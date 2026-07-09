@@ -1,10 +1,19 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { type CardFormValues, normalizeSlug } from '../../lib/adminCards'
+import { getFriendlyErrorMessage } from '../../lib/errors'
+import {
+  buildInvestEmail,
+  getInvestEmailPrefix,
+  INVEST_EMAIL_DOMAIN,
+  normalizeInvestEmailInput,
+} from '../../lib/investEmail'
+import { uploadCardAvatar, uploadCardLogo } from '../../lib/storage'
 
 type CardFormProps = {
   initialValues: CardFormValues
   submitLabel: string
   loading?: boolean
+  onChange?: (values: CardFormValues) => void
   onSubmit: (values: CardFormValues) => Promise<void> | void
 }
 
@@ -12,19 +21,49 @@ export default function CardForm({
   initialValues,
   submitLabel,
   loading = false,
+  onChange,
   onSubmit,
 }: CardFormProps) {
   const [values, setValues] = useState<CardFormValues>(initialValues)
+  const [uploading, setUploading] = useState<'avatar' | 'logo' | ''>('')
+  const [uploadError, setUploadError] = useState('')
 
   useEffect(() => {
     setValues(initialValues)
   }, [initialValues])
+
+  useEffect(() => {
+    onChange?.(values)
+  }, [onChange, values])
 
   function updateField<K extends keyof CardFormValues>(field: K, value: CardFormValues[K]) {
     setValues((current) => ({
       ...current,
       [field]: value,
     }))
+  }
+
+  function updateEmail(value: string) {
+    updateField('email', buildInvestEmail(normalizeInvestEmailInput(value)))
+  }
+
+  async function handleImageUpload(kind: 'avatar' | 'logo', file: File | undefined) {
+    if (!file) {
+      return
+    }
+
+    setUploading(kind)
+    setUploadError('')
+
+    try {
+      const slug = normalizeSlug(values.slug || values.full_name)
+      const url = kind === 'avatar' ? await uploadCardAvatar(file, slug) : await uploadCardLogo(file, slug)
+      updateField(kind === 'avatar' ? 'avatar_url' : 'logo_url', url)
+    } catch (err) {
+      setUploadError(getFriendlyErrorMessage(err))
+    } finally {
+      setUploading('')
+    }
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -147,12 +186,16 @@ export default function CardForm({
 
         <label>
           E-mail
-          <input
-            type="email"
-            value={values.email}
-            onChange={(event) => updateField('email', event.target.value)}
-            placeholder="nome.sobrenome@investrs.org.br"
-          />
+          <span className="email-suffix-field">
+            <input
+              className="email-suffix-input"
+              type="text"
+              value={getInvestEmailPrefix(values.email)}
+              onChange={(event) => updateEmail(event.target.value)}
+              placeholder="nome.sobrenome"
+            />
+            <span className="email-suffix-label">{INVEST_EMAIL_DOMAIN}</span>
+          </span>
         </label>
 
         <label>
@@ -191,10 +234,7 @@ export default function CardForm({
 
           <label>
             País
-            <input
-              value={values.country}
-              onChange={(event) => updateField('country', event.target.value)}
-            />
+            <input value={values.country} onChange={(event) => updateField('country', event.target.value)} />
           </label>
         </div>
       </section>
@@ -233,6 +273,17 @@ export default function CardForm({
         </label>
 
         <label>
+          Enviar avatar
+          <input
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            onChange={(event) => void handleImageUpload('avatar', event.target.files?.[0])}
+          />
+        </label>
+
+        {values.avatar_url ? <img className="asset-preview" src={values.avatar_url} alt="Prévia do avatar" /> : null}
+
+        <label>
           URL do logo
           <input
             type="url"
@@ -241,10 +292,23 @@ export default function CardForm({
             placeholder="https://..."
           />
         </label>
+
+        <label>
+          Enviar logo
+          <input
+            type="file"
+            accept="image/png,image/jpeg,image/webp,image/svg+xml"
+            onChange={(event) => void handleImageUpload('logo', event.target.files?.[0])}
+          />
+        </label>
+
+        {values.logo_url ? <img className="asset-preview logo" src={values.logo_url} alt="Prévia do logo" /> : null}
+        {uploading ? <p className="admin-muted">Enviando {uploading === 'avatar' ? 'avatar' : 'logo'}...</p> : null}
+        {uploadError ? <p className="admin-error">{uploadError}</p> : null}
       </section>
 
       <div className="admin-form-actions">
-        <button className="primary-button" type="submit" disabled={loading || requiredMissing}>
+        <button className="primary-button" type="submit" disabled={loading || Boolean(uploading) || requiredMissing}>
           {loading ? 'Salvando...' : submitLabel}
         </button>
       </div>

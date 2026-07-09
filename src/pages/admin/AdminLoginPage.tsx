@@ -1,10 +1,12 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getCurrentSession, isInvestRsEmail, signInWithMagicLink } from '../../lib/auth'
+import { getFriendlyErrorMessage } from '../../lib/errors'
+import { buildInvestEmail, INVEST_EMAIL_DOMAIN, normalizeInvestEmailInput } from '../../lib/investEmail'
 
 export default function AdminLoginPage() {
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
+  const [emailPrefix, setEmailPrefix] = useState('')
   const [checking, setChecking] = useState(true)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -36,11 +38,11 @@ export default function AdminLoginPage() {
     setMessage('')
 
     try {
+      const email = buildInvestEmail(emailPrefix)
       await signInWithMagicLink(email)
-      setMessage('Enviamos um link de acesso para o seu e-mail institucional.')
+      setMessage(`Enviamos um link de acesso para ${email}.`)
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Não foi possível enviar o link.'
-      setError(errorMessage)
+      setError(getFriendlyErrorMessage(err))
     } finally {
       setLoading(false)
     }
@@ -64,16 +66,21 @@ export default function AdminLoginPage() {
         <form onSubmit={handleSubmit}>
           <label>
             E-mail institucional
-            <input
-              required
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="seu.nome@investrs.org.br"
-            />
+            <span className="email-suffix-field">
+              <input
+                className="email-suffix-input"
+                required
+                type="text"
+                autoComplete="username"
+                value={emailPrefix}
+                onChange={(event) => setEmailPrefix(normalizeInvestEmailInput(event.target.value))}
+                placeholder="seu.nome"
+              />
+              <span className="email-suffix-label">{INVEST_EMAIL_DOMAIN}</span>
+            </span>
           </label>
 
-          <button className="primary-button" type="submit" disabled={loading}>
+          <button className="primary-button" type="submit" disabled={loading || !emailPrefix}>
             {loading ? 'Enviando...' : 'Enviar link de acesso'}
           </button>
         </form>

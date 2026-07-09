@@ -30,6 +30,7 @@ export default function PublicCardPage() {
   const [status, setStatus] = useState<PageStatus>('loading')
   const [qrDataUrl, setQrDataUrl] = useState('')
   const [shareLabel, setShareLabel] = useState('Compartilhar cartão')
+  const [logoFailed, setLogoFailed] = useState(false)
 
   const vcardUrl = useMemo(() => {
     if (!slug) {
@@ -79,6 +80,10 @@ export default function PublicCardPage() {
       isMounted = false
     }
   }, [slug])
+
+  useEffect(() => {
+    setLogoFailed(false)
+  }, [card?.logo_url])
 
   useEffect(() => {
     if (!vcardUrl || status !== 'ready') {
@@ -176,13 +181,20 @@ export default function PublicCardPage() {
   const phone = card.mobile_phone || card.work_phone
   const phoneLink = phone ? normalizePhoneForLink(phone) : ''
   const address = buildAddress(card)
+  const logoUrl = card.logo_url || '/invest-rs-logo.png'
 
   return (
     <main className="app-shell">
       <section className="digital-card">
         <div className="card-visual">
           <div className="card-topline">
-            <span className="brand-name">Invest RS</span>
+            {logoFailed ? (
+              <span className="brand-logo-fallback" role="img" aria-label="Invest RS">
+                Invest RS
+              </span>
+            ) : (
+              <img className="brand-logo" src={logoUrl} alt="Invest RS" onError={() => setLogoFailed(true)} />
+            )}
             <span className="brand-subtitle">Business Card</span>
           </div>
 
@@ -194,7 +206,9 @@ export default function PublicCardPage() {
               {card.job_title && <p className="job-title">{card.job_title}</p>}
               {card.department && <p className="department">{card.department}</p>}
             </div>
+          </div>
 
+          <div className="card-footer">
             <div className="contact-list">
               {phone && (
                 <a href={`tel:${phoneLink}`}>
@@ -224,17 +238,8 @@ export default function PublicCardPage() {
                 </p>
               )}
             </div>
-          </div>
 
-          <div className="card-footer">
-            <div>
-              <strong>{card.company || 'Invest RS'}</strong>
-              <small>Rio Grande do Sul Investment Promotion Agency</small>
-            </div>
-
-            {qrDataUrl && (
-              <img className="qr-code" src={qrDataUrl} alt={`QR Code de ${name}`} />
-            )}
+            {qrDataUrl && <img className="qr-code" src={qrDataUrl} alt={`QR Code de ${name}`} />}
           </div>
         </div>
 
@@ -273,8 +278,8 @@ export default function PublicCardPage() {
           <div className="technical-note">
             <strong>QR Code dinâmico</strong>
             <p>
-              O QR Code aponta para o vCard dinâmico. Quando o projeto estiver publicado na
-              Vercel, o scan abrirá a tela de criação de contato no celular.
+              O QR Code aponta para o vCard dinâmico. Quando o projeto estiver publicado na Vercel, o scan abrirá a
+              tela de criação de contato no celular.
             </p>
           </div>
         </div>

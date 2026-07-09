@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import AdminLayout from '../../components/admin/AdminLayout'
 import CardForm from '../../components/admin/CardForm'
+import CardPreview from '../../components/admin/CardPreview'
 import { getCurrentSession, isInvestRsEmail } from '../../lib/auth'
+import { getFriendlyErrorMessage } from '../../lib/errors'
 import {
   createAdminCard,
   defaultCardFormValues,
@@ -23,6 +25,9 @@ export default function AdminCardFormPage() {
   const [initialValues, setInitialValues] = useState<CardFormValues>({
     ...defaultCardFormValues,
   })
+  const [previewValues, setPreviewValues] = useState<CardFormValues>({
+    ...defaultCardFormValues,
+  })
 
   useEffect(() => {
     async function checkAccessAndLoadCard() {
@@ -41,13 +46,14 @@ export default function AdminCardFormPage() {
             throw new Error('Cartão não encontrado.')
           }
 
-          setInitialValues(toCardFormValues(card))
+          const values = toCardFormValues(card)
+          setInitialValues(values)
+          setPreviewValues(values)
         }
 
         setBooting(false)
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Não foi possível carregar o formulário.'
-        setError(errorMessage)
+        setError(getFriendlyErrorMessage(err))
         setBooting(false)
       }
     }
@@ -68,8 +74,7 @@ export default function AdminCardFormPage() {
 
       navigate('/admin/cartoes')
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Não foi possível salvar o cartão.'
-      setError(errorMessage)
+      setError(getFriendlyErrorMessage(err))
     } finally {
       setSaving(false)
     }
@@ -86,11 +91,7 @@ export default function AdminCardFormPage() {
   return (
     <AdminLayout
       title={isEditing ? 'Editar cartão' : 'Novo cartão'}
-      subtitle={
-        isEditing
-          ? 'Atualize os dados do cartão digital.'
-          : 'Preencha os dados para criar um novo cartão digital.'
-      }
+      subtitle={isEditing ? 'Atualize os dados do cartão digital.' : 'Preencha os dados para criar um novo cartão digital.'}
       action={
         <Link className="secondary-button" to="/admin/cartoes">
           Voltar
@@ -99,12 +100,16 @@ export default function AdminCardFormPage() {
     >
       {error ? <p className="admin-error">{error}</p> : null}
 
-      <CardForm
-        initialValues={initialValues}
-        submitLabel={isEditing ? 'Salvar alterações' : 'Criar cartão'}
-        loading={saving}
-        onSubmit={handleSubmit}
-      />
+      <div className="admin-form-preview-layout">
+        <CardForm
+          initialValues={initialValues}
+          submitLabel={isEditing ? 'Salvar alterações' : 'Criar cartão'}
+          loading={saving}
+          onChange={setPreviewValues}
+          onSubmit={handleSubmit}
+        />
+        <CardPreview values={previewValues} />
+      </div>
     </AdminLayout>
   )
 }

@@ -179,6 +179,20 @@ p {
   gap: 24px;
 }
 
+.brand-logo {
+  width: min(220px, 48vw);
+  aspect-ratio: 640 / 180;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.brand-logo-fallback {
+  font-size: clamp(34px, 5vw, 62px);
+  font-weight: 800;
+  line-height: 0.88;
+  letter-spacing: 0;
+}
+
 .brand-name {
   font-size: clamp(34px, 5vw, 62px);
   line-height: 0.88;
@@ -193,11 +207,8 @@ p {
 }
 
 .card-main {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(230px, 0.72fr);
-  gap: 32px;
-  margin: 72px 0;
-  align-items: end;
+  display: block;
+  margin: 84px 0 72px;
 }
 
 .person-block h1 {
@@ -247,6 +258,10 @@ p {
 
 .card-footer {
   align-items: end;
+}
+
+.card-footer .contact-list {
+  max-width: min(420px, 100%);
 }
 
 .card-footer strong,
@@ -357,6 +372,10 @@ p {
     align-items: flex-start;
   }
 
+  .card-footer {
+    flex-wrap: wrap;
+  }
+
   .qr-code {
     width: 104px;
     height: 104px;
@@ -411,6 +430,11 @@ p {
   gap: 18px;
 }
 
+.admin-login-card .admin-success,
+.admin-login-card .admin-error {
+  margin-top: 18px;
+}
+
 .admin-login-card label,
 .admin-form label {
   display: grid;
@@ -429,6 +453,36 @@ p {
   color: #f7f3eb;
   padding: 13px 14px;
   font: inherit;
+}
+
+.email-suffix-field {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.28);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.admin-login-card .email-suffix-field input,
+.admin-form .email-suffix-field input {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.email-suffix-input {
+  min-width: 0;
+  flex: 1;
+}
+
+.email-suffix-label {
+  flex: 0 0 auto;
+  padding: 0 14px 0 8px;
+  color: rgba(247, 243, 235, 0.68);
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .admin-login-card input:focus,
@@ -546,6 +600,14 @@ p {
   gap: 10px;
 }
 
+.admin-actions a,
+.admin-actions button {
+  min-height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 7px 10px;
+}
+
 .status-pill {
   display: inline-flex;
   align-items: center;
@@ -576,6 +638,13 @@ p {
   align-items: start;
 }
 
+.admin-form-preview-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.8fr);
+  align-items: start;
+  gap: 22px;
+}
+
 .admin-form-section {
   display: grid;
   gap: 16px;
@@ -585,6 +654,99 @@ p {
 .admin-form-section h2 {
   margin: 0;
   font-size: 1.1rem;
+}
+
+.admin-muted {
+  margin: 0;
+  color: rgba(247, 243, 235, 0.68);
+  font-size: 0.92rem;
+}
+
+.asset-preview {
+  width: 88px;
+  height: 88px;
+  border-radius: 14px;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.asset-preview.logo {
+  width: 160px;
+  height: auto;
+  aspect-ratio: 640 / 180;
+  object-fit: contain;
+}
+
+.card-preview {
+  position: sticky;
+  top: 22px;
+  min-height: 520px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  background: rgba(0, 0, 0, 0.58);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 36px;
+}
+
+.card-preview-top,
+.card-preview-footer,
+.admin-mobile-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.card-preview-logo {
+  width: min(170px, 56%);
+  aspect-ratio: 640 / 180;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.card-preview-person h2 {
+  margin-bottom: 12px;
+  font-size: clamp(32px, 4vw, 54px);
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+
+.card-preview-person p {
+  margin-bottom: 6px;
+  color: rgba(247, 243, 235, 0.72);
+}
+
+.card-preview-qr {
+  width: 92px;
+  height: 92px;
+  flex: 0 0 auto;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #050505;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+}
+
+.admin-mobile-cards {
+  display: none;
+}
+
+.admin-mobile-card {
+  display: grid;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-mobile-card p,
+.admin-mobile-card small {
+  margin: 0;
+  color: rgba(247, 243, 235, 0.66);
 }
 
 .admin-form-grid {
@@ -629,12 +791,45 @@ p {
   }
 
   .admin-form-grid,
-  .admin-field-with-action {
+  .admin-field-with-action,
+  .admin-form-preview-layout {
     grid-template-columns: 1fr;
   }
 
   .admin-nav,
   .admin-actions {
     align-items: flex-start;
+  }
+
+  .admin-table {
+    display: none;
+  }
+
+  .admin-table-wrap {
+    overflow-x: visible;
+  }
+
+  .admin-mobile-cards {
+    display: grid;
+  }
+
+  .admin-actions a,
+  .admin-actions button {
+    min-height: 44px;
+    padding: 10px 13px;
+  }
+
+  .card-preview {
+    position: static;
+    min-height: auto;
+  }
+
+  .email-suffix-field {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .email-suffix-label {
+    padding: 0 14px 13px;
   }
 }
