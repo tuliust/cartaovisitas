@@ -4,6 +4,7 @@
     "api/wallet/apple/[slug].ts": { "includeFiles": "public/wallet/**" }
   },
   "rewrites": [
+    { "source": "/qr/:slug", "destination": "/api/qr/:slug" },
     { "source": "/admin/:path*", "destination": "/index.html" },
     { "source": "/meu-cartao/:path*", "destination": "/index.html" },
     { "source": "/meu-cartao", "destination": "/index.html" },

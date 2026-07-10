@@ -7,8 +7,10 @@ import { deleteAdminCard, listAdminCards, setAdminCardActive, type AdminBusiness
 import { getFriendlyErrorMessage } from '../../lib/errors'
 import { downloadQrCodePng } from '../../lib/qrcode'
 import { emptyCardAnalytics, getAnalyticsForCards, type CardAnalyticsSummary } from '../../lib/adminAnalytics'
-import { recordCardEvent } from '../../lib/cards'
 import { useToast } from '../../contexts/ToastContext'
+import { recordAuditLog } from '../../lib/audit'
+import CardImportModal from '../../components/admin/CardImportModal'
+import { downloadCardImportTemplate } from '../../lib/cardImport'
 
 function formatDate(value: string | null) {
   if (!value) {
@@ -77,6 +79,7 @@ export default function AdminCardsPage() {
   const [deleteTarget, setDeleteTarget] = useState<AdminBusinessCard | null>(null)
   const [deleteConfirmation, setDeleteConfirmation] = useState('')
   const [deleting, setDeleting] = useState(false)
+  const [importOpen, setImportOpen] = useState(false)
 
   const visibleCards = useMemo(() => {
     const term = normalizeSearchValue(search.trim())
@@ -177,6 +180,7 @@ export default function AdminCardsPage() {
     try {
       setError('')
       await setAdminCardActive(card.id, !card.is_active)
+      await recordAuditLog({ action: card.is_active ? 'card_deactivated' : 'card_activated', targetType: 'business_card', targetId: card.id, targetLabel: card.slug, beforeData: { is_active: card.is_active }, afterData: { is_active: !card.is_active } })
       await loadCards()
       toast.success(card.is_active ? 'Cartão desativado com sucesso.' : 'Cartão ativado com sucesso.')
     } catch (err) {
@@ -189,16 +193,7 @@ export default function AdminCardsPage() {
   async function handleDownloadQrCode(card: AdminBusinessCard) {
     try {
       setError('')
-      await downloadQrCodePng(`${window.location.origin}/api/vcard/${card.slug}`, `qr-code-${card.slug}.png`)
-      if (await recordCardEvent(card.id, 'qr')) {
-        setAnalytics((current) => ({
-          ...current,
-          [card.id]: {
-            ...(current[card.id] ?? emptyCardAnalytics),
-            qr_count: (current[card.id]?.qr_count ?? 0) + 1,
-          },
-        }))
-      }
+      await downloadQrCodePng(`${window.location.origin}/qr/${card.slug}?lang=pt`, `qr-code-${card.slug}.png`)
       toast.success('QR Code baixado com sucesso.')
     } catch (err) {
       const message = getFriendlyErrorMessage(err)
@@ -213,6 +208,7 @@ export default function AdminCardsPage() {
     setError('')
     try {
       await deleteAdminCard(deleteTarget.id)
+      await recordAuditLog({ action: 'card_deleted', targetType: 'business_card', targetId: deleteTarget.id, targetLabel: deleteTarget.slug, beforeData: deleteTarget })
       setDeleteTarget(null)
       setDeleteConfirmation('')
       await loadCards()
@@ -272,9 +268,11 @@ export default function AdminCardsPage() {
       title="Cartões digitais"
       subtitle="Crie, edite e gerencie os cartões institucionais da Invest RS."
       action={
-        <Link className="primary-button" to="/admin/cartoes/novo">
-          Novo cartão
-        </Link>
+        <div className="admin-header-actions">
+          <button className="secondary-button" type="button" onClick={downloadCardImportTemplate}>Baixar modelo</button>
+          <button className="secondary-button" type="button" onClick={() => setImportOpen(true)}>Importar planilha</button>
+          <Link className="primary-button" to="/admin/cartoes/novo">Novo cartão</Link>
+        </div>
       }
     >
       {error ? <p className="admin-error">{error}</p> : null}
@@ -422,6 +420,7 @@ export default function AdminCardsPage() {
           </section>
         </div>
       ) : null}
+      {importOpen ? <CardImportModal onClose={() => setImportOpen(false)} onImported={loadCards} /> : null}
     </AdminLayout>
   )
 }

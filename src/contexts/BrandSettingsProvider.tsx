@@ -19,11 +19,18 @@ export function BrandSettingsProvider({ children }: { children: ReactNode }) {
     root.style.setProperty('--brand-text', settings.text_color)
     root.style.setProperty('--brand-accent', settings.secondary_color)
     root.style.setProperty('--brand-background-image', settings.background_image_url ? `url("${settings.background_image_url.replace(/"/g, '\\"')}")` : 'none')
-    const favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
-    if (favicon) {
-      favicon.href = settings.favicon_url || defaultBrandSettings.favicon_url
-      const faviconUrl = favicon.href.toLowerCase()
-      favicon.type = faviconUrl.endsWith('.svg') ? 'image/svg+xml' : faviconUrl.endsWith('.png') ? 'image/png' : 'image/x-icon'
+    let favicon = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
+    if (!favicon) { favicon = document.createElement('link'); favicon.rel = 'icon'; document.head.appendChild(favicon) }
+    favicon.href = settings.favicon_url || defaultBrandSettings.favicon_url
+    const faviconUrl = favicon.href.toLowerCase()
+    favicon.type = faviconUrl.endsWith('.svg') ? 'image/svg+xml' : faviconUrl.endsWith('.png') ? 'image/png' : 'image/x-icon'
+    let appleTouch = document.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]')
+    if (settings.apple_touch_icon_url) {
+      if (!appleTouch) { appleTouch = document.createElement('link'); appleTouch.rel = 'apple-touch-icon'; document.head.appendChild(appleTouch) }
+      appleTouch.href = settings.apple_touch_icon_url
+      appleTouch.setAttribute('sizes', '180x180')
+    } else {
+      appleTouch?.remove()
     }
   }, [settings])
 

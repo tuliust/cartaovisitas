@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import type { PublicVisualVariant } from './cardVisualVariants'
 
 export type BusinessCard = {
   id: string
@@ -28,6 +29,7 @@ export type BusinessCard = {
   show_avatar_public: boolean
   logo_url: string | null
   theme: string | null
+  public_visual_variant?: PublicVisualVariant | null
   is_active: boolean
   expires_at: string | null
 }

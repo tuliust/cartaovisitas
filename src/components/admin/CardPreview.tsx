@@ -1,5 +1,6 @@
 import type { CardFormValues } from '../../lib/adminCards'
 import { useBrandSettings } from '../../contexts/BrandSettingsContext'
+import { getVariantClassName, getVariantLogo, getVariantStyle } from '../../lib/cardVisualVariants'
 
 type CardPreviewProps = {
   values: CardFormValues
@@ -14,10 +15,10 @@ export default function CardPreview({ values }: CardPreviewProps) {
   const name = values.display_name || values.full_name || 'Nome completo'
   const phone = values.mobile_phone || values.work_phone
   const address = buildAddress(values)
-  const logoUrl = values.logo_url || settings.logo_url
+  const logoUrl = getVariantLogo(settings, values.public_visual_variant, values.logo_url)
 
   return (
-    <aside className="card-preview" aria-label="Prévia do cartão">
+    <aside className={`card-preview ${getVariantClassName(settings, values.public_visual_variant)}`} style={getVariantStyle(settings, values.public_visual_variant)} aria-label="Prévia do cartão">
       <div className="card-preview-top">
         <img className="public-card-logo card-preview-logo" src={logoUrl} alt="Invest RS" />
         <div className="card-preview-top-actions">

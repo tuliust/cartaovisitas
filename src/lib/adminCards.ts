@@ -1,5 +1,6 @@
 import { supabase } from './supabase'
 import type { BusinessCard } from './cards'
+import type { PublicVisualVariant } from './cardVisualVariants'
 
 export type AdminBusinessCard = BusinessCard & {
   created_at: string | null
@@ -34,6 +35,7 @@ export type CardFormValues = {
   show_avatar_public: boolean
   logo_url: string
   is_active: boolean
+  public_visual_variant: PublicVisualVariant
 }
 
 export const defaultCardFormValues: CardFormValues = {
@@ -63,6 +65,7 @@ export const defaultCardFormValues: CardFormValues = {
   show_avatar_public: false,
   logo_url: '',
   is_active: true,
+  public_visual_variant: 'dark_black',
 }
 
 function requireSupabase() {
@@ -116,6 +119,7 @@ export function toCardFormValues(card: AdminBusinessCard): CardFormValues {
     show_avatar_public: card.show_avatar_public ?? false,
     logo_url: card.logo_url ?? '',
     is_active: card.is_active,
+    public_visual_variant: card.public_visual_variant ?? 'dark_black',
   }
 }
 
@@ -157,6 +161,7 @@ export function buildCardPayload(values: CardFormValues) {
     show_avatar_public: values.show_avatar_public,
     logo_url: stringOrNull(values.logo_url),
     theme: 'invest_black',
+    public_visual_variant: values.public_visual_variant,
     is_active: values.is_active,
     updated_at: new Date().toISOString(),
   }

@@ -7,6 +7,7 @@ import { defaultCardFormValues, type CardFormValues } from '../lib/adminCards'
 import { getFriendlyErrorMessage } from '../lib/errors'
 import { createMyCardDraft, getMyCard, toMyCardFormValues, upsertMyCard } from '../lib/myCard'
 import { useToast } from '../contexts/ToastContext'
+import { requireActiveUser } from '../lib/roles'
 
 export default function MyCardEditPage() {
   const navigate = useNavigate()
@@ -23,6 +24,7 @@ export default function MyCardEditPage() {
     void (async () => {
       const session = await getCurrentSession()
       if (!session) return navigate('/entrar', { replace: true })
+      await requireActiveUser()
       const card = await getMyCard()
       const initial = card ? toMyCardFormValues(card) : await createMyCardDraft()
       setValues(initial)
@@ -30,7 +32,7 @@ export default function MyCardEditPage() {
       setSavedSlug(card?.slug ?? '')
       setCardId(card?.id ?? '')
       setBooting(false)
-    })().catch((err) => { const message = getFriendlyErrorMessage(err); setError(message); toast.error(message); setBooting(false) })
+    })().catch(async (err) => { const message = getFriendlyErrorMessage(err); setError(message); toast.error(message); await signOut().catch(() => undefined); navigate('/entrar', { replace: true }); setBooting(false) })
   }, [navigate, toast])
 
   async function save(form: CardFormValues) {

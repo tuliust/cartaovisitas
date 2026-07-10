@@ -8,6 +8,8 @@ import { uploadCardAvatar, uploadCardLogo, validateAvatarFile } from '../../lib/
 import { checkSlugAvailability } from '../../lib/cardsValidation'
 import ImageCropModal from './ImageCropModal'
 import { useToast } from '../../contexts/ToastContext'
+import { useBrandSettings } from '../../contexts/BrandSettingsContext'
+import { getVariantImage, publicVisualVariantOptions } from '../../lib/cardVisualVariants'
 
 type Language = 'pt' | 'es' | 'en'
 type CardFormProps = {
@@ -44,6 +46,7 @@ export default function CardForm({
   currentCardId,
 }: CardFormProps) {
   const toast = useToast()
+  const { settings } = useBrandSettings()
   const [values, setValues] = useState<CardFormValues>(initialValues)
   const [language, setLanguage] = useState<Language>('pt')
   const [uploading, setUploading] = useState<'avatar' | 'logo' | ''>('')
@@ -166,6 +169,13 @@ export default function CardForm({
           <button type="button" className="secondary-button compact-button" onClick={() => updateSlug(values.full_name)}>Gerar slug</button>
         </div>
         {allowStatusEdit ? <label>Status<select value={values.is_active ? 'true' : 'false'} onChange={(event) => updateField('is_active', event.target.value === 'true')}><option value="true">Ativo</option><option value="false">Inativo</option></select></label> : null}
+      </section>
+
+      <section className="admin-form-section">
+        <h2>Visual do cartão</h2>
+        <p className="field-help">Escolha uma das seis variações institucionais aprovadas.</p>
+        <label>Visual do cartão<select value={values.public_visual_variant} onChange={(event) => updateField('public_visual_variant', event.target.value as CardFormValues['public_visual_variant'])}>{publicVisualVariantOptions.map((option) => <option value={option.value} key={option.value}>{option.label}</option>)}</select></label>
+        {values.public_visual_variant.includes('image') && !getVariantImage(settings, values.public_visual_variant) ? <p className="visual-variant-warning">Imagem institucional ainda não configurada. Será usado o fallback.</p> : null}
       </section>
 
       <section className="admin-form-section">

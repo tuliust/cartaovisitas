@@ -17,6 +17,7 @@ import { useBrandSettings } from '../contexts/BrandSettingsContext'
 import WalletSupportModal from '../components/WalletSupportModal'
 import { getAppleWalletUrl, isIosDevice, isWalletPublicEnabled } from '../lib/wallet'
 import { useToast } from '../contexts/ToastContext'
+import { getVariantClassName, getVariantLogo, getVariantStyle } from '../lib/cardVisualVariants'
 
 type PageStatus = 'loading' | 'ready' | 'not-found' | 'error'
 
@@ -46,6 +47,7 @@ export default function PublicCardPage() {
   const [walletModalOpen, setWalletModalOpen] = useState(false)
 
   const vcardUrl = useMemo(() => slug ? `${getBaseUrl()}/api/vcard/${slug}?lang=${language}` : '', [language, slug])
+  const qrUrl = useMemo(() => slug ? `${getBaseUrl()}/qr/${slug}?lang=${language}` : '', [language, slug])
 
   useEffect(() => {
     let isMounted = true
@@ -79,11 +81,11 @@ export default function PublicCardPage() {
   }, [slug])
 
   useEffect(() => {
-    if (!vcardUrl || status !== 'ready') return
-    QRCode.toDataURL(vcardUrl, { width: 360, margin: 1, errorCorrectionLevel: 'M' })
+    if (!qrUrl || status !== 'ready') return
+    QRCode.toDataURL(qrUrl, { width: 360, margin: 1, errorCorrectionLevel: 'M' })
       .then(setQrDataUrl)
       .catch((error: unknown) => console.error('Erro ao gerar QR Code:', error))
-  }, [vcardUrl, status])
+  }, [qrUrl, status])
 
   function changeLanguage(nextLanguage: PublicCardLanguage) {
     setLanguage(nextLanguage)
@@ -141,7 +143,7 @@ export default function PublicCardPage() {
   async function handleDownloadQrCode() {
     if (!card) return
     try {
-      await downloadQrCodePng(vcardUrl, `qr-code-${card.slug}.png`)
+      await downloadQrCodePng(qrUrl, `qr-code-${card.slug}.png`)
       toast.success('QR Code baixado com sucesso.')
       void recordCardEvent(card.id, 'qr')
     } catch {
@@ -174,14 +176,15 @@ export default function PublicCardPage() {
   const phone = card.mobile_phone || card.work_phone
   const phoneLink = phone ? normalizePhoneForLink(phone) : ''
   const address = buildAddress(card)
-  const logoUrl = card.logo_url || settings.logo_url
+  const visualVariant = card.public_visual_variant ?? 'dark_black'
+  const logoUrl = getVariantLogo(settings, visualVariant, card.logo_url)
   const logoFailed = failedLogoUrl === logoUrl
   const showAvatar = card.show_avatar_public && Boolean(card.avatar_url)
 
   return (
     <main className="app-shell">
       <section className="digital-card">
-        <div className="card-visual">
+        <div className={`card-visual ${getVariantClassName(settings, visualVariant)}`} style={getVariantStyle(settings, visualVariant)}>
           <div className="card-topline">
             {logoFailed ? <span className="brand-logo-fallback" role="img" aria-label="Invest RS">Invest RS</span> : <img className="public-card-logo" src={logoUrl} alt="Invest RS" onError={() => setFailedLogoUrl(logoUrl)} />}
             {showAvatar ? <div className="public-card-avatar-wrapper"><img className="public-card-avatar" src={card.avatar_url ?? ''} alt={`Foto de ${name}`} /></div> : null}

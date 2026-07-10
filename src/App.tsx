@@ -13,6 +13,8 @@ import PasswordUpdatePage from './pages/PasswordUpdatePage'
 import AdminBrandSettingsPage from './pages/admin/AdminBrandSettingsPage'
 import { BrandSettingsProvider } from './contexts/BrandSettingsProvider'
 import ToastProvider from './components/ToastProvider'
+import AdminUsersPage from './pages/admin/AdminUsersPage'
+import AdminAuditPage from './pages/admin/AdminAuditPage'
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
         <Route path="/admin/cartoes/novo" element={<AdminCardFormPage />} />
         <Route path="/admin/cartoes/:id/editar" element={<AdminCardFormPage />} />
         <Route path="/admin/configuracoes" element={<AdminBrandSettingsPage />} />
+        <Route path="/admin/usuarios" element={<AdminUsersPage />} />
+        <Route path="/admin/auditoria" element={<AdminAuditPage />} />
 
         <Route path="/:slug" element={<PublicCardPage />} />
       </Routes>

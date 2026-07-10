@@ -28,6 +28,8 @@ export default function AdminLayout({ title, subtitle, action, children }: Admin
 
         <nav className="admin-nav">
           <Link to="/admin/cartoes">Cartões</Link>
+          <Link to="/admin/usuarios">Usuários</Link>
+          <Link to="/admin/auditoria">Auditoria</Link>
           <Link to="/admin/configuracoes">Configurações</Link>
           <button type="button" onClick={handleSignOut}>
             Sair

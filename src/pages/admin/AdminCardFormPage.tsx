@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import AdminLayout from '../../components/admin/AdminLayout'
 import CardForm from '../../components/admin/CardForm'
 import CardPreview from '../../components/admin/CardPreview'
@@ -15,11 +15,13 @@ import {
   type CardFormValues,
 } from '../../lib/adminCards'
 import { useToast } from '../../contexts/ToastContext'
+import { recordAuditLog } from '../../lib/audit'
 
 export default function AdminCardFormPage() {
   const navigate = useNavigate()
   const toast = useToast()
   const { id } = useParams()
+  const [searchParams] = useSearchParams()
   const isEditing = Boolean(id)
 
   const [booting, setBooting] = useState(true)
@@ -55,6 +57,15 @@ export default function AdminCardFormPage() {
           setPreviewValues(values)
         }
 
+        if (!id) {
+          const email = searchParams.get('email') || ''
+          const fullName = searchParams.get('name') || ''
+          if (email || fullName) {
+            const values = { ...defaultCardFormValues, email, full_name: fullName }
+            setInitialValues(values)
+            setPreviewValues(values)
+          }
+        }
         setBooting(false)
       } catch {
         navigate('/admin/login', { replace: true })
@@ -62,7 +73,7 @@ export default function AdminCardFormPage() {
     }
 
     void checkAccessAndLoadCard()
-  }, [id, navigate])
+  }, [id, navigate, searchParams])
 
   async function handleSubmit(values: CardFormValues) {
     setSaving(true)
@@ -70,9 +81,11 @@ export default function AdminCardFormPage() {
 
     try {
       if (isEditing && id) {
-        await updateAdminCard(id, values)
+        const card = await updateAdminCard(id, values)
+        await recordAuditLog({ action: 'card_updated', targetType: 'business_card', targetId: card.id, targetLabel: card.slug, afterData: card })
       } else {
-        await createAdminCard(values)
+        const card = await createAdminCard(values)
+        await recordAuditLog({ action: 'card_created', targetType: 'business_card', targetId: card.id, targetLabel: card.slug, afterData: card })
       }
 
       toast.success(isEditing ? 'Cartão atualizado com sucesso.' : 'Cartão criado com sucesso.')

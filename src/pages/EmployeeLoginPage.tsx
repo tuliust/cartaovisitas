@@ -1,10 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getCurrentSession, signInWithPassword } from '../lib/auth'
+import { getCurrentSession, signInWithPassword, signOut } from '../lib/auth'
 import { getFriendlyErrorMessage } from '../lib/errors'
 import { buildInvestEmail, INVEST_EMAIL_DOMAIN, normalizeInvestEmailInput } from '../lib/investEmail'
 import { getMyCard } from '../lib/myCard'
-import { ensureUserProfile } from '../lib/roles'
+import { requireActiveUser } from '../lib/roles'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
 import { useToast } from '../contexts/ToastContext'
 
@@ -18,14 +18,12 @@ export default function EmployeeLoginPage() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    void getCurrentSession()
-      .then((session) => {
-        if (session) {
-          navigate('/meu-cartao', { replace: true })
-        }
-      })
-      .catch(() => undefined)
-  }, [navigate])
+    void getCurrentSession().then(async (session) => {
+      if (!session) return
+      try { await requireActiveUser(); navigate('/meu-cartao', { replace: true }) }
+      catch (error) { await signOut().catch(() => undefined); const message = getFriendlyErrorMessage(error); setError(message); toast.error(message) }
+    }).catch(() => undefined)
+  }, [navigate, toast])
 
   async function submit(event: FormEvent) {
     event.preventDefault()
@@ -34,7 +32,7 @@ export default function EmployeeLoginPage() {
 
     try {
       await signInWithPassword(buildInvestEmail(prefix), password)
-      await ensureUserProfile()
+      await requireActiveUser()
       const card = await getMyCard()
       toast.success('Login realizado com sucesso.')
       navigate(card ? `/${card.slug}` : '/meu-cartao/editar', { replace: true })
