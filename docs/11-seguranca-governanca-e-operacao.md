@@ -1,0 +1,108 @@
+# 11 — Segurança, governança e operação
+
+## Princípios
+
+- Menor privilégio.
+- RLS habilitado.
+- Service role somente no backend.
+- E-mail institucional obrigatório.
+- Logs de auditoria para ações administrativas.
+- Não commitar segredos.
+
+## Domínio institucional
+
+Acesso de usuário depende de e-mail `@investrs.org.br`.
+
+## Roles
+
+- `admin`: acesso administrativo.
+- `user`: colaborador.
+
+## Status
+
+- `active`: acesso normal.
+- `pending`: convidado/pendente.
+- `blocked`: bloqueado.
+
+## Service role
+
+`SUPABASE_SERVICE_ROLE_KEY` é usada apenas no endpoint server-side de convite.
+
+Nunca:
+
+- usar no frontend;
+- prefixar com `VITE_`;
+- commitar em arquivo;
+- colar em documentação com valor real.
+
+## RLS
+
+Verificações essenciais:
+
+- `Authenticated users can manage cards` não deve existir.
+- `Public can read active cards` antiga não deve existir se substituída pela policy atual.
+- `events public insert` deve validar cartão ativo.
+- `audit_logs` deve ser lido apenas por admin.
+- `brand_settings` deve ser escrito apenas por admin.
+
+## Auditoria
+
+Registrar:
+
+- alterações de cartão;
+- ativação/desativação;
+- exclusão;
+- convites;
+- promoção/remoção de admin;
+- bloqueios;
+- alterações de branding;
+- importações.
+
+Falha de auditoria não deve quebrar ação crítica, mas deve ser registrada em console controlado.
+
+## Apagar cartão
+
+Ação permanente:
+
+- remove eventos associados;
+- remove o cartão;
+- não remove automaticamente `auth.users`;
+- exige confirmação pelo slug.
+
+## Bloquear usuário
+
+Bloqueio deve impedir:
+
+- admin;
+- edição do próprio cartão;
+- passagem em `is_admin()`.
+
+## Checklist de segurança antes de deploy
+
+```powershell
+git status
+git diff --check
+```
+
+Conferir ausência de:
+
+```text
+.env
+.env.local
+.vercel
+*.p12
+*.cer
+*.pem
+*.key
+```
+
+## Operação
+
+Rotina recomendada:
+
+- revisar auditoria periodicamente;
+- validar convites pendentes;
+- remover admins desnecessários;
+- testar vCard após mudanças de banco;
+- testar RLS após mudanças de policy;
+- manter scripts SQL preservados.
