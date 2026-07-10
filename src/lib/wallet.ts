@@ -2,6 +2,10 @@ export function getAppleWalletUrl(slug: string) {
   return `/api/wallet/apple/${encodeURIComponent(slug)}`
 }
 
+export function isWalletPublicEnabled() {
+  return import.meta.env.VITE_WALLET_PUBLIC_ENABLED === 'true'
+}
+
 export function isIosDevice() {
   const userAgent = window.navigator.userAgent
   return /iPhone|iPad|iPod/i.test(userAgent) || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1)

@@ -79,3 +79,17 @@ A implementação futura exigirá Google Wallet Issuer Account, projeto Google C
 ## Verificação
 
 Sem credenciais, confirme HTTP 503 JSON em `/api/wallet/apple/tulius-souza`. Com credenciais válidas, confirme `Content-Type: application/vnd.apple.pkpass`, nome `invest-rs-tulius-souza.pkpass`, abertura no iPhone e os dados do cartão. Verifique separadamente que `/api/vcard/tulius-souza` continua retornando `text/vcard`.
+
+## Modo standby
+
+`APPLE_WALLET_ENABLED` controla a emissão no backend. `VITE_WALLET_PUBLIC_ENABLED` controla a exposição da funcionalidade no frontend. Quando a flag pública não é exatamente `true`, o botão continua visível, mas abre somente o aviso “Wallet em breve” e não chama o endpoint Apple.
+
+Para manter a Wallet em standby:
+
+```text
+APPLE_WALLET_ENABLED=false
+GOOGLE_WALLET_ENABLED=false
+VITE_WALLET_PUBLIC_ENABLED=false
+```
+
+Para ativar futuramente, aprove o orçamento do Apple Developer Program, crie o Pass Type ID, configure certificados Apple reais na Vercel, defina `APPLE_WALLET_ENABLED=true` e `VITE_WALLET_PUBLIC_ENABLED=true` e faça um novo deploy.

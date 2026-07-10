@@ -5,9 +5,11 @@ import { getFriendlyErrorMessage } from '../../lib/errors'
 import { buildInvestEmail, INVEST_EMAIL_DOMAIN, normalizeInvestEmailInput } from '../../lib/investEmail'
 import { isCurrentUserAdmin } from '../../lib/roles'
 import { useBrandSettings } from '../../contexts/BrandSettingsContext'
+import { useToast } from '../../contexts/ToastContext'
 
 export default function AdminLoginPage() {
   const { settings } = useBrandSettings()
+  const toast = useToast()
   const navigate = useNavigate()
   const [prefix, setPrefix] = useState('')
   const [password, setPassword] = useState('')
@@ -34,12 +36,17 @@ export default function AdminLoginPage() {
       await signInWithPassword(buildInvestEmail(prefix), password)
       if (!(await isCurrentUserAdmin())) {
         await signOut()
-        setError('Seu usuário não tem permissão para acessar a área restrita.')
+        const message = 'Seu usuário não tem permissão para acessar a área restrita.'
+        setError(message)
+        toast.error(message)
         return
       }
+      toast.success('Login administrativo realizado com sucesso.')
       navigate('/admin/cartoes', { replace: true })
     } catch (err) {
-      setError(getFriendlyErrorMessage(err))
+      const message = getFriendlyErrorMessage(err)
+      setError(message)
+      toast.error(message)
     } finally {
       setLoading(false)
     }

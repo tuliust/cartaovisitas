@@ -6,9 +6,11 @@ import { buildInvestEmail, INVEST_EMAIL_DOMAIN, normalizeInvestEmailInput } from
 import { getMyCard } from '../lib/myCard'
 import { ensureUserProfile } from '../lib/roles'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
+import { useToast } from '../contexts/ToastContext'
 
 export default function EmployeeLoginPage() {
   const { settings } = useBrandSettings()
+  const toast = useToast()
   const navigate = useNavigate()
   const [prefix, setPrefix] = useState('')
   const [password, setPassword] = useState('')
@@ -34,9 +36,12 @@ export default function EmployeeLoginPage() {
       await signInWithPassword(buildInvestEmail(prefix), password)
       await ensureUserProfile()
       const card = await getMyCard()
+      toast.success('Login realizado com sucesso.')
       navigate(card ? `/${card.slug}` : '/meu-cartao/editar', { replace: true })
     } catch (err) {
-      setError(getFriendlyErrorMessage(err))
+      const message = getFriendlyErrorMessage(err)
+      setError(message)
+      toast.error(message)
     } finally {
       setLoading(false)
     }

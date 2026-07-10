@@ -14,6 +14,7 @@ import {
 import { getFriendlyErrorMessage } from '../../lib/errors'
 import { requireAdmin } from '../../lib/roles'
 import { useNavigate } from 'react-router-dom'
+import { useToast } from '../../contexts/ToastContext'
 
 type ColorKey = 'primary_color' | 'secondary_color' | 'background_color' | 'surface_color' | 'text_color'
 
@@ -27,6 +28,7 @@ const colorFields: Array<{ key: ColorKey; label: string }> = [
 
 export default function AdminBrandSettingsPage() {
   const navigate = useNavigate()
+  const toast = useToast()
   const { setSettings } = useBrandSettings()
   const [values, setValues] = useState(defaultBrandSettings)
   const [booting, setBooting] = useState(true)
@@ -55,19 +57,20 @@ export default function AdminBrandSettingsPage() {
     const file = event.target.files?.[0]
     if (!file) return
     setUploading(type); setError(''); setSuccess('')
-    try { update(key, await uploadBrandAsset(file, type)) }
-    catch (uploadError) { setError(getFriendlyErrorMessage(uploadError)) }
+    try { update(key, await uploadBrandAsset(file, type)); toast.success('Imagem enviada com sucesso. Salve as configurações para aplicar.') }
+    catch (uploadError) { const message = getFriendlyErrorMessage(uploadError); setError(message); toast.error(message) }
     finally { setUploading(''); event.target.value = '' }
   }
 
   async function save() {
     const invalid = colorFields.find(({ key }) => !isValidHexColor(values[key]))
-    if (invalid) { setError(`${invalid.label}: informe uma cor hexadecimal no formato #050505.`); return }
+    if (invalid) { const message = `${invalid.label}: informe uma cor hexadecimal no formato #050505.`; setError(message); toast.error(message); return }
     setSaving(true); setError(''); setSuccess('')
     try {
       const saved = await updateBrandSettings(values)
-      setValues(saved); setSettings(saved); setSuccess('Identidade visual atualizada com sucesso.')
-    } catch (saveError) { setError(getFriendlyErrorMessage(saveError)) }
+      const message = 'Identidade visual atualizada com sucesso.'
+      setValues(saved); setSettings(saved); setSuccess(message); toast.success(message)
+    } catch (saveError) { const message = getFriendlyErrorMessage(saveError); setError(message); toast.error(message) }
     finally { setSaving(false) }
   }
 

@@ -4,9 +4,11 @@ import { signUpWithPassword } from '../lib/auth'
 import { getFriendlyErrorMessage } from '../lib/errors'
 import { buildInvestEmail, INVEST_EMAIL_DOMAIN, normalizeInvestEmailInput } from '../lib/investEmail'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
+import { useToast } from '../contexts/ToastContext'
 
 export default function RegisterPage() {
   const { settings } = useBrandSettings()
+  const toast = useToast()
   const [prefix, setPrefix] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -20,12 +22,16 @@ export default function RegisterPage() {
     setMessage('')
 
     if (password !== confirm) {
-      setError('As senhas não coincidem.')
+      const validationMessage = 'As senhas não coincidem.'
+      setError(validationMessage)
+      toast.error(validationMessage)
       return
     }
 
     if (password.length < 6) {
-      setError('Use uma senha mais segura.')
+      const validationMessage = 'Use uma senha mais segura.'
+      setError(validationMessage)
+      toast.error(validationMessage)
       return
     }
 
@@ -33,9 +39,13 @@ export default function RegisterPage() {
 
     try {
       await signUpWithPassword(buildInvestEmail(prefix), password)
-      setMessage('Enviamos um e-mail de confirmação. Confirme seu cadastro para continuar.')
+      const successMessage = 'Enviamos um e-mail de confirmação. Confirme seu cadastro para continuar.'
+      setMessage(successMessage)
+      toast.success(successMessage)
     } catch (err) {
-      setError(getFriendlyErrorMessage(err))
+      const failureMessage = getFriendlyErrorMessage(err)
+      setError(failureMessage)
+      toast.error(failureMessage)
     } finally {
       setLoading(false)
     }

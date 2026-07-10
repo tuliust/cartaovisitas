@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Copy, Pencil, QrCode, Wallet } from 'lucide-react'
 import QRCode from 'qrcode'
 import { Link, useNavigate, useParams } from 'react-router-dom'
@@ -15,7 +15,8 @@ import {
 import { downloadQrCodePng } from '../lib/qrcode'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
 import WalletSupportModal from '../components/WalletSupportModal'
-import { getAppleWalletUrl, isIosDevice } from '../lib/wallet'
+import { getAppleWalletUrl, isIosDevice, isWalletPublicEnabled } from '../lib/wallet'
+import { useToast } from '../contexts/ToastContext'
 
 type PageStatus = 'loading' | 'ready' | 'not-found' | 'error'
 
@@ -34,16 +35,15 @@ function getBaseUrl() {
 
 export default function PublicCardPage() {
   const navigate = useNavigate()
+  const toast = useToast()
   const { settings } = useBrandSettings()
   const { slug } = useParams()
   const [card, setCard] = useState<BusinessCard | null>(null)
   const [status, setStatus] = useState<PageStatus>('loading')
   const [qrDataUrl, setQrDataUrl] = useState('')
   const [language, setLanguage] = useState<PublicCardLanguage>(getStoredPublicCardLanguage)
-  const [feedback, setFeedback] = useState('')
   const [failedLogoUrl, setFailedLogoUrl] = useState('')
   const [walletModalOpen, setWalletModalOpen] = useState(false)
-  const feedbackTimer = useRef<number | null>(null)
 
   const vcardUrl = useMemo(() => slug ? `${getBaseUrl()}/api/vcard/${slug}?lang=${language}` : '', [language, slug])
 
@@ -85,16 +85,6 @@ export default function PublicCardPage() {
       .catch((error: unknown) => console.error('Erro ao gerar QR Code:', error))
   }, [vcardUrl, status])
 
-  useEffect(() => () => {
-    if (feedbackTimer.current) window.clearTimeout(feedbackTimer.current)
-  }, [])
-
-  function showFeedback(message: string) {
-    setFeedback(message)
-    if (feedbackTimer.current) window.clearTimeout(feedbackTimer.current)
-    feedbackTimer.current = window.setTimeout(() => setFeedback(''), 2600)
-  }
-
   function changeLanguage(nextLanguage: PublicCardLanguage) {
     setLanguage(nextLanguage)
     storePublicCardLanguage(nextLanguage)
@@ -107,6 +97,7 @@ export default function PublicCardPage() {
     document.body.appendChild(anchor)
     anchor.click()
     anchor.remove()
+    toast.success('Contato pronto para ser salvo.')
     void recordCardEvent(card.id, 'vcard')
   }
 
@@ -114,17 +105,20 @@ export default function PublicCardPage() {
     if (!card) return
     const cardUrl = `${window.location.origin}/${card.slug}`
     const title = `${card.display_name || card.full_name} | ${card.company || 'Invest RS'}`
+    let usedNativeShare = false
 
     try {
-      if (navigator.share) {
+      if ('share' in navigator && typeof navigator.share === 'function') {
         await navigator.share({ title, text: `${publicCardCopy[language].institutionalContact}: ${card.display_name || card.full_name}`, url: cardUrl })
+        usedNativeShare = true
       } else {
         await navigator.clipboard.writeText(cardUrl)
-        showFeedback(publicCardCopy.pt.linkCopied)
       }
+      toast.success(usedNativeShare ? 'Cartão compartilhado com sucesso.' : publicCardCopy.pt.linkCopied)
       void recordCardEvent(card.id, 'share')
     } catch (error) {
       console.warn('Compartilhamento cancelado ou indisponível:', error)
+      toast.error('Não foi possível compartilhar o cartão agora.')
     }
   }
 
@@ -135,19 +129,33 @@ export default function PublicCardPage() {
 
   async function handleCopyVCard() {
     if (!card) return
-    await navigator.clipboard.writeText(vcardUrl)
-    showFeedback(publicCardCopy.pt.vcardCopied)
-    void recordCardEvent(card.id, 'vcard')
+    try {
+      await navigator.clipboard.writeText(vcardUrl)
+      toast.success(publicCardCopy.pt.vcardCopied)
+      void recordCardEvent(card.id, 'vcard')
+    } catch {
+      toast.error('Não foi possível copiar o link do vCard.')
+    }
   }
 
   async function handleDownloadQrCode() {
     if (!card) return
-    await downloadQrCodePng(vcardUrl, `qr-code-${card.slug}.png`)
-    void recordCardEvent(card.id, 'qr')
+    try {
+      await downloadQrCodePng(vcardUrl, `qr-code-${card.slug}.png`)
+      toast.success('QR Code baixado com sucesso.')
+      void recordCardEvent(card.id, 'qr')
+    } catch {
+      toast.error('Não foi possível baixar o QR Code.')
+    }
   }
 
   function handleWallet() {
     if (!card) return
+    if (!isWalletPublicEnabled()) {
+      setWalletModalOpen(true)
+      toast.info('Wallet em breve.')
+      return
+    }
     if (isIosDevice()) {
       window.location.assign(getAppleWalletUrl(card.slug))
       return
@@ -222,11 +230,10 @@ export default function PublicCardPage() {
               <button className="extra-action-button" type="button" onClick={() => void handleDownloadQrCode()}><QrCode className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">{interfaceCopy.downloadQr}</span></button>
               <button className="extra-action-button" type="button" onClick={handleWallet}><Wallet className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">{interfaceCopy.wallet}</span></button>
             </div>
-            <p className="extra-action-feedback" aria-live="polite">{feedback}</p>
           </section>
         </div>
       </section>
-      {walletModalOpen ? <WalletSupportModal slug={card.slug} onClose={() => setWalletModalOpen(false)} /> : null}
+      {walletModalOpen ? <WalletSupportModal slug={card.slug} standby={!isWalletPublicEnabled()} onClose={() => setWalletModalOpen(false)} /> : null}
     </main>
   )
 }

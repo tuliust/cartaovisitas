@@ -7,6 +7,7 @@ import { buildInstagramUrl, buildLinkedinUrl, getInstagramProfile, getLinkedinPr
 import { uploadCardAvatar, uploadCardLogo, validateAvatarFile } from '../../lib/storage'
 import { checkSlugAvailability } from '../../lib/cardsValidation'
 import ImageCropModal from './ImageCropModal'
+import { useToast } from '../../contexts/ToastContext'
 
 type Language = 'pt' | 'es' | 'en'
 type CardFormProps = {
@@ -42,6 +43,7 @@ export default function CardForm({
   lockInstitutionalFields = mode === 'employee',
   currentCardId,
 }: CardFormProps) {
+  const toast = useToast()
   const [values, setValues] = useState<CardFormValues>(initialValues)
   const [language, setLanguage] = useState<Language>('pt')
   const [uploading, setUploading] = useState<'avatar' | 'logo' | ''>('')
@@ -67,7 +69,9 @@ export default function CardForm({
         .catch((error) => {
           if (!cancelled) {
             setSlugAvailability('error')
-            setSlugValidationError(getFriendlyErrorMessage(error))
+            const message = getFriendlyErrorMessage(error)
+            setSlugValidationError(message)
+            toast.error(message)
           }
         })
     }, 500)
@@ -76,7 +80,7 @@ export default function CardForm({
       cancelled = true
       window.clearTimeout(timer)
     }
-  }, [currentCardId, values.slug])
+  }, [currentCardId, toast, values.slug])
 
   function updateField<K extends keyof CardFormValues>(field: K, value: CardFormValues[K]) {
     setValues((current) => ({ ...current, [field]: value }))
@@ -105,9 +109,12 @@ export default function CardForm({
       const url = kind === 'avatar' ? await uploadCardAvatar(file, slug) : await uploadCardLogo(file, slug)
       updateField(kind === 'avatar' ? 'avatar_url' : 'logo_url', url)
       setAvatarToCrop(null)
+      toast.success(kind === 'avatar' ? 'Foto enviada com sucesso.' : 'Logo enviado com sucesso.')
       return true
     } catch (err) {
-      setUploadError(getFriendlyErrorMessage(err))
+      const message = getFriendlyErrorMessage(err)
+      setUploadError(message)
+      toast.error(message)
       return false
     } finally { setUploading('') }
   }
@@ -118,7 +125,7 @@ export default function CardForm({
       validateAvatarFile(file)
       if (mode === 'employee') setAvatarToCrop(file)
       else void uploadImage('avatar', file)
-    } catch (err) { setUploadError(getFriendlyErrorMessage(err)) }
+    } catch (err) { const message = getFriendlyErrorMessage(err); setUploadError(message); toast.error(message) }
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -131,12 +138,14 @@ export default function CardForm({
     try {
       const available = await checkSlugAvailability(slug, currentCardId)
       setSlugAvailability(available ? 'available' : 'unavailable')
-      if (!available) return
+      if (!available) { toast.error('Este slug já está em uso. Escolha outro endereço.'); return }
 
       await onSubmit({ ...values, slug, job_title: values.job_title_pt || values.job_title, department: values.department_pt || values.department })
     } catch (error) {
       setSlugAvailability('error')
-      setSlugValidationError(getFriendlyErrorMessage(error))
+      const message = getFriendlyErrorMessage(error)
+      setSlugValidationError(message)
+      toast.error(message)
     } finally {
       setValidatingSlugOnSubmit(false)
     }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { getCurrentSession } from '../../lib/auth'
@@ -8,6 +8,7 @@ import { getFriendlyErrorMessage } from '../../lib/errors'
 import { downloadQrCodePng } from '../../lib/qrcode'
 import { emptyCardAnalytics, getAnalyticsForCards, type CardAnalyticsSummary } from '../../lib/adminAnalytics'
 import { recordCardEvent } from '../../lib/cards'
+import { useToast } from '../../contexts/ToastContext'
 
 function formatDate(value: string | null) {
   if (!value) {
@@ -64,12 +65,12 @@ function getTimestamp(value: string | null) {
 
 export default function AdminCardsPage() {
   const navigate = useNavigate()
+  const toast = useToast()
   const [booting, setBooting] = useState(true)
   const [loading, setLoading] = useState(false)
   const [cards, setCards] = useState<AdminBusinessCard[]>([])
   const [analytics, setAnalytics] = useState<Record<string, CardAnalyticsSummary>>({})
   const [error, setError] = useState('')
-  const [copied, setCopied] = useState('')
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [sortOption, setSortOption] = useState<SortOption>('updated-desc')
@@ -115,7 +116,7 @@ export default function AdminCardsPage() {
     })
   }, [cards, search, sortOption, statusFilter])
 
-  async function loadCards() {
+  const loadCards = useCallback(async () => {
     setLoading(true)
     setError('')
 
@@ -125,11 +126,13 @@ export default function AdminCardsPage() {
       setCards(data)
       setAnalytics(summaries)
     } catch (err) {
-      setError(getFriendlyErrorMessage(err))
+      const message = getFriendlyErrorMessage(err)
+      setError(message)
+      toast.error(message)
     } finally {
       setLoading(false)
     }
-  }
+  }, [toast])
 
   useEffect(() => {
     async function checkAccess() {
@@ -150,15 +153,15 @@ export default function AdminCardsPage() {
     }
 
     void checkAccess()
-  }, [navigate])
+  }, [loadCards, navigate])
 
   async function copyToClipboard(text: string, label: string) {
-    await navigator.clipboard.writeText(text)
-    setCopied(label)
-
-    window.setTimeout(() => {
-      setCopied('')
-    }, 2000)
+    try {
+      await navigator.clipboard.writeText(text)
+      toast.success(label)
+    } catch (err) {
+      toast.error(getFriendlyErrorMessage(err))
+    }
   }
 
   async function handleToggleActive(card: AdminBusinessCard) {
@@ -175,8 +178,11 @@ export default function AdminCardsPage() {
       setError('')
       await setAdminCardActive(card.id, !card.is_active)
       await loadCards()
+      toast.success(card.is_active ? 'Cartão desativado com sucesso.' : 'Cartão ativado com sucesso.')
     } catch (err) {
-      setError(getFriendlyErrorMessage(err))
+      const message = getFriendlyErrorMessage(err)
+      setError(message)
+      toast.error(message)
     }
   }
 
@@ -193,8 +199,11 @@ export default function AdminCardsPage() {
           },
         }))
       }
+      toast.success('QR Code baixado com sucesso.')
     } catch (err) {
-      setError(getFriendlyErrorMessage(err))
+      const message = getFriendlyErrorMessage(err)
+      setError(message)
+      toast.error(message)
     }
   }
 
@@ -207,8 +216,11 @@ export default function AdminCardsPage() {
       setDeleteTarget(null)
       setDeleteConfirmation('')
       await loadCards()
+      toast.success('Cartão apagado com sucesso.')
     } catch (err) {
-      setError(getFriendlyErrorMessage(err))
+      const message = getFriendlyErrorMessage(err)
+      setError(message)
+      toast.error(message)
     } finally {
       setDeleting(false)
     }
@@ -266,7 +278,6 @@ export default function AdminCardsPage() {
       }
     >
       {error ? <p className="admin-error">{error}</p> : null}
-      {copied ? <p className="admin-success">{copied}</p> : null}
 
       <div className="admin-card">
         <div className="admin-table-header">

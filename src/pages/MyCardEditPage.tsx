@@ -6,9 +6,11 @@ import { getCurrentSession, signOut } from '../lib/auth'
 import { defaultCardFormValues, type CardFormValues } from '../lib/adminCards'
 import { getFriendlyErrorMessage } from '../lib/errors'
 import { createMyCardDraft, getMyCard, toMyCardFormValues, upsertMyCard } from '../lib/myCard'
+import { useToast } from '../contexts/ToastContext'
 
 export default function MyCardEditPage() {
   const navigate = useNavigate()
+  const toast = useToast()
   const [booting, setBooting] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -28,8 +30,8 @@ export default function MyCardEditPage() {
       setSavedSlug(card?.slug ?? '')
       setCardId(card?.id ?? '')
       setBooting(false)
-    })().catch((err) => { setError(getFriendlyErrorMessage(err)); setBooting(false) })
-  }, [navigate])
+    })().catch((err) => { const message = getFriendlyErrorMessage(err); setError(message); toast.error(message); setBooting(false) })
+  }, [navigate, toast])
 
   async function save(form: CardFormValues) {
     setSaving(true); setError('')
@@ -37,7 +39,8 @@ export default function MyCardEditPage() {
       const card = await upsertMyCard(form)
       const current = toMyCardFormValues(card)
       setValues(current); setPreview(current); setSavedSlug(card.slug); setCardId(card.id)
-    } catch (err) { setError(getFriendlyErrorMessage(err)) } finally { setSaving(false) }
+      toast.success('Cartão salvo com sucesso.')
+    } catch (err) { const message = getFriendlyErrorMessage(err); setError(message); toast.error(message) } finally { setSaving(false) }
   }
 
   async function logout() { await signOut(); navigate('/entrar', { replace: true }) }

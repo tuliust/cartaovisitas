@@ -1,5 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/wallet/apple/[slug].ts": { "includeFiles": "public/wallet/**" }
+  },
   "rewrites": [
     { "source": "/admin/:path*", "destination": "/index.html" },
     { "source": "/meu-cartao/:path*", "destination": "/index.html" },

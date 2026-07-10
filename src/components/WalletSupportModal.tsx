@@ -2,9 +2,9 @@ import { X } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { getAppleWalletUrl, isAndroidDevice } from '../lib/wallet'
 
-type WalletSupportModalProps = { slug: string; onClose: () => void }
+type WalletSupportModalProps = { slug: string; standby?: boolean; onClose: () => void }
 
-export default function WalletSupportModal({ slug, onClose }: WalletSupportModalProps) {
+export default function WalletSupportModal({ slug, standby = false, onClose }: WalletSupportModalProps) {
   const android = isAndroidDevice()
   const closeButton = useRef<HTMLButtonElement>(null)
 
@@ -25,7 +25,11 @@ export default function WalletSupportModal({ slug, onClose }: WalletSupportModal
       <section className="wallet-modal" role="dialog" aria-modal="true" aria-labelledby="wallet-modal-title">
         <button ref={closeButton} className="wallet-modal-close" type="button" onClick={onClose} aria-label="Fechar"><X aria-hidden="true" /></button>
         <p className="eyebrow">Wallet</p>
-        <h2 id="wallet-modal-title">Adicionar cartão à Wallet</h2>
+        <h2 id="wallet-modal-title">{standby ? 'Wallet em breve' : 'Adicionar cartão à Wallet'}</h2>
+        {standby ? <>
+          <div className="wallet-option"><p>A integração com Apple Wallet está tecnicamente preparada e será ativada após aprovação institucional da conta Apple Developer.</p></div>
+          <div className="wallet-option disabled"><p>Google Wallet será disponibilizado em uma próxima etapa.</p></div>
+        </> : <>
         <div className="wallet-option">
           <strong>Apple Wallet</strong>
           <p>{android ? 'Apple Wallet está disponível para iPhone.' : 'Abra esta página no iPhone para adicionar diretamente ao Apple Wallet.'}</p>
@@ -35,6 +39,7 @@ export default function WalletSupportModal({ slug, onClose }: WalletSupportModal
           <strong>Google Wallet</strong>
           <p>Google Wallet será disponibilizado em uma próxima etapa.</p>
         </div>
+        </>}
       </section>
     </div>
   )

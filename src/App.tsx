@@ -12,10 +12,12 @@ import PasswordResetRequestPage from './pages/PasswordResetRequestPage'
 import PasswordUpdatePage from './pages/PasswordUpdatePage'
 import AdminBrandSettingsPage from './pages/admin/AdminBrandSettingsPage'
 import { BrandSettingsProvider } from './contexts/BrandSettingsProvider'
+import ToastProvider from './components/ToastProvider'
 
 function App() {
   return (
     <BrandSettingsProvider>
+    <ToastProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -36,6 +38,7 @@ function App() {
         <Route path="/:slug" element={<PublicCardPage />} />
       </Routes>
     </BrowserRouter>
+    </ToastProvider>
     </BrandSettingsProvider>
   )
 }

@@ -14,9 +14,11 @@ import {
   updateAdminCard,
   type CardFormValues,
 } from '../../lib/adminCards'
+import { useToast } from '../../contexts/ToastContext'
 
 export default function AdminCardFormPage() {
   const navigate = useNavigate()
+  const toast = useToast()
   const { id } = useParams()
   const isEditing = Boolean(id)
 
@@ -73,9 +75,12 @@ export default function AdminCardFormPage() {
         await createAdminCard(values)
       }
 
+      toast.success(isEditing ? 'Cartão atualizado com sucesso.' : 'Cartão criado com sucesso.')
       navigate('/admin/cartoes')
     } catch (err) {
-      setError(getFriendlyErrorMessage(err))
+      const message = getFriendlyErrorMessage(err)
+      setError(message)
+      toast.error(message)
     } finally {
       setSaving(false)
     }

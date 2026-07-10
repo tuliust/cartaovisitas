@@ -4,9 +4,11 @@ import { sendPasswordReset } from '../lib/auth'
 import { getFriendlyErrorMessage } from '../lib/errors'
 import { buildInvestEmail, INVEST_EMAIL_DOMAIN, normalizeInvestEmailInput } from '../lib/investEmail'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
+import { useToast } from '../contexts/ToastContext'
 
 export default function PasswordResetRequestPage() {
   const { settings } = useBrandSettings()
+  const toast = useToast()
   const [prefix, setPrefix] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -20,9 +22,13 @@ export default function PasswordResetRequestPage() {
 
     try {
       await sendPasswordReset(buildInvestEmail(prefix))
-      setMessage('Enviamos um link para você definir uma nova senha.')
+      const successMessage = 'Enviamos um link para você definir uma nova senha.'
+      setMessage(successMessage)
+      toast.success(successMessage)
     } catch (err) {
-      setError(getFriendlyErrorMessage(err))
+      const failureMessage = getFriendlyErrorMessage(err)
+      setError(failureMessage)
+      toast.error(failureMessage)
     } finally {
       setLoading(false)
     }
