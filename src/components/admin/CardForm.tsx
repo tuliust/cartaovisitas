@@ -15,6 +15,9 @@ type CardFormProps = {
   loading?: boolean
   onChange?: (values: CardFormValues) => void
   onSubmit: (values: CardFormValues) => Promise<void> | void
+  mode?: 'admin' | 'employee'
+  lockedEmail?: string
+  allowStatusEdit?: boolean
 }
 
 export default function CardForm({
@@ -23,6 +26,9 @@ export default function CardForm({
   loading = false,
   onChange,
   onSubmit,
+  mode = 'admin',
+  lockedEmail,
+  allowStatusEdit = mode === 'admin',
 }: CardFormProps) {
   const [values, setValues] = useState<CardFormValues>(initialValues)
   const [uploading, setUploading] = useState<'avatar' | 'logo' | ''>('')
@@ -120,7 +126,7 @@ export default function CardForm({
           </button>
         </div>
 
-        <label>
+        {allowStatusEdit ? <label>
           Status
           <select
             value={values.is_active ? 'true' : 'false'}
@@ -129,7 +135,7 @@ export default function CardForm({
             <option value="true">Ativo</option>
             <option value="false">Inativo</option>
           </select>
-        </label>
+        </label> : null}
       </section>
 
       <section className="admin-form-section">
@@ -159,6 +165,7 @@ export default function CardForm({
             value={values.company}
             onChange={(event) => updateField('company', event.target.value)}
             placeholder="Invest RS"
+            disabled={mode === 'employee'}
           />
         </label>
       </section>
@@ -193,6 +200,7 @@ export default function CardForm({
               value={getInvestEmailPrefix(values.email)}
               onChange={(event) => updateEmail(event.target.value)}
               placeholder="nome.sobrenome"
+              disabled={Boolean(lockedEmail)}
             />
             <span className="email-suffix-label">{INVEST_EMAIL_DOMAIN}</span>
           </span>

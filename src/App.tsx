@@ -4,12 +4,24 @@ import PublicCardPage from './pages/PublicCardPage'
 import AdminLoginPage from './pages/admin/AdminLoginPage'
 import AdminCardsPage from './pages/admin/AdminCardsPage'
 import AdminCardFormPage from './pages/admin/AdminCardFormPage'
+import EmployeeLoginPage from './pages/EmployeeLoginPage'
+import RegisterPage from './pages/RegisterPage'
+import MyCardRedirectPage from './pages/MyCardRedirectPage'
+import MyCardEditPage from './pages/MyCardEditPage'
+import PasswordResetRequestPage from './pages/PasswordResetRequestPage'
+import PasswordUpdatePage from './pages/PasswordUpdatePage'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/entrar" element={<EmployeeLoginPage />} />
+        <Route path="/cadastro" element={<RegisterPage />} />
+        <Route path="/meu-cartao" element={<MyCardRedirectPage />} />
+        <Route path="/meu-cartao/editar" element={<MyCardEditPage />} />
+        <Route path="/recuperar-senha" element={<PasswordResetRequestPage />} />
+        <Route path="/definir-senha" element={<PasswordUpdatePage />} />
 
         <Route path="/admin" element={<Navigate to="/admin/cartoes" replace />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />

@@ -3,7 +3,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import AdminLayout from '../../components/admin/AdminLayout'
 import CardForm from '../../components/admin/CardForm'
 import CardPreview from '../../components/admin/CardPreview'
-import { getCurrentSession, isInvestRsEmail } from '../../lib/auth'
+import { getCurrentSession } from '../../lib/auth'
+import { requireAdmin } from '../../lib/roles'
 import { getFriendlyErrorMessage } from '../../lib/errors'
 import {
   createAdminCard,
@@ -34,10 +35,11 @@ export default function AdminCardFormPage() {
       try {
         const session = await getCurrentSession()
 
-        if (!session || !isInvestRsEmail(session.user.email)) {
+        if (!session) {
           navigate('/admin/login', { replace: true })
           return
         }
+        await requireAdmin()
 
         if (id) {
           const card = await getAdminCardById(id)
@@ -52,9 +54,8 @@ export default function AdminCardFormPage() {
         }
 
         setBooting(false)
-      } catch (err) {
-        setError(getFriendlyErrorMessage(err))
-        setBooting(false)
+      } catch {
+        navigate('/admin/login', { replace: true })
       }
     }
 

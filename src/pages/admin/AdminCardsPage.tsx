@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/admin/AdminLayout'
-import { getCurrentSession, isInvestRsEmail } from '../../lib/auth'
+import { getCurrentSession } from '../../lib/auth'
+import { requireAdmin } from '../../lib/roles'
 import { listAdminCards, setAdminCardActive, type AdminBusinessCard } from '../../lib/adminCards'
 import { getFriendlyErrorMessage } from '../../lib/errors'
 import { downloadQrCodePng } from '../../lib/qrcode'
@@ -41,10 +42,11 @@ export default function AdminCardsPage() {
       try {
         const session = await getCurrentSession()
 
-        if (!session || !isInvestRsEmail(session.user.email)) {
+        if (!session) {
           navigate('/admin/login', { replace: true })
           return
         }
+        await requireAdmin()
 
         setBooting(false)
         await loadCards()

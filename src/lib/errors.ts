@@ -27,6 +27,14 @@ export function getFriendlyErrorMessage(error: unknown): string {
     return rawText
   }
 
+  if (text.includes('invalid login credentials')) return 'E-mail ou senha incorretos.'
+  if (text.includes('email not confirmed')) return 'Confirme seu e-mail antes de entrar.'
+  if (text.includes('password') && (text.includes('weak') || text.includes('least'))) return 'Use uma senha mais segura.'
+  if (text.includes('already registered') || text.includes('user already exists')) {
+    return 'Este e-mail já possui cadastro. Tente entrar ou recuperar a senha.'
+  }
+  if (text.includes('não tem permissão para acessar a área restrita')) return rawText
+
   if (
     text.includes('duplicate key') ||
     text.includes('unique constraint') ||

@@ -1,13 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    {
-      "source": "/admin/:path*",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/:slug",
-      "destination": "/index.html"
-    }
+    { "source": "/admin/:path*", "destination": "/index.html" },
+    { "source": "/meu-cartao/:path*", "destination": "/index.html" },
+    { "source": "/meu-cartao", "destination": "/index.html" },
+    { "source": "/entrar", "destination": "/index.html" },
+    { "source": "/cadastro", "destination": "/index.html" },
+    { "source": "/recuperar-senha", "destination": "/index.html" },
+    { "source": "/definir-senha", "destination": "/index.html" },
+    { "source": "/:slug", "destination": "/index.html" }
   ]
 }

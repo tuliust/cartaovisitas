@@ -98,7 +98,7 @@ export function toCardFormValues(card: AdminBusinessCard): CardFormValues {
   }
 }
 
-function buildPayload(values: CardFormValues) {
+export function buildCardPayload(values: CardFormValues) {
   const slug = normalizeSlug(values.slug)
 
   if (!slug) {
@@ -173,7 +173,7 @@ export async function createAdminCard(values: CardFormValues) {
   } = await client.auth.getUser()
 
   const payload = {
-    ...buildPayload(values),
+    ...buildCardPayload(values),
     created_by: user?.id ?? null,
   }
 
@@ -192,7 +192,7 @@ export async function createAdminCard(values: CardFormValues) {
 
 export async function updateAdminCard(id: string, values: CardFormValues) {
   const client = requireSupabase()
-  const payload = buildPayload(values)
+  const payload = buildCardPayload(values)
 
   const { data, error } = await client
     .from('business_cards')
