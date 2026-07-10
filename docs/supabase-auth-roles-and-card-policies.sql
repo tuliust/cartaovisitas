@@ -71,6 +71,8 @@ create policy "cards admin delete" on public.business_cards for delete to authen
 alter table public.card_scan_events enable row level security;
 drop policy if exists "events admin read" on public.card_scan_events;
 create policy "events admin read" on public.card_scan_events for select to authenticated using (public.is_admin());
+drop policy if exists "events admin delete" on public.card_scan_events;
+create policy "events admin delete" on public.card_scan_events for delete to authenticated using (public.is_admin());
 -- Preserve a policy pública de INSERT já existente. Ela deve validar que card_id aponta
 -- para um business_cards ativo e não expirado.
 

@@ -57,12 +57,16 @@ export default function EmployeeLoginPage() {
           Entre com seu e-mail institucional para acessar seu cartão digital.
         </p>
 
-        <form onSubmit={submit}>
+        <form autoComplete="on" onSubmit={submit}>
           <label>
             E-mail institucional
             <span className="email-suffix-field">
               <input
                 required
+                id="employee-login-username"
+                name="username"
+                type="text"
+                inputMode="email"
                 autoComplete="username"
                 value={prefix}
                 onChange={(event) => setPrefix(normalizeInvestEmailInput(event.target.value))}
@@ -76,6 +80,8 @@ export default function EmployeeLoginPage() {
             Senha
             <input
               required
+              id="employee-login-password"
+              name="password"
               type="password"
               autoComplete="current-password"
               value={password}

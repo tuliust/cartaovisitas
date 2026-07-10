@@ -6,6 +6,12 @@ type BusinessCard = {
   display_name: string | null
   job_title: string | null
   department: string | null
+  job_title_pt?: string | null
+  job_title_es?: string | null
+  job_title_en?: string | null
+  department_pt?: string | null
+  department_es?: string | null
+  department_en?: string | null
   company: string | null
   mobile_phone: string | null
   work_phone: string | null
@@ -27,7 +33,7 @@ type VercelRequest = {
 type VercelResponse = {
   setHeader: (name: string, value: string) => void
   status: (code: number) => VercelResponse
-  send: (body: string) => void
+  send: (body: string | Buffer) => void
   json: (body: unknown) => void
   end: () => void
 }
@@ -36,12 +42,19 @@ function getSlug(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value
 }
 
+type VCardLanguage = 'pt' | 'es' | 'en'
+
+function getLanguage(value: string | string[] | undefined): VCardLanguage {
+  const language = getSlug(value)
+  return language === 'es' || language === 'en' ? language : 'pt'
+}
+
 function escapeVCardValue(value: string) {
   return value
     .replace(/\\/g, '\\\\')
     .replace(/,/g, '\\,')
     .replace(/;/g, '\\;')
-    .replace(/\n/g, '\\n')
+    .replace(/\r\n|\r|\n/g, '\\n')
 }
 
 function buildStructuredName(fullName: string) {
@@ -57,53 +70,60 @@ function buildStructuredName(fullName: string) {
   return `${escapeVCardValue(lastName)};${escapeVCardValue(firstNames)};;;`
 }
 
-function generateVCard(card: BusinessCard) {
+function getLocalizedValue(card: BusinessCard, field: 'job_title' | 'department', language: VCardLanguage) {
+  return card[`${field}_${language}`] || card[`${field}_pt`] || card[field] || ''
+}
+
+function generateVCard(card: BusinessCard, language: VCardLanguage) {
   const name = card.display_name || card.full_name
   const company = card.company || 'Invest RS'
 
   const lines = [
     'BEGIN:VCARD',
-    'VERSION:4.0',
-    `FN:${escapeVCardValue(name)}`,
-    `N:${buildStructuredName(card.full_name)}`,
-    `ORG:${escapeVCardValue(company)}`,
+    'VERSION:3.0',
+    `FN;CHARSET=UTF-8:${escapeVCardValue(name)}`,
+    `N;CHARSET=UTF-8:${buildStructuredName(card.full_name)}`,
+    `ORG;CHARSET=UTF-8:${escapeVCardValue(company)}`,
   ]
 
-  if (card.job_title) {
-    lines.push(`TITLE:${escapeVCardValue(card.job_title)}`)
+  const jobTitle = getLocalizedValue(card, 'job_title', language)
+  const department = getLocalizedValue(card, 'department', language)
+
+  if (jobTitle) {
+    lines.push(`TITLE;CHARSET=UTF-8:${escapeVCardValue(jobTitle)}`)
   }
 
-  if (card.department) {
-    lines.push(`ROLE:${escapeVCardValue(card.department)}`)
+  if (department) {
+    lines.push(`ROLE;CHARSET=UTF-8:${escapeVCardValue(department)}`)
   }
 
   if (card.mobile_phone) {
-    lines.push(`TEL;TYPE=cell,voice:${card.mobile_phone}`)
+    lines.push(`TEL;TYPE=cell,voice:${escapeVCardValue(card.mobile_phone)}`)
   }
 
   if (card.work_phone) {
-    lines.push(`TEL;TYPE=work,voice:${card.work_phone}`)
+    lines.push(`TEL;TYPE=work,voice:${escapeVCardValue(card.work_phone)}`)
   }
 
   if (card.email) {
-    lines.push(`EMAIL;TYPE=work:${card.email}`)
+    lines.push(`EMAIL;TYPE=work:${escapeVCardValue(card.email)}`)
   }
 
   if (card.website) {
-    lines.push(`URL:${card.website}`)
+    lines.push(`URL:${escapeVCardValue(card.website)}`)
   }
 
   if (card.linkedin_url) {
-    lines.push(`X-SOCIALPROFILE;TYPE=linkedin:${card.linkedin_url}`)
+    lines.push(`X-SOCIALPROFILE;TYPE=linkedin:${escapeVCardValue(card.linkedin_url)}`)
   }
 
   if (card.instagram_url) {
-    lines.push(`X-SOCIALPROFILE;TYPE=instagram:${card.instagram_url}`)
+    lines.push(`X-SOCIALPROFILE;TYPE=instagram:${escapeVCardValue(card.instagram_url)}`)
   }
 
   if (card.address_line || card.city || card.state || card.country) {
     lines.push(
-      `ADR;TYPE=work:;;${escapeVCardValue(card.address_line || '')};${escapeVCardValue(
+      `ADR;CHARSET=UTF-8;TYPE=work:;;${escapeVCardValue(card.address_line || '')};${escapeVCardValue(
         card.city || '',
       )};${escapeVCardValue(card.state || '')};;${escapeVCardValue(card.country || '')}`,
     )
@@ -162,13 +182,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return
     }
 
-    const content = generateVCard(data as BusinessCard)
+    const content = generateVCard(data as BusinessCard, getLanguage(req.query.lang))
     const fileName = `${slug}.vcf`
 
     res.setHeader('Content-Type', 'text/vcard; charset=utf-8')
     res.setHeader('Content-Disposition', `inline; filename="${fileName}"`)
     res.setHeader('Cache-Control', 'no-store')
-    res.status(200).send(content)
+    res.status(200).send(Buffer.from(content, 'utf8'))
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Erro desconhecido'
     res.status(500).json({ error: message })

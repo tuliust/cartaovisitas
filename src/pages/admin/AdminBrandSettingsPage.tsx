@@ -51,7 +51,7 @@ export default function AdminBrandSettingsPage() {
     setSuccess('')
   }
 
-  async function upload(event: ChangeEvent<HTMLInputElement>, type: BrandAssetType, key: 'logo_url' | 'favicon_url' | 'og_image_url') {
+  async function upload(event: ChangeEvent<HTMLInputElement>, type: BrandAssetType, key: 'logo_url' | 'favicon_url' | 'og_image_url' | 'background_image_url') {
     const file = event.target.files?.[0]
     if (!file) return
     setUploading(type); setError(''); setSuccess('')
@@ -115,6 +115,14 @@ export default function AdminBrandSettingsPage() {
             <div className="brand-color-grid">
               {colorFields.map(({ key, label }) => <label className="color-field" key={key}><span>{label}</span><span className="color-input-row"><input type="color" value={isValidHexColor(values[key]) ? values[key] : defaultBrandSettings[key]} onChange={(event) => update(key, event.target.value)} /><input value={values[key]} onChange={(event) => update(key, event.target.value)} maxLength={7} /></span></label>)}
             </div>
+          </section>
+          <section className="brand-settings-section">
+            <h2>Imagem de fundo</h2>
+            <p className="field-help">JPG, PNG ou WebP com até 5 MB. Um overlay escuro preserva a legibilidade.</p>
+            {values.background_image_url ? <img className="brand-asset-preview background" src={values.background_image_url} alt="Imagem de fundo atual" /> : <p className="field-help">O fundo padrão está ativo.</p>}
+            <label>URL da imagem<input value={values.background_image_url} onChange={(event) => update('background_image_url', event.target.value)} /></label>
+            <label>Enviar imagem<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void upload(event, 'background', 'background_image_url')} /></label>
+            <button className="secondary-button compact-button" type="button" onClick={() => update('background_image_url', '')}>Remover imagem e restaurar fundo padrão</button>
           </section>
         </div>
 

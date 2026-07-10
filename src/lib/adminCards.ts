@@ -251,3 +251,11 @@ export async function setAdminCardActive(id: string, isActive: boolean) {
     throw error
   }
 }
+
+export async function deleteAdminCard(id: string) {
+  const client = requireSupabase()
+  const { error: eventsError } = await client.from('card_scan_events').delete().eq('card_id', id)
+  if (eventsError) throw eventsError
+  const { error: cardError } = await client.from('business_cards').delete().eq('id', id)
+  if (cardError) throw cardError
+}

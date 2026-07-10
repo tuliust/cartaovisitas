@@ -72,7 +72,7 @@ export default function AdminLoginPage() {
         {error ? <p className="admin-error" role="alert">{error}</p> : null}
         <div className="auth-links">
           <Link to="/recuperar-senha">Esqueci minha senha</Link>
-          <Link to="/entrar">Acessar meu cartão</Link>
+          <Link to="/">Voltar</Link>
         </div>
       </section>
     </main>

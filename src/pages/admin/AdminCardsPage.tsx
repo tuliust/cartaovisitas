@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { getCurrentSession } from '../../lib/auth'
 import { requireAdmin } from '../../lib/roles'
-import { listAdminCards, setAdminCardActive, type AdminBusinessCard } from '../../lib/adminCards'
+import { deleteAdminCard, listAdminCards, setAdminCardActive, type AdminBusinessCard } from '../../lib/adminCards'
 import { getFriendlyErrorMessage } from '../../lib/errors'
 import { downloadQrCodePng } from '../../lib/qrcode'
 import { emptyCardAnalytics, getAnalyticsForCards, type CardAnalyticsSummary } from '../../lib/adminAnalytics'
@@ -73,6 +73,9 @@ export default function AdminCardsPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [sortOption, setSortOption] = useState<SortOption>('updated-desc')
+  const [deleteTarget, setDeleteTarget] = useState<AdminBusinessCard | null>(null)
+  const [deleteConfirmation, setDeleteConfirmation] = useState('')
+  const [deleting, setDeleting] = useState(false)
 
   const visibleCards = useMemo(() => {
     const term = normalizeSearchValue(search.trim())
@@ -195,6 +198,22 @@ export default function AdminCardsPage() {
     }
   }
 
+  async function handleDelete() {
+    if (!deleteTarget || deleteConfirmation !== deleteTarget.slug) return
+    setDeleting(true)
+    setError('')
+    try {
+      await deleteAdminCard(deleteTarget.id)
+      setDeleteTarget(null)
+      setDeleteConfirmation('')
+      await loadCards()
+    } catch (err) {
+      setError(getFriendlyErrorMessage(err))
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   function renderActions(card: AdminBusinessCard) {
     const publicUrl = `${window.location.origin}/${card.slug}`
     const vcardUrl = `${window.location.origin}/api/vcard/${card.slug}`
@@ -216,6 +235,9 @@ export default function AdminCardsPage() {
         </button>
         <button type="button" onClick={() => handleToggleActive(card)}>
           {card.is_active ? 'Desativar' : 'Ativar'}
+        </button>
+        <button className="danger-action" type="button" onClick={() => { setDeleteTarget(card); setDeleteConfirmation('') }}>
+          Apagar
         </button>
       </div>
     )
@@ -314,10 +336,10 @@ export default function AdminCardsPage() {
                   <th>Slug</th>
                   <th>Status</th>
                   <th>Criado em</th>
-                  <th>Visualizações</th>
+                  <th>Views</th>
                   <th>vCard</th>
                   <th>Compart. / QR</th>
-                  <th>Última visualização</th>
+                  <th>Visto em</th>
                   <th>Ações</th>
                 </tr>
               </thead>
@@ -330,7 +352,7 @@ export default function AdminCardsPage() {
                       {card.email ? <small>{card.email}</small> : null}
                     </td>
                     <td>{card.job_title || '-'}</td>
-                    <td>{card.slug}</td>
+                    <td className="admin-slug-cell" title={card.slug}>{card.slug}</td>
                     <td>
                       <span className={card.is_active ? 'status-pill active' : 'status-pill inactive'}>
                         {card.is_active ? 'Ativo' : 'Inativo'}
@@ -361,13 +383,13 @@ export default function AdminCardsPage() {
                     </span>
                   </div>
                   <p>{card.job_title || 'Cargo não informado'}</p>
-                  <small>/{card.slug}</small>
+                  <small className="admin-card-slug" title={card.slug}>/{card.slug}</small>
                   <div className="admin-mobile-analytics" aria-label="Métricas de uso">
                     <span><strong>{formatCount(getAnalytics(card.id).view_count)}</strong> views</span>
                     <span><strong>{formatCount(getAnalytics(card.id).vcard_count)}</strong> vCards</span>
                     <span><strong>{formatCount(getAnalytics(card.id).share_count)}</strong> compartilhamentos</span>
                     <span><strong>{formatCount(getAnalytics(card.id).qr_count)}</strong> QR Codes</span>
-                    <span className="admin-mobile-last-view">Última visualização: <strong>{formatRelativeDate(getAnalytics(card.id).last_view_at)}</strong></span>
+                    <span className="admin-mobile-last-view">Visto em: <strong>{formatRelativeDate(getAnalytics(card.id).last_view_at)}</strong></span>
                   </div>
                   {renderActions(card)}
                 </article>
@@ -376,6 +398,19 @@ export default function AdminCardsPage() {
           </div>
         ) : null}
       </div>
+      {deleteTarget ? (
+        <div className="confirmation-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !deleting) setDeleteTarget(null) }}>
+          <section className="confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="delete-card-title">
+            <h2 id="delete-card-title">Apagar cartão permanentemente?</h2>
+            <p>Esta ação é permanente e removerá os dados do cartão e seus eventos associados.</p>
+            <label>Digite <strong>{deleteTarget.slug}</strong> para confirmar<input autoFocus value={deleteConfirmation} onChange={(event) => setDeleteConfirmation(event.target.value)} /></label>
+            <div className="confirmation-actions">
+              <button className="secondary-button" type="button" disabled={deleting} onClick={() => setDeleteTarget(null)}>Cancelar</button>
+              <button className="danger-button" type="button" disabled={deleting || deleteConfirmation !== deleteTarget.slug} onClick={() => void handleDelete()}>{deleting ? 'Apagando...' : 'Apagar'}</button>
+            </div>
+          </section>
+        </div>
+      ) : null}
     </AdminLayout>
   )
 }
