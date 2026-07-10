@@ -1,5 +1,5 @@
 import { getCurrentUser } from './auth'
-import { buildCardPayload, defaultCardFormValues, normalizeSlug, type AdminBusinessCard, type CardFormValues } from './adminCards'
+import { buildCardPayload, defaultCardFormValues, normalizeSlug, toCardFormValues, type AdminBusinessCard, type CardFormValues } from './adminCards'
 import { getInvestEmailPrefix } from './investEmail'
 import { supabase } from './supabase'
 
@@ -27,13 +27,18 @@ export async function getMyCard() {
 export async function createMyCardDraft(): Promise<CardFormValues> {
   const user = await identity()
   const prefix = getInvestEmailPrefix(user.email)
-  return { ...defaultCardFormValues, email: user.email, slug: normalizeSlug(prefix), company: 'Invest RS', website: 'https://investrs.org.br', country: 'Brasil', is_active: true }
+  return { ...defaultCardFormValues, email: user.email, slug: normalizeSlug(prefix), company: 'Invest RS', website: 'https://investrs.org.br', address_line: 'Av. Dolores Alcaraz Caldas, 90', city: 'Porto Alegre', state: 'RS', country: 'Brasil', work_phone: '+55 51 2630-0300', is_active: true }
+}
+
+export function toMyCardFormValues(card: AdminBusinessCard): CardFormValues {
+  const values = toCardFormValues(card)
+  return { ...values, job_title_pt: values.job_title_pt || values.job_title, department_pt: values.department_pt || values.department, address_line: values.address_line || 'Av. Dolores Alcaraz Caldas, 90', city: values.city || 'Porto Alegre', state: values.state || 'RS', country: values.country || 'Brasil', work_phone: values.work_phone || '+55 51 2630-0300' }
 }
 
 export async function upsertMyCard(values: CardFormValues) {
   const user = await identity()
   const existing = await getMyCard()
-  const safeValues = { ...values, email: user.email, company: 'Invest RS', is_active: existing?.is_active ?? true }
+  const safeValues = { ...values, email: user.email, company: 'Invest RS', is_active: existing?.is_active ?? true, logo_url: existing?.logo_url ?? '', work_phone: existing?.work_phone || '+55 51 2630-0300', address_line: existing?.address_line || 'Av. Dolores Alcaraz Caldas, 90', city: existing?.city || 'Porto Alegre', state: existing?.state || 'RS', country: existing?.country || 'Brasil', job_title: values.job_title_pt || values.job_title, department: values.department_pt || values.department }
   const payload = buildCardPayload(safeValues)
   if (existing) {
     const { data, error } = await client().from('business_cards').update(payload).eq('id', existing.id).select('*').single()

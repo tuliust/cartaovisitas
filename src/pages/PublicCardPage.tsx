@@ -30,7 +30,7 @@ export default function PublicCardPage() {
   const [status, setStatus] = useState<PageStatus>('loading')
   const [qrDataUrl, setQrDataUrl] = useState('')
   const [shareLabel, setShareLabel] = useState('Compartilhar cartão')
-  const [logoFailed, setLogoFailed] = useState(false)
+  const [failedLogoUrl, setFailedLogoUrl] = useState('')
 
   const vcardUrl = useMemo(() => {
     if (!slug) {
@@ -80,10 +80,6 @@ export default function PublicCardPage() {
       isMounted = false
     }
   }, [slug])
-
-  useEffect(() => {
-    setLogoFailed(false)
-  }, [card?.logo_url])
 
   useEffect(() => {
     if (!vcardUrl || status !== 'ready') {
@@ -182,6 +178,7 @@ export default function PublicCardPage() {
   const phoneLink = phone ? normalizePhoneForLink(phone) : ''
   const address = buildAddress(card)
   const logoUrl = card.logo_url || '/invest-rs-logo.png'
+  const logoFailed = failedLogoUrl === logoUrl
 
   return (
     <main className="app-shell">
@@ -193,7 +190,7 @@ export default function PublicCardPage() {
                 Invest RS
               </span>
             ) : (
-              <img className="brand-logo" src={logoUrl} alt="Invest RS" onError={() => setLogoFailed(true)} />
+              <img className="brand-logo" src={logoUrl} alt="Invest RS" onError={() => setFailedLogoUrl(logoUrl)} />
             )}
             <span className="brand-subtitle">Business Card</span>
           </div>

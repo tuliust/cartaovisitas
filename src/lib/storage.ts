@@ -41,6 +41,10 @@ function validateImage(file: File, allowedTypes: string[], label: string) {
   }
 }
 
+export function validateAvatarFile(file: File) {
+  validateImage(file, AVATAR_TYPES, 'Avatar')
+}
+
 function safeSlug(slug: string) {
   return slug.trim().toLowerCase().replace(/[^a-z0-9-]+/g, '-') || 'cartao'
 }
@@ -64,7 +68,7 @@ async function uploadCardAsset(file: File, slug: string, folder: 'avatars' | 'lo
 }
 
 export async function uploadCardAvatar(file: File, slug: string): Promise<string> {
-  validateImage(file, AVATAR_TYPES, 'Avatar')
+  validateAvatarFile(file)
   return uploadCardAsset(file, slug, 'avatars')
 }
 

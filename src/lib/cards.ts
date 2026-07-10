@@ -7,6 +7,12 @@ export type BusinessCard = {
   display_name: string | null
   job_title: string | null
   department: string | null
+  job_title_pt?: string | null
+  job_title_es?: string | null
+  job_title_en?: string | null
+  department_pt?: string | null
+  department_es?: string | null
+  department_en?: string | null
   company: string | null
   mobile_phone: string | null
   work_phone: string | null

@@ -13,6 +13,12 @@ export type CardFormValues = {
   display_name: string
   job_title: string
   department: string
+  job_title_pt: string
+  job_title_es: string
+  job_title_en: string
+  department_pt: string
+  department_es: string
+  department_en: string
   company: string
   mobile_phone: string
   work_phone: string
@@ -35,12 +41,18 @@ export const defaultCardFormValues: CardFormValues = {
   display_name: '',
   job_title: '',
   department: '',
+  job_title_pt: '',
+  job_title_es: '',
+  job_title_en: '',
+  department_pt: '',
+  department_es: '',
+  department_en: '',
   company: 'Invest RS',
   mobile_phone: '',
-  work_phone: '',
+  work_phone: '+55 51 2630-0300',
   email: '',
   website: 'https://investrs.org.br',
-  address_line: '',
+  address_line: 'Av. Dolores Alcaraz Caldas, 90',
   city: 'Porto Alegre',
   state: 'RS',
   country: 'Brasil',
@@ -81,6 +93,12 @@ export function toCardFormValues(card: AdminBusinessCard): CardFormValues {
     display_name: card.display_name ?? '',
     job_title: card.job_title ?? '',
     department: card.department ?? '',
+    job_title_pt: card.job_title_pt ?? card.job_title ?? '',
+    job_title_es: card.job_title_es ?? '',
+    job_title_en: card.job_title_en ?? '',
+    department_pt: card.department_pt ?? card.department ?? '',
+    department_es: card.department_es ?? '',
+    department_en: card.department_en ?? '',
     company: card.company ?? 'Invest RS',
     mobile_phone: card.mobile_phone ?? '',
     work_phone: card.work_phone ?? '',
@@ -113,8 +131,14 @@ export function buildCardPayload(values: CardFormValues) {
     slug,
     full_name: values.full_name.trim(),
     display_name: stringOrNull(values.display_name),
-    job_title: stringOrNull(values.job_title),
-    department: stringOrNull(values.department),
+    job_title: stringOrNull(values.job_title_pt || values.job_title),
+    department: stringOrNull(values.department_pt || values.department),
+    job_title_pt: stringOrNull(values.job_title_pt || values.job_title),
+    job_title_es: stringOrNull(values.job_title_es),
+    job_title_en: stringOrNull(values.job_title_en),
+    department_pt: stringOrNull(values.department_pt || values.department),
+    department_es: stringOrNull(values.department_es),
+    department_en: stringOrNull(values.department_en),
     company: stringOrNull(values.company) || 'Invest RS',
     mobile_phone: stringOrNull(values.mobile_phone),
     work_phone: stringOrNull(values.work_phone),
