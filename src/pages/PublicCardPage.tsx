@@ -1,8 +1,20 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Copy, Pencil, QrCode, Wallet } from 'lucide-react'
 import QRCode from 'qrcode'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { getCurrentSession } from '../lib/auth'
 import { getPublicCardBySlug, recordCardEvent, type BusinessCard } from '../lib/cards'
+import {
+  getLocalizedProfessionalData,
+  getStoredPublicCardLanguage,
+  publicCardCopy,
+  publicCardLanguageLabels,
+  storePublicCardLanguage,
+  type PublicCardLanguage,
+} from '../lib/publicCardLocale'
+import { downloadQrCodePng } from '../lib/qrcode'
 import { buildVCardFileName, generateVCard } from '../lib/vcard'
+import { useBrandSettings } from '../contexts/BrandSettingsContext'
 
 type PageStatus = 'loading' | 'ready' | 'not-found' | 'error'
 
@@ -16,29 +28,22 @@ function buildAddress(card: BusinessCard) {
 
 function getBaseUrl() {
   const envBaseUrl = import.meta.env.VITE_APP_BASE_URL
-
-  if (envBaseUrl) {
-    return envBaseUrl.replace(/\/$/, '')
-  }
-
-  return window.location.origin
+  return envBaseUrl ? envBaseUrl.replace(/\/$/, '') : window.location.origin
 }
 
 export default function PublicCardPage() {
+  const navigate = useNavigate()
+  const { settings } = useBrandSettings()
   const { slug } = useParams()
   const [card, setCard] = useState<BusinessCard | null>(null)
   const [status, setStatus] = useState<PageStatus>('loading')
   const [qrDataUrl, setQrDataUrl] = useState('')
-  const [shareLabel, setShareLabel] = useState('Compartilhar cartão')
+  const [language, setLanguage] = useState<PublicCardLanguage>(getStoredPublicCardLanguage)
+  const [feedback, setFeedback] = useState('')
   const [failedLogoUrl, setFailedLogoUrl] = useState('')
+  const feedbackTimer = useRef<number | null>(null)
 
-  const vcardUrl = useMemo(() => {
-    if (!slug) {
-      return ''
-    }
-
-    return `${getBaseUrl()}/api/vcard/${slug}`
-  }, [slug])
+  const vcardUrl = useMemo(() => slug ? `${getBaseUrl()}/api/vcard/${slug}` : '', [slug])
 
   useEffect(() => {
     let isMounted = true
@@ -52,11 +57,7 @@ export default function PublicCardPage() {
       try {
         setStatus('loading')
         const result = await getPublicCardBySlug(slug)
-
-        if (!isMounted) {
-          return
-        }
-
+        if (!isMounted) return
         if (!result) {
           setStatus('not-found')
           return
@@ -67,218 +68,154 @@ export default function PublicCardPage() {
         void recordCardEvent(result.id, 'view')
       } catch (error) {
         console.error(error)
-
-        if (isMounted) {
-          setStatus('error')
-        }
+        if (isMounted) setStatus('error')
       }
     }
 
     void loadCard()
-
-    return () => {
-      isMounted = false
-    }
+    return () => { isMounted = false }
   }, [slug])
 
   useEffect(() => {
-    if (!vcardUrl || status !== 'ready') {
-      return
-    }
-
-    QRCode.toDataURL(vcardUrl, {
-      width: 360,
-      margin: 1,
-      errorCorrectionLevel: 'M',
-    })
+    if (!vcardUrl || status !== 'ready') return
+    QRCode.toDataURL(vcardUrl, { width: 360, margin: 1, errorCorrectionLevel: 'M' })
       .then(setQrDataUrl)
-      .catch((error: unknown) => {
-        console.error('Erro ao gerar QR Code:', error)
-      })
+      .catch((error: unknown) => console.error('Erro ao gerar QR Code:', error))
   }, [vcardUrl, status])
 
-  function handleDownloadVCard() {
-    if (!card) {
-      return
-    }
+  useEffect(() => () => {
+    if (feedbackTimer.current) window.clearTimeout(feedbackTimer.current)
+  }, [])
 
-    const vcard = generateVCard(card)
-    const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' })
+  function showFeedback(message: string) {
+    setFeedback(message)
+    if (feedbackTimer.current) window.clearTimeout(feedbackTimer.current)
+    feedbackTimer.current = window.setTimeout(() => setFeedback(''), 2600)
+  }
+
+  function changeLanguage(nextLanguage: PublicCardLanguage) {
+    setLanguage(nextLanguage)
+    storePublicCardLanguage(nextLanguage)
+  }
+
+  function handleDownloadVCard() {
+    if (!card) return
+    const blob = new Blob([generateVCard(card)], { type: 'text/vcard;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const anchor = document.createElement('a')
-
     anchor.href = url
     anchor.download = buildVCardFileName(card)
     document.body.appendChild(anchor)
     anchor.click()
     anchor.remove()
-
     URL.revokeObjectURL(url)
     void recordCardEvent(card.id, 'vcard')
   }
 
   async function handleShareCard() {
-    if (!card) {
-      return
-    }
-
+    if (!card) return
     const cardUrl = `${window.location.origin}/${card.slug}`
     const title = `${card.display_name || card.full_name} | ${card.company || 'Invest RS'}`
 
     try {
       if (navigator.share) {
-        await navigator.share({
-          title,
-          text: `Cartão digital de ${card.display_name || card.full_name}`,
-          url: cardUrl,
-        })
+        await navigator.share({ title, text: `${publicCardCopy[language].institutionalContact}: ${card.display_name || card.full_name}`, url: cardUrl })
       } else {
         await navigator.clipboard.writeText(cardUrl)
-        setShareLabel('Link copiado')
-        window.setTimeout(() => setShareLabel('Compartilhar cartão'), 2200)
+        showFeedback(publicCardCopy[language].linkCopied)
       }
+      void recordCardEvent(card.id, 'share')
     } catch (error) {
       console.warn('Compartilhamento cancelado ou indisponível:', error)
     }
   }
 
-  if (status === 'loading') {
-    return (
-      <main className="app-shell">
-        <section className="state-card">Carregando cartão...</section>
-      </main>
-    )
+  async function handleEdit() {
+    const session = await getCurrentSession().catch(() => null)
+    navigate(session ? '/meu-cartao/editar' : '/entrar')
   }
 
-  if (status === 'not-found') {
-    return (
-      <main className="app-shell">
-        <section className="state-card">
-          <h1>Cartão não encontrado</h1>
-          <p>Verifique se o link está correto ou se o cartão ainda está ativo.</p>
-          <Link to="/">Voltar</Link>
-        </section>
-      </main>
-    )
+  async function handleCopyVCard() {
+    if (!card) return
+    await navigator.clipboard.writeText(vcardUrl)
+    showFeedback(publicCardCopy[language].vcardCopied)
+    void recordCardEvent(card.id, 'vcard')
   }
 
-  if (status === 'error' || !card) {
-    return (
-      <main className="app-shell">
-        <section className="state-card">
-          <h1>Erro ao carregar</h1>
-          <p>Confira as variáveis do Supabase no arquivo .env.local.</p>
-        </section>
-      </main>
-    )
+  async function handleDownloadQrCode() {
+    if (!card) return
+    await downloadQrCodePng(vcardUrl, `qr-code-${card.slug}.png`)
+    void recordCardEvent(card.id, 'qr')
   }
 
+  if (status === 'loading') return <main className="app-shell"><section className="state-card">Carregando cartão...</section></main>
+  if (status === 'not-found') return <main className="app-shell"><section className="state-card"><h1>Cartão não encontrado</h1><p>Verifique se o link está correto ou se o cartão ainda está ativo.</p><Link to="/">Voltar</Link></section></main>
+  if (status === 'error' || !card) return <main className="app-shell"><section className="state-card"><h1>Erro ao carregar</h1><p>Não foi possível carregar este cartão agora.</p></section></main>
+
+  const copy = publicCardCopy[language]
+  const professionalData = getLocalizedProfessionalData(card, language)
   const name = card.display_name || card.full_name
   const phone = card.mobile_phone || card.work_phone
   const phoneLink = phone ? normalizePhoneForLink(phone) : ''
   const address = buildAddress(card)
-  const logoUrl = card.logo_url || '/invest-rs-logo.png'
+  const logoUrl = card.logo_url || settings.logo_url
   const logoFailed = failedLogoUrl === logoUrl
+  const showAvatar = card.show_avatar_public && Boolean(card.avatar_url)
 
   return (
     <main className="app-shell">
       <section className="digital-card">
         <div className="card-visual">
           <div className="card-topline">
-            {logoFailed ? (
-              <span className="brand-logo-fallback" role="img" aria-label="Invest RS">
-                Invest RS
-              </span>
-            ) : (
-              <img className="brand-logo" src={logoUrl} alt="Invest RS" onError={() => setFailedLogoUrl(logoUrl)} />
-            )}
-            <span className="brand-subtitle">Business Card</span>
+            {logoFailed ? <span className="brand-logo-fallback" role="img" aria-label="Invest RS">Invest RS</span> : <img className="public-card-logo" src={logoUrl} alt="Invest RS" onError={() => setFailedLogoUrl(logoUrl)} />}
+            {showAvatar ? <div className="public-card-avatar-wrapper"><img className="public-card-avatar" src={card.avatar_url ?? ''} alt={`Foto de ${name}`} /></div> : null}
           </div>
 
           <div className="card-main">
             <div className="person-block">
-              <p className="label">Contato institucional</p>
+              <p className="label">{copy.institutionalContact}</p>
               <h1>{name}</h1>
-
-              {card.job_title && <p className="job-title">{card.job_title}</p>}
-              {card.department && <p className="department">{card.department}</p>}
+              {professionalData.jobTitle ? <p className="job-title">{professionalData.jobTitle}</p> : null}
+              {professionalData.department ? <p className="department">{professionalData.department}</p> : null}
             </div>
           </div>
 
           <div className="card-footer">
             <div className="contact-list">
-              {phone && (
-                <a href={`tel:${phoneLink}`}>
-                  <span>Telefone</span>
-                  {phone}
-                </a>
-              )}
-
-              {card.email && (
-                <a href={`mailto:${card.email}`}>
-                  <span>E-mail</span>
-                  {card.email}
-                </a>
-              )}
-
-              {card.website && (
-                <a href={card.website} target="_blank">
-                  <span>Site</span>
-                  {card.website.replace(/^https?:\/\//, '')}
-                </a>
-              )}
-
-              {address && (
-                <p>
-                  <span>Endereço</span>
-                  {address}
-                </p>
-              )}
+              {phone ? <a href={`tel:${phoneLink}`}><span>{copy.phone}</span>{phone}</a> : null}
+              {card.email ? <a href={`mailto:${card.email}`}><span>{copy.email}</span>{card.email}</a> : null}
+              {card.website ? <a href={card.website} target="_blank" rel="noreferrer"><span>{copy.website}</span>{card.website.replace(/^https?:\/\//, '')}</a> : null}
+              {address ? <p><span>{copy.address}</span>{address}</p> : null}
             </div>
-
-            {qrDataUrl && <img className="qr-code" src={qrDataUrl} alt={`QR Code de ${name}`} />}
+            {qrDataUrl ? <img className="qr-code" src={qrDataUrl} alt={`QR Code de ${name}`} /> : null}
           </div>
         </div>
 
         <div className="action-panel">
-          <p className="eyebrow">Ações rápidas</p>
-          <h2>Salve ou compartilhe este contato.</h2>
+          <div className="public-language-toggle" aria-label="Idioma do cartão">
+            {(Object.keys(publicCardLanguageLabels) as PublicCardLanguage[]).map((item) => <button key={item} type="button" className={language === item ? 'active' : ''} aria-pressed={language === item} onClick={() => changeLanguage(item)}>{publicCardLanguageLabels[item]}</button>)}
+          </div>
+          <p className="eyebrow">{copy.quickActions}</p>
+          <h2>{copy.actionTitle}</h2>
 
           <div className="button-grid">
-            <button className="primary-button" type="button" onClick={handleDownloadVCard}>
-              Salvar contato
-            </button>
-
-            {phone && (
-              <a className="secondary-button" href={`tel:${phoneLink}`}>
-                Ligar
-              </a>
-            )}
-
-            {card.email && (
-              <a className="secondary-button" href={`mailto:${card.email}`}>
-                E-mail
-              </a>
-            )}
-
-            {card.website && (
-              <a className="secondary-button" href={card.website} target="_blank">
-                Site
-              </a>
-            )}
-
-            <button className="secondary-button" type="button" onClick={handleShareCard}>
-              {shareLabel}
-            </button>
+            <button className="primary-button" type="button" onClick={handleDownloadVCard}>{copy.saveContact}</button>
+            {phone ? <a className="secondary-button" href={`tel:${phoneLink}`}>{copy.call}</a> : null}
+            {card.email ? <a className="secondary-button" href={`mailto:${card.email}`}>{copy.email}</a> : null}
+            {card.website ? <a className="secondary-button" href={card.website} target="_blank" rel="noreferrer">{copy.website}</a> : null}
+            <button className="secondary-button" type="button" onClick={() => void handleShareCard()}>{copy.share}</button>
           </div>
 
-          <div className="technical-note">
-            <strong>QR Code dinâmico</strong>
-            <p>
-              O QR Code aponta para o vCard dinâmico. Quando o projeto estiver publicado na Vercel, o scan abrirá a
-              tela de criação de contato no celular.
-            </p>
-          </div>
+          <section className="extra-functions" aria-labelledby="extra-functions-title">
+            <h3 id="extra-functions-title">{copy.otherFeatures}</h3>
+            <div className="extra-actions-grid">
+              <button className="extra-action-button" type="button" onClick={() => void handleEdit()}><Pencil className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">{copy.edit}</span></button>
+              <button className="extra-action-button" type="button" onClick={() => void handleCopyVCard()}><Copy className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">{copy.copyVcard}</span></button>
+              <button className="extra-action-button" type="button" onClick={() => void handleDownloadQrCode()}><QrCode className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">{copy.downloadQr}</span></button>
+              <button className="extra-action-button" type="button" onClick={() => showFeedback(copy.walletSoon)}><Wallet className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">{copy.wallet}</span></button>
+            </div>
+            <p className="extra-action-feedback" aria-live="polite">{feedback}</p>
+          </section>
         </div>
       </section>
     </main>

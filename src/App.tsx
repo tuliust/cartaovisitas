@@ -10,9 +10,12 @@ import MyCardRedirectPage from './pages/MyCardRedirectPage'
 import MyCardEditPage from './pages/MyCardEditPage'
 import PasswordResetRequestPage from './pages/PasswordResetRequestPage'
 import PasswordUpdatePage from './pages/PasswordUpdatePage'
+import AdminBrandSettingsPage from './pages/admin/AdminBrandSettingsPage'
+import { BrandSettingsProvider } from './contexts/BrandSettingsProvider'
 
 function App() {
   return (
+    <BrandSettingsProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -28,10 +31,12 @@ function App() {
         <Route path="/admin/cartoes" element={<AdminCardsPage />} />
         <Route path="/admin/cartoes/novo" element={<AdminCardFormPage />} />
         <Route path="/admin/cartoes/:id/editar" element={<AdminCardFormPage />} />
+        <Route path="/admin/configuracoes" element={<AdminBrandSettingsPage />} />
 
         <Route path="/:slug" element={<PublicCardPage />} />
       </Routes>
     </BrowserRouter>
+    </BrandSettingsProvider>
   )
 }
 

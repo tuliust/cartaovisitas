@@ -106,6 +106,7 @@ export default function AdminCardFormPage() {
           initialValues={initialValues}
           submitLabel={isEditing ? 'Salvar alterações' : 'Criar cartão'}
           loading={saving}
+          currentCardId={id}
           onChange={setPreviewValues}
           onSubmit={handleSubmit}
         />

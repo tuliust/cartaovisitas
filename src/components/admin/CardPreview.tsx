@@ -1,4 +1,5 @@
 import type { CardFormValues } from '../../lib/adminCards'
+import { useBrandSettings } from '../../contexts/BrandSettingsContext'
 
 type CardPreviewProps = {
   values: CardFormValues
@@ -9,18 +10,22 @@ function buildAddress(values: CardFormValues) {
 }
 
 export default function CardPreview({ values }: CardPreviewProps) {
+  const { settings } = useBrandSettings()
   const name = values.display_name || values.full_name || 'Nome completo'
   const phone = values.mobile_phone || values.work_phone
   const address = buildAddress(values)
-  const logoUrl = values.logo_url || '/invest-rs-logo.png'
+  const logoUrl = values.logo_url || settings.logo_url
 
   return (
     <aside className="card-preview" aria-label="Prévia do cartão">
       <div className="card-preview-top">
-        <img className="card-preview-logo" src={logoUrl} alt="Invest RS" />
-        <span className={values.is_active ? 'status-pill active' : 'status-pill inactive'}>
-          {values.is_active ? 'Ativo' : 'Inativo'}
-        </span>
+        <img className="public-card-logo card-preview-logo" src={logoUrl} alt="Invest RS" />
+        <div className="card-preview-top-actions">
+          {values.show_avatar_public && values.avatar_url ? <div className="public-card-avatar-wrapper preview"><img className="public-card-avatar" src={values.avatar_url} alt={`Foto de ${name}`} /></div> : null}
+          <span className={values.is_active ? 'status-pill active' : 'status-pill inactive'}>
+            {values.is_active ? 'Ativo' : 'Inativo'}
+          </span>
+        </div>
       </div>
 
       <div className="card-preview-person">

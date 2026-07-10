@@ -5,6 +5,7 @@ import { buildInvestEmail, getInvestEmailPrefix, INVEST_EMAIL_DOMAIN, normalizeI
 import { formatBrazilianPhone } from '../../lib/phone'
 import { buildInstagramUrl, buildLinkedinUrl, getInstagramProfile, getLinkedinProfile } from '../../lib/socialLinks'
 import { uploadCardAvatar, uploadCardLogo, validateAvatarFile } from '../../lib/storage'
+import { checkSlugAvailability } from '../../lib/cardsValidation'
 import ImageCropModal from './ImageCropModal'
 
 type Language = 'pt' | 'es' | 'en'
@@ -20,7 +21,10 @@ type CardFormProps = {
   allowLogoUpload?: boolean
   allowAvatarUpload?: boolean
   lockInstitutionalFields?: boolean
+  currentCardId?: string
 }
+
+type SlugAvailability = 'idle' | 'checking' | 'available' | 'unavailable' | 'error'
 
 const languageLabels: Record<Language, string> = { pt: 'PT', es: 'ES', en: 'EN' }
 
@@ -36,17 +40,53 @@ export default function CardForm({
   allowLogoUpload = mode === 'admin',
   allowAvatarUpload = true,
   lockInstitutionalFields = mode === 'employee',
+  currentCardId,
 }: CardFormProps) {
   const [values, setValues] = useState<CardFormValues>(initialValues)
   const [language, setLanguage] = useState<Language>('pt')
   const [uploading, setUploading] = useState<'avatar' | 'logo' | ''>('')
   const [uploadError, setUploadError] = useState('')
   const [avatarToCrop, setAvatarToCrop] = useState<File | null>(null)
+  const [slugAvailability, setSlugAvailability] = useState<SlugAvailability>(initialValues.slug ? 'checking' : 'idle')
+  const [slugValidationError, setSlugValidationError] = useState('')
+  const [validatingSlugOnSubmit, setValidatingSlugOnSubmit] = useState(false)
 
   useEffect(() => { onChange?.(values) }, [onChange, values])
 
+  useEffect(() => {
+    const slug = normalizeSlug(values.slug)
+    if (!slug) return
+
+    let cancelled = false
+
+    const timer = window.setTimeout(() => {
+      void checkSlugAvailability(slug, currentCardId)
+        .then((available) => {
+          if (!cancelled) setSlugAvailability(available ? 'available' : 'unavailable')
+        })
+        .catch((error) => {
+          if (!cancelled) {
+            setSlugAvailability('error')
+            setSlugValidationError(getFriendlyErrorMessage(error))
+          }
+        })
+    }, 500)
+
+    return () => {
+      cancelled = true
+      window.clearTimeout(timer)
+    }
+  }, [currentCardId, values.slug])
+
   function updateField<K extends keyof CardFormValues>(field: K, value: CardFormValues[K]) {
     setValues((current) => ({ ...current, [field]: value }))
+  }
+
+  function updateSlug(value: string) {
+    const slug = normalizeSlug(value)
+    updateField('slug', slug)
+    setSlugAvailability(slug ? 'checking' : 'idle')
+    setSlugValidationError('')
   }
 
   function updateLocalizedField(kind: 'job_title' | 'department', value: string) {
@@ -83,7 +123,23 @@ export default function CardForm({
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    await onSubmit({ ...values, slug: normalizeSlug(values.slug), job_title: values.job_title_pt || values.job_title, department: values.department_pt || values.department })
+    const slug = normalizeSlug(values.slug)
+    setValidatingSlugOnSubmit(true)
+    setSlugAvailability('checking')
+    setSlugValidationError('')
+
+    try {
+      const available = await checkSlugAvailability(slug, currentCardId)
+      setSlugAvailability(available ? 'available' : 'unavailable')
+      if (!available) return
+
+      await onSubmit({ ...values, slug, job_title: values.job_title_pt || values.job_title, department: values.department_pt || values.department })
+    } catch (error) {
+      setSlugAvailability('error')
+      setSlugValidationError(getFriendlyErrorMessage(error))
+    } finally {
+      setValidatingSlugOnSubmit(false)
+    }
   }
 
   const localizedJob = values[`job_title_${language}`]
@@ -97,8 +153,8 @@ export default function CardForm({
         <label>Nome completo *<input required value={values.full_name} onChange={(event) => updateField('full_name', event.target.value)} placeholder="Alexandre Elmi" /></label>
         <label>Nome de exibição<input value={values.display_name} onChange={(event) => updateField('display_name', event.target.value)} placeholder="Alexandre Elmi" /></label>
         <div className="admin-field-with-action">
-          <label>Slug da página *<input required value={values.slug} onChange={(event) => updateField('slug', normalizeSlug(event.target.value))} placeholder="alexandre-elmi" />{mode === 'employee' ? <small className="field-help">Sua página será investrs.org/{values.slug || '[slug]'}</small> : null}</label>
-          <button type="button" className="secondary-button compact-button" onClick={() => updateField('slug', normalizeSlug(values.full_name))}>Gerar slug</button>
+          <label>Slug da página *<input required value={values.slug} onChange={(event) => updateSlug(event.target.value)} placeholder="alexandre-elmi" aria-describedby="slug-help slug-availability" aria-invalid={slugAvailability === 'unavailable'} /><small className="field-help" id="slug-help">Sua página será investrs.org/{values.slug || '[slug]'}</small><small className={`slug-availability ${slugAvailability}`} id="slug-availability" aria-live="polite">{slugAvailability === 'checking' ? 'Verificando disponibilidade...' : slugAvailability === 'available' ? 'Endereço disponível.' : slugAvailability === 'unavailable' ? 'Este endereço já está em uso. Escolha outro slug.' : slugValidationError}</small></label>
+          <button type="button" className="secondary-button compact-button" onClick={() => updateSlug(values.full_name)}>Gerar slug</button>
         </div>
         {allowStatusEdit ? <label>Status<select value={values.is_active ? 'true' : 'false'} onChange={(event) => updateField('is_active', event.target.value === 'true')}><option value="true">Ativo</option><option value="false">Inativo</option></select></label> : null}
       </section>
@@ -129,11 +185,12 @@ export default function CardForm({
         {mode === 'employee' ? <><label>LinkedIn<span className="url-prefix-field"><span className="url-prefix-label">linkedin.com/in/</span><input className="url-prefix-input" value={getLinkedinProfile(values.linkedin_url)} onChange={(event) => updateField('linkedin_url', buildLinkedinUrl(event.target.value))} placeholder="seu-perfil" /></span></label><label>Instagram<span className="url-prefix-field"><span className="url-prefix-label">instagram.com/</span><input className="url-prefix-input" value={getInstagramProfile(values.instagram_url)} onChange={(event) => updateField('instagram_url', buildInstagramUrl(event.target.value))} placeholder="seu.perfil" /></span></label></> : <><label>LinkedIn<input type="url" value={values.linkedin_url} onChange={(event) => updateField('linkedin_url', event.target.value)} /></label><label>Instagram<input type="url" value={values.instagram_url} onChange={(event) => updateField('instagram_url', event.target.value)} /></label></>}
         {mode === 'admin' ? <label>URL da foto/avatar<input type="url" value={values.avatar_url} onChange={(event) => updateField('avatar_url', event.target.value)} /></label> : null}
         {allowAvatarUpload ? <label>Enviar foto<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => selectAvatar(event.target.files?.[0])} /></label> : null}
+        <label className="admin-checkbox-field"><input type="checkbox" checked={values.show_avatar_public} onChange={(event) => updateField('show_avatar_public', event.target.checked)} /><span>Exibir foto no cartão público</span></label>
         {values.avatar_url ? <img className="asset-preview" src={values.avatar_url} alt="Prévia do avatar" /> : null}
         {allowLogoUpload ? <><label>URL do logo<input type="url" value={values.logo_url} onChange={(event) => updateField('logo_url', event.target.value)} /></label><label>Enviar logo<input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onChange={(event) => { const file = event.target.files?.[0]; if (file) void uploadImage('logo', file) }} /></label>{values.logo_url ? <img className="asset-preview logo" src={values.logo_url} alt="Prévia do logo" /> : null}</> : null}
         {uploading ? <p className="admin-muted">Enviando {uploading === 'avatar' ? 'foto' : 'logo'}...</p> : null}{uploadError ? <p className="admin-error">{uploadError}</p> : null}
       </section>
-      <div className="admin-form-actions"><button className="primary-button" type="submit" disabled={loading || Boolean(uploading) || requiredMissing}>{loading ? 'Salvando...' : submitLabel}</button></div>
+      <div className="admin-form-actions"><button className="primary-button" type="submit" disabled={loading || validatingSlugOnSubmit || Boolean(uploading) || requiredMissing || slugAvailability === 'unavailable'}>{validatingSlugOnSubmit ? 'Verificando...' : loading ? 'Salvando...' : submitLabel}</button></div>
     </form>
     {avatarToCrop ? <ImageCropModal file={avatarToCrop} onCancel={() => setAvatarToCrop(null)} onConfirm={async (file) => { if (!(await uploadImage('avatar', file))) throw new Error('Não foi possível enviar a foto. Tente novamente.') }} /> : null}
   </>

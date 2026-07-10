@@ -25,6 +25,7 @@ export type BusinessCard = {
   linkedin_url: string | null
   instagram_url: string | null
   avatar_url: string | null
+  show_avatar_public: boolean
   logo_url: string | null
   theme: string | null
   is_active: boolean
@@ -56,7 +57,7 @@ export async function getPublicCardBySlug(slug: string) {
   return data as BusinessCard | null
 }
 
-export async function recordCardEvent(cardId: string, eventType: 'view' | 'vcard' | 'qr') {
+export async function recordCardEvent(cardId: string, eventType: 'view' | 'vcard' | 'share' | 'qr') {
   const client = requireSupabase()
 
   const { error } = await client.from('card_scan_events').insert({
@@ -68,5 +69,8 @@ export async function recordCardEvent(cardId: string, eventType: 'view' | 'vcard
 
   if (error) {
     console.warn('Não foi possível registrar evento do cartão:', error.message)
+    return false
   }
+
+  return true
 }

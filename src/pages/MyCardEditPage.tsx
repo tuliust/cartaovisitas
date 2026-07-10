@@ -13,6 +13,7 @@ export default function MyCardEditPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedSlug, setSavedSlug] = useState('')
+  const [cardId, setCardId] = useState('')
   const [values, setValues] = useState<CardFormValues>({ ...defaultCardFormValues })
   const [preview, setPreview] = useState<CardFormValues>({ ...defaultCardFormValues })
 
@@ -25,6 +26,7 @@ export default function MyCardEditPage() {
       setValues(initial)
       setPreview(initial)
       setSavedSlug(card?.slug ?? '')
+      setCardId(card?.id ?? '')
       setBooting(false)
     })().catch((err) => { setError(getFriendlyErrorMessage(err)); setBooting(false) })
   }, [navigate])
@@ -34,7 +36,7 @@ export default function MyCardEditPage() {
     try {
       const card = await upsertMyCard(form)
       const current = toMyCardFormValues(card)
-      setValues(current); setPreview(current); setSavedSlug(card.slug)
+      setValues(current); setPreview(current); setSavedSlug(card.slug); setCardId(card.id)
     } catch (err) { setError(getFriendlyErrorMessage(err)) } finally { setSaving(false) }
   }
 
@@ -48,7 +50,7 @@ export default function MyCardEditPage() {
       <div className="admin-page-header"><div><p className="eyebrow">Área do colaborador</p><h1>Meu cartão</h1><p>Atualize os dados do seu cartão digital.</p></div>{savedSlug ? <Link className="secondary-button" to={`/${savedSlug}`}>Ver meu cartão</Link> : null}</div>
       {error ? <p className="admin-error">{error}</p> : null}
       <div className="admin-form-preview-layout">
-        <CardForm initialValues={values} submitLabel="Salvar alterações" loading={saving} onChange={setPreview} onSubmit={save} mode="employee" lockedEmail={values.email} allowStatusEdit={false} allowLogoUpload={false} allowAvatarUpload lockInstitutionalFields />
+        <CardForm initialValues={values} submitLabel="Salvar alterações" loading={saving} currentCardId={cardId || undefined} onChange={setPreview} onSubmit={save} mode="employee" lockedEmail={values.email} allowStatusEdit={false} allowLogoUpload={false} allowAvatarUpload lockInstitutionalFields />
         <CardPreview values={preview} />
       </div>
     </section>

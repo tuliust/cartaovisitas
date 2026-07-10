@@ -22,6 +22,7 @@ export function getFriendlyErrorMessage(error: unknown): string {
   if (
     text.startsWith('avatar:') ||
     text.startsWith('logo:') ||
+    text.startsWith('asset de marca:') ||
     text.includes('use um e-mail institucional')
   ) {
     return rawText
@@ -38,7 +39,8 @@ export function getFriendlyErrorMessage(error: unknown): string {
   if (
     text.includes('duplicate key') ||
     text.includes('unique constraint') ||
-    text.includes('business_cards_slug_key')
+    text.includes('business_cards_slug_key') ||
+    text.includes('23505')
   ) {
     return 'Já existe um cartão com esse slug. Escolha outro endereço.'
   }

@@ -5,8 +5,10 @@ import { getFriendlyErrorMessage } from '../lib/errors'
 import { buildInvestEmail, INVEST_EMAIL_DOMAIN, normalizeInvestEmailInput } from '../lib/investEmail'
 import { getMyCard } from '../lib/myCard'
 import { ensureUserProfile } from '../lib/roles'
+import { useBrandSettings } from '../contexts/BrandSettingsContext'
 
 export default function EmployeeLoginPage() {
+  const { settings } = useBrandSettings()
   const navigate = useNavigate()
   const [prefix, setPrefix] = useState('')
   const [password, setPassword] = useState('')
@@ -44,8 +46,8 @@ export default function EmployeeLoginPage() {
     <main className="admin-login-shell">
       <section className="admin-login-card">
         <img
-          className="home-logo"
-          src="/invest-rs-logo.png"
+          className="auth-logo"
+          src={settings.logo_url}
           alt="Invest RS"
           style={{ width: '180px', marginBottom: '28px' }}
         />

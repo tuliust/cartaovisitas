@@ -31,6 +31,7 @@ export type CardFormValues = {
   linkedin_url: string
   instagram_url: string
   avatar_url: string
+  show_avatar_public: boolean
   logo_url: string
   is_active: boolean
 }
@@ -59,6 +60,7 @@ export const defaultCardFormValues: CardFormValues = {
   linkedin_url: '',
   instagram_url: '',
   avatar_url: '',
+  show_avatar_public: false,
   logo_url: '',
   is_active: true,
 }
@@ -111,6 +113,7 @@ export function toCardFormValues(card: AdminBusinessCard): CardFormValues {
     linkedin_url: card.linkedin_url ?? '',
     instagram_url: card.instagram_url ?? '',
     avatar_url: card.avatar_url ?? '',
+    show_avatar_public: card.show_avatar_public ?? false,
     logo_url: card.logo_url ?? '',
     is_active: card.is_active,
   }
@@ -151,6 +154,7 @@ export function buildCardPayload(values: CardFormValues) {
     linkedin_url: stringOrNull(values.linkedin_url),
     instagram_url: stringOrNull(values.instagram_url),
     avatar_url: stringOrNull(values.avatar_url),
+    show_avatar_public: values.show_avatar_public,
     logo_url: stringOrNull(values.logo_url),
     theme: 'invest_black',
     is_active: values.is_active,

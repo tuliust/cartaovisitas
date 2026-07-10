@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom'
 import { sendPasswordReset } from '../lib/auth'
 import { getFriendlyErrorMessage } from '../lib/errors'
 import { buildInvestEmail, INVEST_EMAIL_DOMAIN, normalizeInvestEmailInput } from '../lib/investEmail'
+import { useBrandSettings } from '../contexts/BrandSettingsContext'
 
 export default function PasswordResetRequestPage() {
+  const { settings } = useBrandSettings()
   const [prefix, setPrefix] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -30,8 +32,8 @@ export default function PasswordResetRequestPage() {
     <main className="admin-login-shell">
       <section className="admin-login-card">
         <img
-          className="home-logo"
-          src="/invest-rs-logo.png"
+          className="auth-logo"
+          src={settings.logo_url}
           alt="Invest RS"
           style={{ width: '180px', marginBottom: '28px' }}
         />
