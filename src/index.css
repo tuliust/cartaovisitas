@@ -1698,7 +1698,13 @@ html.app-visual-mode-light body,
 html.app-visual-mode-light .admin-login-shell,
 html.app-visual-mode-light .admin-shell {
   color: var(--visual-page-text);
-  background-color: transparent;
+}
+
+html.app-visual-mode-dark .admin-login-shell,
+html.app-visual-mode-dark .admin-shell,
+html.app-visual-mode-light .admin-login-shell,
+html.app-visual-mode-light .admin-shell {
+  background: transparent;
 }
 
 html.app-visual-mode-light .home-panel,
@@ -2931,7 +2937,13 @@ html.app-visual-mode-light body,
 html.app-visual-mode-light .admin-login-shell,
 html.app-visual-mode-light .admin-shell {
   color: var(--visual-page-text);
-  background-color: transparent;
+}
+
+html.app-visual-mode-dark .admin-login-shell,
+html.app-visual-mode-dark .admin-shell,
+html.app-visual-mode-light .admin-login-shell,
+html.app-visual-mode-light .admin-shell {
+  background: transparent;
 }
 
 html.app-visual-mode-light .home-panel,

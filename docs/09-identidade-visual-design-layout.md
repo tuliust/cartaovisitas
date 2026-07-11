@@ -24,6 +24,8 @@ Configurável em `/admin/configuracoes`:
 
 A Home e o cartão público oferecem um botão compacto de visual que abre um popover com seis miniaturas institucionais em grade. Cada opção representa um fundo e usa a imagem real configurada quando disponível. A escolha do visitante é persistida no navegador pela chave `invest-rs-public-visual-mode` e acompanha a navegação por Home, autenticação, área administrativa, área do colaborador e cartão público. Essa preferência é somente local e não altera dados no banco. O cabeçalho da área do colaborador usa o logo institucional adequado ao contraste atual.
 
+Os shells de autenticação e das áreas restritas permanecem transparentes para que a variante global aplicada ao `body` não seja escondida por backgrounds locais.
+
 ### Modo escuro
 
 | Código | Nome | Logo | Texto |
