@@ -20,6 +20,15 @@
   --visual-card-border: rgba(255, 255, 255, 0.18);
   --visual-action-color: #ffffff;
   --visual-action-muted: rgba(255, 255, 255, 0.72);
+  --admin-header-bg: rgba(8, 8, 8, 0.78);
+  --admin-nav-text: #ffffff;
+  --admin-nav-bg: transparent;
+  --admin-nav-bg-hover: rgba(255, 255, 255, 0.08);
+  --admin-nav-border: rgba(255, 255, 255, 0.14);
+  --admin-primary-button-bg: #111111;
+  --admin-primary-button-text: #ffffff;
+  --admin-secondary-button-text: #ffffff;
+  --admin-danger-button-text: #ffd0d0;
 }
 
 * {
@@ -60,6 +69,15 @@ html.app-visual-mode-light {
   --visual-card-border: rgba(17, 17, 17, 0.14);
   --visual-action-color: #111111;
   --visual-action-muted: rgba(17, 17, 17, 0.72);
+  --admin-header-bg: rgba(255, 255, 255, 0.82);
+  --admin-nav-text: #111111;
+  --admin-nav-bg: transparent;
+  --admin-nav-bg-hover: rgba(17, 17, 17, 0.06);
+  --admin-nav-border: rgba(17, 17, 17, 0.12);
+  --admin-primary-button-bg: #111111;
+  --admin-primary-button-text: #ffffff;
+  --admin-secondary-button-text: #111111;
+  --admin-danger-button-text: #8f1010;
 }
 
 a {
@@ -3085,4 +3103,91 @@ html.app-visual-mode-light :is(.home-panel, .admin-login-card, .admin-card, .adm
 
 html.app-visual-mode-light :is(.admin-login-card, .admin-card, .admin-form-section) :is(input, select, textarea) {
   caret-color: #111111;
+}
+
+html.app-visual-mode-light .admin-topbar {
+  border-bottom-color: var(--admin-nav-border);
+  background: var(--admin-header-bg);
+}
+
+html.app-visual-mode-light .admin-nav a,
+html.app-visual-mode-light .admin-nav button {
+  border: 1px solid transparent;
+  background: var(--admin-nav-bg);
+  color: var(--admin-nav-text);
+  opacity: 1;
+}
+
+html.app-visual-mode-light .admin-nav a:hover,
+html.app-visual-mode-light .admin-nav button:hover,
+html.app-visual-mode-light .admin-nav a:focus-visible,
+html.app-visual-mode-light .admin-nav button:focus-visible {
+  border-color: var(--admin-nav-border);
+  background: var(--admin-nav-bg-hover);
+  color: var(--admin-nav-text);
+}
+
+html.app-visual-mode-light .admin-nav a:focus-visible,
+html.app-visual-mode-light .admin-nav button:focus-visible {
+  outline: 3px solid #286fca;
+  outline-offset: 2px;
+}
+
+html.app-visual-mode-light .admin-actions a,
+html.app-visual-mode-light .admin-actions button {
+  border-color: rgba(17, 17, 17, 0.22);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--admin-secondary-button-text);
+  opacity: 1;
+}
+
+html.app-visual-mode-light .admin-actions a:hover,
+html.app-visual-mode-light .admin-actions button:hover,
+html.app-visual-mode-light .admin-actions a:focus-visible,
+html.app-visual-mode-light .admin-actions button:focus-visible {
+  border-color: rgba(17, 17, 17, 0.36);
+  background: rgba(17, 17, 17, 0.06);
+  color: #050505;
+}
+
+html.app-visual-mode-light .admin-actions a:focus-visible,
+html.app-visual-mode-light .admin-actions button:focus-visible {
+  outline: 3px solid #286fca;
+  outline-offset: 2px;
+}
+
+html.app-visual-mode-light .admin-actions .danger-action,
+html.app-visual-mode-light .danger-button {
+  border-color: rgba(180, 30, 30, 0.42);
+  background: rgba(255, 235, 235, 0.86);
+  color: var(--admin-danger-button-text);
+}
+
+html.app-visual-mode-light .admin-actions .danger-action:hover,
+html.app-visual-mode-light .admin-actions .danger-action:focus-visible,
+html.app-visual-mode-light .danger-button:hover:not(:disabled),
+html.app-visual-mode-light .danger-button:focus-visible:not(:disabled) {
+  border-color: rgba(143, 16, 16, 0.62);
+  background: rgba(255, 220, 220, 0.94);
+  color: #720b0b;
+}
+
+html.app-visual-mode-light .admin-page-action .primary-button,
+html.app-visual-mode-light .admin-page-action .primary-button:link,
+html.app-visual-mode-light .admin-page-action .primary-button:visited,
+html.app-visual-mode-light .admin-page-action .primary-button:hover,
+html.app-visual-mode-light .admin-page-action .primary-button:focus-visible {
+  background: var(--admin-primary-button-bg);
+  color: var(--admin-primary-button-text);
+  opacity: 1;
+}
+
+html.app-visual-mode-light .admin-page-action .primary-button:hover,
+html.app-visual-mode-light .admin-page-action .primary-button:focus-visible {
+  background: #242424;
+}
+
+html.app-visual-mode-light .admin-page-action .primary-button:focus-visible {
+  outline: 3px solid #286fca;
+  outline-offset: 3px;
 }
