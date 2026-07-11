@@ -11,7 +11,7 @@ import { useToast } from '../../contexts/ToastContext'
 import { recordAuditLog } from '../../lib/audit'
 import CardImportModal from '../../components/admin/CardImportModal'
 import { downloadCardImportTemplate } from '../../lib/cardImport'
-import { Ban, CheckCircle2, Copy, ExternalLink, Link as LinkIcon, Pencil, QrCode, Trash2 } from 'lucide-react'
+import { Ban, CheckCircle2, Copy, ExternalLink, Link as LinkIcon, MoreVertical, Pencil, QrCode, Trash2 } from 'lucide-react'
 
 function formatDate(value: string | null) {
   if (!value) {
@@ -81,6 +81,7 @@ export default function AdminCardsPage() {
   const [deleteConfirmation, setDeleteConfirmation] = useState('')
   const [deleting, setDeleting] = useState(false)
   const [importOpen, setImportOpen] = useState(false)
+  const [openActionsMenu, setOpenActionsMenu] = useState<string | null>(null)
 
   const visibleCards = useMemo(() => {
     const term = normalizeSearchValue(search.trim())
@@ -159,6 +160,31 @@ export default function AdminCardsPage() {
     void checkAccess()
   }, [loadCards, navigate])
 
+  useEffect(() => {
+    if (!openActionsMenu) return
+
+    function closeOnOutsideClick(event: MouseEvent) {
+      const target = event.target
+      if (target instanceof Element && !target.closest('[data-card-actions-root]')) {
+        setOpenActionsMenu(null)
+      }
+    }
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setOpenActionsMenu(null)
+      }
+    }
+
+    document.addEventListener('mousedown', closeOnOutsideClick)
+    document.addEventListener('keydown', closeOnEscape)
+
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsideClick)
+      document.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [openActionsMenu])
+
   async function copyToClipboard(text: string, label: string) {
     try {
       await navigator.clipboard.writeText(text)
@@ -223,46 +249,122 @@ export default function AdminCardsPage() {
     }
   }
 
-  function renderActions(card: AdminBusinessCard) {
+  function renderActions(card: AdminBusinessCard, placement: 'desktop' | 'mobile') {
     const publicUrl = `${window.location.origin}/${card.slug}`
     const vcardUrl = `${window.location.origin}/api/vcard/${card.slug}`
+    const menuKey = `${placement}-${card.id}`
+    const menuId = `card-actions-menu-${placement}-${card.id}`
+    const isOpen = openActionsMenu === menuKey
+    const cardName = card.display_name || card.full_name
 
     return (
-      <div className="admin-actions card-compact-actions">
-        <Link to={`/admin/cartoes/${card.id}/editar`} aria-label="Editar cartão" title="Editar">
-          <Pencil aria-hidden="true" />
-          <span className="card-action-label">Editar</span>
-        </Link>
-
-        <a href={publicUrl} target="_blank" rel="noreferrer" aria-label="Abrir cartão" title="Abrir">
-          <ExternalLink aria-hidden="true" />
-          <span className="card-action-label">Abrir</span>
-        </a>
-
-        <button type="button" aria-label="Copiar link público" title="Copiar link" onClick={() => copyToClipboard(publicUrl, 'Link público copiado.')}>
-          <LinkIcon aria-hidden="true" />
-          <span className="card-action-label">Copiar link</span>
+      <div
+        className={`card-actions-menu-root${isOpen ? ' is-open' : ''}`}
+        data-card-actions-root
+      >
+        <button
+          className="card-actions-trigger"
+          type="button"
+          aria-label={`Abrir ações do cartão de ${cardName}`}
+          aria-haspopup="menu"
+          aria-expanded={isOpen}
+          aria-controls={menuId}
+          title="Ações"
+          onClick={() => setOpenActionsMenu((current) => current === menuKey ? null : menuKey)}
+        >
+          <MoreVertical aria-hidden="true" />
         </button>
 
-        <button type="button" aria-label="Copiar link do vCard" title="Copiar vCard" onClick={() => copyToClipboard(vcardUrl, 'Link do vCard copiado.')}>
-          <Copy aria-hidden="true" />
-          <span className="card-action-label">Copiar vCard</span>
-        </button>
+        {isOpen ? (
+          <div
+            className="card-actions-popover"
+            id={menuId}
+            role="menu"
+            aria-label={`Ações do cartão de ${cardName}`}
+          >
+            <Link
+              to={`/admin/cartoes/${card.id}/editar`}
+              role="menuitem"
+              onClick={() => setOpenActionsMenu(null)}
+            >
+              <Pencil aria-hidden="true" />
+              <span>Editar</span>
+            </Link>
 
-        <button type="button" aria-label="Baixar QR Code" title="Baixar QR Code" onClick={() => handleDownloadQrCode(card)}>
-          <QrCode aria-hidden="true" />
-          <span className="card-action-label">Baixar QR Code</span>
-        </button>
+            <a
+              href={publicUrl}
+              target="_blank"
+              rel="noreferrer"
+              role="menuitem"
+              onClick={() => setOpenActionsMenu(null)}
+            >
+              <ExternalLink aria-hidden="true" />
+              <span>Abrir</span>
+            </a>
 
-        <button type="button" aria-label={card.is_active ? 'Desativar cartão' : 'Ativar cartão'} title={card.is_active ? 'Desativar' : 'Ativar'} onClick={() => handleToggleActive(card)}>
-          {card.is_active ? <Ban aria-hidden="true" /> : <CheckCircle2 aria-hidden="true" />}
-          <span className="card-action-label">{card.is_active ? 'Desativar' : 'Ativar'}</span>
-        </button>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpenActionsMenu(null)
+                void copyToClipboard(publicUrl, 'Link público copiado.')
+              }}
+            >
+              <LinkIcon aria-hidden="true" />
+              <span>Copiar link</span>
+            </button>
 
-        <button className="danger-action" type="button" aria-label="Apagar cartão" title="Apagar" onClick={() => { setDeleteTarget(card); setDeleteConfirmation('') }}>
-          <Trash2 aria-hidden="true" />
-          <span className="card-action-label">Apagar</span>
-        </button>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpenActionsMenu(null)
+                void copyToClipboard(vcardUrl, 'Link do vCard copiado.')
+              }}
+            >
+              <Copy aria-hidden="true" />
+              <span>Copiar vCard</span>
+            </button>
+
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpenActionsMenu(null)
+                void handleDownloadQrCode(card)
+              }}
+            >
+              <QrCode aria-hidden="true" />
+              <span>Baixar QR Code</span>
+            </button>
+
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpenActionsMenu(null)
+                void handleToggleActive(card)
+              }}
+            >
+              {card.is_active ? <Ban aria-hidden="true" /> : <CheckCircle2 aria-hidden="true" />}
+              <span>{card.is_active ? 'Desativar' : 'Ativar'}</span>
+            </button>
+
+            <button
+              className="danger-action"
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpenActionsMenu(null)
+                setDeleteTarget(card)
+                setDeleteConfirmation('')
+              }}
+            >
+              <Trash2 aria-hidden="true" />
+              <span>Apagar</span>
+            </button>
+          </div>
+        ) : null}
       </div>
     )
   }
@@ -364,10 +466,8 @@ export default function AdminCardsPage() {
                   <th>Status</th>
                   <th>Criado em</th>
                   <th>Views</th>
-                  <th>vCard</th>
-                  <th>Compart. / QR</th>
                   <th>Visto em</th>
-                  <th>Ações</th>
+                  <th className="admin-actions-heading">Ações</th>
                 </tr>
               </thead>
 
@@ -387,14 +487,8 @@ export default function AdminCardsPage() {
                     </td>
                     <td>{formatDate(card.created_at)}</td>
                     <td>{formatCount(getAnalytics(card.id).view_count)}</td>
-                    <td>{formatCount(getAnalytics(card.id).vcard_count)}</td>
-                    <td>
-                      <span className="admin-analytics-pair">
-                        {formatCount(getAnalytics(card.id).share_count)} / {formatCount(getAnalytics(card.id).qr_count)}
-                      </span>
-                    </td>
                     <td>{formatRelativeDate(getAnalytics(card.id).last_view_at)}</td>
-                    <td>{renderActions(card)}</td>
+                    <td className="admin-actions-cell">{renderActions(card, 'desktop')}</td>
                   </tr>
                 ))}
               </tbody>
@@ -405,9 +499,12 @@ export default function AdminCardsPage() {
                 <article className="admin-mobile-card" key={card.id}>
                   <div className="admin-mobile-card-heading">
                     <strong>{card.display_name || card.full_name}</strong>
-                    <span className={card.is_active ? 'status-pill active' : 'status-pill inactive'}>
-                      {card.is_active ? 'Ativo' : 'Inativo'}
-                    </span>
+                    <div className="admin-mobile-card-controls">
+                      <span className={card.is_active ? 'status-pill active' : 'status-pill inactive'}>
+                        {card.is_active ? 'Ativo' : 'Inativo'}
+                      </span>
+                      {renderActions(card, 'mobile')}
+                    </div>
                   </div>
                   <p>{card.job_title || 'Cargo não informado'}</p>
                   <small className="admin-card-slug" title={card.slug}>/{card.slug}</small>
@@ -418,7 +515,6 @@ export default function AdminCardsPage() {
                     <span><strong>{formatCount(getAnalytics(card.id).qr_count)}</strong> QR Codes</span>
                     <span className="admin-mobile-last-view">Visto em: <strong>{formatRelativeDate(getAnalytics(card.id).last_view_at)}</strong></span>
                   </div>
-                  {renderActions(card)}
                 </article>
               ))}
             </div>
