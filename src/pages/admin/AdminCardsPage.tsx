@@ -172,7 +172,7 @@ export default function AdminCardsPage() {
     if (
       card.is_active &&
       !window.confirm(
-        `Tem certeza que deseja desativar o cartÃ£o de ${card.display_name || card.full_name}? A pÃ¡gina pÃºblica, o QR Code e o vCard deixarÃ£o de funcionar enquanto ele estiver inativo.`,
+        `Tem certeza que deseja desativar o cartão de ${card.display_name || card.full_name}? A página pública, o QR Code e o vCard deixarão de funcionar enquanto ele estiver inativo.`,
       )
     ) {
       return
@@ -183,7 +183,7 @@ export default function AdminCardsPage() {
       await setAdminCardActive(card.id, !card.is_active)
       await recordAuditLog({ action: card.is_active ? 'card_deactivated' : 'card_activated', targetType: 'business_card', targetId: card.id, targetLabel: card.slug, beforeData: { is_active: card.is_active }, afterData: { is_active: !card.is_active } })
       await loadCards()
-      toast.success(card.is_active ? 'CartÃ£o desativado com sucesso.' : 'CartÃ£o ativado com sucesso.')
+      toast.success(card.is_active ? 'Cartão desativado com sucesso.' : 'Cartão ativado com sucesso.')
     } catch (err) {
       const message = getFriendlyErrorMessage(err)
       setError(message)
@@ -213,7 +213,7 @@ export default function AdminCardsPage() {
       setDeleteTarget(null)
       setDeleteConfirmation('')
       await loadCards()
-      toast.success('CartÃ£o apagado com sucesso.')
+      toast.success('Cartão apagado com sucesso.')
     } catch (err) {
       const message = getFriendlyErrorMessage(err)
       setError(message)
@@ -279,17 +279,17 @@ export default function AdminCardsPage() {
     )
   }
 
-  const cardCountLabel = cards.length === 1 ? 'cartÃ£o' : 'cartÃµes'
+  const cardCountLabel = cards.length === 1 ? 'cartão' : 'cartões'
 
   return (
     <AdminLayout
-      title="CartÃµes digitais"
-      subtitle="Crie, edite e gerencie os cartÃµes institucionais da Invest RS."
+      title="Cartões digitais"
+      subtitle="Crie, edite e gerencie os cartões institucionais da Invest RS."
       action={
         <div className="admin-header-actions">
           <button className="secondary-button" type="button" onClick={downloadCardImportTemplate}>Baixar modelo</button>
           <button className="secondary-button" type="button" onClick={() => setImportOpen(true)}>Importar planilha</button>
-          <Link className="primary-button" to="/admin/cartoes/novo">Novo cartÃ£o</Link>
+          <Link className="primary-button" to="/admin/cartoes/novo">Novo cartão</Link>
         </div>
       }
     >
@@ -304,7 +304,7 @@ export default function AdminCardsPage() {
         </div>
 
         {cards.length > 0 ? (
-          <div className="admin-list-controls" role="search" aria-label="Buscar e organizar cartÃµes">
+          <div className="admin-list-controls" role="search" aria-label="Buscar e organizar cartões">
             <label className="admin-search-field">
               <span>Busca</span>
               <input
@@ -326,8 +326,8 @@ export default function AdminCardsPage() {
             <label>
               <span>Ordenar por</span>
               <select className="admin-sort-select" value={sortOption} onChange={(event) => setSortOption(event.target.value as SortOption)}>
-                <option value="name-asc">Nome Aâ€“Z</option>
-                <option value="name-desc">Nome Zâ€“A</option>
+                <option value="name-asc">Nome A–Z</option>
+                <option value="name-desc">Nome Z–A</option>
                 <option value="created-desc">Mais recentes</option>
                 <option value="updated-desc">Atualizados recentemente</option>
                 <option value="status">Status</option>
@@ -336,20 +336,20 @@ export default function AdminCardsPage() {
           </div>
         ) : null}
 
-        {loading ? <p>Carregando cartÃµes...</p> : null}
+        {loading ? <p>Carregando cartões...</p> : null}
 
         {!loading && cards.length === 0 ? (
           <div className="admin-empty">
-            <p>Nenhum cartÃ£o cadastrado ainda.</p>
+            <p>Nenhum cartão cadastrado ainda.</p>
             <Link className="primary-button" to="/admin/cartoes/novo">
-              Criar primeiro cartÃ£o
+              Criar primeiro cartão
             </Link>
           </div>
         ) : null}
 
         {!loading && cards.length > 0 && visibleCards.length === 0 ? (
           <div className="admin-empty admin-filter-empty">
-            <p>Nenhum cartÃ£o encontrado para os filtros selecionados.</p>
+            <p>Nenhum cartão encontrado para os filtros selecionados.</p>
           </div>
         ) : null}
 
@@ -367,7 +367,7 @@ export default function AdminCardsPage() {
                   <th>vCard</th>
                   <th>Compart. / QR</th>
                   <th>Visto em</th>
-                  <th>AÃ§Ãµes</th>
+                  <th>Ações</th>
                 </tr>
               </thead>
 
@@ -409,9 +409,9 @@ export default function AdminCardsPage() {
                       {card.is_active ? 'Ativo' : 'Inativo'}
                     </span>
                   </div>
-                  <p>{card.job_title || 'Cargo nÃ£o informado'}</p>
+                  <p>{card.job_title || 'Cargo não informado'}</p>
                   <small className="admin-card-slug" title={card.slug}>/{card.slug}</small>
-                  <div className="admin-mobile-analytics" aria-label="MÃ©tricas de uso">
+                  <div className="admin-mobile-analytics" aria-label="Métricas de uso">
                     <span><strong>{formatCount(getAnalytics(card.id).view_count)}</strong> views</span>
                     <span><strong>{formatCount(getAnalytics(card.id).vcard_count)}</strong> vCards</span>
                     <span><strong>{formatCount(getAnalytics(card.id).share_count)}</strong> compartilhamentos</span>
@@ -428,8 +428,8 @@ export default function AdminCardsPage() {
       {deleteTarget ? (
         <div className="confirmation-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !deleting) setDeleteTarget(null) }}>
           <section className="confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="delete-card-title">
-            <h2 id="delete-card-title">Apagar cartÃ£o permanentemente?</h2>
-            <p>Esta aÃ§Ã£o Ã© permanente e removerÃ¡ os dados do cartÃ£o e seus eventos associados.</p>
+            <h2 id="delete-card-title">Apagar cartão permanentemente?</h2>
+            <p>Esta ação é permanente e removerá os dados do cartão e seus eventos associados.</p>
             <label>Digite <strong>{deleteTarget.slug}</strong> para confirmar<input autoFocus value={deleteConfirmation} onChange={(event) => setDeleteConfirmation(event.target.value)} /></label>
             <div className="confirmation-actions">
               <button className="secondary-button" type="button" disabled={deleting} onClick={() => setDeleteTarget(null)}>Cancelar</button>
