@@ -165,7 +165,7 @@ export default function AdminCardsPage() {
 
     function closeOnOutsideClick(event: MouseEvent) {
       const target = event.target
-      if (target instanceof Element && !target.closest('[data-card-actions-root]')) {
+      if (target instanceof Element && !target.closest('[data-admin-actions-root]')) {
         setOpenActionsMenu(null)
       }
     }
@@ -259,11 +259,11 @@ export default function AdminCardsPage() {
 
     return (
       <div
-        className={`card-actions-menu-root${isOpen ? ' is-open' : ''}`}
-        data-card-actions-root
+        className={`admin-actions-menu-root${isOpen ? ' is-open' : ''}`}
+        data-admin-actions-root
       >
         <button
-          className="card-actions-trigger"
+          className="admin-actions-trigger"
           type="button"
           aria-label={`Abrir ações do cartão de ${cardName}`}
           aria-haspopup="menu"
@@ -277,7 +277,7 @@ export default function AdminCardsPage() {
 
         {isOpen ? (
           <div
-            className="card-actions-popover"
+            className="admin-actions-popover"
             id={menuId}
             role="menu"
             aria-label={`Ações do cartão de ${cardName}`}

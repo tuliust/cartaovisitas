@@ -1990,62 +1990,6 @@ html.app-visual-mode-light .visual-mode-option.active {
   object-position: center;
 }
 
-.user-governance-row {
-  grid-template-columns: minmax(180px, 1.3fr) auto auto minmax(110px, 0.7fr) auto;
-}
-
-.user-compact-actions {
-  flex-wrap: nowrap;
-  gap: 6px;
-  white-space: nowrap;
-}
-
-.user-compact-actions > button,
-.user-compact-actions > a {
-  min-width: 36px;
-  min-height: 36px;
-  padding: 7px 9px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  border-radius: 10px;
-  font-size: 0.74rem;
-  line-height: 1;
-}
-
-.user-compact-actions svg {
-  width: 16px;
-  height: 16px;
-  flex: 0 0 auto;
-}
-
-.user-compact-actions > :focus-visible {
-  outline: 3px solid #6aa9ff;
-  outline-offset: 2px;
-}
-
-@media (max-width: 1180px) and (min-width: 901px) {
-  .user-action-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-  }
-}
-
-@media (max-width: 900px) {
-  .user-governance-row {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .user-compact-actions {
-    grid-column: 1 / -1;
-    flex-wrap: wrap;
-  }
-}
 
 @media (max-width: 560px) {
   .public-panel-controls {
@@ -2058,18 +2002,6 @@ html.app-visual-mode-light .visual-mode-option.active {
     margin-left: auto;
   }
 
-  .user-governance-row {
-    grid-template-columns: 1fr;
-  }
-
-  .user-compact-actions {
-    grid-column: auto;
-  }
-
-  .user-compact-actions > button,
-  .user-compact-actions > a {
-    flex: 1 1 auto;
-  }
 }
 
 .card-visual.public-card-variant-dark-image-1,
@@ -2313,6 +2245,19 @@ body,
     display: flex;
     align-items: flex-start;
     justify-content: flex-end;
+  }
+
+  .admin-users-table tr {
+    grid-template-columns:
+      minmax(230px, 1.75fr)
+      minmax(110px, 0.72fr)
+      minmax(110px, 0.72fr)
+      minmax(160px, 1fr)
+      minmax(64px, 0.35fr);
+  }
+
+  .admin-users-table td {
+    align-self: center;
   }
 }
 
@@ -3238,40 +3183,6 @@ html.app-visual-mode-light .admin-page-action .primary-button:focus-visible {
   outline-offset: 3px;
 }
 
-@media (min-width: 1101px) {
-  .user-governance-row {
-    grid-template-columns: minmax(160px, 1fr) auto auto minmax(100px, 0.55fr) minmax(430px, auto);
-  }
-
-  .user-compact-actions {
-    min-width: 430px;
-    align-items: center;
-    justify-content: flex-end;
-    flex-wrap: nowrap;
-  }
-
-  .user-action-label {
-    position: static;
-    width: auto;
-    height: auto;
-    overflow: visible;
-    clip: auto;
-    white-space: nowrap;
-  }
-}
-
-@media (max-width: 1100px) {
-  .user-governance-row {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .user-compact-actions {
-    min-width: 0;
-    grid-column: 1 / -1;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-  }
-}
 
 .invite-user-modal {
   border-color: rgba(255, 255, 255, 0.2);
@@ -3580,19 +3491,90 @@ html.app-visual-mode-light .slug-availability.checking {
   color: var(--admin-muted);
 }
 
-/* Compact actions popover for admin cards. */
-.card-actions-menu-root {
+/* Admin users table and responsive cards. */
+.admin-user-name-cell strong,
+.admin-user-identity strong {
+  display: block;
+}
+
+.admin-user-card-cell,
+.admin-user-card-link {
+  min-width: 0;
+}
+
+.admin-user-card-link {
+  display: block;
+  overflow: hidden;
+  color: var(--admin-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-user-card-link:hover,
+.admin-user-card-link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.admin-user-identity {
+  min-width: 0;
+}
+
+.admin-user-identity small {
+  display: block;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.admin-user-mobile-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-user-mobile-card-link {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.admin-user-mobile-card-link > span {
+  color: var(--admin-muted);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-user-mobile-card-link a,
+.admin-user-mobile-card-link strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--admin-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-user-mobile-card-link a:hover,
+.admin-user-mobile-card-link a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Shared compact actions popover for admin tables and mobile cards. */
+.admin-actions-menu-root {
   position: relative;
   z-index: 1;
   display: inline-flex;
   justify-content: flex-end;
 }
 
-.card-actions-menu-root.is-open {
+.admin-actions-menu-root.is-open {
   z-index: 60;
 }
 
-.card-actions-trigger {
+.admin-actions-trigger {
   width: 36px;
   height: 36px;
   padding: 0;
@@ -3605,16 +3587,16 @@ html.app-visual-mode-light .slug-availability.checking {
   place-items: center;
 }
 
-.card-actions-trigger:hover {
+.admin-actions-trigger:hover {
   background: color-mix(in srgb, var(--admin-text) 10%, transparent);
 }
 
-.card-actions-trigger svg {
+.admin-actions-trigger svg {
   width: 18px;
   height: 18px;
 }
 
-.card-actions-popover {
+.admin-actions-popover {
   position: absolute;
   z-index: 80;
   top: calc(100% + 8px);
@@ -3630,8 +3612,8 @@ html.app-visual-mode-light .slug-availability.checking {
   gap: 3px;
 }
 
-.card-actions-popover > a,
-.card-actions-popover > button {
+.admin-actions-popover > a,
+.admin-actions-popover > button {
   width: 100%;
   min-height: 40px;
   padding: 9px 10px;
@@ -3651,22 +3633,22 @@ html.app-visual-mode-light .slug-availability.checking {
   text-decoration: none;
 }
 
-.card-actions-popover > a:hover,
-.card-actions-popover > button:hover {
+.admin-actions-popover > a:hover,
+.admin-actions-popover > button:hover {
   background: var(--modal-secondary-bg);
 }
 
-.card-actions-popover svg {
+.admin-actions-popover svg {
   width: 16px;
   height: 16px;
   flex: 0 0 auto;
 }
 
-.card-actions-popover .danger-action {
+.admin-actions-popover .danger-action {
   color: var(--admin-danger-button-text);
 }
 
-.card-actions-popover .danger-action:hover {
+.admin-actions-popover .danger-action:hover {
   background: rgba(181, 48, 48, 0.18);
 }
 
@@ -3679,12 +3661,12 @@ html.app-visual-mode-light .slug-availability.checking {
 }
 
 @media (max-width: 760px) {
-  .card-actions-trigger {
+  .admin-actions-trigger {
     width: 44px;
     height: 44px;
   }
 
-  .card-actions-popover {
+  .admin-actions-popover {
     width: min(240px, calc(100vw - 56px));
   }
 }
