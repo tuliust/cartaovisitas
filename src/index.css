@@ -29,6 +29,11 @@
   --admin-primary-button-text: #ffffff;
   --admin-secondary-button-text: #ffffff;
   --admin-danger-button-text: #ffd0d0;
+  --admin-text: #ffffff;
+  --admin-muted: rgba(255, 255, 255, 0.72);
+  --admin-subtle: rgba(255, 255, 255, 0.56);
+  --admin-table-heading: rgba(255, 255, 255, 0.72);
+  --admin-border: rgba(255, 255, 255, 0.14);
   --modal-backdrop: rgba(0, 0, 0, 0.72);
   --modal-surface: rgba(17, 17, 17, 0.98);
   --modal-surface-strong: #111111;
@@ -91,6 +96,11 @@ html.app-visual-mode-light {
   --admin-primary-button-text: #ffffff;
   --admin-secondary-button-text: #111111;
   --admin-danger-button-text: #8f1010;
+  --admin-text: #111111;
+  --admin-muted: rgba(17, 17, 17, 0.7);
+  --admin-subtle: rgba(17, 17, 17, 0.56);
+  --admin-table-heading: rgba(17, 17, 17, 0.76);
+  --admin-border: rgba(17, 17, 17, 0.14);
   --modal-backdrop: rgba(0, 0, 0, 0.42);
   --modal-surface: rgba(255, 255, 255, 0.98);
   --modal-surface-strong: #ffffff;
@@ -3494,4 +3504,68 @@ html.app-visual-mode-light .invite-user-modal .primary-button:disabled {
 
 .crop-zoom-label input[type="range"] {
   accent-color: #6aa9ff;
+}
+
+/* Semantic admin text contrast. Keep after legacy fixed-color rules. */
+.admin-shell :is(.admin-page, .admin-card, .admin-form-section) {
+  color: var(--admin-text);
+}
+
+.admin-table th {
+  border-bottom-color: var(--admin-border);
+  color: var(--admin-table-heading);
+  opacity: 1;
+}
+
+.admin-table td {
+  border-bottom-color: var(--admin-border);
+  color: var(--admin-text);
+}
+
+.field-help,
+.admin-muted,
+.admin-table td small,
+.admin-mobile-card p,
+.admin-mobile-card small,
+.governance-row small,
+.admin-page-header p {
+  color: var(--admin-muted);
+  opacity: 1;
+}
+
+.admin-form-section :is(h2, h3, label),
+.brand-settings-section :is(h2, h3, label),
+.audit-filters label,
+.admin-list-controls label,
+.admin-table-header,
+.admin-table-header strong {
+  color: var(--admin-text);
+  opacity: 1;
+}
+
+.admin-form-section,
+.brand-settings-section,
+.admin-list-controls,
+.governance-row,
+.admin-mobile-card {
+  border-color: var(--admin-border);
+}
+
+html.app-visual-mode-light .status-pill.active {
+  background: rgba(21, 128, 61, 0.12);
+  color: #126331;
+}
+
+html.app-visual-mode-light .status-pill.inactive {
+  background: rgba(17, 17, 17, 0.08);
+  color: rgba(17, 17, 17, 0.72);
+}
+
+html.app-visual-mode-light .visual-variant-warning {
+  background: rgba(145, 91, 0, 0.1);
+  color: #704500;
+}
+
+html.app-visual-mode-light .slug-availability.checking {
+  color: var(--admin-muted);
 }

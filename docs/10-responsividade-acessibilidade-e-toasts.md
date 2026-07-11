@@ -72,6 +72,8 @@ Regras:
 
 Modais administrativos usam tokens próprios de backdrop, superfície, texto, inputs e botões para manter contraste nos modos claros e escuros. Transparência deve existir apenas no background; o container e seu conteúdo não usam opacidade global.
 
+Headers de tabela, labels e textos auxiliares administrativos usam tokens semânticos (`--admin-text`, `--admin-muted` e `--admin-table-heading`) em vez de cores fixas. Containers com texto não devem receber opacidade reduzida.
+
 ## Acessibilidade
 
 Regras mínimas:

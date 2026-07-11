@@ -263,6 +263,8 @@ export default function AdminCardsPage() {
     )
   }
 
+  const cardCountLabel = cards.length === 1 ? 'cartão' : 'cartões'
+
   return (
     <AdminLayout
       title="Cartões digitais"
@@ -279,7 +281,7 @@ export default function AdminCardsPage() {
 
       <div className="admin-card">
         <div className="admin-table-header">
-          <strong>{visibleCards.length} de {cards.length} cartão(ões)</strong>
+          <strong>{visibleCards.length} de {cards.length} {cardCountLabel}</strong>
           <button className="secondary-button compact-button" type="button" onClick={loadCards}>
             Atualizar
           </button>

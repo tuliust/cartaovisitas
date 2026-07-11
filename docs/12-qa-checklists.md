@@ -79,6 +79,9 @@ Testar:
 - copiar vCard;
 - importação CSV;
 - analytics.
+- headers da tabela legíveis nos modos claro e escuro;
+- contagem usa corretamente `cartão` ou `cartões`, sem forma parentética;
+- textos auxiliares do formulário permanecem legíveis em criação e edição.
 
 ## Admin usuários
 
