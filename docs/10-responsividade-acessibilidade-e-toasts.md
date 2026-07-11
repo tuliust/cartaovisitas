@@ -87,6 +87,8 @@ Regras mínimas:
 
 O botão compacto de visual exibido na Home abre um popover com seis miniaturas. O controle informa `aria-haspopup` e `aria-expanded`, usa botões com nomes acessíveis, preserva foco visível e fecha por clique externo ou `Escape`. A preferência fica em `localStorage` e pode ser alterada retornando à Home.
 
+No cartão público, o mesmo seletor fica alinhado ao toggle PT/ES/EN e pode quebrar de linha no mobile. Em `/admin/usuarios`, ações compactas usam ícone, texto quando houver espaço, `aria-label` e `title`.
+
 ## QR e mobile
 
 QR Code precisa ser legível em mobile e desktop. Downloads devem gerar PNG com nome baseado no slug.

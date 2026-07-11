@@ -6,6 +6,7 @@ import { getCurrentSession } from '../../lib/auth'
 import { blockUser, getAdminUsers, inviteAdminUser, unblockUser, updateUserRole, type AdminUser, type AdminUserStatus } from '../../lib/adminUsers'
 import { getFriendlyErrorMessage } from '../../lib/errors'
 import { requireAdmin } from '../../lib/roles'
+import { Ban, ExternalLink, IdCard, LockOpen, Mail, ShieldCheck, ShieldOff } from 'lucide-react'
 
 type RoleFilter = 'all' | 'admin' | 'user'
 type StatusFilter = 'all' | AdminUserStatus
@@ -42,12 +43,17 @@ export default function AdminUsersPage() {
         <label><span>Perfil</span><select value={role} onChange={(event) => setRole(event.target.value as RoleFilter)}><option value="all">Todos</option><option value="admin">Admin</option><option value="user">Colaborador</option></select></label>
         <label><span>Status</span><select value={status} onChange={(event) => setStatus(event.target.value as StatusFilter)}><option value="all">Todos</option><option value="active">Ativo</option><option value="blocked">Bloqueado</option><option value="pending">Pendente</option></select></label>
       </div>
-      {loading ? <p>Carregando usuários...</p> : <div className="governance-list">{visible.map((user) => <article className="governance-row" key={user.id}>
-        <div><strong>{user.full_name || user.email}</strong><small>{user.email}</small></div>
+      {loading ? <p>Carregando usuários...</p> : <div className="governance-list">{visible.map((user) => <article className="governance-row user-governance-row" key={user.id}>
+        <div><strong>{user.full_name || user.email}</strong>{user.full_name ? <small>{user.email}</small> : null}</div>
         <span className="status-pill">{user.role === 'admin' ? 'Admin' : 'Colaborador'}</span>
         <span className={`status-pill ${user.status === 'active' ? 'active' : 'inactive'}`}>{user.status === 'active' ? 'Ativo' : user.status === 'blocked' ? 'Bloqueado' : 'Pendente'}</span>
-        <div>{user.card ? <Link to={`/${user.card.slug}`} target="_blank">/{user.card.slug}</Link> : <span>Sem cartão</span>}</div>
-        <div className="admin-actions governance-actions"><button type="button" onClick={() => void changeRole(user)}>{user.role === 'admin' ? 'Remover admin' : 'Promover a admin'}</button><button type="button" onClick={() => void changeBlock(user)}>{user.status === 'blocked' ? 'Desbloquear' : 'Bloquear'}</button>{user.card ? <Link to={`/${user.card.slug}`} target="_blank">Abrir cartão</Link> : <Link to={`/admin/cartoes/novo?email=${encodeURIComponent(user.email)}&name=${encodeURIComponent(user.full_name || '')}`}>Criar cartão</Link>}<button type="button" onClick={() => void sendInvite(user.email)}>{user.status === 'pending' ? 'Reenviar convite' : 'Enviar convite'}</button></div>
+        <div>{user.card ? <Link to={`/${user.card.slug}`} target="_blank" rel="noreferrer">/{user.card.slug}</Link> : <span>Sem cartão</span>}</div>
+        <div className="admin-actions governance-actions user-compact-actions">
+          <button type="button" aria-label={user.role === 'admin' ? 'Remover acesso de administrador' : 'Promover a administrador'} title={user.role === 'admin' ? 'Remover admin' : 'Promover a admin'} onClick={() => void changeRole(user)}>{user.role === 'admin' ? <ShieldOff aria-hidden="true" /> : <ShieldCheck aria-hidden="true" />}<span className="user-action-label">{user.role === 'admin' ? 'Remover admin' : 'Promover'}</span></button>
+          <button type="button" aria-label={user.status === 'blocked' ? 'Desbloquear usuário' : 'Bloquear usuário'} title={user.status === 'blocked' ? 'Desbloquear' : 'Bloquear'} onClick={() => void changeBlock(user)}>{user.status === 'blocked' ? <LockOpen aria-hidden="true" /> : <Ban aria-hidden="true" />}<span className="user-action-label">{user.status === 'blocked' ? 'Desbloquear' : 'Bloquear'}</span></button>
+          {user.card ? <Link to={`/${user.card.slug}`} target="_blank" rel="noreferrer" aria-label="Abrir cartão" title="Abrir cartão"><ExternalLink aria-hidden="true" /><span className="user-action-label">Abrir cartão</span></Link> : <Link to={`/admin/cartoes/novo?email=${encodeURIComponent(user.email)}&name=${encodeURIComponent(user.full_name || '')}`} aria-label="Criar cartão" title="Criar cartão"><IdCard aria-hidden="true" /><span className="user-action-label">Criar cartão</span></Link>}
+          <button type="button" aria-label={user.status === 'pending' ? 'Reenviar convite' : 'Enviar convite'} title={user.status === 'pending' ? 'Reenviar convite' : 'Enviar convite'} onClick={() => void sendInvite(user.email)}><Mail aria-hidden="true" /><span className="user-action-label">{user.status === 'pending' ? 'Reenviar' : 'Convidar'}</span></button>
+        </div>
       </article>)}</div>}
     </div>
     {inviteOpen ? <div className="confirmation-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setInviteOpen(false) }}><section className="confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="invite-title"><h2 id="invite-title">Convidar usuário</h2><p>O convite será enviado pelo Supabase para o e-mail institucional.</p><label>E-mail institucional<input autoFocus type="email" value={inviteEmail} onChange={(event) => setInviteEmail(event.target.value)} placeholder="nome@investrs.org.br" /></label><div className="confirmation-actions"><button className="secondary-button" type="button" onClick={() => setInviteOpen(false)}>Cancelar</button><button className="primary-button" type="button" disabled={sending || !inviteEmail} onClick={() => void sendInvite()}>{sending ? 'Enviando...' : 'Enviar convite'}</button></div></section></div> : null}

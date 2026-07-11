@@ -1909,6 +1909,109 @@ html.app-visual-mode-light .visual-mode-option.active {
   color: #111111;
 }
 
+.public-panel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.public-panel-controls .public-language-toggle {
+  margin-bottom: 0;
+}
+
+.collaborator-logo {
+  width: clamp(150px, 16vw, 205px);
+  max-width: min(48vw, 205px);
+  max-height: 72px;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+}
+
+.user-governance-row {
+  grid-template-columns: minmax(180px, 1.3fr) auto auto minmax(110px, 0.7fr) auto;
+}
+
+.user-compact-actions {
+  flex-wrap: nowrap;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.user-compact-actions > button,
+.user-compact-actions > a {
+  min-width: 36px;
+  min-height: 36px;
+  padding: 7px 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 10px;
+  font-size: 0.74rem;
+  line-height: 1;
+}
+
+.user-compact-actions svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+.user-compact-actions > :focus-visible {
+  outline: 3px solid #6aa9ff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 1180px) and (min-width: 901px) {
+  .user-action-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 900px) {
+  .user-governance-row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .user-compact-actions {
+    grid-column: 1 / -1;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 560px) {
+  .public-panel-controls {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .public-panel-controls .visual-mode-selector {
+    margin-left: auto;
+  }
+
+  .user-governance-row {
+    grid-template-columns: 1fr;
+  }
+
+  .user-compact-actions {
+    grid-column: auto;
+  }
+
+  .user-compact-actions > button,
+  .user-compact-actions > a {
+    flex: 1 1 auto;
+  }
+}
+
 .card-visual.public-card-variant-dark-image-1,
 .card-visual.public-card-variant-dark-image-2,
 .card-preview.public-card-variant-dark-image-1,

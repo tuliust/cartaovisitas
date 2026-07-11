@@ -19,6 +19,7 @@ import { getAppleWalletUrl, isIosDevice, isWalletPublicEnabled } from '../lib/wa
 import { useToast } from '../contexts/ToastContext'
 import { getEffectiveVisualVariant, getVariantClassName, getVariantLogo, getVariantStyle, isLightVisualVariant } from '../lib/cardVisualVariants'
 import { useVisualMode } from '../contexts/VisualModeContext'
+import VisualModeSelector from '../components/VisualModeSelector'
 
 type PageStatus = 'loading' | 'ready' | 'not-found' | 'error'
 
@@ -135,7 +136,7 @@ export default function PublicCardPage() {
     if (!card) return
     try {
       await navigator.clipboard.writeText(vcardUrl)
-      toast.success(publicCardCopy.pt.vcardCopied)
+      toast.success('URL do vCard copiada.')
       void recordCardEvent(card.id, 'vcard')
     } catch {
       toast.error('Não foi possível copiar o link do vCard.')
@@ -214,8 +215,11 @@ export default function PublicCardPage() {
         </div>
 
         <div className={`action-panel ${actionPanelTheme}`}>
-          <div className="public-language-toggle" aria-label="Idioma do cartão">
-            {(Object.keys(publicCardLanguageLabels) as PublicCardLanguage[]).map((item) => <button key={item} type="button" className={language === item ? 'active' : ''} aria-pressed={language === item} onClick={() => changeLanguage(item)}>{publicCardLanguageLabels[item]}</button>)}
+          <div className="public-panel-controls">
+            <div className="public-language-toggle" aria-label="Idioma do cartão">
+              {(Object.keys(publicCardLanguageLabels) as PublicCardLanguage[]).map((item) => <button key={item} type="button" className={language === item ? 'active' : ''} aria-pressed={language === item} onClick={() => changeLanguage(item)}>{publicCardLanguageLabels[item]}</button>)}
+            </div>
+            <VisualModeSelector />
           </div>
           <p className="eyebrow">{interfaceCopy.quickActions}</p>
           <h2>{interfaceCopy.actionTitle}</h2>

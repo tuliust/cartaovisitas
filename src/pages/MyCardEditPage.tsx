@@ -8,10 +8,15 @@ import { getFriendlyErrorMessage } from '../lib/errors'
 import { createMyCardDraft, getMyCard, toMyCardFormValues, upsertMyCard } from '../lib/myCard'
 import { useToast } from '../contexts/ToastContext'
 import { requireActiveUser } from '../lib/roles'
+import { useBrandSettings } from '../contexts/BrandSettingsContext'
+import { useVisualMode } from '../contexts/VisualModeContext'
+import { getEffectiveVisualVariant, isLightVisualVariant } from '../lib/cardVisualVariants'
 
 export default function MyCardEditPage() {
   const navigate = useNavigate()
   const toast = useToast()
+  const { settings } = useBrandSettings()
+  const { visualMode } = useVisualMode()
   const [booting, setBooting] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -47,10 +52,14 @@ export default function MyCardEditPage() {
 
   async function logout() { await signOut(); navigate('/entrar', { replace: true }) }
 
+  const logoUrl = isLightVisualVariant(getEffectiveVisualVariant(settings, visualMode))
+    ? settings.logo_on_light_url || settings.logo_on_dark_url || settings.logo_url || '/invest-rs-logo.png'
+    : settings.logo_on_dark_url || settings.logo_on_light_url || settings.logo_url || '/invest-rs-logo.png'
+
   if (booting) return <main className="admin-login-shell"><div className="admin-login-card">Carregando formulário...</div></main>
 
   return <main className="admin-shell">
-    <header className="admin-topbar"><Link className="admin-brand" to="/">Invest RS</Link><nav className="admin-nav">{savedSlug ? <Link to={`/${savedSlug}`}>Ver meu cartão</Link> : null}<button type="button" onClick={() => void logout()}>Sair</button></nav></header>
+    <header className="admin-topbar"><Link className="admin-brand" to="/"><img className="admin-logo collaborator-logo" src={logoUrl} alt="Invest RS" /></Link><nav className="admin-nav">{savedSlug ? <Link to={`/${savedSlug}`}>Ver meu cartão</Link> : null}<button type="button" onClick={() => void logout()}>Sair</button></nav></header>
     <section className="admin-page">
       <div className="admin-page-header"><div><p className="eyebrow">Área do colaborador</p><h1>Meu cartão</h1><p>Atualize os dados do seu cartão digital.</p></div>{savedSlug ? <Link className="secondary-button" to={`/${savedSlug}`}>Ver meu cartão</Link> : null}</div>
       {error ? <p className="admin-error">{error}</p> : null}

@@ -134,6 +134,10 @@ Testar:
 - preferência local altera apenas a renderização do cartão público;
 - limpar a chave restaura o `public_visual_variant` salvo no cartão;
 - vCard, QR, idioma e Wallet permanecem inalterados.
+- seletor visual aparece à direita do toggle PT/ES/EN no cartão público;
+- “Copiar vCard” copia a URL `/api/vcard/:slug?lang=:idioma`;
+- área do colaborador exibe o logo institucional no header;
+- `/admin/usuarios` mostra nome sobre e-mail e ações compactas com ícones.
 
 ## RLS
 
