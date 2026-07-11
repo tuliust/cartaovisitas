@@ -1068,29 +1068,37 @@ p {
 .brand-logo-main,
 .auth-logo,
 .public-card-logo,
-.admin-logo {
+.admin-logo,
+.brand-asset-preview.logo,
+.visual-variant-thumbnail img,
+.brand-preview > img {
   display: block;
-  aspect-ratio: 640 / 180;
+  max-width: 100%;
   height: auto;
+  aspect-ratio: auto;
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
 }
 
 .brand-logo-main {
   width: clamp(230px, 32vw, 340px);
+  max-height: 170px;
 }
 
 .auth-logo {
   width: clamp(210px, 68%, 280px);
+  max-height: 140px;
   margin-bottom: 30px;
 }
 
 .public-card-logo {
   width: min(230px, 48vw);
+  max-height: 110px;
 }
 
 .admin-logo {
   width: clamp(150px, 16vw, 205px);
+  max-height: 72px;
 }
 
 .home-content h1,
@@ -1537,7 +1545,8 @@ body,
 
 .brand-asset-preview.logo {
   width: min(300px, 100%);
-  aspect-ratio: 640 / 180;
+  max-height: 150px;
+  padding: 12px;
 }
 
 .brand-asset-preview.favicon {
@@ -1597,9 +1606,11 @@ body,
 .visual-variant-thumbnail img {
   width: min(150px, 75%);
   height: 48px;
+  max-width: 100%;
+  max-height: 48px;
   margin-bottom: auto;
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
 }
 
 .visual-variant-thumbnail span { color: var(--public-card-label); font-size: 0.76rem; }
@@ -1844,9 +1855,12 @@ body,
 
 .brand-preview > img {
   width: min(250px, 75%);
-  aspect-ratio: 640 / 180;
+  max-width: 100%;
+  max-height: 125px;
+  height: auto;
+  display: block;
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
 }
 
 .brand-preview-card {

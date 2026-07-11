@@ -29,4 +29,4 @@ Esta pasta concentra a documentação oficial do sistema de cartões digitais da
 
 ## Política sobre documentos antigos
 
-Os arquivos SQL devem ser preservados como histórico técnico. Documentos antigos podem ser movidos para `docs/archive/` depois que o conteúdo for absorvido por estes documentos canônicos.
+`docs/archive/` contém documentos históricos substituídos pela documentação canônica. Os scripts SQL permanecem na raiz de `docs/` para rastreabilidade técnica.

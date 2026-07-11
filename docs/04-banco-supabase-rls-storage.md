@@ -1,5 +1,43 @@
 # 04 — Banco, RLS e Storage
 
+## Bootstrap de ambiente novo
+
+O bootstrap deve ser revisado e executado manualmente, nesta sequência:
+
+1. Executar `supabase-base-schema.sql`.
+2. Executar `supabase-storage-business-card-assets.sql`.
+3. Executar `supabase-governance-users-audit-import.sql`.
+4. Executar `supabase-visual-variants-and-icons.sql`.
+5. Configurar o primeiro admin conforme a seção seguinte.
+6. Validar todas as policies antes de liberar o ambiente.
+
+Os scripts legados complementares e a ordem completa estão em `appendix-sql-scripts.md`.
+
+## Bootstrap do primeiro admin
+
+Depois de criar o usuário em Supabase Authentication, promova manualmente o primeiro admin pelo SQL Editor:
+
+```sql
+insert into public.user_profiles (
+  id,
+  email,
+  role,
+  status
+)
+select
+  id,
+  email,
+  'admin',
+  'active'
+from auth.users
+where lower(email) = 'tulius.souza@investrs.org.br'
+on conflict (id) do update set
+  email = excluded.email,
+  role = 'admin',
+  status = 'active',
+  updated_at = now();
+```
+
 ## Tabelas principais
 
 ### `business_cards`
@@ -23,7 +61,7 @@ Campos relevantes:
 - `linkedin_url`, `instagram_url`
 - `avatar_url`
 - `show_avatar_public`
-- `logo_url`
+- `logo_url` (fallback técnico/legado; não editável pelo admin)
 - `public_visual_variant`
 - `is_active`
 - `expires_at`
@@ -73,7 +111,7 @@ Configura branding.
 
 Campos:
 
-- `logo_url`
+- `logo_url` (fallback técnico/legado; não editável em `/admin/configuracoes`)
 - `favicon_url`
 - `og_image_url`
 - `background_image_url`
@@ -134,7 +172,7 @@ business-card-assets
 Uso:
 
 - avatars;
-- logo;
+- logos institucionais por contraste;
 - favicon;
 - Apple Touch;
 - OG image;

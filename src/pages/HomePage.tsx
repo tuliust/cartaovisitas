@@ -7,7 +7,7 @@ export default function HomePage() {
   return (
     <main className="app-shell">
       <section className="home-panel">
-        <img className="brand-logo-main" src={settings.logo_url} alt="Invest RS" />
+        <img className="brand-logo-main" src={settings.logo_on_dark_url || settings.logo_url} alt="Invest RS" />
         <div className="home-content">
           <p className="eyebrow">Cartão de visitas digital</p>
           <h1>Cartões digitais com QR Code.</h1>

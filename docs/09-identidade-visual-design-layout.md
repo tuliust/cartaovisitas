@@ -8,7 +8,8 @@ O sistema usa identidade institucional controlada. O colaborador não pode fazer
 
 Configurável em `/admin/configuracoes`:
 
-- logo principal;
+- logo para fundo escuro;
+- logo para fundo claro;
 - favicon;
 - Apple Touch Icon;
 - Open Graph image;
@@ -46,7 +47,7 @@ Configurável em `/admin/configuracoes`:
 
 - `logo_on_dark_url`: logo branca/clara para fundos escuros.
 - `logo_on_light_url`: logo preta/escura para fundos claros.
-- `logo_url`: fallback global.
+- `logo_url`: fallback técnico/legado, sem edição em `/admin/configuracoes`.
 
 ## Fundos institucionais
 

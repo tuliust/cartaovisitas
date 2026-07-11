@@ -7,8 +7,15 @@ values (
   'business-card-assets',
   'business-card-assets',
   true,
-  2097152,
-  array['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml']
+  5242880,
+  array[
+    'image/png',
+    'image/jpeg',
+    'image/webp',
+    'image/svg+xml',
+    'image/x-icon',
+    'image/vnd.microsoft.icon'
+  ]
 )
 on conflict (id) do update
 set

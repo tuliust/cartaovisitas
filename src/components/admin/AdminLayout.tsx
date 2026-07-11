@@ -23,7 +23,7 @@ export default function AdminLayout({ title, subtitle, action, children }: Admin
     <main className="admin-shell">
       <header className="admin-topbar">
         <Link className="admin-brand" to="/admin/cartoes">
-          <img className="admin-logo" src={settings.logo_url} alt="Invest RS" />
+          <img className="admin-logo" src={settings.logo_on_dark_url || settings.logo_url} alt="Invest RS" />
         </Link>
 
         <nav className="admin-nav">

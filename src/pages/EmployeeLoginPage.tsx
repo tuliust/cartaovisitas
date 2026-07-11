@@ -50,7 +50,7 @@ export default function EmployeeLoginPage() {
       <section className="admin-login-card">
         <img
           className="auth-logo"
-          src={settings.logo_url}
+          src={settings.logo_on_dark_url || settings.logo_url}
           alt="Invest RS"
           style={{ width: '180px', marginBottom: '28px' }}
         />

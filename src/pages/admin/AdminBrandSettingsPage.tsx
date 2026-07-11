@@ -19,11 +19,11 @@ import { recordAuditLog } from '../../lib/audit'
 import { getVariantClassName, getVariantLogo, getVariantStyle, publicVisualVariantOptions } from '../../lib/cardVisualVariants'
 
 type ColorKey = 'primary_color' | 'secondary_color' | 'background_color' | 'surface_color' | 'text_color'
-type AssetUrlKey = 'logo_url' | 'favicon_url' | 'og_image_url' | 'background_image_url' | 'apple_touch_icon_url' | 'logo_on_dark_url' | 'logo_on_light_url' | 'card_bg_dark_image_1_url' | 'card_bg_dark_image_2_url' | 'card_bg_light_image_3_url' | 'card_bg_light_image_4_url'
+type AssetUrlKey = 'favicon_url' | 'og_image_url' | 'background_image_url' | 'apple_touch_icon_url' | 'logo_on_dark_url' | 'logo_on_light_url' | 'card_bg_dark_image_1_url' | 'card_bg_dark_image_2_url' | 'card_bg_light_image_3_url' | 'card_bg_light_image_4_url'
 
 const institutionalAssets: Array<{ key: AssetUrlKey; type: BrandAssetType; label: string; help: string; accept: string }> = [
-  { key: 'logo_on_dark_url', type: 'logo-on-dark', label: 'Logo para fundo escuro', help: 'Logo branca ou clara, usada nas variações escuras.', accept: 'image/png,image/svg+xml,image/webp' },
-  { key: 'logo_on_light_url', type: 'logo-on-light', label: 'Logo para fundo claro', help: 'Logo preta ou escura, usada nas variações claras.', accept: 'image/png,image/svg+xml,image/webp' },
+  { key: 'logo_on_dark_url', type: 'logo-on-dark', label: 'Logo para fundo escuro', help: 'Use uma versão branca ou clara. Recomendado: logo horizontal em PNG, SVG ou WebP, entre 600–1200 px de largura e 160–320 px de altura, preferencialmente com fundo transparente, área segura ao redor da marca e arquivo de até 2 MB. O sistema ajusta a imagem automaticamente para evitar cortes.', accept: 'image/png,image/svg+xml,image/webp' },
+  { key: 'logo_on_light_url', type: 'logo-on-light', label: 'Logo para fundo claro', help: 'Use uma versão preta ou escura. Recomendado: logo horizontal em PNG, SVG ou WebP, entre 600–1200 px de largura e 160–320 px de altura, preferencialmente com fundo transparente, área segura ao redor da marca e arquivo de até 2 MB. O sistema ajusta a imagem automaticamente para evitar cortes.', accept: 'image/png,image/svg+xml,image/webp' },
   { key: 'card_bg_dark_image_1_url', type: 'card-bg-dark-1', label: 'Imagem escura 1', help: 'JPG, PNG ou WebP. Recomendado: 1600 × 1000 px ou maior.', accept: 'image/png,image/jpeg,image/webp' },
   { key: 'card_bg_dark_image_2_url', type: 'card-bg-dark-2', label: 'Imagem escura 2', help: 'JPG, PNG ou WebP. Recomendado: 1600 × 1000 px ou maior.', accept: 'image/png,image/jpeg,image/webp' },
   { key: 'card_bg_light_image_3_url', type: 'card-bg-light-3', label: 'Imagem clara 1', help: 'JPG, PNG ou WebP. Recomendado: 1600 × 1000 px ou maior.', accept: 'image/png,image/jpeg,image/webp' },
@@ -111,14 +111,6 @@ export default function AdminBrandSettingsPage() {
       <div className="brand-settings-grid">
         <div className="brand-settings-form">
           <section className="brand-settings-section">
-            <h2>Logo</h2>
-            <img className="brand-asset-preview logo" src={values.logo_url || defaultBrandSettings.logo_url} alt="Logo atual" />
-            <label>URL do logo<input value={values.logo_url} onChange={(event) => update('logo_url', event.target.value)} /></label>
-            <label>Enviar logo<input type="file" accept="image/png,image/svg+xml,image/webp" onChange={(event) => void upload(event, 'logo', 'logo_url')} /></label>
-            <button className="secondary-button compact-button" type="button" onClick={() => update('logo_url', defaultBrandSettings.logo_url)}>Restaurar padrão</button>
-          </section>
-
-          <section className="brand-settings-section">
             <h2>Favicon</h2>
             <p className="field-help">Usado na aba do navegador. Prefira SVG quadrado ou ICO com 16, 32 e 48 px.</p>
             <img className="brand-asset-preview favicon" src={values.favicon_url || defaultBrandSettings.favicon_url} alt="Favicon atual" />
@@ -159,14 +151,14 @@ export default function AdminBrandSettingsPage() {
           </section>
           <section className="brand-settings-section visual-variants-settings">
             <h2>Variações visuais do cartão</h2>
-            <p className="field-help">Configure logos institucionais e fundos aprovados. Imagens ausentes usam automaticamente o fallback preto ou branco.</p>
+            <p className="field-help">Configure os logos oficiais por contraste. O logo para fundo escuro deve ser branco/claro. O logo para fundo claro deve ser preto/escuro.</p>
             <div className="institutional-assets-grid">{institutionalAssets.map((asset) => <div className="institutional-asset-field" key={asset.key}><h3>{asset.label}</h3><p className="field-help">{asset.help}</p>{values[asset.key] ? <img className={`brand-asset-preview ${asset.type.startsWith('logo') ? 'logo' : 'background'}`} src={values[asset.key]} alt={`Prévia: ${asset.label}`} /> : null}<label>URL<input value={values[asset.key]} onChange={(event) => update(asset.key, event.target.value)} /></label><label>Enviar arquivo<input type="file" accept={asset.accept} onChange={(event) => void upload(event, asset.type, asset.key)} /></label><button className="secondary-button compact-button" type="button" onClick={() => update(asset.key, '')}>Remover e restaurar fallback</button></div>)}</div>
             <div className="visual-variants-preview" aria-label="Prévia das seis variações">{publicVisualVariantOptions.map((option) => <article className={`visual-variant-thumbnail ${getVariantClassName(values, option.value)}`} style={getVariantStyle(values, option.value)} key={option.value}><img src={getVariantLogo(values, option.value)} alt="Invest RS" /><strong>{option.label}</strong><span>Contato institucional</span></article>)}</div>
           </section>
         </div>
 
         <aside className="brand-preview" style={previewStyle} aria-label="Prévia da identidade visual">
-          <img src={values.logo_url || defaultBrandSettings.logo_url} alt="Invest RS" />
+          <img src={values.logo_on_dark_url || values.logo_url || defaultBrandSettings.logo_url} alt="Invest RS" />
           <div className="brand-preview-card"><p>Cartão institucional</p><h2>Identidade Invest RS</h2><span>Texto de exemplo para conferir contraste e legibilidade.</span><div><button type="button">Botão primário</button><button type="button">Secundário</button></div></div>
         </aside>
       </div>

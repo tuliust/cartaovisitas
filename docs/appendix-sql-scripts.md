@@ -4,6 +4,10 @@ Este apêndice lista scripts SQL do projeto e sua finalidade. Não excluir scrip
 
 ## Scripts principais
 
+### `docs/supabase-base-schema.sql`
+
+Cria o schema canônico mínimo para bootstrap de ambientes novos. Deve ser revisado antes da execução e não deve ser aplicado automaticamente em produção.
+
 ### `docs/supabase-storage-business-card-assets.sql`
 
 Cria/configura bucket `business-card-assets` e policies de Storage.
@@ -33,6 +37,8 @@ Adiciona:
 
 Cria/configura `brand_settings` e campos iniciais de branding.
 
+O campo `logo_url` desses scripts deve ser preservado por compatibilidade e funciona apenas como fallback técnico/legado. A operação administrativa dos logos usa `logo_on_dark_url` e `logo_on_light_url`.
+
 ### `docs/supabase-governance-users-audit-import.sql`
 
 Adiciona governança operacional:
@@ -57,13 +63,15 @@ Adiciona:
 
 ## Ordem recomendada para ambiente novo
 
-1. Script base de tabelas, se separado no histórico.
+1. `supabase-base-schema.sql`
 2. `supabase-storage-business-card-assets.sql`
-3. `supabase-card-localized-fields.sql`
-4. `supabase-card-public-photo-flag.sql`
-5. `supabase-brand-settings.sql`
+3. `supabase-card-localized-fields.sql`, se ainda necessário em ambiente legado
+4. `supabase-card-public-photo-flag.sql`, se ainda necessário em ambiente legado
+5. `supabase-brand-settings.sql`, se ainda necessário em ambiente legado
 6. `supabase-governance-users-audit-import.sql`
 7. `supabase-visual-variants-and-icons.sql`
+
+Em ambientes novos, alguns scripts complementares podem ser redundantes porque o schema base já contém suas colunas. Eles devem permanecer no repositório e na sequência operacional por rastreabilidade histórica e por serem idempotentes.
 
 ## Verificação de tabelas
 

@@ -18,6 +18,10 @@ Acesso de usuário depende de e-mail `@investrs.org.br`.
 - `admin`: acesso administrativo.
 - `user`: colaborador.
 
+O primeiro admin deve ser promovido manualmente via SQL, após a criação do usuário no Supabase Authentication. Depois desse bootstrap, novos admins devem ser geridos por `/admin/usuarios`.
+
+Nunca deixe o sistema sem ao menos um admin ativo. Antes de bloquear, remover ou rebaixar um admin, confirme que outro admin ativo consegue acessar a área administrativa.
+
 ## Status
 
 - `active`: acesso normal.

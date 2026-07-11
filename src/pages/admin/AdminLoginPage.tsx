@@ -59,7 +59,7 @@ export default function AdminLoginPage() {
   return (
     <main className="admin-login-shell">
       <section className="admin-login-card">
-        <img className="auth-logo" src={settings.logo_url} alt="Invest RS" />
+        <img className="auth-logo" src={settings.logo_on_dark_url || settings.logo_url} alt="Invest RS" />
         <h1>Área Restrita</h1>
         <p>Acesso administrativo aos cartões digitais da Invest RS.</p>
         <form onSubmit={submit}>

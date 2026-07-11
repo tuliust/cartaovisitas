@@ -121,7 +121,6 @@ Finalidade: gerenciar identidade visual e assets.
 
 Inclui:
 
-- logo principal;
 - favicon;
 - Apple Touch Icon;
 - OG image;
@@ -131,3 +130,5 @@ Inclui:
 - logo para fundo claro;
 - quatro fundos institucionais;
 - preview das seis variantes.
+
+Os logos institucionais editáveis são exclusivamente `logo_on_dark_url` e `logo_on_light_url`. O campo `logo_url` permanece apenas como fallback técnico/legado e não é editável nesta página.
