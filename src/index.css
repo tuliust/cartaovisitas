@@ -96,94 +96,118 @@ button {
 
 .visual-mode-selector {
   position: relative;
-  z-index: 20;
+  z-index: 5;
   flex: 0 0 auto;
 }
 
-.visual-mode-trigger {
-  width: 48px;
-  height: 48px;
-  padding: 5px;
+.visual-mode-wheel {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 999px;
-  background: rgba(12, 12, 12, 0.78);
-  color: #ffffff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  isolation: isolate;
+  background: #090909;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34), inset 0 0 0 5px rgba(0, 0, 0, 0.72);
 }
 
-.visual-mode-current-swatch,
-.visual-mode-option-swatch {
-  display: block;
-  flex: 0 0 auto;
-  border: 1px solid rgba(127, 127, 127, 0.35);
-  border-radius: 999px;
+.visual-mode-segment {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  background-color: #050505;
   background-size: cover;
   background-position: center;
+  transition: filter 160ms ease, transform 160ms ease, opacity 160ms ease;
 }
 
-.visual-mode-current-swatch {
-  width: 26px;
-  height: 26px;
+.visual-mode-segment:nth-child(1) { clip-path: polygon(34% 3%, 66% 3%, 59% 34%, 41% 34%); }
+.visual-mode-segment:nth-child(2) { clip-path: polygon(69% 5%, 96% 30%, 96% 48%, 71% 48%, 60% 35%); }
+.visual-mode-segment:nth-child(3) { clip-path: polygon(96% 52%, 96% 70%, 69% 95%, 60% 65%, 71% 52%); }
+.visual-mode-segment:nth-child(4) { clip-path: polygon(66% 97%, 34% 97%, 41% 66%, 59% 66%); }
+.visual-mode-segment:nth-child(5) { clip-path: polygon(31% 95%, 4% 70%, 4% 52%, 29% 52%, 40% 65%); }
+.visual-mode-segment:nth-child(6) { clip-path: polygon(4% 48%, 4% 30%, 31% 5%, 40% 35%, 29% 48%); }
+
+.visual-mode-segment.public-card-theme-light {
+  background-color: #f8f7f3;
 }
 
-.visual-mode-option-swatch {
-  width: 34px;
-  height: 34px;
+.visual-mode-option-dark-image-1:not(.has-image) {
+  background-image: linear-gradient(135deg, #080808 0 42%, #343434 43% 57%, #101010 58%);
 }
 
-.visual-mode-menu {
+.visual-mode-option-dark-image-2:not(.has-image) {
+  background-image: radial-gradient(circle at 72% 28%, #525252, #171717 34%, #050505 70%);
+}
+
+.visual-mode-option-light-image-3:not(.has-image) {
+  background-image: linear-gradient(145deg, #ffffff 0 38%, #d8d3c8 39% 53%, #f4f1eb 54%);
+}
+
+.visual-mode-option-light-image-4:not(.has-image) {
+  background-image: radial-gradient(circle at 28% 72%, #c8c3b8, #eeeae2 36%, #ffffff 72%);
+}
+
+.visual-mode-segment.public-card-variant-dark-image-1,
+.visual-mode-segment.public-card-variant-dark-image-2 {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.3)), var(--public-card-variant-image, linear-gradient(135deg, #242424, #050505));
+}
+
+.visual-mode-segment.public-card-variant-light-image-3,
+.visual-mode-segment.public-card-variant-light-image-4 {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.28)), var(--public-card-variant-image, linear-gradient(135deg, #ffffff, #d8d5ce));
+}
+
+.visual-mode-segment:hover {
+  filter: brightness(1.22) saturate(1.08);
+}
+
+.visual-mode-segment.active {
+  z-index: 1;
+  filter: brightness(1.24) saturate(1.12) drop-shadow(0 0 5px #ffffff) drop-shadow(0 0 9px rgba(106, 169, 255, 0.95));
+}
+
+.visual-mode-segment.active::after {
+  content: '';
   position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  width: min(280px, calc(100vw - 48px));
-  padding: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 18px;
-  background: rgba(16, 16, 16, 0.97);
-  color: #ffffff;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
+  left: 50%;
+  top: 12%;
+  width: 7px;
+  height: 7px;
+  border: 2px solid #050505;
+  border-radius: 50%;
+  background: #ffffff;
+  transform: translateX(-50%);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.82);
 }
 
-.visual-mode-menu button {
-  width: 100%;
-  min-height: 48px;
-  padding: 7px 9px;
-  border: 0;
-  border-radius: 12px;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
+.visual-mode-segment:nth-child(2).active::after { left: 82%; top: 31%; }
+.visual-mode-segment:nth-child(3).active::after { left: 82%; top: 69%; }
+.visual-mode-segment:nth-child(4).active::after { left: 50%; top: 83%; }
+.visual-mode-segment:nth-child(5).active::after { left: 18%; top: 69%; }
+.visual-mode-segment:nth-child(6).active::after { left: 18%; top: 31%; }
+
+.visual-mode-segment:focus-visible {
+  outline: none;
+  filter: brightness(1.2) drop-shadow(0 0 5px #ffffff) drop-shadow(0 0 10px #6aa9ff);
+}
+
+.visual-mode-wheel-center {
+  position: absolute;
+  z-index: 3;
+  inset: 35%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+  background: #080808;
+  color: #f8f7f3;
   display: grid;
-  grid-template-columns: 34px 1fr 18px;
-  align-items: center;
-  gap: 10px;
-  text-align: left;
-}
-
-.visual-mode-menu button:hover,
-.visual-mode-menu button.active {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.visual-mode-trigger:focus-visible,
-.visual-mode-menu button:focus-visible {
-  outline: 3px solid #6aa9ff;
-  outline-offset: 2px;
-}
-
-.visual-mode-current-swatch.public-card-theme-dark,
-.visual-mode-option-swatch.public-card-theme-dark {
-  background-color: #050505;
-}
-
-.visual-mode-current-swatch.public-card-theme-light,
-.visual-mode-option-swatch.public-card-theme-light {
-  background-color: #ffffff;
+  place-items: center;
+  pointer-events: none;
 }
 
 html.app-visual-mode-light .home-panel,
@@ -227,15 +251,10 @@ html.app-visual-mode-light .admin-card textarea {
   color: #111111;
 }
 
-html.app-visual-mode-light .visual-mode-trigger {
-  border-color: rgba(0, 0, 0, 0.2);
-  background: rgba(255, 255, 255, 0.9);
-  color: #111111;
-}
-
 @media (max-width: 560px) {
   .home-topline { gap: 12px; }
-  .visual-mode-trigger { width: 44px; height: 44px; }
+  .visual-mode-wheel { width: 108px; height: 108px; }
+  .visual-mode-wheel-center svg { width: 18px; height: 18px; }
 }
 
 .brand-mark,

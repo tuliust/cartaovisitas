@@ -22,7 +22,7 @@ Configurável em `/admin/configuracoes`:
 
 ## Seis variantes do cartão público
 
-A Home oferece um seletor global com as seis variantes institucionais. A escolha do visitante é persistida no navegador pela chave `invest-rs-public-visual-mode` e acompanha a navegação por Home, autenticação, área administrativa, área do colaborador e cartão público. Essa preferência é somente local e não altera dados no banco.
+A Home oferece uma paleta visual circular, inspirada em um diafragma de seis segmentos, com acesso direto às seis variantes institucionais. Cada setor representa um fundo e usa a imagem real configurada quando disponível. A escolha do visitante é persistida no navegador pela chave `invest-rs-public-visual-mode` e acompanha a navegação por Home, autenticação, área administrativa, área do colaborador e cartão público. Essa preferência é somente local e não altera dados no banco.
 
 ### Modo escuro
 

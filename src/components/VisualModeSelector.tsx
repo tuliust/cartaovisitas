@@ -1,42 +1,50 @@
-import { Check, ChevronDown } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { Aperture } from 'lucide-react'
+import { useRef, type KeyboardEvent } from 'react'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
 import { useVisualMode } from '../contexts/VisualModeContext'
-import { getVariantClassName, getVariantStyle } from '../lib/cardVisualVariants'
+import { getVariantClassName, getVariantImage, getVariantStyle } from '../lib/cardVisualVariants'
 
 export default function VisualModeSelector() {
   const { settings } = useBrandSettings()
   const { visualMode, setVisualMode, visualModeOptions } = useVisualMode()
-  const [open, setOpen] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([])
 
-  useEffect(() => {
-    if (!open) return
-    function closeOnOutsideClick(event: MouseEvent) {
-      if (!containerRef.current?.contains(event.target as Node)) setOpen(false)
-    }
-    function closeOnEscape(event: KeyboardEvent) {
-      if (event.key === 'Escape') setOpen(false)
-    }
-    document.addEventListener('mousedown', closeOnOutsideClick)
-    document.addEventListener('keydown', closeOnEscape)
-    return () => {
-      document.removeEventListener('mousedown', closeOnOutsideClick)
-      document.removeEventListener('keydown', closeOnEscape)
-    }
-  }, [open])
+  function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(event.key)) return
+    event.preventDefault()
+    const lastIndex = visualModeOptions.length - 1
+    const nextIndex = event.key === 'Home'
+      ? 0
+      : event.key === 'End'
+        ? lastIndex
+        : event.key === 'ArrowRight' || event.key === 'ArrowDown'
+          ? (index + 1) % visualModeOptions.length
+          : (index - 1 + visualModeOptions.length) % visualModeOptions.length
+    const nextOption = visualModeOptions[nextIndex]
+    setVisualMode(nextOption.value)
+    optionRefs.current[nextIndex]?.focus()
+  }
 
-  return <div className="visual-mode-selector" ref={containerRef}>
-    <button className="visual-mode-trigger" type="button" aria-label="Escolher modo visual" aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
-      <span className={`visual-mode-current-swatch ${getVariantClassName(settings, visualMode)}`} style={getVariantStyle(settings, visualMode)} aria-hidden="true" />
-      <ChevronDown size={15} aria-hidden="true" />
-    </button>
-    {open ? <div className="visual-mode-menu" role="menu" aria-label="Modos visuais">
-      {visualModeOptions.map((option) => <button className={visualMode === option.value ? 'active' : ''} type="button" role="menuitem" key={option.value} onClick={() => { setVisualMode(option.value); setOpen(false) }}>
-        <span className={`visual-mode-option-swatch ${getVariantClassName(settings, option.value)}`} style={getVariantStyle(settings, option.value)} aria-hidden="true" />
-        <span>{option.label}</span>
-        {visualMode === option.value ? <Check size={16} aria-label="Ativo" /> : null}
-      </button>)}
-    </div> : null}
+  return <div className="visual-mode-selector" role="radiogroup" aria-label="Escolha o fundo visual">
+    <div className="visual-mode-wheel">
+      {visualModeOptions.map((option, index) => {
+        const hasImage = Boolean(getVariantImage(settings, option.value))
+        return <button
+          className={`visual-mode-segment visual-mode-option-${option.value.replace(/_/g, '-')}${hasImage ? ' has-image' : ''} ${getVariantClassName(settings, option.value)}${visualMode === option.value ? ' active' : ''}`}
+          style={getVariantStyle(settings, option.value)}
+          type="button"
+          role="radio"
+          aria-checked={visualMode === option.value}
+          aria-label={`Usar fundo: ${option.label}`}
+          title={option.label}
+          key={option.value}
+          ref={(element) => { optionRefs.current[index] = element }}
+          onClick={() => setVisualMode(option.value)}
+          onKeyDown={(event) => handleKeyDown(event, index)}
+        />
+      })}
+      <span className="visual-mode-wheel-center" aria-hidden="true"><Aperture size={22} /></span>
+    </div>
+    <span className="sr-only" aria-live="polite">Fundo ativo: {visualModeOptions.find(({ value }) => value === visualMode)?.label}</span>
   </div>
 }

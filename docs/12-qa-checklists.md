@@ -124,8 +124,9 @@ Testar:
 
 ## Modo visual global
 
-- botão redondo e menu com seis opções aparecem na Home;
-- clique externo e `Escape` fecham o menu;
+- paleta circular com seis setores visuais aparece na Home;
+- clique direto e navegação por setas selecionam cada variante;
+- opção ativa possui destaque e marcador visíveis;
 - escolha persiste em `invest-rs-public-visual-mode` após reload;
 - `dark_black` acompanha a navegação para `/entrar`;
 - `light_white` acompanha a navegação para `/cadastro`;

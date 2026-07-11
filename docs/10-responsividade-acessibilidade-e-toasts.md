@@ -85,7 +85,7 @@ Regras mínimas:
 
 ## Seletor global de modo visual
 
-O seletor redondo exibido na Home abre um menu com as seis variações institucionais. Ele usa botão semântico com `aria-haspopup`, informa `aria-expanded`, aceita fechamento por clique externo ou `Escape` e preserva foco visível. A preferência fica em `localStorage` e pode ser alterada retornando à Home.
+O seletor circular exibido na Home apresenta diretamente seis setores visuais, um para cada variação institucional. O controle usa semântica de `radiogroup`, botões com `role="radio"`, nomes acessíveis, foco visível e navegação por setas, Home e End. A preferência fica em `localStorage` e pode ser alterada retornando à Home.
 
 ## QR e mobile
 
