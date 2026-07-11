@@ -4170,96 +4170,126 @@ html.app-visual-mode-light .password-input-field:focus-within {
   min-height: 100svh;
   max-height: 100dvh;
   overflow: hidden;
-  padding: clamp(10px, 2vh, 20px);
+  padding: clamp(12px, 2.2vh, 22px);
   place-items: center;
 }
 
 .auth-page-card {
+  --auth-autofill-bg: #101010;
+  --auth-autofill-text: #f7f3eb;
   width: min(100%, 440px);
-  max-height: calc(100dvh - clamp(20px, 4vh, 40px));
+  max-height: calc(100dvh - clamp(24px, 4.4vh, 44px));
   margin: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: clamp(20px, 3vh, 28px);
+  padding: clamp(22px, 3.2vh, 30px);
   border-radius: 22px;
   scrollbar-width: thin;
 }
 
+html.app-visual-mode-light .auth-page-card {
+  --auth-autofill-bg: #ffffff;
+  --auth-autofill-text: #111111;
+}
+
 .auth-page-card .auth-page-logo {
-  width: clamp(140px, 19vh, 165px);
-  max-height: clamp(56px, 9vh, 78px);
-  margin: 0 0 clamp(14px, 2.3vh, 20px);
+  width: clamp(145px, 19vh, 165px);
+  max-height: clamp(58px, 9vh, 78px);
+  margin: 0 0 clamp(24px, 3.2vh, 30px);
   object-fit: contain;
   object-position: left center;
 }
 
 .auth-page-card .auth-page-title {
   margin: 0;
-  font-size: clamp(1.75rem, 4.5vh, 2.15rem);
+  font-size: clamp(1.8rem, 4.5vh, 2.15rem);
   line-height: 1.02;
 }
 
 .auth-page-card .auth-page-description {
-  margin: clamp(7px, 1.2vh, 10px) 0 clamp(14px, 2.5vh, 22px);
-  font-size: clamp(0.9rem, 2vh, 1rem);
-  line-height: 1.45;
+  margin: clamp(9px, 1.4vh, 12px) 0 clamp(20px, 2.8vh, 26px);
+  font-size: clamp(0.92rem, 2vh, 1rem);
+  line-height: 1.5;
 }
 
 .auth-page-card .auth-page-form {
-  gap: clamp(11px, 1.8vh, 16px);
+  gap: clamp(18px, 2.4vh, 22px);
 }
 
 .auth-page-card label,
 .auth-page-card .auth-form-field > label {
-  gap: 6px;
-  font-size: clamp(0.85rem, 1.8vh, 0.92rem);
+  gap: 8px;
+  font-size: clamp(0.86rem, 1.8vh, 0.92rem);
 }
 
 .auth-page-card input {
-  min-height: clamp(42px, 6.2vh, 48px);
+  min-height: clamp(44px, 6.2vh, 48px);
   padding-block: 10px;
 }
 
 .auth-page-card .email-suffix-field,
 .auth-page-card .password-input-field {
-  min-height: clamp(42px, 6.2vh, 48px);
+  min-height: clamp(44px, 6.2vh, 48px);
 }
 
 .auth-page-card .auth-page-submit {
-  min-height: clamp(44px, 6.4vh, 48px);
+  min-height: clamp(46px, 6.4vh, 48px);
 }
 
 .auth-page-card .auth-page-links {
-  margin-top: clamp(10px, 1.7vh, 15px);
+  margin-top: clamp(14px, 2vh, 18px);
 }
 
-@media (max-height: 700px) {
+.auth-page-card input:-webkit-autofill,
+.auth-page-card input:-webkit-autofill:hover,
+.auth-page-card input:-webkit-autofill:focus,
+.auth-page-card input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--auth-autofill-text);
+  caret-color: var(--auth-autofill-text);
+  -webkit-box-shadow: 0 0 0 1000px var(--auth-autofill-bg) inset;
+  box-shadow: 0 0 0 1000px var(--auth-autofill-bg) inset;
+  transition: background-color 9999s ease-out 0s;
+}
+
+.auth-page-card input:autofill {
+  color: var(--auth-autofill-text);
+  background: var(--auth-autofill-bg);
+}
+
+.auth-page-status {
+  display: grid;
+  min-height: 140px;
+  place-items: center;
+  text-align: center;
+}
+
+@media (max-height: 760px) {
   .admin-login-shell.auth-page-shell {
-    padding: 8px 12px;
+    padding: 9px 12px;
   }
 
   .auth-page-card {
-    max-height: calc(100dvh - 16px);
-    padding: 16px 20px;
+    max-height: calc(100dvh - 18px);
+    padding: 18px 20px;
   }
 
   .auth-page-card .auth-page-logo {
-    width: 132px;
-    max-height: 58px;
-    margin-bottom: 11px;
+    width: 138px;
+    max-height: 60px;
+    margin-bottom: 20px;
   }
 
   .auth-page-card .auth-page-title {
-    font-size: 1.7rem;
+    font-size: 1.75rem;
   }
 
   .auth-page-card .auth-page-description {
-    margin: 6px 0 12px;
-    font-size: 0.88rem;
+    margin: 7px 0 16px;
+    font-size: 0.9rem;
   }
 
   .auth-page-card .auth-page-form {
-    gap: 10px;
+    gap: 15px;
   }
 
   .auth-page-card input,
@@ -4273,7 +4303,36 @@ html.app-visual-mode-light .password-input-field:focus-within {
   }
 
   .auth-page-card .auth-page-links {
-    margin-top: 9px;
+    margin-top: 11px;
+  }
+}
+
+@media (max-height: 640px) {
+  .auth-page-card {
+    padding-block: 14px;
+  }
+
+  .auth-page-card .auth-page-logo {
+    width: 126px;
+    max-height: 54px;
+    margin-bottom: 16px;
+  }
+
+  .auth-page-card .auth-page-title {
+    font-size: 1.62rem;
+  }
+
+  .auth-page-card .auth-page-description {
+    margin: 6px 0 12px;
+    font-size: 0.86rem;
+  }
+
+  .auth-page-card .auth-page-form {
+    gap: 12px;
+  }
+
+  .auth-page-card .auth-page-links {
+    margin-top: 8px;
   }
 }
 

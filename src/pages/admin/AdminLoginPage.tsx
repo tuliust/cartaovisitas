@@ -18,7 +18,6 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('')
   const [checking, setChecking] = useState(true)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
 
   useEffect(() => {
     void (async () => {
@@ -33,55 +32,88 @@ export default function AdminLoginPage() {
   async function submit(event: FormEvent) {
     event.preventDefault()
     setLoading(true)
-    setError('')
 
     try {
       await signInWithPassword(buildInvestEmail(prefix), password)
+
       if (!(await isCurrentUserAdmin())) {
         await signOut()
-        const message = 'Seu usuário não tem permissão para acessar a área restrita.'
-        setError(message)
-        toast.error(message)
+        toast.error('Seu usuário não tem permissão para acessar a área restrita.')
         return
       }
+
       toast.success('Login administrativo realizado com sucesso.')
       navigate('/admin/cartoes', { replace: true })
     } catch (err) {
-      const message = getFriendlyErrorMessage(err)
-      setError(message)
-      toast.error(message)
+      toast.error(getFriendlyErrorMessage(err))
     } finally {
       setLoading(false)
     }
   }
 
   if (checking) {
-    return <main className="admin-login-shell"><div className="admin-login-card">Verificando sessão...</div></main>
+    return (
+      <main className="admin-login-shell auth-page-shell">
+        <div className="admin-login-card auth-page-card auth-page-status">
+          Verificando sessão...
+        </div>
+      </main>
+    )
   }
 
   return (
-    <main className="admin-login-shell">
-      <section className="admin-login-card">
-        <img className="auth-logo" src={getVariantLogo(settings, visualMode)} alt="Invest RS" />
-        <h1>Área Restrita</h1>
-        <p>Acesso administrativo aos cartões digitais da Invest RS.</p>
-        <form onSubmit={submit}>
+    <main className="admin-login-shell auth-page-shell">
+      <section className="admin-login-card auth-page-card">
+        <img
+          className="auth-logo auth-page-logo"
+          src={getVariantLogo(settings, visualMode)}
+          alt="Invest RS"
+        />
+
+        <h1 className="auth-page-title">Área Restrita</h1>
+        <p className="auth-page-description">
+          Acesso administrativo aos cartões digitais da Invest RS.
+        </p>
+
+        <form className="auth-page-form" autoComplete="on" onSubmit={submit}>
           <label>
             E-mail institucional
             <span className="email-suffix-field">
-              <input required autoComplete="username" value={prefix} onChange={(event) => setPrefix(normalizeInvestEmailInput(event.target.value))} />
+              <input
+                required
+                id="admin-login-username"
+                name="username"
+                type="text"
+                inputMode="email"
+                autoComplete="username"
+                value={prefix}
+                onChange={(event) => setPrefix(normalizeInvestEmailInput(event.target.value))}
+                placeholder="seu.nome"
+              />
               <span className="email-suffix-label">{INVEST_EMAIL_DOMAIN}</span>
             </span>
           </label>
+
           <label>
             Senha
-            <input required type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} />
+            <input
+              required
+              id="admin-login-password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
           </label>
-          <button className="primary-button" disabled={loading}>{loading ? 'Entrando...' : 'Entrar'}</button>
+
+          <button className="primary-button auth-page-submit" disabled={loading}>
+            {loading ? 'Entrando...' : 'Entrar'}
+          </button>
         </form>
-        {error ? <p className="admin-error" role="alert">{error}</p> : null}
-        <div className="auth-links">
-          <Link to="/recuperar-senha">Esqueci minha senha</Link>
+
+        <div className="auth-links auth-page-links">
+          <Link to="/recuperar-senha">Recuperar senha</Link>
           <Link to="/">Voltar</Link>
         </div>
       </section>
