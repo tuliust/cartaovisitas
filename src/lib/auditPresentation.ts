@@ -106,7 +106,7 @@ function humanizeCode(value: string) {
   return normalized.charAt(0).toLocaleUpperCase('pt-BR') + normalized.slice(1)
 }
 
-function readChangedFields(log: AuditLog) {
+function readChangedFields(log: AuditLog): string[] {
   const metadata = isRecord(log.metadata) ? log.metadata : {}
   const fromMetadata = metadata.changed_fields
 
@@ -114,14 +114,21 @@ function readChangedFields(log: AuditLog) {
     return fromMetadata.filter((item): item is string => typeof item === 'string')
   }
 
-  if (!isRecord(log.before_data) || !isRecord(log.after_data)) {
+  const beforeData = log.before_data
+  const afterData = log.after_data
+
+  if (!isRecord(beforeData) || !isRecord(afterData)) {
     return []
   }
 
-  return Array.from(new Set([
-    ...Object.keys(log.before_data),
-    ...Object.keys(log.after_data),
-  ])).filter((key) => JSON.stringify(log.before_data[key]) !== JSON.stringify(log.after_data[key]))
+  const keys = new Set([
+    ...Object.keys(beforeData),
+    ...Object.keys(afterData),
+  ])
+
+  return Array.from(keys).filter(
+    (key) => JSON.stringify(beforeData[key]) !== JSON.stringify(afterData[key]),
+  )
 }
 
 function getBrandSettingsTitle(log: AuditLog) {
