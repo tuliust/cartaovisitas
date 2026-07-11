@@ -4360,3 +4360,40 @@ html.app-visual-mode-light .auth-page-card {
   }
 }
 
+/* AUTH SPACING OVERRIDE START */
+/* Shared visual spacing for /entrar, /cadastro, /recuperar-senha and /admin/login. */
+
+.auth-page-card .auth-page-logo {
+  width: clamp(165px, 22vh, 190px);
+  max-height: clamp(68px, 10vh, 88px);
+  margin-bottom: clamp(30px, 4vh, 38px);
+}
+
+.auth-page-card .auth-page-links {
+  margin-top: clamp(22px, 3vh, 30px);
+}
+
+@media (max-height: 760px) {
+  .auth-page-card .auth-page-logo {
+    width: 150px;
+    max-height: 66px;
+    margin-bottom: 22px;
+  }
+
+  .auth-page-card .auth-page-links {
+    margin-top: 16px;
+  }
+}
+
+@media (max-height: 640px) {
+  .auth-page-card .auth-page-logo {
+    width: 136px;
+    max-height: 58px;
+    margin-bottom: 18px;
+  }
+
+  .auth-page-card .auth-page-links {
+    margin-top: 12px;
+  }
+}
+/* AUTH SPACING OVERRIDE END */
