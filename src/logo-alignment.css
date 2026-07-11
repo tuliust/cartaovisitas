@@ -1,0 +1,72 @@
+/*
+  Alinhamento óptico da marca Invest RS.
+  O arquivo do logo tem respiro interno; por isso a borda visível da marca
+  precisa ser deslocada levemente para a esquerda para alinhar com o conteúdo.
+*/
+
+:root {
+  --page-inline-gutter: clamp(20px, 2.5vw, 32px);
+  --brand-logo-optical-offset: -28px;
+}
+
+/* Header das áreas administrativas e do colaborador */
+.admin-topbar {
+  padding-left: var(--page-inline-gutter) !important;
+  padding-right: var(--page-inline-gutter) !important;
+}
+
+/* Conteúdo abaixo do header usa o mesmo gutter */
+.admin-page {
+  width: min(1180px, calc(100% - (var(--page-inline-gutter) * 2))) !important;
+}
+
+/* Logos devem alinhar pela esquerda visual */
+.auth-logo,
+.public-card-logo,
+.admin-logo,
+.card-preview-logo,
+.brand-logo-main,
+.asset-preview.logo,
+.brand-asset-preview.logo,
+.brand-preview > img {
+  object-position: left center !important;
+}
+
+/* Compensação óptica do respiro interno do arquivo do logo */
+.auth-logo,
+.public-card-logo,
+.admin-logo,
+.card-preview-logo,
+.brand-logo-main {
+  transform: translateX(var(--brand-logo-optical-offset));
+  transform-origin: left center;
+}
+
+.admin-brand {
+  display: inline-flex;
+  align-items: center;
+  overflow: visible;
+}
+
+.card-topline,
+.card-preview-top {
+  overflow: visible;
+}
+
+@media (max-width: 760px) {
+  :root {
+    --page-inline-gutter: 16px;
+    --brand-logo-optical-offset: -18px;
+  }
+
+  .admin-page {
+    width: min(100% - (var(--page-inline-gutter) * 2), 1180px) !important;
+  }
+}
+
+@media (max-width: 360px) {
+  :root {
+    --page-inline-gutter: 14px;
+    --brand-logo-optical-offset: -14px;
+  }
+}
