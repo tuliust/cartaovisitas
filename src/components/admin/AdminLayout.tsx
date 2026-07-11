@@ -1,5 +1,6 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import type { ReactNode } from 'react'
+import { ClipboardList, CreditCard, LogOut, Settings, Users } from 'lucide-react'
 import { signOut } from '../../lib/auth'
 import { useBrandSettings } from '../../contexts/BrandSettingsContext'
 import { useVisualMode } from '../../contexts/VisualModeContext'
@@ -25,17 +26,46 @@ export default function AdminLayout({ title, subtitle, action, children }: Admin
   return (
     <main className="admin-shell">
       <header className="admin-topbar">
-        <Link className="admin-brand" to="/admin/cartoes">
+        <Link className="admin-brand" to="/admin/cartoes" aria-label="Ir para o painel de cartões">
           <img className="admin-logo" src={getVariantLogo(settings, visualMode)} alt="Invest RS" />
         </Link>
 
-        <nav className="admin-nav">
-          <Link to="/admin/cartoes">Cartões</Link>
-          <Link to="/admin/usuarios">Usuários</Link>
-          <Link to="/admin/auditoria">Auditoria</Link>
-          <Link to="/admin/configuracoes">Configurações</Link>
-          <button type="button" onClick={handleSignOut}>
-            Sair
+        <nav className="admin-nav" aria-label="Navegação administrativa">
+          <NavLink
+            className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}
+            to="/admin/cartoes"
+          >
+            <CreditCard aria-hidden="true" />
+            <span>Cartões</span>
+          </NavLink>
+
+          <NavLink
+            className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}
+            to="/admin/usuarios"
+          >
+            <Users aria-hidden="true" />
+            <span>Usuários</span>
+          </NavLink>
+
+          <NavLink
+            className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}
+            to="/admin/auditoria"
+          >
+            <ClipboardList aria-hidden="true" />
+            <span>Auditoria</span>
+          </NavLink>
+
+          <NavLink
+            className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}
+            to="/admin/configuracoes"
+          >
+            <Settings aria-hidden="true" />
+            <span>Configurações</span>
+          </NavLink>
+
+          <button className="admin-nav-logout" type="button" onClick={handleSignOut}>
+            <LogOut aria-hidden="true" />
+            <span>Sair</span>
           </button>
         </nav>
       </header>

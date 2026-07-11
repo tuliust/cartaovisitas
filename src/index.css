@@ -21,9 +21,13 @@
   --visual-action-color: #ffffff;
   --visual-action-muted: rgba(255, 255, 255, 0.72);
   --admin-header-bg: rgba(8, 8, 8, 0.78);
-  --admin-nav-text: #ffffff;
+  --admin-nav-text: rgba(255, 255, 255, 0.74);
+  --admin-nav-text-hover: #ffffff;
+  --admin-nav-text-active: #ffffff;
+  --admin-nav-logout: #ffb3b3;
+  --admin-nav-logout-hover: #ffd0d0;
   --admin-nav-bg: transparent;
-  --admin-nav-bg-hover: rgba(255, 255, 255, 0.08);
+  --admin-nav-bg-hover: transparent;
   --admin-nav-border: rgba(255, 255, 255, 0.14);
   --admin-primary-button-bg: #111111;
   --admin-primary-button-text: #ffffff;
@@ -88,9 +92,13 @@ html.app-visual-mode-light {
   --visual-action-color: #111111;
   --visual-action-muted: rgba(17, 17, 17, 0.72);
   --admin-header-bg: rgba(255, 255, 255, 0.82);
-  --admin-nav-text: #111111;
+  --admin-nav-text: rgba(17, 17, 17, 0.72);
+  --admin-nav-text-hover: #111111;
+  --admin-nav-text-active: #111111;
+  --admin-nav-logout: #9f1f1f;
+  --admin-nav-logout-hover: #720b0b;
   --admin-nav-bg: transparent;
-  --admin-nav-bg-hover: rgba(17, 17, 17, 0.06);
+  --admin-nav-bg-hover: transparent;
   --admin-nav-border: rgba(17, 17, 17, 0.12);
   --admin-primary-button-bg: #111111;
   --admin-primary-button-text: #ffffff;
@@ -3670,3 +3678,170 @@ html.app-visual-mode-light .slug-availability.checking {
     width: min(240px, calc(100vw - 56px));
   }
 }
+
+/* Admin header navigation: compact, icon-led and visually consistent across themes. */
+.admin-nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 2px 4px;
+}
+
+.admin-nav .admin-nav-link,
+.admin-nav .admin-nav-logout {
+  min-height: 36px;
+  margin: 0;
+  padding: 7px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--admin-nav-text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  opacity: 1;
+  transition: color 150ms ease;
+}
+
+.admin-nav .admin-nav-link svg,
+.admin-nav .admin-nav-logout svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  stroke-width: 1.9;
+}
+
+.admin-nav .admin-nav-link:hover,
+.admin-nav .admin-nav-link:focus-visible {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--admin-nav-text-hover);
+  text-decoration: none;
+}
+
+.admin-nav .admin-nav-link.active,
+.admin-nav .admin-nav-link.active:hover,
+.admin-nav .admin-nav-link.active:focus-visible {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--admin-nav-text-active);
+  font-weight: 700;
+}
+
+.admin-nav .admin-nav-logout {
+  margin-left: 8px;
+  color: var(--admin-nav-logout);
+}
+
+.admin-nav .admin-nav-logout:hover,
+.admin-nav .admin-nav-logout:focus-visible {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--admin-nav-logout-hover);
+}
+
+.admin-nav .admin-nav-link:focus-visible,
+.admin-nav .admin-nav-logout:focus-visible {
+  outline: 3px solid #6aa9ff;
+  outline-offset: 2px;
+}
+
+html.app-visual-mode-dark .admin-nav .admin-nav-link,
+html.app-visual-mode-dark .admin-nav .admin-nav-logout,
+html.app-visual-mode-light .admin-nav .admin-nav-link,
+html.app-visual-mode-light .admin-nav .admin-nav-logout {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+html.app-visual-mode-dark .admin-nav .admin-nav-link {
+  color: var(--admin-nav-text);
+}
+
+html.app-visual-mode-dark .admin-nav .admin-nav-link:hover,
+html.app-visual-mode-dark .admin-nav .admin-nav-link:focus-visible {
+  color: var(--admin-nav-text-hover);
+}
+
+html.app-visual-mode-dark .admin-nav .admin-nav-link.active,
+html.app-visual-mode-dark .admin-nav .admin-nav-link.active:hover,
+html.app-visual-mode-dark .admin-nav .admin-nav-link.active:focus-visible {
+  color: var(--admin-nav-text-active);
+}
+
+html.app-visual-mode-dark .admin-nav .admin-nav-logout {
+  color: var(--admin-nav-logout);
+}
+
+html.app-visual-mode-dark .admin-nav .admin-nav-logout:hover,
+html.app-visual-mode-dark .admin-nav .admin-nav-logout:focus-visible {
+  color: var(--admin-nav-logout-hover);
+}
+
+html.app-visual-mode-light .admin-nav .admin-nav-link {
+  color: var(--admin-nav-text);
+}
+
+html.app-visual-mode-light .admin-nav .admin-nav-link:hover,
+html.app-visual-mode-light .admin-nav .admin-nav-link:focus-visible {
+  color: var(--admin-nav-text-hover);
+}
+
+html.app-visual-mode-light .admin-nav .admin-nav-link.active,
+html.app-visual-mode-light .admin-nav .admin-nav-link.active:hover,
+html.app-visual-mode-light .admin-nav .admin-nav-link.active:focus-visible {
+  color: var(--admin-nav-text-active);
+}
+
+html.app-visual-mode-light .admin-nav .admin-nav-logout {
+  color: var(--admin-nav-logout);
+}
+
+html.app-visual-mode-light .admin-nav .admin-nav-logout:hover,
+html.app-visual-mode-light .admin-nav .admin-nav-logout:focus-visible {
+  color: var(--admin-nav-logout-hover);
+}
+
+@media (max-width: 760px) {
+  .admin-nav {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 2px 6px;
+  }
+
+  .admin-nav .admin-nav-link,
+  .admin-nav .admin-nav-logout {
+    min-height: 40px;
+    padding: 7px 6px;
+    font-size: 0.82rem;
+  }
+
+  .admin-nav .admin-nav-logout {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-nav {
+    justify-content: flex-start;
+  }
+
+  .admin-nav .admin-nav-logout {
+    margin-left: 0;
+  }
+}
+
