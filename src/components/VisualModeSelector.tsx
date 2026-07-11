@@ -1,5 +1,5 @@
-import { Aperture } from 'lucide-react'
-import { useRef, type KeyboardEvent } from 'react'
+import { Check, ChevronDown } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
 import { useVisualMode } from '../contexts/VisualModeContext'
 import { getVariantClassName, getVariantImage, getVariantStyle } from '../lib/cardVisualVariants'
@@ -7,44 +7,54 @@ import { getVariantClassName, getVariantImage, getVariantStyle } from '../lib/ca
 export default function VisualModeSelector() {
   const { settings } = useBrandSettings()
   const { visualMode, setVisualMode, visualModeOptions } = useVisualMode()
-  const optionRefs = useRef<Array<HTMLButtonElement | null>>([])
+  const [open, setOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const activeOption = visualModeOptions.find(({ value }) => value === visualMode)
 
-  function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
-    if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(event.key)) return
-    event.preventDefault()
-    const lastIndex = visualModeOptions.length - 1
-    const nextIndex = event.key === 'Home'
-      ? 0
-      : event.key === 'End'
-        ? lastIndex
-        : event.key === 'ArrowRight' || event.key === 'ArrowDown'
-          ? (index + 1) % visualModeOptions.length
-          : (index - 1 + visualModeOptions.length) % visualModeOptions.length
-    const nextOption = visualModeOptions[nextIndex]
-    setVisualMode(nextOption.value)
-    optionRefs.current[nextIndex]?.focus()
-  }
+  useEffect(() => {
+    if (!open) return
+    function closeOnOutsideClick(event: MouseEvent) {
+      if (!containerRef.current?.contains(event.target as Node)) setOpen(false)
+    }
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('mousedown', closeOnOutsideClick)
+    document.addEventListener('keydown', closeOnEscape)
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsideClick)
+      document.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [open])
 
-  return <div className="visual-mode-selector" role="radiogroup" aria-label="Escolha o fundo visual">
-    <div className="visual-mode-wheel">
-      {visualModeOptions.map((option, index) => {
-        const hasImage = Boolean(getVariantImage(settings, option.value))
-        return <button
-          className={`visual-mode-segment visual-mode-option-${option.value.replace(/_/g, '-')}${hasImage ? ' has-image' : ''} ${getVariantClassName(settings, option.value)}${visualMode === option.value ? ' active' : ''}`}
-          style={getVariantStyle(settings, option.value)}
-          type="button"
-          role="radio"
-          aria-checked={visualMode === option.value}
-          aria-label={`Usar fundo: ${option.label}`}
-          title={option.label}
-          key={option.value}
-          ref={(element) => { optionRefs.current[index] = element }}
-          onClick={() => setVisualMode(option.value)}
-          onKeyDown={(event) => handleKeyDown(event, index)}
-        />
-      })}
-      <span className="visual-mode-wheel-center" aria-hidden="true"><Aperture size={22} /></span>
-    </div>
-    <span className="sr-only" aria-live="polite">Fundo ativo: {visualModeOptions.find(({ value }) => value === visualMode)?.label}</span>
+  return <div className="visual-mode-selector" ref={containerRef}>
+    <button className="visual-mode-trigger" type="button" aria-label={`Escolher visual. Atual: ${activeOption?.label ?? 'Preto institucional'}`} aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
+      <span className={`visual-mode-trigger-swatch ${getVariantClassName(settings, visualMode)}`} style={getVariantStyle(settings, visualMode)} aria-hidden="true" />
+      <span>Visual</span>
+      <ChevronDown className={open ? 'open' : ''} size={15} aria-hidden="true" />
+    </button>
+
+    {open ? <section className="visual-mode-popover" role="dialog" aria-label="Escolha o visual">
+      <p>Escolha o visual</p>
+      <div className="visual-mode-grid">
+        {visualModeOptions.map((option) => {
+          const hasImage = Boolean(getVariantImage(settings, option.value))
+          const active = visualMode === option.value
+          return <button
+            className={`visual-mode-option${active ? ' active' : ''}`}
+            type="button"
+            aria-label={`Usar visual: ${option.label}`}
+            aria-pressed={active}
+            key={option.value}
+            onClick={() => { setVisualMode(option.value); setOpen(false) }}
+          >
+            <span className={`visual-mode-option-preview visual-mode-option-${option.value.replace(/_/g, '-')}${hasImage ? ' has-image' : ''} ${getVariantClassName(settings, option.value)}`} style={getVariantStyle(settings, option.value)} aria-hidden="true">
+              {active ? <span className="visual-mode-option-check"><Check size={13} /></span> : null}
+            </span>
+            <span>{option.label}</span>
+          </button>
+        })}
+      </div>
+    </section> : null}
   </div>
 }

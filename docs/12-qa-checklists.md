@@ -124,8 +124,9 @@ Testar:
 
 ## Modo visual global
 
-- paleta circular com seis setores visuais aparece na Home;
-- clique direto e navegação por setas selecionam cada variante;
+- botão compacto abre popover com seis miniaturas na Home;
+- clique externo e `Escape` fecham o popover;
+- clique em uma miniatura seleciona a variante e fecha o popover;
 - opção ativa possui destaque e marcador visíveis;
 - escolha persiste em `invest-rs-public-visual-mode` após reload;
 - `dark_black` acompanha a navegação para `/entrar`;
