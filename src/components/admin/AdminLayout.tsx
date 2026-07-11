@@ -2,6 +2,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import type { ReactNode } from 'react'
 import { signOut } from '../../lib/auth'
 import { useBrandSettings } from '../../contexts/BrandSettingsContext'
+import { useVisualMode } from '../../contexts/VisualModeContext'
+import { getVariantLogo } from '../../lib/cardVisualVariants'
 
 type AdminLayoutProps = {
   title: string
@@ -13,6 +15,7 @@ type AdminLayoutProps = {
 export default function AdminLayout({ title, subtitle, action, children }: AdminLayoutProps) {
   const navigate = useNavigate()
   const { settings } = useBrandSettings()
+  const { visualMode } = useVisualMode()
 
   async function handleSignOut() {
     await signOut()
@@ -23,7 +26,7 @@ export default function AdminLayout({ title, subtitle, action, children }: Admin
     <main className="admin-shell">
       <header className="admin-topbar">
         <Link className="admin-brand" to="/admin/cartoes">
-          <img className="admin-logo" src={settings.logo_on_dark_url || settings.logo_url} alt="Invest RS" />
+          <img className="admin-logo" src={getVariantLogo(settings, visualMode)} alt="Invest RS" />
         </Link>
 
         <nav className="admin-nav">

@@ -62,6 +62,9 @@ Testar:
 - compartilhar;
 - baixar QR;
 - Wallet standby.
+- usa a preferência visual local quando existente;
+- sem preferência local, usa `public_visual_variant` do cartão;
+- variante sem imagem usa o fallback preto ou branco correspondente.
 
 ## Admin cartões
 
@@ -111,7 +114,6 @@ Testar:
 
 ## Branding
 
-- upload de logo principal;
 - upload logo fundo escuro;
 - upload logo fundo claro;
 - upload fundos;
@@ -119,6 +121,17 @@ Testar:
 - upload Apple Touch;
 - preview das seis variantes;
 - persistência após reload.
+
+## Modo visual global
+
+- botão redondo e menu com seis opções aparecem na Home;
+- clique externo e `Escape` fecham o menu;
+- escolha persiste em `invest-rs-public-visual-mode` após reload;
+- `dark_black` acompanha a navegação para `/entrar`;
+- `light_white` acompanha a navegação para `/cadastro`;
+- preferência local altera apenas a renderização do cartão público;
+- limpar a chave restaura o `public_visual_variant` salvo no cartão;
+- vCard, QR, idioma e Wallet permanecem inalterados.
 
 ## RLS
 

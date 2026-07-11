@@ -1,13 +1,17 @@
 import { Link } from 'react-router-dom'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
+import VisualModeSelector from '../components/VisualModeSelector'
+import { useVisualMode } from '../contexts/VisualModeContext'
+import { getVariantLogo } from '../lib/cardVisualVariants'
 
 export default function HomePage() {
   const { settings } = useBrandSettings()
+  const { visualMode } = useVisualMode()
 
   return (
     <main className="app-shell">
       <section className="home-panel">
-        <img className="brand-logo-main" src={settings.logo_on_dark_url || settings.logo_url} alt="Invest RS" />
+        <div className="home-topline"><img className="brand-logo-main" src={getVariantLogo(settings, visualMode)} alt="Invest RS" /><VisualModeSelector /></div>
         <div className="home-content">
           <p className="eyebrow">Cartão de visitas digital</p>
           <h1>Cartões digitais com QR Code.</h1>

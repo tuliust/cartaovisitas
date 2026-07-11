@@ -18,6 +18,7 @@ import WalletSupportModal from '../components/WalletSupportModal'
 import { getAppleWalletUrl, isIosDevice, isWalletPublicEnabled } from '../lib/wallet'
 import { useToast } from '../contexts/ToastContext'
 import { getVariantClassName, getVariantLogo, getVariantStyle } from '../lib/cardVisualVariants'
+import { useVisualMode } from '../contexts/VisualModeContext'
 
 type PageStatus = 'loading' | 'ready' | 'not-found' | 'error'
 
@@ -38,6 +39,7 @@ export default function PublicCardPage() {
   const navigate = useNavigate()
   const toast = useToast()
   const { settings } = useBrandSettings()
+  const { visualMode, hasVisualModePreference } = useVisualMode()
   const { slug } = useParams()
   const [card, setCard] = useState<BusinessCard | null>(null)
   const [status, setStatus] = useState<PageStatus>('loading')
@@ -176,7 +178,7 @@ export default function PublicCardPage() {
   const phone = card.mobile_phone || card.work_phone
   const phoneLink = phone ? normalizePhoneForLink(phone) : ''
   const address = buildAddress(card)
-  const visualVariant = card.public_visual_variant ?? 'dark_black'
+  const visualVariant = hasVisualModePreference ? visualMode : card.public_visual_variant ?? 'dark_black'
   const logoUrl = getVariantLogo(settings, visualVariant, card.logo_url)
   const logoFailed = failedLogoUrl === logoUrl
   const showAvatar = card.show_avatar_public && Boolean(card.avatar_url)

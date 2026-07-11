@@ -15,10 +15,12 @@ import { BrandSettingsProvider } from './contexts/BrandSettingsProvider'
 import ToastProvider from './components/ToastProvider'
 import AdminUsersPage from './pages/admin/AdminUsersPage'
 import AdminAuditPage from './pages/admin/AdminAuditPage'
+import { VisualModeProvider } from './contexts/VisualModeProvider'
 
 function App() {
   return (
     <BrandSettingsProvider>
+    <VisualModeProvider>
     <ToastProvider>
     <BrowserRouter>
       <Routes>
@@ -43,6 +45,7 @@ function App() {
       </Routes>
     </BrowserRouter>
     </ToastProvider>
+    </VisualModeProvider>
     </BrandSettingsProvider>
   )
 }

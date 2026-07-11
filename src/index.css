@@ -13,6 +13,7 @@
   --brand-text: #ffffff;
   --brand-accent: #f7f3eb;
   --brand-background-image: none;
+  --app-visual-variant-image: none;
 }
 
 * {
@@ -26,6 +27,24 @@ body {
   background:
     radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 30rem),
     linear-gradient(135deg, #0c0c0c, #050505 50%, #111111);
+}
+
+html.app-visual-mode-dark body {
+  color: #ffffff;
+  background-color: #050505;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.78)), var(--app-visual-variant-image), radial-gradient(circle at top left, #202020, #050505 58%);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+html.app-visual-mode-light body {
+  color: #111111;
+  background-color: #f4f1eb;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.84)), var(--app-visual-variant-image), linear-gradient(135deg, #ffffff, #e8e3da);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 a {
@@ -66,6 +85,157 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.home-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.visual-mode-selector {
+  position: relative;
+  z-index: 20;
+  flex: 0 0 auto;
+}
+
+.visual-mode-trigger {
+  width: 48px;
+  height: 48px;
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(12, 12, 12, 0.78);
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.visual-mode-current-swatch,
+.visual-mode-option-swatch {
+  display: block;
+  flex: 0 0 auto;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 999px;
+  background-size: cover;
+  background-position: center;
+}
+
+.visual-mode-current-swatch {
+  width: 26px;
+  height: 26px;
+}
+
+.visual-mode-option-swatch {
+  width: 34px;
+  height: 34px;
+}
+
+.visual-mode-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: min(280px, calc(100vw - 48px));
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 18px;
+  background: rgba(16, 16, 16, 0.97);
+  color: #ffffff;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
+}
+
+.visual-mode-menu button {
+  width: 100%;
+  min-height: 48px;
+  padding: 7px 9px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 34px 1fr 18px;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+}
+
+.visual-mode-menu button:hover,
+.visual-mode-menu button.active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.visual-mode-trigger:focus-visible,
+.visual-mode-menu button:focus-visible {
+  outline: 3px solid #6aa9ff;
+  outline-offset: 2px;
+}
+
+.visual-mode-current-swatch.public-card-theme-dark,
+.visual-mode-option-swatch.public-card-theme-dark {
+  background-color: #050505;
+}
+
+.visual-mode-current-swatch.public-card-theme-light,
+.visual-mode-option-swatch.public-card-theme-light {
+  background-color: #ffffff;
+}
+
+html.app-visual-mode-light .home-panel,
+html.app-visual-mode-light .admin-login-card,
+html.app-visual-mode-light .admin-card,
+html.app-visual-mode-light .state-card,
+html.app-visual-mode-light .action-panel,
+html.app-visual-mode-light .admin-topbar {
+  border-color: rgba(0, 0, 0, 0.14);
+  background: rgba(255, 255, 255, 0.88);
+  color: #111111;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.14);
+}
+
+html.app-visual-mode-light .home-description,
+html.app-visual-mode-light .admin-login-card p,
+html.app-visual-mode-light .admin-page-header p,
+html.app-visual-mode-light .eyebrow {
+  color: #555555;
+}
+
+html.app-visual-mode-light .secondary-button,
+html.app-visual-mode-light .admin-nav a,
+html.app-visual-mode-light .admin-nav button {
+  border-color: rgba(0, 0, 0, 0.18);
+  background: rgba(0, 0, 0, 0.06);
+  color: #111111;
+}
+
+html.app-visual-mode-light .primary-button {
+  background: #111111;
+  color: #ffffff;
+}
+
+html.app-visual-mode-light .admin-login-card input,
+html.app-visual-mode-light .admin-card input,
+html.app-visual-mode-light .admin-card select,
+html.app-visual-mode-light .admin-card textarea {
+  border-color: rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.92);
+  color: #111111;
+}
+
+html.app-visual-mode-light .visual-mode-trigger {
+  border-color: rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.9);
+  color: #111111;
+}
+
+@media (max-width: 560px) {
+  .home-topline { gap: 12px; }
+  .visual-mode-trigger { width: 44px; height: 44px; }
 }
 
 .brand-mark,

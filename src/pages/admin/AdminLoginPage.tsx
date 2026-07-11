@@ -5,10 +5,13 @@ import { getFriendlyErrorMessage } from '../../lib/errors'
 import { buildInvestEmail, INVEST_EMAIL_DOMAIN, normalizeInvestEmailInput } from '../../lib/investEmail'
 import { isCurrentUserAdmin } from '../../lib/roles'
 import { useBrandSettings } from '../../contexts/BrandSettingsContext'
+import { useVisualMode } from '../../contexts/VisualModeContext'
+import { getVariantLogo } from '../../lib/cardVisualVariants'
 import { useToast } from '../../contexts/ToastContext'
 
 export default function AdminLoginPage() {
   const { settings } = useBrandSettings()
+  const { visualMode } = useVisualMode()
   const toast = useToast()
   const navigate = useNavigate()
   const [prefix, setPrefix] = useState('')
@@ -59,7 +62,7 @@ export default function AdminLoginPage() {
   return (
     <main className="admin-login-shell">
       <section className="admin-login-card">
-        <img className="auth-logo" src={settings.logo_on_dark_url || settings.logo_url} alt="Invest RS" />
+        <img className="auth-logo" src={getVariantLogo(settings, visualMode)} alt="Invest RS" />
         <h1>Área Restrita</h1>
         <p>Acesso administrativo aos cartões digitais da Invest RS.</p>
         <form onSubmit={submit}>

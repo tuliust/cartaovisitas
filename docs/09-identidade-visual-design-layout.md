@@ -22,6 +22,8 @@ Configurável em `/admin/configuracoes`:
 
 ## Seis variantes do cartão público
 
+A Home oferece um seletor global com as seis variantes institucionais. A escolha do visitante é persistida no navegador pela chave `invest-rs-public-visual-mode` e acompanha a navegação por Home, autenticação, área administrativa, área do colaborador e cartão público. Essa preferência é somente local e não altera dados no banco.
+
 ### Modo escuro
 
 | Código | Nome | Logo | Texto |
@@ -42,6 +44,8 @@ Configurável em `/admin/configuracoes`:
 
 - `dark_image_1` e `dark_image_2` sem imagem configurada usam `dark_black`.
 - `light_image_3` e `light_image_4` sem imagem configurada usam `light_white`.
+- Sem preferência local, o cartão público usa seu `public_visual_variant` institucional salvo no banco.
+- Com preferência local, o cartão é renderizado no modo escolhido sem sobrescrever `public_visual_variant`.
 
 ## Logos
 

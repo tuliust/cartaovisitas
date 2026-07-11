@@ -83,6 +83,10 @@ Regras mínimas:
 - QR Code com `alt`;
 - toasts com `aria-live`.
 
+## Seletor global de modo visual
+
+O seletor redondo exibido na Home abre um menu com as seis variações institucionais. Ele usa botão semântico com `aria-haspopup`, informa `aria-expanded`, aceita fechamento por clique externo ou `Escape` e preserva foco visível. A preferência fica em `localStorage` e pode ser alterada retornando à Home.
+
 ## QR e mobile
 
 QR Code precisa ser legível em mobile e desktop. Downloads devem gerar PNG com nome baseado no slug.

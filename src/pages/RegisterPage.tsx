@@ -4,10 +4,13 @@ import { signUpWithPassword } from '../lib/auth'
 import { getFriendlyErrorMessage } from '../lib/errors'
 import { buildInvestEmail, INVEST_EMAIL_DOMAIN, normalizeInvestEmailInput } from '../lib/investEmail'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
+import { useVisualMode } from '../contexts/VisualModeContext'
+import { getVariantLogo } from '../lib/cardVisualVariants'
 import { useToast } from '../contexts/ToastContext'
 
 export default function RegisterPage() {
   const { settings } = useBrandSettings()
+  const { visualMode } = useVisualMode()
   const toast = useToast()
   const [prefix, setPrefix] = useState('')
   const [password, setPassword] = useState('')
@@ -56,7 +59,7 @@ export default function RegisterPage() {
       <section className="admin-login-card">
         <img
           className="auth-logo"
-          src={settings.logo_on_dark_url || settings.logo_url}
+          src={getVariantLogo(settings, visualMode)}
           alt="Invest RS"
           style={{ width: '180px', marginBottom: '28px' }}
         />
