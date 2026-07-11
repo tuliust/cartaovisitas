@@ -46,6 +46,7 @@ A Home e o cartão público oferecem um botão compacto de visual que abre um po
 - `light_image_3` e `light_image_4` sem imagem configurada usam `light_white`.
 - Sem preferência local, o cartão público usa seu `public_visual_variant` institucional salvo no banco.
 - Com preferência local, o cartão é renderizado no modo escolhido sem sobrescrever `public_visual_variant`.
+- `light_image_4` usa no cartão público uma superfície quase branca sobre a textura institucional, preservando conteúdo escuro e totalmente opaco.
 
 ## Logos
 

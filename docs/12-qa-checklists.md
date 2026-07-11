@@ -138,6 +138,9 @@ Testar:
 - “Copiar vCard” copia a URL `/api/vcard/:slug?lang=:idioma`;
 - área do colaborador exibe o logo institucional no header;
 - `/admin/usuarios` mostra nome sobre e-mail e ações compactas com ícones.
+- CTA principal da Home mantém texto branco em `light_white`, `light_image_3` e `light_image_4`;
+- preferência visual persiste em cadastro, login, recuperação, definição de senha, área do colaborador e cartão público;
+- `light_image_4` exibe card público quase branco, com texto, labels e QR legíveis.
 
 ## RLS
 

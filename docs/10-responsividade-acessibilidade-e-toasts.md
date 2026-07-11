@@ -89,6 +89,8 @@ O botão compacto de visual exibido na Home abre um popover com seis miniaturas.
 
 No cartão público, o mesmo seletor fica alinhado ao toggle PT/ES/EN e pode quebrar de linha no mobile. Em `/admin/usuarios`, ações compactas usam ícone, texto quando houver espaço, `aria-label` e `title`.
 
+Nos modos claros, botões primários com fundo escuro mantêm texto branco em todos os estados. A transparência visual é aplicada somente aos backgrounds das superfícies; textos, ícones e ações disponíveis permanecem opacos.
+
 ## QR e mobile
 
 QR Code precisa ser legível em mobile e desktop. Downloads devem gerar PNG com nome baseado no slug.

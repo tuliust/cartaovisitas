@@ -3038,3 +3038,39 @@ html.app-visual-mode-light .visual-mode-option.active {
   background: rgba(40, 111, 202, 0.1);
   color: #111111;
 }
+
+html.app-visual-mode-light .home-actions .primary-button,
+html.app-visual-mode-light .home-actions .primary-button:link,
+html.app-visual-mode-light .home-actions .primary-button:visited,
+html.app-visual-mode-light .home-actions .primary-button:hover,
+html.app-visual-mode-light .home-actions .primary-button:focus-visible {
+  background: #111111;
+  color: #ffffff;
+  opacity: 1;
+}
+
+html.app-visual-mode-light .home-actions .primary-button:hover,
+html.app-visual-mode-light .home-actions .primary-button:focus-visible {
+  background: #242424;
+}
+
+.card-visual.public-card-variant-light-image-4 {
+  --public-card-foreground: #0f0f0f;
+  --public-card-muted: rgba(15, 15, 15, 0.78);
+  --public-card-subtle: rgba(15, 15, 15, 0.7);
+  --public-card-label: rgba(15, 15, 15, 0.72);
+  border-color: rgba(17, 17, 17, 0.12);
+  background-color: rgba(255, 255, 255, 0.92);
+  background-image: linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.94)), var(--public-card-variant-image);
+  box-shadow: 0 22px 58px rgba(17, 17, 17, 0.13);
+  color: var(--public-card-foreground);
+  opacity: 1;
+}
+
+html.app-visual-mode-light :is(.home-panel, .admin-login-card, .admin-card, .admin-form-section, .action-panel) :is(h1, h2, h3, p, label, a, button, svg) {
+  opacity: 1;
+}
+
+html.app-visual-mode-light :is(.admin-login-card, .admin-card, .admin-form-section) :is(input, select, textarea) {
+  caret-color: #111111;
+}
