@@ -11,6 +11,7 @@ import { useToast } from '../../contexts/ToastContext'
 import { recordAuditLog } from '../../lib/audit'
 import CardImportModal from '../../components/admin/CardImportModal'
 import { downloadCardImportTemplate } from '../../lib/cardImport'
+import { Ban, CheckCircle2, Copy, ExternalLink, Link as LinkIcon, Pencil, QrCode, Trash2 } from 'lucide-react'
 
 function formatDate(value: string | null) {
   if (!value) {
@@ -171,7 +172,7 @@ export default function AdminCardsPage() {
     if (
       card.is_active &&
       !window.confirm(
-        `Tem certeza que deseja desativar o cartão de ${card.display_name || card.full_name}? A página pública, o QR Code e o vCard deixarão de funcionar enquanto ele estiver inativo.`,
+        `Tem certeza que deseja desativar o cartÃ£o de ${card.display_name || card.full_name}? A pÃ¡gina pÃºblica, o QR Code e o vCard deixarÃ£o de funcionar enquanto ele estiver inativo.`,
       )
     ) {
       return
@@ -182,7 +183,7 @@ export default function AdminCardsPage() {
       await setAdminCardActive(card.id, !card.is_active)
       await recordAuditLog({ action: card.is_active ? 'card_deactivated' : 'card_activated', targetType: 'business_card', targetId: card.id, targetLabel: card.slug, beforeData: { is_active: card.is_active }, afterData: { is_active: !card.is_active } })
       await loadCards()
-      toast.success(card.is_active ? 'Cartão desativado com sucesso.' : 'Cartão ativado com sucesso.')
+      toast.success(card.is_active ? 'CartÃ£o desativado com sucesso.' : 'CartÃ£o ativado com sucesso.')
     } catch (err) {
       const message = getFriendlyErrorMessage(err)
       setError(message)
@@ -212,7 +213,7 @@ export default function AdminCardsPage() {
       setDeleteTarget(null)
       setDeleteConfirmation('')
       await loadCards()
-      toast.success('Cartão apagado com sucesso.')
+      toast.success('CartÃ£o apagado com sucesso.')
     } catch (err) {
       const message = getFriendlyErrorMessage(err)
       setError(message)
@@ -227,25 +228,40 @@ export default function AdminCardsPage() {
     const vcardUrl = `${window.location.origin}/api/vcard/${card.slug}`
 
     return (
-      <div className="admin-actions">
-        <Link to={`/admin/cartoes/${card.id}/editar`}>Editar</Link>
-        <a href={publicUrl} target="_blank" rel="noreferrer">
-          Abrir
+      <div className="admin-actions card-compact-actions">
+        <Link to={`/admin/cartoes/${card.id}/editar`} aria-label="Editar cartão" title="Editar">
+          <Pencil aria-hidden="true" />
+          <span className="card-action-label">Editar</span>
+        </Link>
+
+        <a href={publicUrl} target="_blank" rel="noreferrer" aria-label="Abrir cartão" title="Abrir">
+          <ExternalLink aria-hidden="true" />
+          <span className="card-action-label">Abrir</span>
         </a>
-        <button type="button" onClick={() => copyToClipboard(publicUrl, 'Link público copiado.')}>
-          Copiar link
+
+        <button type="button" aria-label="Copiar link público" title="Copiar link" onClick={() => copyToClipboard(publicUrl, 'Link público copiado.')}>
+          <LinkIcon aria-hidden="true" />
+          <span className="card-action-label">Copiar link</span>
         </button>
-        <button type="button" onClick={() => copyToClipboard(vcardUrl, 'Link do vCard copiado.')}>
-          Copiar vCard
+
+        <button type="button" aria-label="Copiar link do vCard" title="Copiar vCard" onClick={() => copyToClipboard(vcardUrl, 'Link do vCard copiado.')}>
+          <Copy aria-hidden="true" />
+          <span className="card-action-label">Copiar vCard</span>
         </button>
-        <button type="button" onClick={() => handleDownloadQrCode(card)}>
-          Baixar QR Code
+
+        <button type="button" aria-label="Baixar QR Code" title="Baixar QR Code" onClick={() => handleDownloadQrCode(card)}>
+          <QrCode aria-hidden="true" />
+          <span className="card-action-label">Baixar QR Code</span>
         </button>
-        <button type="button" onClick={() => handleToggleActive(card)}>
-          {card.is_active ? 'Desativar' : 'Ativar'}
+
+        <button type="button" aria-label={card.is_active ? 'Desativar cartão' : 'Ativar cartão'} title={card.is_active ? 'Desativar' : 'Ativar'} onClick={() => handleToggleActive(card)}>
+          {card.is_active ? <Ban aria-hidden="true" /> : <CheckCircle2 aria-hidden="true" />}
+          <span className="card-action-label">{card.is_active ? 'Desativar' : 'Ativar'}</span>
         </button>
-        <button className="danger-action" type="button" onClick={() => { setDeleteTarget(card); setDeleteConfirmation('') }}>
-          Apagar
+
+        <button className="danger-action" type="button" aria-label="Apagar cartão" title="Apagar" onClick={() => { setDeleteTarget(card); setDeleteConfirmation('') }}>
+          <Trash2 aria-hidden="true" />
+          <span className="card-action-label">Apagar</span>
         </button>
       </div>
     )
@@ -263,17 +279,17 @@ export default function AdminCardsPage() {
     )
   }
 
-  const cardCountLabel = cards.length === 1 ? 'cartão' : 'cartões'
+  const cardCountLabel = cards.length === 1 ? 'cartÃ£o' : 'cartÃµes'
 
   return (
     <AdminLayout
-      title="Cartões digitais"
-      subtitle="Crie, edite e gerencie os cartões institucionais da Invest RS."
+      title="CartÃµes digitais"
+      subtitle="Crie, edite e gerencie os cartÃµes institucionais da Invest RS."
       action={
         <div className="admin-header-actions">
           <button className="secondary-button" type="button" onClick={downloadCardImportTemplate}>Baixar modelo</button>
           <button className="secondary-button" type="button" onClick={() => setImportOpen(true)}>Importar planilha</button>
-          <Link className="primary-button" to="/admin/cartoes/novo">Novo cartão</Link>
+          <Link className="primary-button" to="/admin/cartoes/novo">Novo cartÃ£o</Link>
         </div>
       }
     >
@@ -288,7 +304,7 @@ export default function AdminCardsPage() {
         </div>
 
         {cards.length > 0 ? (
-          <div className="admin-list-controls" role="search" aria-label="Buscar e organizar cartões">
+          <div className="admin-list-controls" role="search" aria-label="Buscar e organizar cartÃµes">
             <label className="admin-search-field">
               <span>Busca</span>
               <input
@@ -310,8 +326,8 @@ export default function AdminCardsPage() {
             <label>
               <span>Ordenar por</span>
               <select className="admin-sort-select" value={sortOption} onChange={(event) => setSortOption(event.target.value as SortOption)}>
-                <option value="name-asc">Nome A–Z</option>
-                <option value="name-desc">Nome Z–A</option>
+                <option value="name-asc">Nome Aâ€“Z</option>
+                <option value="name-desc">Nome Zâ€“A</option>
                 <option value="created-desc">Mais recentes</option>
                 <option value="updated-desc">Atualizados recentemente</option>
                 <option value="status">Status</option>
@@ -320,20 +336,20 @@ export default function AdminCardsPage() {
           </div>
         ) : null}
 
-        {loading ? <p>Carregando cartões...</p> : null}
+        {loading ? <p>Carregando cartÃµes...</p> : null}
 
         {!loading && cards.length === 0 ? (
           <div className="admin-empty">
-            <p>Nenhum cartão cadastrado ainda.</p>
+            <p>Nenhum cartÃ£o cadastrado ainda.</p>
             <Link className="primary-button" to="/admin/cartoes/novo">
-              Criar primeiro cartão
+              Criar primeiro cartÃ£o
             </Link>
           </div>
         ) : null}
 
         {!loading && cards.length > 0 && visibleCards.length === 0 ? (
           <div className="admin-empty admin-filter-empty">
-            <p>Nenhum cartão encontrado para os filtros selecionados.</p>
+            <p>Nenhum cartÃ£o encontrado para os filtros selecionados.</p>
           </div>
         ) : null}
 
@@ -351,7 +367,7 @@ export default function AdminCardsPage() {
                   <th>vCard</th>
                   <th>Compart. / QR</th>
                   <th>Visto em</th>
-                  <th>Ações</th>
+                  <th>AÃ§Ãµes</th>
                 </tr>
               </thead>
 
@@ -393,9 +409,9 @@ export default function AdminCardsPage() {
                       {card.is_active ? 'Ativo' : 'Inativo'}
                     </span>
                   </div>
-                  <p>{card.job_title || 'Cargo não informado'}</p>
+                  <p>{card.job_title || 'Cargo nÃ£o informado'}</p>
                   <small className="admin-card-slug" title={card.slug}>/{card.slug}</small>
-                  <div className="admin-mobile-analytics" aria-label="Métricas de uso">
+                  <div className="admin-mobile-analytics" aria-label="MÃ©tricas de uso">
                     <span><strong>{formatCount(getAnalytics(card.id).view_count)}</strong> views</span>
                     <span><strong>{formatCount(getAnalytics(card.id).vcard_count)}</strong> vCards</span>
                     <span><strong>{formatCount(getAnalytics(card.id).share_count)}</strong> compartilhamentos</span>
@@ -412,8 +428,8 @@ export default function AdminCardsPage() {
       {deleteTarget ? (
         <div className="confirmation-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !deleting) setDeleteTarget(null) }}>
           <section className="confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="delete-card-title">
-            <h2 id="delete-card-title">Apagar cartão permanentemente?</h2>
-            <p>Esta ação é permanente e removerá os dados do cartão e seus eventos associados.</p>
+            <h2 id="delete-card-title">Apagar cartÃ£o permanentemente?</h2>
+            <p>Esta aÃ§Ã£o Ã© permanente e removerÃ¡ os dados do cartÃ£o e seus eventos associados.</p>
             <label>Digite <strong>{deleteTarget.slug}</strong> para confirmar<input autoFocus value={deleteConfirmation} onChange={(event) => setDeleteConfirmation(event.target.value)} /></label>
             <div className="confirmation-actions">
               <button className="secondary-button" type="button" disabled={deleting} onClick={() => setDeleteTarget(null)}>Cancelar</button>

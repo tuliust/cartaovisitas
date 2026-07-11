@@ -3569,3 +3569,48 @@ html.app-visual-mode-light .visual-variant-warning {
 html.app-visual-mode-light .slug-availability.checking {
   color: var(--admin-muted);
 }
+
+/* Compact card actions use the same visual language as admin user actions. */
+.card-compact-actions {
+  flex-wrap: nowrap;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.card-compact-actions > button,
+.card-compact-actions > a {
+  min-width: 36px;
+  min-height: 36px;
+  padding: 7px 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 10px;
+  font-size: 0.74rem;
+  line-height: 1;
+}
+
+.card-compact-actions svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+.card-compact-actions > :focus-visible {
+  outline: 3px solid #6aa9ff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+  .card-compact-actions {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 560px) {
+  .card-compact-actions > button,
+  .card-compact-actions > a {
+    flex: 1 1 auto;
+  }
+}
