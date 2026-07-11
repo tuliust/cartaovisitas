@@ -19,24 +19,17 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [message, setMessage] = useState('')
 
   async function submit(event: FormEvent) {
     event.preventDefault()
-    setError('')
-    setMessage('')
-
     if (password !== confirm) {
       const validationMessage = 'As senhas não coincidem.'
-      setError(validationMessage)
       toast.error(validationMessage)
       return
     }
 
     if (password.length < 6) {
       const validationMessage = 'Use uma senha mais segura.'
-      setError(validationMessage)
       toast.error(validationMessage)
       return
     }
@@ -46,11 +39,9 @@ export default function RegisterPage() {
     try {
       await signUpWithPassword(buildInvestEmail(prefix), password)
       const successMessage = 'Enviamos um e-mail de confirmação. Confirme seu cadastro para continuar.'
-      setMessage(successMessage)
       toast.success(successMessage)
     } catch (err) {
       const failureMessage = getFriendlyErrorMessage(err)
-      setError(failureMessage)
       toast.error(failureMessage)
     } finally {
       setLoading(false)
@@ -58,21 +49,20 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="admin-login-shell">
-      <section className="admin-login-card">
+    <main className="admin-login-shell auth-page-shell">
+      <section className="admin-login-card auth-page-card">
         <img
-          className="auth-logo"
+          className="auth-logo auth-page-logo"
           src={getVariantLogo(settings, visualMode)}
           alt="Invest RS"
-          style={{ width: '180px', marginBottom: '28px' }}
         />
 
-        <h1>Cadastro</h1>
-        <p style={{ marginTop: '12px' }}>
+        <h1 className="auth-page-title">Cadastro</h1>
+        <p className="auth-page-description">
           Crie seu acesso com o e-mail institucional da Invest RS.
         </p>
 
-        <form onSubmit={submit}>
+        <form className="auth-page-form" onSubmit={submit}>
           <label>
             E-mail institucional
             <span className="email-suffix-field">
@@ -139,15 +129,13 @@ export default function RegisterPage() {
             </span>
           </div>
 
-          <button className="primary-button" disabled={loading}>
+          <button className="primary-button auth-page-submit" disabled={loading}>
             {loading ? 'Criando...' : 'Criar cadastro'}
           </button>
         </form>
 
-        {message ? <p className="admin-success">{message}</p> : null}
-        {error ? <p className="admin-error">{error}</p> : null}
 
-        <div className="auth-links">
+        <div className="auth-links auth-page-links">
           <Link to="/">Voltar</Link>
         </div>
       </section>

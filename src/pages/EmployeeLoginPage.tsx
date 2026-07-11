@@ -18,21 +18,18 @@ export default function EmployeeLoginPage() {
   const [prefix, setPrefix] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
 
   useEffect(() => {
     void getCurrentSession().then(async (session) => {
       if (!session) return
       try { await requireActiveUser(); navigate('/meu-cartao', { replace: true }) }
-      catch (error) { await signOut().catch(() => undefined); const message = getFriendlyErrorMessage(error); setError(message); toast.error(message) }
+      catch (error) { await signOut().catch(() => undefined); toast.error(getFriendlyErrorMessage(error)) }
     }).catch(() => undefined)
   }, [navigate, toast])
 
   async function submit(event: FormEvent) {
     event.preventDefault()
     setLoading(true)
-    setError('')
-
     try {
       await signInWithPassword(buildInvestEmail(prefix), password)
       await requireActiveUser()
@@ -41,7 +38,6 @@ export default function EmployeeLoginPage() {
       navigate(card ? `/${card.slug}` : '/meu-cartao/editar', { replace: true })
     } catch (err) {
       const message = getFriendlyErrorMessage(err)
-      setError(message)
       toast.error(message)
     } finally {
       setLoading(false)
@@ -49,21 +45,20 @@ export default function EmployeeLoginPage() {
   }
 
   return (
-    <main className="admin-login-shell">
-      <section className="admin-login-card">
+    <main className="admin-login-shell auth-page-shell">
+      <section className="admin-login-card auth-page-card">
         <img
-          className="auth-logo"
+          className="auth-logo auth-page-logo"
           src={getVariantLogo(settings, visualMode)}
           alt="Invest RS"
-          style={{ width: '180px', marginBottom: '28px' }}
         />
 
-        <h1>Acessar meu cartão</h1>
-        <p style={{ marginTop: '12px' }}>
+        <h1 className="auth-page-title">Acessar meu cartão</h1>
+        <p className="auth-page-description">
           Entre com seu e-mail institucional para acessar seu cartão digital.
         </p>
 
-        <form autoComplete="on" onSubmit={submit}>
+        <form className="auth-page-form" autoComplete="on" onSubmit={submit}>
           <label>
             E-mail institucional
             <span className="email-suffix-field">
@@ -95,14 +90,13 @@ export default function EmployeeLoginPage() {
             />
           </label>
 
-          <button className="primary-button" disabled={loading}>
+          <button className="primary-button auth-page-submit" disabled={loading}>
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
 
-        {error ? <p className="admin-error">{error}</p> : null}
 
-        <div className="auth-links">
+        <div className="auth-links auth-page-links">
           <Link to="/">Voltar</Link>
           <Link to="/cadastro">Cadastre-se</Link>
           <Link to="/recuperar-senha">Recuperar senha</Link>

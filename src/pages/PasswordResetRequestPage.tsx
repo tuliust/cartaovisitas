@@ -14,51 +14,43 @@ export default function PasswordResetRequestPage() {
   const toast = useToast()
   const [prefix, setPrefix] = useState('')
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
-  const [error, setError] = useState('')
 
   async function submit(event: FormEvent) {
     event.preventDefault()
     setLoading(true)
-    setError('')
-    setMessage('')
 
     try {
       await sendPasswordReset(buildInvestEmail(prefix))
-      const successMessage = 'Enviamos um link para você definir uma nova senha.'
-      setMessage(successMessage)
-      toast.success(successMessage)
+      toast.success('Enviamos um link para você definir uma nova senha.')
     } catch (err) {
-      const failureMessage = getFriendlyErrorMessage(err)
-      setError(failureMessage)
-      toast.error(failureMessage)
+      toast.error(getFriendlyErrorMessage(err))
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <main className="admin-login-shell">
-      <section className="admin-login-card">
+    <main className="admin-login-shell auth-page-shell">
+      <section className="admin-login-card auth-page-card">
         <img
-          className="auth-logo"
+          className="auth-logo auth-page-logo"
           src={getVariantLogo(settings, visualMode)}
           alt="Invest RS"
-          style={{ width: '180px', marginBottom: '28px' }}
         />
 
-        <h1>Recuperar senha</h1>
-        <p style={{ marginTop: '12px' }}>
+        <h1 className="auth-page-title">Recuperar senha</h1>
+        <p className="auth-page-description">
           Informe seu e-mail institucional para receber o link de recuperação.
         </p>
 
-        <form onSubmit={submit}>
+        <form className="auth-page-form" onSubmit={submit}>
           <label>
             E-mail institucional
             <span className="email-suffix-field">
               <input
                 required
                 value={prefix}
+                autoComplete="username"
                 onChange={(event) => setPrefix(normalizeInvestEmailInput(event.target.value))}
                 placeholder="seu.nome"
               />
@@ -66,15 +58,12 @@ export default function PasswordResetRequestPage() {
             </span>
           </label>
 
-          <button className="primary-button" disabled={loading}>
+          <button className="primary-button auth-page-submit" disabled={loading}>
             {loading ? 'Enviando...' : 'Enviar link de recuperação'}
           </button>
         </form>
 
-        {message ? <p className="admin-success">{message}</p> : null}
-        {error ? <p className="admin-error">{error}</p> : null}
-
-        <div className="auth-links">
+        <div className="auth-links auth-page-links">
           <Link to="/">Voltar</Link>
         </div>
       </section>
