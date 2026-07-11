@@ -14,6 +14,12 @@
   --brand-accent: #f7f3eb;
   --brand-background-image: none;
   --app-visual-variant-image: none;
+  --visual-page-text: #ffffff;
+  --visual-page-muted: rgba(255, 255, 255, 0.72);
+  --visual-card-surface: rgba(8, 8, 8, 0.78);
+  --visual-card-border: rgba(255, 255, 255, 0.18);
+  --visual-action-color: #ffffff;
+  --visual-action-muted: rgba(255, 255, 255, 0.72);
 }
 
 * {
@@ -45,6 +51,15 @@ html.app-visual-mode-light body {
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+}
+
+html.app-visual-mode-light {
+  --visual-page-text: #111111;
+  --visual-page-muted: rgba(17, 17, 17, 0.72);
+  --visual-card-surface: rgba(255, 255, 255, 0.82);
+  --visual-card-border: rgba(17, 17, 17, 0.14);
+  --visual-action-color: #111111;
+  --visual-action-muted: rgba(17, 17, 17, 0.72);
 }
 
 a {
@@ -1672,6 +1687,213 @@ p {
   }
 }
 
+/* Base contrast contract; the final cascade guard protects it from legacy rules below. */
+html.app-visual-mode-dark body,
+html.app-visual-mode-dark .admin-login-shell,
+html.app-visual-mode-dark .admin-shell {
+  color: var(--visual-page-text);
+}
+
+html.app-visual-mode-light body,
+html.app-visual-mode-light .admin-login-shell,
+html.app-visual-mode-light .admin-shell {
+  color: var(--visual-page-text);
+  background-color: transparent;
+}
+
+html.app-visual-mode-light .home-panel,
+html.app-visual-mode-light .state-card,
+html.app-visual-mode-light .admin-login-card,
+html.app-visual-mode-light .admin-card,
+html.app-visual-mode-light .admin-form-section,
+html.app-visual-mode-light .admin-topbar {
+  border-color: var(--visual-card-border);
+  background-color: var(--visual-card-surface);
+  color: var(--visual-page-text);
+  box-shadow: 0 20px 58px rgba(17, 17, 17, 0.12);
+}
+
+html.app-visual-mode-light .home-panel h1,
+html.app-visual-mode-light .state-card h1,
+html.app-visual-mode-light .admin-login-card h1,
+html.app-visual-mode-light .admin-card h1,
+html.app-visual-mode-light .admin-card h2,
+html.app-visual-mode-light .admin-card h3,
+html.app-visual-mode-light .admin-form-section h2,
+html.app-visual-mode-light .admin-page-header h1,
+html.app-visual-mode-light .admin-login-card label,
+html.app-visual-mode-light .admin-card label,
+html.app-visual-mode-light .admin-form-section label {
+  color: var(--visual-page-text);
+}
+
+html.app-visual-mode-light .home-description,
+html.app-visual-mode-light .state-card p,
+html.app-visual-mode-light .admin-login-card > p:not(.admin-error):not(.admin-success),
+html.app-visual-mode-light .admin-page-header p,
+html.app-visual-mode-light .admin-card small,
+html.app-visual-mode-light .admin-form-section small,
+html.app-visual-mode-light .eyebrow {
+  color: var(--visual-page-muted);
+}
+
+html.app-visual-mode-light .admin-nav,
+html.app-visual-mode-light .admin-nav a,
+html.app-visual-mode-light .admin-nav button,
+html.app-visual-mode-light .admin-brand,
+html.app-visual-mode-light .admin-card a {
+  color: var(--visual-page-text);
+}
+
+html.app-visual-mode-light .admin-login-card input,
+html.app-visual-mode-light .admin-card input,
+html.app-visual-mode-light .admin-card select,
+html.app-visual-mode-light .admin-card textarea,
+html.app-visual-mode-light .admin-form-section input,
+html.app-visual-mode-light .admin-form-section select,
+html.app-visual-mode-light .admin-form-section textarea,
+html.app-visual-mode-light .admin-search-input,
+html.app-visual-mode-light .admin-filter-select,
+html.app-visual-mode-light .admin-sort-select {
+  border-color: rgba(17, 17, 17, 0.2);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--visual-page-text);
+}
+
+html.app-visual-mode-light .admin-search-input::placeholder,
+html.app-visual-mode-light input::placeholder,
+html.app-visual-mode-light textarea::placeholder {
+  color: rgba(17, 17, 17, 0.54);
+}
+
+.action-panel-theme-dark {
+  --visual-action-color: #ffffff;
+  --visual-action-muted: rgba(255, 255, 255, 0.74);
+  --visual-action-surface: rgba(8, 8, 8, 0.82);
+  --visual-action-border: rgba(255, 255, 255, 0.18);
+  --visual-action-tile: rgba(255, 255, 255, 0.07);
+  --visual-action-tile-hover: rgba(255, 255, 255, 0.12);
+  --visual-action-primary-bg: #ffffff;
+  --visual-action-primary-text: #050505;
+}
+
+.action-panel-theme-light {
+  --visual-action-color: #111111;
+  --visual-action-muted: rgba(17, 17, 17, 0.72);
+  --visual-action-surface: rgba(255, 255, 255, 0.82);
+  --visual-action-border: rgba(17, 17, 17, 0.14);
+  --visual-action-tile: rgba(17, 17, 17, 0.055);
+  --visual-action-tile-hover: rgba(17, 17, 17, 0.1);
+  --visual-action-primary-bg: #111111;
+  --visual-action-primary-text: #ffffff;
+}
+
+.action-panel.action-panel-theme-dark,
+.action-panel.action-panel-theme-light {
+  border-color: var(--visual-action-border);
+  background: var(--visual-action-surface);
+  color: var(--visual-action-color);
+  box-shadow: 0 22px 64px rgba(17, 17, 17, 0.16);
+}
+
+.action-panel h2,
+.extra-functions h3,
+.extra-action-button,
+.extra-action-icon,
+.extra-action-label {
+  color: var(--visual-action-color);
+  opacity: 1;
+}
+
+.action-panel .eyebrow {
+  color: var(--visual-action-muted);
+  opacity: 1;
+}
+
+.action-panel .button-grid .primary-button {
+  background: var(--visual-action-primary-bg);
+  color: var(--visual-action-primary-text);
+}
+
+.action-panel .button-grid .secondary-button {
+  border-color: var(--visual-action-border);
+  background: var(--visual-action-tile);
+  color: var(--visual-action-color);
+}
+
+.extra-functions {
+  border-top-color: var(--visual-action-border);
+}
+
+.extra-action-button {
+  border-color: var(--visual-action-border);
+  background: var(--visual-action-tile);
+}
+
+.extra-action-button:hover,
+.extra-action-button:focus-visible {
+  border-color: color-mix(in srgb, var(--visual-action-color) 32%, transparent);
+  background: var(--visual-action-tile-hover);
+  color: var(--visual-action-color);
+}
+
+.public-language-toggle {
+  border-color: var(--visual-action-border);
+  background: var(--visual-action-tile);
+}
+
+.public-language-toggle button {
+  color: var(--visual-action-muted);
+  opacity: 1;
+}
+
+.public-language-toggle button.active {
+  background: var(--visual-action-primary-bg);
+  color: var(--visual-action-primary-text);
+}
+
+.public-card-theme-light .qr-code {
+  border: 1px solid rgba(17, 17, 17, 0.12);
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(17, 17, 17, 0.14);
+}
+
+.card-visual.public-card-theme-light {
+  --public-card-foreground: #111111;
+  --public-card-muted: #303030;
+  --public-card-subtle: #4d4d4d;
+  --public-card-label: #555555;
+}
+
+.card-visual.public-card-variant-light-image-3,
+.card-visual.public-card-variant-light-image-4 {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.86)), var(--public-card-variant-image);
+}
+
+html.app-visual-mode-light .visual-mode-popover {
+  border-color: rgba(17, 17, 17, 0.16);
+  background: rgba(255, 255, 255, 0.96);
+  color: #111111;
+  box-shadow: 0 24px 64px rgba(17, 17, 17, 0.18);
+}
+
+html.app-visual-mode-light .visual-mode-popover > p,
+html.app-visual-mode-light .visual-mode-option {
+  color: #333333;
+}
+
+html.app-visual-mode-light .visual-mode-option:hover {
+  border-color: rgba(17, 17, 17, 0.16);
+  background: rgba(17, 17, 17, 0.055);
+}
+
+html.app-visual-mode-light .visual-mode-option.active {
+  border-color: #286fca;
+  background: rgba(40, 111, 202, 0.1);
+  color: #111111;
+  box-shadow: 0 0 0 1px rgba(40, 111, 202, 0.24);
+}
+
 /* Public card variants must win over the shared brand surface defaults above. */
 .card-visual.public-card-theme-dark,
 .card-preview.public-card-theme-dark,
@@ -2599,4 +2821,117 @@ body,
     width: 70px;
     border-radius: 17px;
   }
+}
+
+/* Final cascade guard: visual mode contrast must override legacy fixed colors. */
+html.app-visual-mode-light body,
+html.app-visual-mode-light .admin-login-shell,
+html.app-visual-mode-light .admin-shell {
+  color: var(--visual-page-text);
+  background-color: transparent;
+}
+
+html.app-visual-mode-light .home-panel,
+html.app-visual-mode-light .state-card,
+html.app-visual-mode-light .admin-login-card,
+html.app-visual-mode-light .admin-card,
+html.app-visual-mode-light .admin-form-section,
+html.app-visual-mode-light .admin-topbar {
+  border-color: var(--visual-card-border);
+  background-color: var(--visual-card-surface);
+  color: var(--visual-page-text);
+}
+
+html.app-visual-mode-light :is(.home-panel, .state-card, .admin-login-card, .admin-card, .admin-form-section, .admin-page-header) :is(h1, h2, h3, label, a),
+html.app-visual-mode-light :is(.admin-nav, .admin-brand, .admin-nav a, .admin-nav button) {
+  color: var(--visual-page-text);
+}
+
+html.app-visual-mode-light :is(.home-description, .state-card p, .admin-page-header p, .eyebrow, .admin-card small, .admin-form-section small) {
+  color: var(--visual-page-muted);
+}
+
+html.app-visual-mode-light :is(.admin-login-card, .admin-card, .admin-form-section) :is(input, select, textarea),
+html.app-visual-mode-light :is(.admin-search-input, .admin-filter-select, .admin-sort-select) {
+  border-color: rgba(17, 17, 17, 0.2);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--visual-page-text);
+}
+
+.action-panel.action-panel-theme-dark,
+.action-panel.action-panel-theme-light {
+  border-color: var(--visual-action-border);
+  background: var(--visual-action-surface);
+  color: var(--visual-action-color);
+}
+
+.action-panel :is(h2, .extra-functions h3, .extra-action-button, .extra-action-icon, .extra-action-label) {
+  color: var(--visual-action-color);
+  opacity: 1;
+}
+
+.action-panel .eyebrow,
+.action-panel .public-language-toggle button {
+  color: var(--visual-action-muted);
+  opacity: 1;
+}
+
+.action-panel .button-grid .primary-button,
+.action-panel .public-language-toggle button.active {
+  background: var(--visual-action-primary-bg);
+  color: var(--visual-action-primary-text);
+}
+
+.action-panel .button-grid .secondary-button,
+.action-panel .extra-action-button,
+.action-panel .public-language-toggle {
+  border-color: var(--visual-action-border);
+  background: var(--visual-action-tile);
+  color: var(--visual-action-color);
+}
+
+.action-panel .extra-functions {
+  border-top-color: var(--visual-action-border);
+}
+
+.action-panel .extra-action-button:hover,
+.action-panel .extra-action-button:focus-visible {
+  border-color: color-mix(in srgb, var(--visual-action-color) 32%, transparent);
+  background: var(--visual-action-tile-hover);
+  color: var(--visual-action-color);
+}
+
+.card-visual.public-card-theme-light {
+  --public-card-foreground: #111111;
+  --public-card-muted: #303030;
+  --public-card-subtle: #4d4d4d;
+  --public-card-label: #555555;
+}
+
+.card-visual.public-card-theme-light .qr-code {
+  border: 1px solid rgba(17, 17, 17, 0.12);
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(17, 17, 17, 0.14);
+}
+
+.card-visual.public-card-variant-light-image-3,
+.card-visual.public-card-variant-light-image-4 {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.86)), var(--public-card-variant-image);
+}
+
+html.app-visual-mode-light .visual-mode-popover {
+  border-color: rgba(17, 17, 17, 0.16);
+  background: rgba(255, 255, 255, 0.96);
+  color: #111111;
+}
+
+html.app-visual-mode-light .visual-mode-popover > p,
+html.app-visual-mode-light .visual-mode-option {
+  color: #333333;
+}
+
+html.app-visual-mode-light .visual-mode-option.active {
+  border-color: #286fca;
+  background: rgba(40, 111, 202, 0.1);
+  color: #111111;
 }

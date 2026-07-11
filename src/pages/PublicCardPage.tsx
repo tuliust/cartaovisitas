@@ -17,7 +17,7 @@ import { useBrandSettings } from '../contexts/BrandSettingsContext'
 import WalletSupportModal from '../components/WalletSupportModal'
 import { getAppleWalletUrl, isIosDevice, isWalletPublicEnabled } from '../lib/wallet'
 import { useToast } from '../contexts/ToastContext'
-import { getVariantClassName, getVariantLogo, getVariantStyle } from '../lib/cardVisualVariants'
+import { getEffectiveVisualVariant, getVariantClassName, getVariantLogo, getVariantStyle, isLightVisualVariant } from '../lib/cardVisualVariants'
 import { useVisualMode } from '../contexts/VisualModeContext'
 
 type PageStatus = 'loading' | 'ready' | 'not-found' | 'error'
@@ -179,6 +179,7 @@ export default function PublicCardPage() {
   const phoneLink = phone ? normalizePhoneForLink(phone) : ''
   const address = buildAddress(card)
   const visualVariant = hasVisualModePreference ? visualMode : card.public_visual_variant ?? 'dark_black'
+  const actionPanelTheme = isLightVisualVariant(getEffectiveVisualVariant(settings, visualVariant)) ? 'action-panel-theme-light' : 'action-panel-theme-dark'
   const logoUrl = getVariantLogo(settings, visualVariant, card.logo_url)
   const logoFailed = failedLogoUrl === logoUrl
   const showAvatar = card.show_avatar_public && Boolean(card.avatar_url)
@@ -212,7 +213,7 @@ export default function PublicCardPage() {
           </div>
         </div>
 
-        <div className="action-panel">
+        <div className={`action-panel ${actionPanelTheme}`}>
           <div className="public-language-toggle" aria-label="Idioma do cartão">
             {(Object.keys(publicCardLanguageLabels) as PublicCardLanguage[]).map((item) => <button key={item} type="button" className={language === item ? 'active' : ''} aria-pressed={language === item} onClick={() => changeLanguage(item)}>{publicCardLanguageLabels[item]}</button>)}
           </div>
