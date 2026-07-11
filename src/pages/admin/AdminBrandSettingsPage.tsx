@@ -42,11 +42,18 @@ const colorFields: Array<{ key: ColorKey; label: string }> = [
   { key: 'text_color', label: 'Cor de texto' },
 ]
 
+const brandSettingKeys = Object.keys(defaultBrandSettings) as Array<keyof BrandSettings>
+
+function getChangedBrandFields(before: BrandSettings, after: BrandSettings) {
+  return brandSettingKeys.filter((key) => JSON.stringify(before[key]) !== JSON.stringify(after[key]))
+}
+
 export default function AdminBrandSettingsPage() {
   const navigate = useNavigate()
   const toast = useToast()
   const { setSettings } = useBrandSettings()
   const [values, setValues] = useState(defaultBrandSettings)
+  const [savedValues, setSavedValues] = useState(defaultBrandSettings)
   const [booting, setBooting] = useState(true)
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState<BrandAssetType | ''>('')
@@ -59,7 +66,7 @@ export default function AdminBrandSettingsPage() {
       if (!(await getCurrentSession())) return navigate('/admin/login', { replace: true })
       await requireAdmin()
       const loaded = await getBrandSettings()
-      if (mounted) { setValues(loaded); setBooting(false) }
+      if (mounted) { setValues(loaded); setSavedValues(loaded); setBooting(false) }
     })().catch(() => navigate('/admin/login', { replace: true }))
     return () => { mounted = false }
   }, [navigate])
@@ -86,10 +93,24 @@ export default function AdminBrandSettingsPage() {
     if (invalid) { const message = `${invalid.label}: informe uma cor hexadecimal no formato #050505.`; setError(message); toast.error(message); return }
     setSaving(true); setError(''); setSuccess('')
     try {
+      const previousValues = savedValues
+      const changedFields = getChangedBrandFields(previousValues, values)
       const saved = await updateBrandSettings(values)
-      await recordAuditLog({ action: 'brand_settings_updated', targetType: 'brand_settings', targetId: saved.id, targetLabel: 'Identidade visual', afterData: saved })
+
+      if (changedFields.length > 0) {
+        await recordAuditLog({
+          action: 'brand_settings_updated',
+          targetType: 'brand_settings',
+          targetId: saved.id,
+          targetLabel: 'Identidade visual',
+          beforeData: previousValues,
+          afterData: saved,
+          metadata: { changed_fields: changedFields },
+        })
+      }
+
       const message = 'Identidade visual atualizada com sucesso.'
-      setValues(saved); setSettings(saved); setSuccess(message); toast.success(message)
+      setValues(saved); setSavedValues(saved); setSettings(saved); setSuccess(message); toast.success(message)
     } catch (saveError) { const message = getFriendlyErrorMessage(saveError); setError(message); toast.error(message) }
     finally { setSaving(false) }
   }

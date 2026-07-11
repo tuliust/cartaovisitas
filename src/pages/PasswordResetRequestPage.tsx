@@ -76,7 +76,6 @@ export default function PasswordResetRequestPage() {
 
         <div className="auth-links">
           <Link to="/">Voltar</Link>
-          <Link to="/entrar">Voltar para entrar</Link>
         </div>
       </section>
     </main>

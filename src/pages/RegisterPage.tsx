@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { signUpWithPassword } from '../lib/auth'
 import { getFriendlyErrorMessage } from '../lib/errors'
@@ -15,6 +16,8 @@ export default function RegisterPage() {
   const [prefix, setPrefix] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
@@ -84,29 +87,57 @@ export default function RegisterPage() {
             </span>
           </label>
 
-          <label>
-            Senha
-            <input
-              required
-              minLength={6}
-              type="password"
-              autoComplete="new-password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-            />
-          </label>
+          <div className="auth-form-field">
+            <label htmlFor="register-password">Senha</label>
+            <span className="password-input-field">
+              <input
+                required
+                id="register-password"
+                name="password"
+                minLength={6}
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="new-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+              <button
+                className="password-visibility-button"
+                type="button"
+                aria-label={showPassword ? 'Ocultar senha' : 'Exibir senha'}
+                aria-pressed={showPassword}
+                title={showPassword ? 'Ocultar senha' : 'Exibir senha'}
+                onClick={() => setShowPassword((current) => !current)}
+              >
+                {showPassword ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+              </button>
+            </span>
+          </div>
 
-          <label>
-            Confirmar senha
-            <input
-              required
-              minLength={6}
-              type="password"
-              autoComplete="new-password"
-              value={confirm}
-              onChange={(event) => setConfirm(event.target.value)}
-            />
-          </label>
+          <div className="auth-form-field">
+            <label htmlFor="register-password-confirmation">Confirmar senha</label>
+            <span className="password-input-field">
+              <input
+                required
+                id="register-password-confirmation"
+                name="password-confirmation"
+                minLength={6}
+                type={showConfirmPassword ? 'text' : 'password'}
+                autoComplete="new-password"
+                value={confirm}
+                onChange={(event) => setConfirm(event.target.value)}
+              />
+              <button
+                className="password-visibility-button"
+                type="button"
+                aria-label={showConfirmPassword ? 'Ocultar senha' : 'Exibir senha'}
+                aria-pressed={showConfirmPassword}
+                title={showConfirmPassword ? 'Ocultar senha' : 'Exibir senha'}
+                onClick={() => setShowConfirmPassword((current) => !current)}
+              >
+                {showConfirmPassword ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+              </button>
+            </span>
+          </div>
 
           <button className="primary-button" disabled={loading}>
             {loading ? 'Criando...' : 'Criar cadastro'}
@@ -118,7 +149,6 @@ export default function RegisterPage() {
 
         <div className="auth-links">
           <Link to="/">Voltar</Link>
-          <Link to="/entrar">Já tenho cadastro</Link>
         </div>
       </section>
     </main>

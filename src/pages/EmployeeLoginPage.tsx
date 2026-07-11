@@ -104,8 +104,8 @@ export default function EmployeeLoginPage() {
 
         <div className="auth-links">
           <Link to="/">Voltar</Link>
-          <Link to="/cadastro">Ainda não tenho cadastro</Link>
-          <Link to="/recuperar-senha">Esqueci minha senha</Link>
+          <Link to="/cadastro">Cadastre-se</Link>
+          <Link to="/recuperar-senha">Recuperar senha</Link>
         </div>
       </section>
     </main>

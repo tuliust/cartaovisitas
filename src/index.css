@@ -3844,4 +3844,320 @@ html.app-visual-mode-light .admin-nav .admin-nav-logout:focus-visible {
     margin-left: 0;
   }
 }
+/* Audit table aligned with the shared admin list pattern. */
+.audit-list-controls {
+  grid-template-columns:
+    minmax(240px, 1fr)
+    minmax(150px, 0.42fr)
+    minmax(150px, 0.42fr)
+    minmax(145px, 0.4fr)
+    minmax(145px, 0.4fr);
+}
 
+.audit-list-controls .admin-search-field {
+  grid-column: auto;
+}
+
+html.app-visual-mode-dark .audit-list-controls input[type="date"] {
+  color-scheme: dark;
+}
+
+html.app-visual-mode-light .audit-list-controls input[type="date"] {
+  color-scheme: light;
+}
+
+.admin-audit-actor-cell strong,
+.admin-audit-event-cell strong {
+  display: block;
+  color: var(--admin-text);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.admin-audit-event-cell small {
+  display: block;
+  margin-top: 4px;
+  color: var(--admin-muted);
+  line-height: 1.35;
+}
+
+.audit-detail-button {
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.audit-detail-button svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+}
+
+.admin-audit-mobile-meta,
+.audit-detail-summary {
+  margin: 0;
+}
+
+.admin-audit-mobile-meta {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-audit-mobile-meta > div {
+  display: grid;
+  gap: 3px;
+}
+
+.admin-audit-mobile-meta dt,
+.audit-detail-summary dt {
+  color: var(--admin-muted);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-audit-mobile-meta dd,
+.audit-detail-summary dd {
+  margin: 0;
+  color: var(--admin-text);
+  overflow-wrap: anywhere;
+}
+
+.audit-detail {
+  width: min(760px, 100%);
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+}
+
+.audit-detail-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.audit-detail-summary > div {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  padding: 13px 14px;
+  border: 1px solid var(--modal-border);
+  border-radius: 12px;
+  background: var(--modal-secondary-bg);
+}
+
+.audit-detail-summary code,
+.audit-detail-changes code {
+  color: inherit;
+  font: 0.86em ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  overflow-wrap: anywhere;
+}
+
+.audit-detail-changes,
+.audit-detail-data-block {
+  margin-top: 18px;
+}
+
+.audit-detail-changes h3,
+.audit-detail-data-block h3 {
+  margin-bottom: 9px;
+  font-size: 0.92rem;
+}
+
+.audit-detail-changes ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.audit-detail-changes li {
+  padding: 6px 8px;
+  border: 1px solid var(--modal-border);
+  border-radius: 8px;
+  background: var(--modal-secondary-bg);
+}
+
+.audit-detail-data-block pre,
+.audit-detail-technical pre {
+  max-height: 38vh;
+  overflow: auto;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--modal-border);
+  border-radius: 12px;
+  background: var(--modal-input-bg);
+  color: var(--modal-text);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.audit-detail-technical {
+  margin-top: 18px;
+}
+
+.audit-detail-technical summary {
+  color: var(--modal-muted);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.audit-detail-technical[open] summary {
+  margin-bottom: 10px;
+}
+
+@media (min-width: 761px) {
+  .admin-audit-table tr {
+    grid-template-columns:
+      minmax(175px, 0.76fr)
+      minmax(220px, 1fr)
+      minmax(320px, 1.65fr)
+      minmax(140px, 0.48fr);
+  }
+
+  .admin-audit-table td {
+    align-self: center;
+  }
+}
+
+@media (max-width: 1100px) {
+  .audit-list-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .audit-list-controls .admin-search-field {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-audit-mobile-card {
+    gap: 15px;
+  }
+
+  .audit-detail-summary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .audit-list-controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .audit-list-controls .admin-search-field {
+    grid-column: auto;
+  }
+
+  .audit-detail {
+    max-height: calc(100dvh - 24px);
+  }
+}
+
+/* Accessible password visibility controls for authentication forms. */
+.auth-form-field {
+  display: grid;
+  gap: 8px;
+}
+
+.auth-form-field > label {
+  color: rgba(247, 243, 235, 0.9);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.password-input-field {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.28);
+  display: flex;
+  align-items: stretch;
+}
+
+.admin-login-card .password-input-field input {
+  min-width: 0;
+  min-height: 46px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #f7f3eb;
+  flex: 1;
+  box-shadow: none;
+}
+
+.password-visibility-button {
+  width: 46px;
+  min-width: 46px;
+  min-height: 46px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(247, 243, 235, 0.7);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.password-visibility-button:hover {
+  background: transparent;
+  color: #ffffff;
+}
+
+.password-visibility-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.password-input-field:focus-within {
+  border-color: #f7f3eb;
+  box-shadow: 0 0 0 3px rgba(247, 243, 235, 0.22);
+}
+
+.password-input-field:focus-within input {
+  outline: none;
+}
+
+.password-visibility-button:focus-visible {
+  outline: 3px solid #6aa9ff;
+  outline-offset: -4px;
+}
+
+html.app-visual-mode-light .auth-form-field > label {
+  color: var(--visual-page-text);
+}
+
+html.app-visual-mode-light .password-input-field {
+  border-color: rgba(17, 17, 17, 0.2);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+html.app-visual-mode-light .admin-login-card .password-input-field input {
+  background: transparent;
+  color: var(--visual-page-text);
+}
+
+html.app-visual-mode-light .password-visibility-button {
+  background: transparent;
+  color: rgba(17, 17, 17, 0.62);
+}
+
+html.app-visual-mode-light .password-visibility-button:hover {
+  background: transparent;
+  color: #111111;
+}
+
+html.app-visual-mode-light .password-input-field:focus-within {
+  border-color: #111111;
+  box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.16);
+}
