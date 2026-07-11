@@ -100,6 +100,7 @@ Testar:
 - ação aparece após convite;
 - filtros funcionam;
 - modal de detalhes abre.
+- JSON e botão do modal permanecem legíveis nos modos claro e escuro.
 
 ## Importação CSV
 
@@ -111,6 +112,14 @@ Testar:
 - prévia mostra erros;
 - modos de importação funcionam;
 - auditoria registra.
+- modal, input de arquivo, preview e ações mantêm contraste nos modos claro e escuro.
+
+## Modais administrativos
+
+- convite de usuário legível nos modos claro e escuro;
+- confirmação de apagar mantém título, input e botões legíveis;
+- crop de avatar mantém instruções, zoom e ações legíveis;
+- modais não aplicam opacidade ao container com conteúdo.
 
 ## Branding
 

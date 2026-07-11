@@ -70,6 +70,8 @@ Regras:
 - fechamento por backdrop quando seguro;
 - não fechar durante operação crítica.
 
+Modais administrativos usam tokens próprios de backdrop, superfície, texto, inputs e botões para manter contraste nos modos claros e escuros. Transparência deve existir apenas no background; o container e seu conteúdo não usam opacidade global.
+
 ## Acessibilidade
 
 Regras mínimas:
