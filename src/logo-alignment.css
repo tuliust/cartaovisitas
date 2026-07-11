@@ -6,7 +6,7 @@
 
 :root {
   --page-inline-gutter: clamp(20px, 2.5vw, 32px);
-  --brand-logo-optical-offset: -28px;
+  --brand-logo-optical-offset: -12px;
 }
 
 /* Header das áreas administrativas e do colaborador */
@@ -56,7 +56,7 @@
 @media (max-width: 760px) {
   :root {
     --page-inline-gutter: 16px;
-    --brand-logo-optical-offset: -18px;
+    --brand-logo-optical-offset: -8px;
   }
 
   .admin-page {
@@ -67,6 +67,6 @@
 @media (max-width: 360px) {
   :root {
     --page-inline-gutter: 14px;
-    --brand-logo-optical-offset: -14px;
+    --brand-logo-optical-offset: -6px;
   }
 }
