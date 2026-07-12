@@ -57,9 +57,17 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 0;
+}
+
 body {
-  min-width: 320px;
-  min-height: 100vh;
+  min-width: 0;
+  min-height: 100dvh;
+  overflow-x: clip;
   margin: 0;
   background:
     radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 30rem),
@@ -752,7 +760,7 @@ p {
   }
 
   .home-panel {
-    min-height: 620px;
+    min-height: min(620px, calc(100dvh - 36px));
     padding: 26px;
     border-radius: 28px;
   }
@@ -790,7 +798,7 @@ p {
 
 .admin-login-shell,
 .admin-shell {
-  min-height: 100vh;
+  min-height: 100dvh;
   background:
     radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 30%),
     #050505;
@@ -1146,7 +1154,8 @@ p {
   position: fixed;
   z-index: 1000;
   inset: 0;
-  padding: 20px;
+  padding: clamp(10px, 2.5vw, 20px);
+  overflow-y: auto;
   background: rgba(0, 0, 0, 0.82);
   display: grid;
   place-items: center;
@@ -1154,27 +1163,32 @@ p {
 
 .crop-modal {
   width: min(560px, 100%);
-  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 24px);
   overflow-y: auto;
-  padding: 24px;
+  overscroll-behavior: contain;
+  padding: clamp(16px, 3vw, 24px);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 24px;
   background: #111;
   box-shadow: 0 30px 100px rgba(0, 0, 0, 0.62);
   display: grid;
-  gap: 18px;
+  gap: clamp(14px, 2.5vh, 18px);
 }
 
-.crop-modal h2,
-.crop-modal p {
+.crop-modal-header h2,
+.crop-modal-header p {
   margin-bottom: 6px;
+}
+
+.crop-modal-header p {
+  margin-bottom: 0;
 }
 
 .crop-stage {
   position: relative;
   width: 100%;
-  height: min(55vh, 420px);
-  min-height: 280px;
+  height: clamp(160px, 45dvh, 420px);
+  min-height: 0;
   overflow: hidden;
   border-radius: 18px;
   background: #050505;
@@ -1191,6 +1205,7 @@ p {
 
 .crop-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 12px;
 }
@@ -2296,6 +2311,9 @@ body,
 
 .confirmation-modal {
   width: min(100%, 520px);
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 26px;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 22px;
@@ -2382,9 +2400,18 @@ body,
 .audit-filters input, .audit-filters select, .import-modal input, .import-modal select, .admin-list-controls select { min-width: 0; min-height: 44px; border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 12px; background: rgba(0, 0, 0, 0.28); color: inherit; padding: 9px 11px; font: inherit; }
 
 .audit-detail pre { max-height: 55vh; overflow: auto; border-radius: 12px; background: rgba(0, 0, 0, 0.3); padding: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
-.import-modal { width: min(1100px, 100%); max-height: calc(100vh - 40px); overflow: auto; }
-.import-preview { max-height: 48vh; overflow: auto; margin-top: 18px; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px; }
-.import-preview table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.import-modal {
+  width: min(1100px, 100%);
+  max-height: calc(100dvh - 24px);
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+.import-modal-header h2 { margin-bottom: 8px; }
+.import-modal-header p { margin-bottom: 0; color: var(--modal-muted); }
+.import-modal-body { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding-right: 2px; }
+.import-preview { max-height: none; overflow-x: auto; overflow-y: visible; margin-top: 18px; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 14px; }
+.import-preview table { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 0.82rem; }
 .import-preview th, .import-preview td { padding: 9px; border-bottom: 1px solid rgba(255, 255, 255, 0.09); text-align: left; vertical-align: top; }
 .import-preview tr.invalid { background: rgba(181, 48, 48, 0.16); }
 .import-preview tr.valid { background: rgba(84, 214, 132, 0.07); }
@@ -4162,29 +4189,26 @@ html.app-visual-mode-light .password-input-field:focus-within {
   box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.16);
 }
 
-/* Shared authentication pages: fit the available viewport without page scrolling. */
+/* Shared authentication pages: one responsive contract for all authentication routes. */
 
 .admin-login-shell.auth-page-shell {
   width: 100%;
-  height: 100dvh;
-  min-height: 100svh;
-  max-height: 100dvh;
-  overflow: hidden;
-  padding: clamp(12px, 2.2vh, 22px);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: clamp(12px, 2.5vh, 24px);
   place-items: center;
 }
 
 .auth-page-card {
   --auth-autofill-bg: #101010;
   --auth-autofill-text: #f7f3eb;
-  width: min(100%, 440px);
-  max-height: calc(100dvh - clamp(24px, 4.4vh, 44px));
-  margin: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: clamp(22px, 3.2vh, 30px);
+  width: min(100%, 460px);
+  max-height: none;
+  margin: auto 0;
+  overflow: visible;
+  padding: clamp(22px, 3.4vh, 32px);
   border-radius: 22px;
-  scrollbar-width: thin;
 }
 
 html.app-visual-mode-light .auth-page-card {
@@ -4193,9 +4217,9 @@ html.app-visual-mode-light .auth-page-card {
 }
 
 .auth-page-card .auth-page-logo {
-  width: clamp(145px, 19vh, 165px);
-  max-height: clamp(58px, 9vh, 78px);
-  margin: 0 0 clamp(24px, 3.2vh, 30px);
+  width: clamp(220px, 30vw, 280px);
+  max-height: clamp(88px, 13vh, 112px);
+  margin: 0 0 clamp(34px, 4.8vh, 46px);
   object-fit: contain;
   object-position: left center;
 }
@@ -4207,37 +4231,48 @@ html.app-visual-mode-light .auth-page-card {
 }
 
 .auth-page-card .auth-page-description {
-  margin: clamp(9px, 1.4vh, 12px) 0 clamp(20px, 2.8vh, 26px);
+  margin: clamp(9px, 1.4vh, 12px) 0 clamp(24px, 3.2vh, 32px);
   font-size: clamp(0.92rem, 2vh, 1rem);
   line-height: 1.5;
 }
 
 .auth-page-card .auth-page-form {
-  gap: clamp(18px, 2.4vh, 22px);
+  gap: clamp(22px, 3vh, 28px);
 }
 
 .auth-page-card label,
 .auth-page-card .auth-form-field > label {
-  gap: 8px;
+  gap: 10px;
   font-size: clamp(0.86rem, 1.8vh, 0.92rem);
 }
 
 .auth-page-card input {
-  min-height: clamp(44px, 6.2vh, 48px);
+  min-height: clamp(46px, 6.2vh, 50px);
   padding-block: 10px;
 }
 
 .auth-page-card .email-suffix-field,
 .auth-page-card .password-input-field {
-  min-height: clamp(44px, 6.2vh, 48px);
+  min-height: clamp(46px, 6.2vh, 50px);
+}
+
+.auth-page-card .email-suffix-field {
+  align-items: stretch;
+  flex-wrap: nowrap;
+}
+
+.auth-page-card .email-suffix-label {
+  padding: 0 14px 0 8px;
+  display: flex;
+  align-items: center;
 }
 
 .auth-page-card .auth-page-submit {
-  min-height: clamp(46px, 6.4vh, 48px);
+  min-height: clamp(46px, 6.4vh, 50px);
 }
 
 .auth-page-card .auth-page-links {
-  margin-top: clamp(14px, 2vh, 18px);
+  margin-top: clamp(24px, 3.4vh, 32px);
 }
 
 .auth-page-card input:-webkit-autofill,
@@ -4265,141 +4300,26 @@ html.app-visual-mode-light .auth-page-card {
 
 @media (max-height: 760px) {
   .admin-login-shell.auth-page-shell {
-    padding: 9px 12px;
+    padding: 10px 12px;
   }
 
   .auth-page-card {
-    max-height: calc(100dvh - 18px);
     padding: 18px 20px;
   }
 
   .auth-page-card .auth-page-logo {
-    width: 138px;
-    max-height: 60px;
-    margin-bottom: 20px;
-  }
-
-  .auth-page-card .auth-page-title {
-    font-size: 1.75rem;
+    width: 200px;
+    max-height: 82px;
+    margin-bottom: 28px;
   }
 
   .auth-page-card .auth-page-description {
-    margin: 7px 0 16px;
+    margin: 7px 0 20px;
     font-size: 0.9rem;
   }
 
   .auth-page-card .auth-page-form {
-    gap: 15px;
-  }
-
-  .auth-page-card input,
-  .auth-page-card .email-suffix-field,
-  .auth-page-card .password-input-field {
-    min-height: 42px;
-  }
-
-  .auth-page-card .auth-page-submit {
-    min-height: 44px;
-  }
-
-  .auth-page-card .auth-page-links {
-    margin-top: 11px;
-  }
-}
-
-@media (max-height: 640px) {
-  .auth-page-card {
-    padding-block: 14px;
-  }
-
-  .auth-page-card .auth-page-logo {
-    width: 126px;
-    max-height: 54px;
-    margin-bottom: 16px;
-  }
-
-  .auth-page-card .auth-page-title {
-    font-size: 1.62rem;
-  }
-
-  .auth-page-card .auth-page-description {
-    margin: 6px 0 12px;
-    font-size: 0.86rem;
-  }
-
-  .auth-page-card .auth-page-form {
-    gap: 12px;
-  }
-
-  .auth-page-card .auth-page-links {
-    margin-top: 8px;
-  }
-}
-
-@media (max-width: 760px) {
-  .admin-login-shell.auth-page-shell {
-    align-items: center;
-    padding: 10px;
-  }
-
-  .auth-page-card {
-    width: min(100%, 440px);
-    max-height: calc(100dvh - 20px);
-    margin: 0;
-  }
-}
-
-@media (max-width: 380px) {
-  .auth-page-card {
-    padding-inline: 16px;
-  }
-
-  .auth-page-card .auth-page-links {
-    gap: 8px;
-    font-size: 0.84rem;
-  }
-}
-
-/* AUTH SPACING OVERRIDE START */
-/* Shared visual spacing for /entrar, /cadastro, /recuperar-senha and /admin/login.
-   /cadastro defines the maximum vertical rhythm for the shared pattern. */
-
-.auth-page-card .auth-page-logo {
-  width: clamp(270px, 36vh, 320px);
-  max-height: clamp(96px, 15vh, 124px);
-  margin-bottom: clamp(58px, 7.4vh, 70px);
-}
-
-.auth-page-card .auth-page-description {
-  margin-bottom: clamp(36px, 4.8vh, 44px);
-}
-
-.auth-page-card .auth-page-form {
-  gap: clamp(30px, 4vh, 36px);
-}
-
-.auth-page-card label,
-.auth-page-card .auth-form-field > label {
-  gap: 12px;
-}
-
-.auth-page-card .auth-page-links {
-  margin-top: clamp(34px, 4.6vh, 44px);
-}
-
-@media (max-height: 760px) {
-  .auth-page-card .auth-page-logo {
-    width: 220px;
-    max-height: 86px;
-    margin-bottom: 34px;
-  }
-
-  .auth-page-card .auth-page-description {
-    margin-bottom: 22px;
-  }
-
-  .auth-page-card .auth-page-form {
-    gap: 21px;
+    gap: 18px;
   }
 
   .auth-page-card label,
@@ -4408,23 +4328,37 @@ html.app-visual-mode-light .auth-page-card {
   }
 
   .auth-page-card .auth-page-links {
-    margin-top: 22px;
+    margin-top: 18px;
   }
 }
 
 @media (max-height: 640px) {
+  .admin-login-shell.auth-page-shell {
+    place-items: start center;
+  }
+
+  .auth-page-card {
+    margin: 0 auto;
+    padding-block: 14px;
+  }
+
   .auth-page-card .auth-page-logo {
-    width: 180px;
-    max-height: 72px;
-    margin-bottom: 22px;
+    width: 168px;
+    max-height: 68px;
+    margin-bottom: 18px;
+  }
+
+  .auth-page-card .auth-page-title {
+    font-size: 1.62rem;
   }
 
   .auth-page-card .auth-page-description {
-    margin-bottom: 16px;
+    margin: 6px 0 14px;
+    font-size: 0.86rem;
   }
 
   .auth-page-card .auth-page-form {
-    gap: 16px;
+    gap: 13px;
   }
 
   .auth-page-card label,
@@ -4433,7 +4367,219 @@ html.app-visual-mode-light .auth-page-card {
   }
 
   .auth-page-card .auth-page-links {
-    margin-top: 14px;
+    margin-top: 12px;
   }
 }
-/* AUTH SPACING OVERRIDE END */
+
+@media (max-width: 480px) {
+  .admin-login-shell.auth-page-shell {
+    padding: 10px;
+  }
+
+  .auth-page-card {
+    width: 100%;
+    padding-inline: 18px;
+  }
+
+  .auth-page-card .auth-page-logo {
+    width: min(220px, 72vw);
+  }
+}
+
+@media (max-width: 360px) {
+  .auth-page-card {
+    padding-inline: 16px;
+  }
+
+  .auth-page-card .email-suffix-label {
+    font-size: 0.82rem;
+  }
+
+  .auth-page-card .auth-page-links {
+    gap: 8px;
+    font-size: 0.84rem;
+  }
+}
+
+/* Canonical responsive layer for administrative pages and modals. */
+
+#root,
+.app-shell,
+.digital-card,
+.admin-shell,
+.admin-page,
+.admin-card,
+.admin-form,
+.admin-form-preview-layout,
+.admin-form-preview-layout > *,
+.admin-topbar > *,
+.admin-nav,
+.admin-table-wrap,
+.confirmation-modal,
+.crop-modal,
+.import-modal,
+.import-modal-body {
+  min-width: 0;
+}
+
+.admin-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+.confirmation-backdrop,
+.crop-modal-backdrop,
+.wallet-modal-backdrop {
+  padding: clamp(10px, 2.5vw, 20px);
+  overflow-y: auto;
+}
+
+.confirmation-modal,
+.crop-modal,
+.wallet-modal {
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.import-modal-actions {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--modal-border);
+}
+
+@media (max-width: 900px) {
+  .brand-settings-grid,
+  .admin-form-preview-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .card-preview {
+    position: static;
+  }
+}
+
+@media (max-width: 820px) {
+  .admin-topbar,
+  .admin-page-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-topbar {
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .admin-page {
+    width: min(100% - 24px, 1180px);
+    padding: 28px 0 48px;
+  }
+
+  .admin-nav {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .admin-nav .admin-nav-link,
+  .admin-nav .admin-nav-logout {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    margin-left: 0;
+    padding: 8px 6px;
+  }
+
+  .admin-form-grid,
+  .admin-field-with-action,
+  .brand-color-grid,
+  .institutional-assets-grid,
+  .visual-variants-preview {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-table {
+    display: none;
+  }
+
+  .admin-mobile-cards {
+    display: grid;
+  }
+
+  .audit-list-controls,
+  .audit-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .audit-list-controls .admin-search-field {
+    grid-column: auto;
+  }
+
+  .admin-page-action,
+  .admin-page-action > *,
+  .admin-form-actions,
+  .admin-form-actions > * {
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-nav .admin-nav-link,
+  .admin-nav .admin-nav-logout {
+    min-height: 44px;
+  }
+
+  .admin-nav-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .admin-nav .admin-nav-link svg,
+  .admin-nav .admin-nav-logout svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .confirmation-actions,
+  .crop-actions,
+  .import-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .confirmation-actions > *,
+  .crop-actions > *,
+  .import-modal-actions > * {
+    width: 100%;
+  }
+
+  .import-modal {
+    padding: 18px;
+  }
+
+  .import-preview table {
+    min-width: 680px;
+  }
+}
+
+@media (max-height: 520px) {
+  .confirmation-backdrop,
+  .crop-modal-backdrop,
+  .wallet-modal-backdrop {
+    place-items: start center;
+  }
+
+  .crop-stage {
+    height: clamp(140px, 38dvh, 240px);
+  }
+}
+

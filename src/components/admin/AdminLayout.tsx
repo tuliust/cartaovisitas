@@ -34,38 +34,52 @@ export default function AdminLayout({ title, subtitle, action, children }: Admin
           <NavLink
             className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}
             to="/admin/cartoes"
+            aria-label="Cartões"
+            title="Cartões"
           >
             <CreditCard aria-hidden="true" />
-            <span>Cartões</span>
+            <span className="admin-nav-label">Cartões</span>
           </NavLink>
 
           <NavLink
             className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}
             to="/admin/usuarios"
+            aria-label="Usuários"
+            title="Usuários"
           >
             <Users aria-hidden="true" />
-            <span>Usuários</span>
+            <span className="admin-nav-label">Usuários</span>
           </NavLink>
 
           <NavLink
             className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}
             to="/admin/auditoria"
+            aria-label="Auditoria"
+            title="Auditoria"
           >
             <ClipboardList aria-hidden="true" />
-            <span>Auditoria</span>
+            <span className="admin-nav-label">Auditoria</span>
           </NavLink>
 
           <NavLink
             className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}
             to="/admin/configuracoes"
+            aria-label="Configurações"
+            title="Configurações"
           >
             <Settings aria-hidden="true" />
-            <span>Configurações</span>
+            <span className="admin-nav-label">Configurações</span>
           </NavLink>
 
-          <button className="admin-nav-logout" type="button" onClick={handleSignOut}>
+          <button
+            className="admin-nav-logout"
+            type="button"
+            aria-label="Sair"
+            title="Sair"
+            onClick={handleSignOut}
+          >
             <LogOut aria-hidden="true" />
-            <span>Sair</span>
+            <span className="admin-nav-label">Sair</span>
           </button>
         </nav>
       </header>
