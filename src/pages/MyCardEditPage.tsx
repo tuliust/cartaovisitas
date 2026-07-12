@@ -28,45 +28,120 @@ export default function MyCardEditPage() {
   useEffect(() => {
     void (async () => {
       const session = await getCurrentSession()
-      if (!session) return navigate('/entrar', { replace: true })
+      if (!session) {
+        navigate('/entrar', { replace: true })
+        return
+      }
+
       await requireActiveUser()
       const card = await getMyCard()
       const initial = card ? toMyCardFormValues(card) : await createMyCardDraft()
+
       setValues(initial)
       setPreview(initial)
       setSavedSlug(card?.slug ?? '')
       setCardId(card?.id ?? '')
       setBooting(false)
-    })().catch(async (err) => { const message = getFriendlyErrorMessage(err); setError(message); toast.error(message); await signOut().catch(() => undefined); navigate('/entrar', { replace: true }); setBooting(false) })
+    })().catch(async (err) => {
+      const message = getFriendlyErrorMessage(err)
+      setError(message)
+      toast.error(message)
+      await signOut().catch(() => undefined)
+      navigate('/entrar', { replace: true })
+      setBooting(false)
+    })
   }, [navigate, toast])
 
   async function save(form: CardFormValues) {
-    setSaving(true); setError('')
+    setSaving(true)
+    setError('')
+
     try {
       const card = await upsertMyCard(form)
       const current = toMyCardFormValues(card)
-      setValues(current); setPreview(current); setSavedSlug(card.slug); setCardId(card.id)
+
+      setValues(current)
+      setPreview(current)
+      setSavedSlug(card.slug)
+      setCardId(card.id)
       toast.success('Cartão salvo com sucesso.')
-    } catch (err) { const message = getFriendlyErrorMessage(err); setError(message); toast.error(message) } finally { setSaving(false) }
+    } catch (err) {
+      const message = getFriendlyErrorMessage(err)
+      setError(message)
+      toast.error(message)
+    } finally {
+      setSaving(false)
+    }
   }
 
-  async function logout() { await signOut(); navigate('/entrar', { replace: true }) }
+  async function logout() {
+    await signOut()
+    navigate('/entrar', { replace: true })
+  }
 
   const logoUrl = isLightVisualVariant(getEffectiveVisualVariant(settings, visualMode))
     ? settings.logo_on_light_url || settings.logo_on_dark_url || settings.logo_url || '/invest-rs-logo.png'
     : settings.logo_on_dark_url || settings.logo_on_light_url || settings.logo_url || '/invest-rs-logo.png'
 
-  if (booting) return <main className="admin-login-shell"><div className="admin-login-card">Carregando formulário...</div></main>
+  if (booting) {
+    return (
+      <main className="admin-login-shell admin-state-shell">
+        <div className="admin-login-card admin-state-card" role="status">
+          Carregando formulário...
+        </div>
+      </main>
+    )
+  }
 
-  return <main className="admin-shell">
-    <header className="admin-topbar"><Link className="admin-brand" to="/"><img className="admin-logo collaborator-logo" src={logoUrl} alt="Invest RS" /></Link><nav className="admin-nav">{savedSlug ? <Link to={`/${savedSlug}`}>Ver meu cartão</Link> : null}<button type="button" onClick={() => void logout()}>Sair</button></nav></header>
-    <section className="admin-page">
-      <div className="admin-page-header"><div><p className="eyebrow">Área do colaborador</p><h1>Meu cartão</h1><p>Atualize os dados do seu cartão digital.</p></div>{savedSlug ? <Link className="secondary-button" to={`/${savedSlug}`}>Ver meu cartão</Link> : null}</div>
-      {error ? <p className="admin-error">{error}</p> : null}
-      <div className="admin-form-preview-layout">
-        <CardForm initialValues={values} submitLabel="Salvar alterações" loading={saving} currentCardId={cardId || undefined} onChange={setPreview} onSubmit={save} mode="employee" lockedEmail={values.email} allowStatusEdit={false} allowLogoUpload={false} allowAvatarUpload lockInstitutionalFields />
-        <CardPreview values={preview} />
-      </div>
-    </section>
-  </main>
+  return (
+    <main className="admin-shell">
+      <header className="admin-topbar collaborator-topbar">
+        <Link className="admin-brand" to="/" aria-label="Ir para a página inicial">
+          <img className="admin-logo collaborator-logo" src={logoUrl} alt="Invest RS" />
+        </Link>
+
+        <nav className="admin-nav collaborator-nav" aria-label="Navegação do colaborador">
+          <button className="admin-nav-logout" type="button" onClick={() => void logout()}>
+            <span>Sair</span>
+          </button>
+        </nav>
+      </header>
+
+      <section className="admin-page collaborator-page">
+        <div className="admin-page-header">
+          <div>
+            <p className="eyebrow">Área do colaborador</p>
+            <h1>Meu cartão</h1>
+            <p>Atualize os dados do seu cartão digital.</p>
+          </div>
+
+          {savedSlug ? (
+            <Link className="secondary-button" to={`/${savedSlug}`}>
+              Ver meu cartão
+            </Link>
+          ) : null}
+        </div>
+
+        {error ? <p className="admin-error" role="alert">{error}</p> : null}
+
+        <div className="admin-form-preview-layout collaborator-card-layout">
+          <CardForm
+            initialValues={values}
+            submitLabel="Salvar alterações"
+            loading={saving}
+            currentCardId={cardId || undefined}
+            onChange={setPreview}
+            onSubmit={save}
+            mode="employee"
+            lockedEmail={values.email}
+            allowStatusEdit={false}
+            allowLogoUpload={false}
+            allowAvatarUpload
+            lockInstitutionalFields
+          />
+          <CardPreview values={preview} />
+        </div>
+      </section>
+    </main>
+  )
 }

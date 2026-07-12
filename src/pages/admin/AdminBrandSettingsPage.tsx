@@ -115,7 +115,7 @@ export default function AdminBrandSettingsPage() {
     finally { setSaving(false) }
   }
 
-  if (booting) return <main className="admin-login-shell"><div className="admin-login-card">Carregando configurações...</div></main>
+  if (booting) return <main className="admin-login-shell admin-state-shell"><div className="admin-login-card admin-state-card" role="status">Carregando configurações...</div></main>
 
   const previewStyle = {
     '--preview-background': values.background_color,

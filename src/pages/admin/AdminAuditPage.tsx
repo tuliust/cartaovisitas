@@ -87,6 +87,9 @@ export default function AdminAuditPage() {
   useEffect(() => {
     if (!detail) return
 
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
     function closeOnEscape(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         setDetail(null)
@@ -94,7 +97,11 @@ export default function AdminAuditPage() {
     }
 
     document.addEventListener('keydown', closeOnEscape)
-    return () => document.removeEventListener('keydown', closeOnEscape)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      document.removeEventListener('keydown', closeOnEscape)
+    }
   }, [detail])
 
   const actions = useMemo(
@@ -128,8 +135,8 @@ export default function AdminAuditPage() {
 
   if (booting) {
     return (
-      <main className="admin-login-shell">
-        <div className="admin-login-card">Verificando acesso...</div>
+      <main className="admin-login-shell admin-state-shell">
+        <div className="admin-login-card admin-state-card" role="status">Verificando acesso...</div>
       </main>
     )
   }
@@ -377,7 +384,7 @@ export default function AdminAuditPage() {
               <pre>{formatAuditJson(detail)}</pre>
             </details>
 
-            <div className="confirmation-actions">
+            <div className="confirmation-actions audit-detail-actions">
               <button className="secondary-button" type="button" onClick={() => setDetail(null)}>
                 Fechar
               </button>

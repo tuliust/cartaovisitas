@@ -186,7 +186,7 @@ export default function PublicCardPage() {
   const showAvatar = card.show_avatar_public && Boolean(card.avatar_url)
 
   return (
-    <main className="app-shell">
+    <main className="app-shell public-card-shell">
       <section className="digital-card">
         <div className={`card-visual ${getVariantClassName(settings, visualVariant)}`} style={getVariantStyle(settings, visualVariant)}>
           <div className="card-topline">
@@ -204,7 +204,7 @@ export default function PublicCardPage() {
           </div>
 
           <div className="card-footer">
-            <div className="contact-list">
+            <div className="contact-list public-card-contact-list">
               {phone ? <a href={`tel:${phoneLink}`}><span>{cardCopy.phone}</span>{phone}</a> : null}
               {card.email ? <a href={`mailto:${card.email}`}><span>{cardCopy.email}</span>{card.email}</a> : null}
               {card.website ? <a href={card.website} target="_blank" rel="noreferrer"><span>{cardCopy.website}</span>{card.website.replace(/^https?:\/\//, '')}</a> : null}
@@ -214,7 +214,7 @@ export default function PublicCardPage() {
           </div>
         </div>
 
-        <div className={`action-panel ${actionPanelTheme}`}>
+        <div className={`action-panel public-card-actions-panel ${actionPanelTheme}`}>
           <div className="public-panel-controls">
             <div className="public-language-toggle" aria-label="Idioma do cartão">
               {(Object.keys(publicCardLanguageLabels) as PublicCardLanguage[]).map((item) => <button key={item} type="button" className={language === item ? 'active' : ''} aria-pressed={language === item} onClick={() => changeLanguage(item)}>{publicCardLanguageLabels[item]}</button>)}

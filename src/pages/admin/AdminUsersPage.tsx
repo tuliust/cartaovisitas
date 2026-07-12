@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, type MouseEvent as ReactMouseEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { useToast } from '../../contexts/ToastContext'
@@ -54,6 +54,7 @@ export default function AdminUsersPage() {
   const [inviteEmail, setInviteEmail] = useState('')
   const [sending, setSending] = useState(false)
   const [openActionsMenu, setOpenActionsMenu] = useState<string | null>(null)
+  const [openActionsUpward, setOpenActionsUpward] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -82,27 +83,52 @@ export default function AdminUsersPage() {
   useEffect(() => {
     if (!openActionsMenu) return
 
+    function closeActionsMenu() {
+      setOpenActionsMenu(null)
+      setOpenActionsUpward(false)
+    }
+
     function closeOnOutsideClick(event: MouseEvent) {
       const target = event.target
       if (target instanceof Element && !target.closest('[data-admin-actions-root]')) {
-        setOpenActionsMenu(null)
+        closeActionsMenu()
       }
     }
 
     function closeOnEscape(event: KeyboardEvent) {
       if (event.key === 'Escape') {
-        setOpenActionsMenu(null)
+        closeActionsMenu()
       }
     }
 
     document.addEventListener('mousedown', closeOnOutsideClick)
     document.addEventListener('keydown', closeOnEscape)
+    window.addEventListener('resize', closeActionsMenu)
+    window.addEventListener('scroll', closeActionsMenu, true)
 
     return () => {
       document.removeEventListener('mousedown', closeOnOutsideClick)
       document.removeEventListener('keydown', closeOnEscape)
+      window.removeEventListener('resize', closeActionsMenu)
+      window.removeEventListener('scroll', closeActionsMenu, true)
     }
   }, [openActionsMenu])
+
+  function toggleActionsMenu(event: ReactMouseEvent<HTMLButtonElement>, menuKey: string) {
+    if (openActionsMenu === menuKey) {
+      setOpenActionsMenu(null)
+      setOpenActionsUpward(false)
+      return
+    }
+
+    const triggerRect = event.currentTarget.getBoundingClientRect()
+    const estimatedMenuHeight = 224
+    const spaceBelow = window.innerHeight - triggerRect.bottom
+    const spaceAbove = triggerRect.top
+
+    setOpenActionsUpward(spaceBelow < estimatedMenuHeight && spaceAbove > spaceBelow)
+    setOpenActionsMenu(menuKey)
+  }
 
   const visibleUsers = useMemo(() => {
     const term = search.trim().toLocaleLowerCase('pt-BR')
@@ -165,7 +191,7 @@ export default function AdminUsersPage() {
 
     return (
       <div
-        className={`admin-actions-menu-root${isOpen ? ' is-open' : ''}`}
+        className={`admin-actions-menu-root${isOpen ? ' is-open' : ''}${isOpen && openActionsUpward ? ' opens-upward' : ''}`}
         data-admin-actions-root
       >
         <button
@@ -176,7 +202,7 @@ export default function AdminUsersPage() {
           aria-expanded={isOpen}
           aria-controls={menuId}
           title="Ações"
-          onClick={() => setOpenActionsMenu((current) => current === menuKey ? null : menuKey)}
+          onClick={(event) => toggleActionsMenu(event, menuKey)}
         >
           <MoreVertical aria-hidden="true" />
         </button>
@@ -193,6 +219,7 @@ export default function AdminUsersPage() {
               role="menuitem"
               onClick={() => {
                 setOpenActionsMenu(null)
+                setOpenActionsUpward(false)
                 void changeRole(user)
               }}
             >
@@ -205,6 +232,7 @@ export default function AdminUsersPage() {
               role="menuitem"
               onClick={() => {
                 setOpenActionsMenu(null)
+                setOpenActionsUpward(false)
                 void changeBlock(user)
               }}
             >
@@ -218,7 +246,10 @@ export default function AdminUsersPage() {
                 target="_blank"
                 rel="noreferrer"
                 role="menuitem"
-                onClick={() => setOpenActionsMenu(null)}
+                onClick={() => {
+                  setOpenActionsMenu(null)
+                  setOpenActionsUpward(false)
+                }}
               >
                 <ExternalLink aria-hidden="true" />
                 <span>Abrir cartão</span>
@@ -227,7 +258,10 @@ export default function AdminUsersPage() {
               <Link
                 to={`/admin/cartoes/novo?email=${encodeURIComponent(user.email)}&name=${encodeURIComponent(user.full_name || '')}`}
                 role="menuitem"
-                onClick={() => setOpenActionsMenu(null)}
+                onClick={() => {
+                  setOpenActionsMenu(null)
+                  setOpenActionsUpward(false)
+                }}
               >
                 <IdCard aria-hidden="true" />
                 <span>Criar cartão</span>
@@ -239,6 +273,7 @@ export default function AdminUsersPage() {
               role="menuitem"
               onClick={() => {
                 setOpenActionsMenu(null)
+                setOpenActionsUpward(false)
                 void sendInvite(user.email)
               }}
             >

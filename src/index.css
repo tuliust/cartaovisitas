@@ -4401,11 +4401,15 @@ html.app-visual-mode-light .auth-page-card {
   }
 }
 
-/* Canonical responsive layer for administrative pages and modals. */
+/* Canonical responsive layer for administrative, collaborator and public pages. */
 
 #root,
 .app-shell,
+.home-panel,
 .digital-card,
+.digital-card > *,
+.card-visual,
+.action-panel,
 .admin-shell,
 .admin-page,
 .admin-card,
@@ -4415,17 +4419,46 @@ html.app-visual-mode-light .auth-page-card {
 .admin-topbar > *,
 .admin-nav,
 .admin-table-wrap,
+.admin-mobile-card,
+.brand-settings-grid,
+.brand-settings-grid > *,
+.brand-settings-form,
+.brand-settings-section,
+.brand-preview,
 .confirmation-modal,
 .crop-modal,
 .import-modal,
-.import-modal-body {
+.import-modal-body,
+.wallet-modal,
+.wallet-modal-body {
   min-width: 0;
+}
+
+.app-shell {
+  min-height: 100dvh;
+}
+
+.home-panel {
+  min-height: min(560px, calc(100dvh - 64px));
 }
 
 .admin-table-wrap {
   max-width: 100%;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
+  scrollbar-gutter: stable;
+}
+
+.admin-actions-menu-root.opens-upward .admin-actions-popover {
+  top: auto;
+  bottom: calc(100% + 8px);
+}
+
+.admin-actions-popover {
+  width: min(220px, calc(100vw - 24px));
+  max-height: min(320px, calc(100dvh - 24px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .confirmation-backdrop,
@@ -4433,6 +4466,7 @@ html.app-visual-mode-light .auth-page-card {
 .wallet-modal-backdrop {
   padding: clamp(10px, 2.5vw, 20px);
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .confirmation-modal,
@@ -4443,10 +4477,138 @@ html.app-visual-mode-light .auth-page-card {
   overscroll-behavior: contain;
 }
 
+.import-modal {
+  max-height: calc(100dvh - 24px);
+  overflow: hidden;
+}
+
+.import-modal-body,
+.wallet-modal-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
 .import-modal-actions {
   margin-top: 16px;
   padding-top: 16px;
   border-top: 1px solid var(--modal-border);
+}
+
+.wallet-modal {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.wallet-modal-body {
+  padding-right: 2px;
+}
+
+.wallet-modal-close {
+  z-index: 2;
+}
+
+.wallet-option,
+.wallet-option > * {
+  min-width: 0;
+}
+
+.wallet-option p {
+  overflow-wrap: anywhere;
+}
+
+.brand-settings-actions {
+  position: sticky;
+  z-index: 10;
+  bottom: 12px;
+  padding: 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--visual-card-surface) 96%, transparent);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(14px);
+}
+
+.brand-settings-actions .primary-button {
+  min-width: min(280px, 100%);
+}
+
+.admin-card-form-layout,
+.collaborator-card-layout {
+  align-items: start;
+}
+
+.collaborator-topbar {
+  align-items: center;
+}
+
+.collaborator-nav {
+  width: auto;
+}
+
+.collaborator-page .admin-page-action {
+  display: flex;
+}
+
+.public-card-shell {
+  align-items: center;
+}
+
+.public-card-contact-list,
+.public-card-contact-list :is(a, p) {
+  min-width: 0;
+}
+
+.public-card-contact-list :is(a, p) {
+  overflow-wrap: anywhere;
+}
+
+.public-card-actions-panel {
+  min-width: 0;
+}
+
+.audit-detail-actions {
+  position: sticky;
+  bottom: 0;
+  padding-top: 14px;
+  background: linear-gradient(to bottom, transparent, var(--modal-surface-strong) 24%);
+}
+
+.admin-state-shell {
+  min-height: 100dvh;
+}
+
+.admin-state-card {
+  width: min(100%, 460px);
+  text-align: center;
+}
+
+@media (min-width: 821px) and (max-width: 1040px) {
+  .admin-topbar {
+    gap: 12px;
+    padding-inline: 20px;
+  }
+
+  .admin-logo {
+    width: clamp(135px, 15vw, 170px);
+  }
+
+  .admin-nav {
+    flex-wrap: nowrap;
+    gap: 0;
+  }
+
+  .admin-nav .admin-nav-link,
+  .admin-nav .admin-nav-logout {
+    gap: 4px;
+    padding-inline: 5px;
+    font-size: 0.8rem;
+  }
+
+  .admin-nav .admin-nav-logout {
+    margin-left: 4px;
+  }
 }
 
 @media (max-width: 900px) {
@@ -4455,8 +4617,51 @@ html.app-visual-mode-light .auth-page-card {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .card-preview {
+  .brand-color-grid,
+  .institutional-assets-grid,
+  .visual-variants-preview {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .card-preview,
+  .brand-preview {
     position: static;
+  }
+
+  .brand-preview {
+    min-height: 340px;
+  }
+
+  .brand-settings-actions {
+    justify-content: stretch;
+  }
+
+  .brand-settings-actions .primary-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 860px) {
+  .app-shell {
+    align-items: start;
+    padding: 18px;
+  }
+
+  .home-panel {
+    min-height: min(560px, calc(100dvh - 36px));
+  }
+
+  .digital-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .card-visual,
+  .action-panel {
+    min-height: auto;
+  }
+
+  .public-card-shell {
+    align-items: start;
   }
 }
 
@@ -4493,11 +4698,23 @@ html.app-visual-mode-light .auth-page-card {
     padding: 8px 6px;
   }
 
+  .collaborator-topbar {
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .collaborator-nav {
+    width: auto;
+    display: flex;
+    margin-left: auto;
+  }
+
+  .collaborator-nav .admin-nav-logout {
+    min-width: 88px;
+  }
+
   .admin-form-grid,
-  .admin-field-with-action,
-  .brand-color-grid,
-  .institutional-assets-grid,
-  .visual-variants-preview {
+  .admin-field-with-action {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -4523,6 +4740,64 @@ html.app-visual-mode-light .auth-page-card {
   .admin-form-actions,
   .admin-form-actions > * {
     width: 100%;
+  }
+
+  .admin-mobile-card {
+    overflow: visible;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-list-controls {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 15px;
+  }
+
+  .admin-search-field {
+    grid-column: auto;
+  }
+
+  .admin-table-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-table-header .compact-button {
+    width: 100%;
+  }
+
+  .card-footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .qr-code {
+    justify-self: start;
+  }
+
+  .public-panel-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .public-panel-controls .visual-mode-selector {
+    margin-left: 0;
+    align-self: flex-end;
+  }
+
+  .public-language-toggle {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .extra-actions-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .brand-preview {
+    min-height: 280px;
   }
 }
 
@@ -4550,6 +4825,10 @@ html.app-visual-mode-light .auth-page-card {
     height: 18px;
   }
 
+  .collaborator-nav .admin-nav-logout {
+    min-width: 76px;
+  }
+
   .confirmation-actions,
   .crop-actions,
   .import-modal-actions {
@@ -4562,12 +4841,104 @@ html.app-visual-mode-light .auth-page-card {
     width: 100%;
   }
 
-  .import-modal {
+  .import-modal,
+  .wallet-modal {
     padding: 18px;
   }
 
   .import-preview table {
     min-width: 680px;
+  }
+
+  .wallet-modal-close {
+    top: 12px;
+    right: 12px;
+  }
+
+  .wallet-modal-body {
+    padding-top: 8px;
+  }
+
+  .wallet-option {
+    padding: 15px;
+  }
+
+  .wallet-option .primary-button {
+    width: 100%;
+  }
+
+  .home-panel {
+    min-height: auto;
+  }
+
+  .home-topline {
+    align-items: flex-start;
+  }
+
+  .home-actions .primary-button,
+  .home-actions .secondary-button {
+    width: 100%;
+  }
+
+  .public-card-shell {
+    padding: 12px;
+  }
+
+  .card-visual,
+  .action-panel {
+    padding: 22px 18px;
+  }
+
+  .card-main {
+    margin-block: 44px;
+  }
+
+  .person-block h1 {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 380px) {
+  .admin-page {
+    width: min(100% - 16px, 1180px);
+  }
+
+  .admin-topbar {
+    padding: 12px;
+  }
+
+  .collaborator-logo {
+    width: min(150px, 48vw);
+  }
+
+  .admin-actions-popover {
+    width: min(220px, calc(100vw - 16px));
+  }
+
+  .public-card-shell {
+    padding: 8px;
+  }
+
+  .card-visual,
+  .action-panel,
+  .admin-card,
+  .admin-form-section,
+  .brand-settings-section {
+    padding-inline: 16px;
+  }
+}
+
+@media (max-height: 620px) {
+  .home-panel {
+    min-height: auto;
+  }
+
+  .home-content h1 {
+    font-size: clamp(2.15rem, 9vh, 4.25rem);
+  }
+
+  .card-main {
+    margin-block: 36px;
   }
 }
 
@@ -4581,5 +4952,8 @@ html.app-visual-mode-light .auth-page-card {
   .crop-stage {
     height: clamp(140px, 38dvh, 240px);
   }
-}
 
+  .wallet-modal {
+    max-height: none;
+  }
+}

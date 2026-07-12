@@ -101,8 +101,8 @@ export default function AdminCardFormPage() {
 
   if (booting) {
     return (
-      <main className="admin-login-shell">
-        <div className="admin-login-card">Carregando formulário...</div>
+      <main className="admin-login-shell admin-state-shell">
+        <div className="admin-login-card admin-state-card" role="status">Carregando formulário...</div>
       </main>
     )
   }
@@ -119,7 +119,7 @@ export default function AdminCardFormPage() {
     >
       {error ? <p className="admin-error">{error}</p> : null}
 
-      <div className="admin-form-preview-layout">
+      <div className="admin-form-preview-layout admin-card-form-layout">
         <CardForm
           initialValues={initialValues}
           submitLabel={isEditing ? 'Salvar alterações' : 'Criar cartão'}
