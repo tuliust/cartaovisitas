@@ -22,6 +22,30 @@ Migrar ou complementar os e-mails atuais com Resend.
 
 A arquitetura definitiva ainda precisa ser implementada e validada.
 
+Objetivos obrigatórios:
+
+- templates institucionais;
+- secrets server-side;
+- geração segura de links;
+- resposta uniforme para reduzir enumeração;
+- logs sem tokens;
+- auditoria;
+- testes em Gmail e Outlook.
+
+## Bloqueadores antes de ativar integrações
+
+### Apple Wallet
+
+O passe atual aponta o QR e a URL principal para `/:slug`, rota autenticada.
+
+Antes da ativação:
+
+- escolher destino público adequado;
+- alterar o código do passe;
+- atualizar `wallet-setup.md`;
+- testar em iPhone;
+- validar analytics.
+
 ## Standby
 
 ### Apple Wallet
@@ -36,6 +60,7 @@ Dependências:
 - WWDR;
 - secrets;
 - flags;
+- destino público do QR;
 - teste físico.
 
 ### Google Wallet

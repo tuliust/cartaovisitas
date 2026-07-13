@@ -4,6 +4,8 @@
 
 A interface React `/:slug` é autenticada e pertence ao proprietário.
 
+O parâmetro precisa corresponder ao slug do cartão carregado para a sessão.
+
 Exibe, conforme os dados disponíveis:
 
 - logo;
@@ -18,6 +20,28 @@ Exibe, conforme os dados disponíveis:
 - QR Code;
 - seletor de idioma;
 - ações do colaborador.
+
+## Comportamento mobile
+
+Na primeira dobra, a interface prioriza:
+
+- identidade profissional;
+- contatos;
+- QR Code;
+- barra de ações inicial.
+
+A barra mobile contém:
+
+- toggle PT, ES e EN;
+- Editar;
+- Compartilhar;
+- QR Code;
+- Wallet;
+- seta para a área inferior.
+
+Os botões dessa barra não executam diretamente as ações finais. Eles fazem scroll suave para a segunda área da página, onde ficam as ações completas.
+
+A área inferior não repete o toggle de idioma.
 
 ## Idiomas
 
@@ -35,7 +59,7 @@ Fallback:
 idioma selecionado → PT → campo legado
 ```
 
-A preferência do idioma do cartão pode ser armazenada localmente.
+A preferência do idioma pode ser armazenada localmente.
 
 ## vCard
 
@@ -149,4 +173,24 @@ Quando a flag pública não está ativa:
 - modal informa indisponibilidade;
 - endpoint Apple não é chamado.
 
-Ativação e certificados estão em `wallet-setup.md`.
+## Bloqueador para ativação do Apple Wallet
+
+O passe atual gera:
+
+```text
+/:slug
+```
+
+como URL e conteúdo do QR Code.
+
+Essa rota exige autenticação e não é adequada como destino público para terceiros.
+
+Antes de ativar o Apple Wallet, definir e implementar um destino apropriado, por exemplo:
+
+- `/qr/:slug`;
+- `/api/vcard/:slug`;
+- ou futura rota pública formalmente aprovada.
+
+A ativação da Wallet não deve ocorrer antes dessa decisão.
+
+Configuração de certificados e detalhes operacionais estão em `wallet-setup.md`.

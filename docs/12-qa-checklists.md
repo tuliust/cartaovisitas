@@ -24,22 +24,26 @@ git diff --name-only
 ## Home
 
 - três CTAs principais;
-- links Guia e Termos;
 - seletor visual;
+- Guia e Termos;
 - logos corretos;
 - seis variantes;
 - persistência após reload;
+- seletor mobile abaixo do card;
+- links de apoio no rodapé mobile;
 - mobile e desktop.
 
 ## Cadastro
 
+- sem subtítulo abaixo do título;
 - e-mail institucional;
+- input e sufixo na mesma linha;
 - senha e confirmação;
 - aceite obrigatório;
+- checkbox alinhado;
 - modal de Termos;
 - fallback de conteúdo;
 - foco no erro;
-- checkbox alinhado;
 - criação válida.
 
 ## Login e recuperação
@@ -48,8 +52,15 @@ git diff --name-only
 - bloqueado negado;
 - e-mail inválido;
 - reset com rate limit;
-- e-mail inexistente sem enumeração indevida;
+- e-mail não cadastrado retorna o comportamento atual documentado;
+- confirmar que a resposta uniforme ainda é pendência da frente Resend;
 - redirect para definição de senha.
+
+Após a implementação do Resend:
+
+- e-mail existente e inexistente devem produzir resposta externa uniforme;
+- nenhum token deve aparecer em log ou resposta;
+- entrega e links devem ser validados.
 
 ## Área do colaborador
 
@@ -60,6 +71,8 @@ git diff --name-only
 - header;
 - menu Mais;
 - seletor compacto;
+- popover em duas colunas e três linhas;
+- sem overflow horizontal;
 - mobile.
 
 ## Edição
@@ -68,10 +81,16 @@ git diff --name-only
 - avatar;
 - slug;
 - seis variantes;
+- três colunas por grupo no mobile;
+- nomes visíveis das variantes removidos;
+- acessibilidade preservada;
 - idioma;
-- e-mail;
+- toggle sem espaço excedente;
+- e-mail e sufixo na mesma linha;
 - salvar;
-- preview;
+- preview lateral no desktop;
+- botão “Ver Preview” no mobile;
+- modal usa valores ainda não salvos;
 - nenhuma perda de dados.
 
 ## Cartão por slug
@@ -85,10 +104,13 @@ git diff --name-only
 - QR;
 - idioma;
 - ações;
+- barra inicial mobile;
+- scroll suave para área inferior;
 - compartilhar somente quando suportado;
 - instalação PWA;
 - Wallet standby;
-- sem acesso a slug arbitrário.
+- sem acesso a slug arbitrário;
+- Termos não aparece nessa rota.
 
 ## vCard
 
@@ -126,11 +148,14 @@ git diff --name-only
 
 ## Estatísticas
 
-- períodos;
-- personalizado;
-- contagens;
+- 7, 30, 90 e Personalizado;
+- quatro filtros na mesma linha mobile;
+- datas personalizadas;
+- quatro KPIs principais na mesma linha mobile;
+- indicadores secundários abaixo;
 - gráfico;
 - comparação;
+- resumo textual;
 - estado vazio;
 - responsividade.
 
@@ -196,8 +221,36 @@ git diff --name-only
 - modo standalone;
 - app instalado oculta ação;
 - modal acessível;
-- superfície sólida;
+- Escape;
+- foco;
+- backdrop;
+- bloqueio de scroll;
 - ausência de service worker deliberada.
+
+### Pendência conhecida
+
+A superfície sólida do modal ainda não está aprovada.
+
+Depois da correção:
+
+- validar fundo sólido nas seis variantes;
+- validar que `card_surface_opacity` não afeta o painel;
+- validar abas, passos, botões e textos;
+- validar mobile e desktop.
+
+## Wallet
+
+Standby:
+
+- botão abre aviso;
+- endpoint não é chamado com flag pública desativada.
+
+Antes da ativação:
+
+- corrigir o destino do QR do passe;
+- impedir destino para rota autenticada;
+- testar `.pkpass` em iPhone;
+- validar evento `wallet_apple`.
 
 ## Pós-deploy
 

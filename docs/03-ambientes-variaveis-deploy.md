@@ -9,9 +9,9 @@
 | Vercel Production | Produção em `https://cartaovisitas.vercel.app`. |
 | Supabase | Auth, Database, RLS, Storage e Edge Functions. |
 
-## Variáveis públicas
+## Variáveis públicas do frontend
 
-Entram no bundle do frontend:
+Entram no bundle do navegador:
 
 ```text
 VITE_SUPABASE_URL=
@@ -20,28 +20,91 @@ VITE_APP_BASE_URL=
 VITE_WALLET_PUBLIC_ENABLED=false
 ```
 
-## Variáveis privadas
+Regras:
 
-Somente backend:
+- qualquer variável `VITE_` deve ser tratada como pública;
+- nenhum secret pode usar prefixo `VITE_`;
+- `VITE_APP_BASE_URL` deve refletir o ambiente.
+
+## Variáveis privadas das Vercel Functions
+
+Usadas por endpoints em `api/`:
 
 ```text
 SUPABASE_URL=
 SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 PUBLIC_SITE_URL=https://cartaovisitas.vercel.app
-PASSWORD_RESET_RATE_LIMIT_SALT=
+
 APPLE_WALLET_ENABLED=false
 GOOGLE_WALLET_ENABLED=false
+
+APPLE_PASS_TYPE_IDENTIFIER=
+APPLE_TEAM_IDENTIFIER=
+APPLE_ORGANIZATION_NAME=Invest RS
+APPLE_PASS_CERT_BASE64=
+APPLE_PASS_CERT_PASSWORD=
+APPLE_WWDR_CERT_BASE64=
+
+GOOGLE_WALLET_ISSUER_ID=
+GOOGLE_WALLET_CLASS_ID=
+GOOGLE_WALLET_SERVICE_ACCOUNT_JSON_BASE64=
 ```
 
-A frente Resend adicionará variáveis próprias somente depois da definição final do fluxo.
+`SUPABASE_SERVICE_ROLE_KEY` nunca deve ser exposta ao frontend.
 
-## Regras
+## Secrets da Supabase Edge Function
 
-- Nunca prefixar `SUPABASE_SERVICE_ROLE_KEY` com `VITE_`.
+A função:
+
+```text
+supabase/functions/request-password-reset
+```
+
+utiliza secrets no runtime do Supabase:
+
+```text
+SUPABASE_URL
+SUPABASE_SERVICE_ROLE_KEY
+SUPABASE_ANON_KEY
+PUBLIC_SITE_URL
+PASSWORD_RESET_RATE_LIMIT_SALT
+```
+
+Observações:
+
+- esses valores não precisam estar no `.env.example` do frontend;
+- `PASSWORD_RESET_RATE_LIMIT_SALT` deve ser aleatório e privado;
+- secrets da Edge Function devem ser configurados no ambiente do Supabase;
+- não registrar valores reais em documentação ou logs.
+
+## Variáveis futuras do Resend
+
+A integração ainda não foi implementada.
+
+Nomes conceituais:
+
+```text
+RESEND_API_KEY=
+RESEND_FROM_EMAIL=
+RESEND_REPLY_TO=
+```
+
+Os nomes finais devem seguir o código implementado.
+
+Regras:
+
+- somente server-side;
+- nunca usar prefixo `VITE_`;
+- não commitar valores reais;
+- separar Production e Preview quando necessário.
+
+## Regras gerais
+
 - Não commitar `.env`, `.env.local`, `.vercel`, certificados ou chaves.
-- Segredos do Supabase, Wallet e Resend ficam em ambientes server-side.
+- Segredos do Supabase, Wallet e Resend ficam em runtimes server-side.
 - `PUBLIC_SITE_URL` deve usar HTTPS em produção.
+- Alterações de variáveis devem ser seguidas por redeploy ou redeploy da função afetada.
 
 ## Redirect URLs do Supabase Auth
 

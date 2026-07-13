@@ -12,21 +12,53 @@ O fluxo atual utiliza mecanismos do Supabase Auth para:
 
 Este documento registra requisitos para a nova frente, não uma implementação concluída.
 
+## Fluxo atual
+
+### Convite
+
+- frontend chama `/api/admin/invite-user`;
+- endpoint valida admin;
+- Supabase Auth Admin envia convite;
+- perfil fica `pending`;
+- auditoria registra o envio.
+
+### Cadastro
+
+- `signUp` usa `emailRedirectTo`;
+- a confirmação depende da configuração do Supabase Auth.
+
+### Recuperação
+
+- frontend chama a Edge Function `request-password-reset`;
+- a função aplica rate limit;
+- verifica se o e-mail existe;
+- usa `resetPasswordForEmail`;
+- redireciona para `/definir-senha`.
+
+## Limitação atual de segurança
+
+A recuperação diferencia conta cadastrada e não cadastrada por meio de `not_registered`.
+
+O frontend exibe mensagem específica.
+
+Isso permite enumeração de contas e precisa ser corrigido na nova arquitetura.
+
 ## Objetivo
 
-Padronizar e controlar e-mails institucionais por meio do Resend, preservando a segurança dos links e a integração com o Supabase Auth.
+Padronizar e controlar e-mails institucionais por meio do Resend, preservando a integração segura com o Supabase Auth.
 
 ## Decisões que precisam ser definidas
 
-- Resend substituirá ou apenas complementará o envio do Supabase?
-- Como serão gerados os links de convite?
-- Como serão gerados os links de redefinição?
+- Resend substituirá ou complementará o envio do Supabase?
+- Como serão gerados links de convite?
+- Como serão gerados links de redefinição?
 - O cadastro exigirá confirmação por e-mail?
 - Qual domínio remetente será validado?
 - Qual endereço será usado em `from` e `reply-to`?
 - Onde templates serão versionados?
 - Quais eventos entram na auditoria?
 - Como serão tratados retries e falhas?
+- Como será garantida resposta uniforme ao solicitante?
 
 ## Requisitos técnicos
 
@@ -36,9 +68,10 @@ Padronizar e controlar e-mails institucionais por meio do Resend, preservando a 
 - validade e uso único dos links;
 - domínio institucional validado;
 - rate limiting;
-- proteção contra enumeração;
+- resposta uniforme para conta existente e inexistente;
 - respostas sem stack trace;
 - logs sem conteúdo sensível;
+- tokens nunca registrados;
 - ambiente Production separado de Preview.
 
 ## Fluxos previstos
@@ -61,10 +94,11 @@ Possível fluxo:
 
 1. usuário informa e-mail;
 2. backend aplica rate limit;
-3. backend evita enumeração;
-4. gera link seguro;
-5. Resend envia;
-6. usuário acessa `/definir-senha`.
+3. backend responde de forma uniforme;
+4. internamente verifica se existe conta;
+5. quando aplicável, gera link seguro;
+6. Resend envia;
+7. usuário acessa `/definir-senha`.
 
 ## Templates
 
@@ -105,11 +139,13 @@ Os nomes finais devem seguir o código implementado.
 - não aceitar remetente arbitrário do cliente;
 - não registrar tokens;
 - não reutilizar links;
-- validar URL pública.
+- validar URL pública;
+- não confirmar publicamente se um e-mail existe.
 
 ## QA futuro
 
 - domínio verificado;
+- SPF e DKIM;
 - entrega em Gmail e Outlook;
 - spam;
 - links;
@@ -119,7 +155,9 @@ Os nomes finais devem seguir o código implementado.
 - falha do provedor;
 - rate limit;
 - convite duplicado;
-- recuperação de conta inexistente;
+- recuperação de conta existente;
+- recuperação de conta inexistente com resposta idêntica;
+- ausência de tokens em logs;
 - auditoria.
 
 ## Atualização obrigatória
@@ -127,10 +165,10 @@ Os nomes finais devem seguir o código implementado.
 Depois da implementação, revisar:
 
 - este documento;
+- README;
 - arquitetura;
 - ambientes;
 - rotas;
 - admin;
 - segurança;
-- QA;
-- README.
+- QA.

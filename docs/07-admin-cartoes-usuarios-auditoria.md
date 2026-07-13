@@ -58,6 +58,27 @@ Regras:
 - não remover o último admin ativo;
 - usuário bloqueado não acessa áreas restritas.
 
+## Convites — fluxo atual
+
+1. Admin informa o e-mail institucional.
+2. Frontend chama `/api/admin/invite-user`.
+3. Endpoint valida a sessão e o perfil admin.
+4. Supabase Auth Admin cria ou convida o usuário.
+5. `user_profiles` é criado ou atualizado como `pending`.
+6. Auditoria registra o envio.
+
+A migração para Resend está pendente.
+
+Depois da implementação do Resend, revisar:
+
+- endpoint;
+- geração do link;
+- template;
+- status do perfil;
+- tratamento de falhas;
+- auditoria;
+- reenvio de convite.
+
 ## Auditoria
 
 Rota:
@@ -132,7 +153,3 @@ Target:
 ```text
 managed_page
 ```
-
-## Convites
-
-O endpoint atual usa Supabase Auth Admin. A migração para Resend está pendente e poderá alterar o fluxo operacional e a auditoria.

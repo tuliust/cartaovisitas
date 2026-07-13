@@ -34,7 +34,32 @@ zoom 200%
 - mudanças de rota retornam ao topo;
 - hashes do Guia são preservados;
 - links reais para navegação;
-- botões reais para ações.
+- botões reais para ações;
+- ações intermediárias podem usar scroll suave para seções da mesma página.
+
+## Home
+
+### Desktop
+
+- seletor visual no topo do card;
+- três CTAs principais;
+- links de apoio abaixo do card.
+
+### Mobile
+
+- card principal com maior altura e respiro;
+- logo alinhado visualmente com o conteúdo;
+- seletor visual fora do topo do card;
+- seletor posicionado acima dos links de apoio;
+- Guia e Termos no rodapé da página.
+
+## Cadastro
+
+- sem subtítulo abaixo de “Cadastro”;
+- e-mail e sufixo institucional na mesma linha;
+- checkbox alinhado ao texto;
+- modal de Termos acessível;
+- comportamento consistente em mobile e desktop.
 
 ## Área do colaborador
 
@@ -48,7 +73,64 @@ O header compartilhado deve manter:
 - seletor visual;
 - Sair.
 
-Em mobile, o layout pode compactar gaps e ícones, mas não deve remover ações.
+Em mobile:
+
+- gaps e paddings compactos;
+- logo reduzido sem perda de legibilidade;
+- todos os botões permanecem disponíveis;
+- seletor compacto centralizado;
+- popover das seis variantes em duas colunas e três linhas;
+- sem scroll horizontal.
+
+## Edição do cartão
+
+### Desktop
+
+- formulário e preview lado a lado;
+- preview permanente;
+- botão “Ver Preview” oculto.
+
+### Mobile
+
+- formulário em largura total;
+- preview permanente removido do fluxo;
+- botão “Ver Preview” ao lado de “Salvar alterações”;
+- modal de preview usa valores ainda não salvos;
+- restauração de foco ao fechar;
+- variantes em três colunas por grupo;
+- nomes visíveis das variantes removidos;
+- acessibilidade preservada por `aria-label`, `title` e `aria-pressed`;
+- toggle PT/ES/EN sem espaço excedente;
+- input e sufixo de e-mail na mesma linha.
+
+## Cartão por slug
+
+### Mobile
+
+A primeira dobra deve incluir:
+
+- identidade;
+- contatos;
+- QR;
+- barra inicial de idioma e ações.
+
+A barra inicial:
+
+- contém PT, ES e EN;
+- contém Editar, Compartilhar, QR, Wallet e seta;
+- permanece visível sem scroll quando a altura disponível permitir;
+- leva o usuário à seção inferior por scroll suave;
+- não repete o toggle na área inferior.
+
+## Estatísticas
+
+Em mobile:
+
+- 7 dias, 30 dias, 90 dias e Personalizado na mesma linha;
+- quatro KPIs principais em uma linha;
+- títulos podem ocupar até duas linhas;
+- indicadores secundários ficam abaixo;
+- gráfico preserva descrição e resumo textual.
 
 ## Formulários
 
@@ -87,7 +169,19 @@ Usos atuais incluem:
 - auditoria;
 - crop;
 - exclusão;
-- preview do cartão, quando aplicável.
+- preview do cartão.
+
+## Pendência do modal PWA
+
+O modal de instalação ainda pode herdar transparência em algumas variantes.
+
+A correção deve assegurar:
+
+- backdrop escurecido;
+- painel interno sólido;
+- independência de `card_surface_opacity`;
+- contraste de textos, abas, passos e botões;
+- manutenção de foco, Escape e bloqueio de scroll.
 
 ## Menus e popovers
 
@@ -116,13 +210,6 @@ Características:
 
 Não exibir simultaneamente toast e box inline com a mesma confirmação.
 
-## Gráficos e estatísticas
-
-- descrição acessível;
-- resumo tabular quando necessário;
-- filtros responsivos;
-- KPIs sem corte.
-
 ## Estado de revisão visual
 
-Pequenas correções desktop e mobile continuam em andamento. Depois da estabilização, este documento deve ser comparado novamente com `src/index.css` e as páginas afetadas.
+Pequenas correções desktop e mobile continuam em andamento. Depois da estabilização, comparar este documento novamente com `src/index.css` e as páginas afetadas.

@@ -63,9 +63,31 @@ A Edge Function:
 - aceita solicitação pública;
 - valida domínio;
 - aplica limite por IP e e-mail;
-- usa hashes;
-- evita consulta de `auth.users` pelo cliente;
+- usa hashes para as chaves do rate limit;
+- consulta usuários somente no backend;
 - retorna respostas controladas.
+
+## Limitação atual: enumeração de contas
+
+O fluxo atual diferencia:
+
+```text
+e-mail cadastrado
+e-mail não cadastrado
+```
+
+A Edge Function pode retornar `not_registered`, e o frontend exibe mensagem específica.
+
+Isso permite inferir a existência de uma conta.
+
+A frente Resend deve corrigir esse comportamento com resposta externa uniforme, sem eliminar:
+
+- rate limiting;
+- logs internos;
+- auditoria;
+- tratamento administrativo de falhas.
+
+Até essa correção, a documentação e os testes não devem afirmar proteção completa contra enumeração.
 
 ## Conteúdo gerenciado
 
@@ -95,17 +117,28 @@ Falha de auditoria não deve expor dados sensíveis nem quebrar uma ação crít
 
 ## E-mails
 
-O fluxo atual depende do Supabase Auth para convite e redefinição.
+O fluxo atual depende do Supabase Auth para convite, confirmação conforme configuração e redefinição.
 
 A futura integração com Resend deve preservar:
 
 - geração segura de links;
-- proteção contra enumeração;
+- resposta uniforme ao usuário;
 - rate limiting;
 - segredos server-side;
 - validação do domínio;
 - auditoria;
-- mensagens sem dados sensíveis.
+- mensagens sem dados sensíveis;
+- ausência de tokens em logs.
+
+## Wallet
+
+Antes de ativar Apple Wallet:
+
+- corrigir o destino do QR do passe;
+- não apontar terceiros para uma rota autenticada;
+- validar analytics;
+- validar certificados;
+- testar em dispositivo físico.
 
 ## Checklist de segurança
 
@@ -136,4 +169,5 @@ supabase/.temp
 - validar convites pendentes;
 - testar RLS depois de policies;
 - testar vCard depois de mudanças de schema;
-- preservar migrations e repairs.
+- preservar migrations e repairs;
+- revisar fluxos de e-mail após a migração para Resend.

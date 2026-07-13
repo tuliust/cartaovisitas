@@ -1,12 +1,59 @@
 # Configuração de Wallet
 
+## Estado
+
+Apple e Google Wallet permanecem em standby.
+
+A base técnica do Apple Wallet existe, mas há um bloqueador funcional antes da ativação: o QR e a URL principal do passe apontam atualmente para `/:slug`, rota autenticada do proprietário.
+
+A ativação não deve ocorrer antes da definição de um destino adequado para terceiros.
+
 ## Apple Wallet
 
-O endpoint `GET /api/wallet/apple/:slug` gera um passe `.pkpass` assinado em memória. Certificados e chaves nunca são enviados ao frontend nem gravados no repositório.
+O endpoint:
 
-### Variáveis de ambiente
+```text
+GET /api/wallet/apple/:slug
+```
 
-Configure somente no backend da Vercel (Production, Preview e Development conforme necessário):
+gera um passe `.pkpass` assinado em memória.
+
+Certificados e chaves nunca são enviados ao frontend nem gravados no repositório.
+
+## Bloqueador: destino do QR e da URL
+
+O código atual monta:
+
+```text
+https://cartaovisitas.vercel.app/:slug
+```
+
+como:
+
+- URL do campo “Página”;
+- conteúdo do QR Code do passe.
+
+Como `/:slug` exige autenticação, esse destino não é adequado para pessoas que recebem o contato.
+
+Antes da ativação, escolher e implementar uma opção:
+
+```text
+/qr/:slug
+/api/vcard/:slug
+ou uma futura rota pública aprovada
+```
+
+Depois da alteração:
+
+- atualizar este documento;
+- atualizar o documento 06;
+- testar o passe em iPhone;
+- validar tracking;
+- confirmar que o destino funciona sem sessão.
+
+## Variáveis de ambiente
+
+Configure somente no backend da Vercel:
 
 ```text
 APPLE_WALLET_ENABLED=true
@@ -19,44 +66,67 @@ APPLE_WWDR_CERT_BASE64=
 PUBLIC_SITE_URL=https://cartaovisitas.vercel.app
 ```
 
-Nenhuma variável Apple deve usar o prefixo `VITE_`. O `.p12`, a senha e o certificado WWDR são segredos de backend. Não adicione certificados, arquivos `.env`, `.env.local` ou `.vercel` ao Git.
+Nenhuma variável Apple deve usar prefixo `VITE_`.
 
-### Emissão dos certificados
+O `.p12`, a senha e o WWDR são segredos de backend.
 
-1. Tenha uma conta ativa no Apple Developer Program.
-2. Em Certificates, Identifiers & Profiles, crie um Pass Type ID, por exemplo `pass.com.investrs.businesscard`.
-3. Gere um certificado para esse Pass Type ID e instale-o no Keychain Access.
-4. Exporte o certificado e sua chave privada como `.p12`, protegido por senha.
-5. Converta o arquivo completo para base64 e salve o resultado em `APPLE_PASS_CERT_BASE64`.
-6. Baixe o certificado Apple Worldwide Developer Relations (WWDR) vigente no portal da Apple.
-7. Converta o WWDR para base64 e salve em `APPLE_WWDR_CERT_BASE64`. O endpoint aceita certificado DER ou PEM codificado em base64.
-8. Configure as variáveis na Vercel, faça um novo deploy e teste o endpoint em um iPhone.
+Não adicionar certificados, `.env`, `.env.local` ou `.vercel` ao Git.
 
-Exemplos de conversão:
+## Emissão dos certificados
+
+1. Ter conta ativa no Apple Developer Program.
+2. Criar um Pass Type ID.
+3. Gerar certificado para o Pass Type ID.
+4. Instalar no Keychain Access.
+5. Exportar certificado e chave privada como `.p12`.
+6. Converter o `.p12` para base64.
+7. Baixar o certificado WWDR vigente.
+8. Converter o WWDR para base64.
+9. Configurar as variáveis.
+10. Fazer novo deploy.
+11. Testar em iPhone.
+
+Exemplos:
 
 ```bash
 base64 -i pass-certificate.p12 | tr -d '\n'
 base64 -i AppleWWDRCAG4.cer | tr -d '\n'
 ```
 
-No PowerShell:
+PowerShell:
 
 ```powershell
 [Convert]::ToBase64String([IO.File]::ReadAllBytes('pass-certificate.p12'))
 [Convert]::ToBase64String([IO.File]::ReadAllBytes('AppleWWDRCAG4.cer'))
 ```
 
-Se `APPLE_WALLET_ENABLED` não for `true` ou alguma credencial estiver ausente, o endpoint retorna HTTP 503 com JSON amigável. Ele nunca retorna conteúdo de certificados ou stack trace.
+## Comportamento sem configuração
 
-### Analytics
+Se `APPLE_WALLET_ENABLED` não for `true` ou alguma credencial estiver ausente:
 
-Após gerar o passe com sucesso, o endpoint tenta inserir `wallet_apple` em `card_scan_events`. Se `event_type` tiver uma constraint ou enum limitado a `view`, `vcard`, `share` e `qr`, inclua `wallet_apple` entre os valores aceitos antes do deploy. Uma falha de analytics não impede o download do passe.
+- endpoint retorna HTTP 503;
+- resposta é JSON amigável;
+- certificados e stack trace não são expostos.
+
+## Analytics
+
+Após gerar o passe, o endpoint tenta inserir:
+
+```text
+wallet_apple
+```
+
+em `card_scan_events`.
+
+Antes da ativação, confirmar que a constraint ou enum aceita esse valor.
+
+Falha de analytics não deve impedir o download do passe.
 
 ## Google Wallet
 
-Google Wallet está preparado, mas não é emitido nesta fase. O endpoint reservado retorna HTTP 501 e o frontend apresenta uma mensagem de disponibilidade futura.
+Google Wallet não é emitido nesta fase.
 
-Variáveis futuras, ainda opcionais:
+Variáveis futuras:
 
 ```text
 GOOGLE_WALLET_ENABLED=false
@@ -65,26 +135,47 @@ GOOGLE_WALLET_CLASS_ID=
 GOOGLE_WALLET_SERVICE_ACCOUNT_JSON_BASE64=
 ```
 
-A implementação futura exigirá Google Wallet Issuer Account, projeto Google Cloud, Service Account, Issuer ID, Class ID, JWT assinado e publishing access. A service account também será exclusiva do backend e nunca poderá usar prefixo `VITE_`.
+A implementação dependerá de:
 
-## Limitações desta fase
+- Google Wallet Issuer Account;
+- Google Cloud;
+- Service Account;
+- Issuer ID;
+- Class ID;
+- JWT assinado;
+- publishing access.
 
-- Sem Apple PassKit Web Service ou atualizações push.
-- Sem sincronização automática quando os dados do cartão mudam.
-- Sem revogação remota ou atualização dinâmica do passe emitido.
-- Sem Google Wallet real.
-- Sem upload de certificados pelo painel administrativo.
-- O QR do passe aponta diretamente para a página pública, sem tracking intermediário.
+## Limitações
+
+- sem PassKit Web Service;
+- sem push;
+- sem sincronização automática;
+- sem revogação remota;
+- sem Google Wallet real;
+- sem upload de certificados pelo painel;
+- destino público do QR ainda pendente.
 
 ## Verificação
 
-Sem credenciais, confirme HTTP 503 JSON em `/api/wallet/apple/tulius-souza`. Com credenciais válidas, confirme `Content-Type: application/vnd.apple.pkpass`, nome `invest-rs-tulius-souza.pkpass`, abertura no iPhone e os dados do cartão. Verifique separadamente que `/api/vcard/tulius-souza` continua retornando `text/vcard`.
+Sem credenciais:
+
+```text
+/api/wallet/apple/tulius-souza
+```
+
+deve retornar HTTP 503 com JSON.
+
+Com credenciais válidas e depois de corrigir o destino:
+
+- `Content-Type: application/vnd.apple.pkpass`;
+- filename esperado;
+- abertura no iPhone;
+- dados corretos;
+- QR funcional para terceiros;
+- analytics;
+- vCard preservado.
 
 ## Modo standby
-
-`APPLE_WALLET_ENABLED` controla a emissão no backend. `VITE_WALLET_PUBLIC_ENABLED` controla a exposição da funcionalidade no frontend. Quando a flag pública não é exatamente `true`, o botão continua visível, mas abre somente o aviso “Wallet em breve” e não chama o endpoint Apple.
-
-Para manter a Wallet em standby:
 
 ```text
 APPLE_WALLET_ENABLED=false
@@ -92,4 +183,4 @@ GOOGLE_WALLET_ENABLED=false
 VITE_WALLET_PUBLIC_ENABLED=false
 ```
 
-Para ativar futuramente, aprove o orçamento do Apple Developer Program, crie o Pass Type ID, configure certificados Apple reais na Vercel, defina `APPLE_WALLET_ENABLED=true` e `VITE_WALLET_PUBLIC_ENABLED=true` e faça um novo deploy.
+Quando a flag pública não é `true`, o botão abre apenas o aviso de disponibilidade futura e não chama o endpoint Apple.
