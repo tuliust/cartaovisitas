@@ -906,6 +906,279 @@ p {
   }
 }
 
+/* Collaborator card editor: link status, institutional fields, avatar and sticky preview. */
+.employee-card-form .slug-input-field {
+  position: relative;
+  display: block;
+}
+
+.employee-card-form .slug-input-field input {
+  padding-right: 52px;
+}
+
+.slug-input-status-icon {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  width: 24px;
+  height: 24px;
+  display: inline-grid;
+  place-items: center;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.slug-input-status-icon svg {
+  width: 21px;
+  height: 21px;
+  stroke-width: 3;
+}
+
+.slug-input-field--available .slug-input-status-icon {
+  color: var(--semantic-success);
+}
+
+.slug-input-field--unavailable .slug-input-status-icon,
+.slug-input-field--error .slug-input-status-icon {
+  color: var(--semantic-danger);
+}
+
+.slug-input-field--checking .slug-input-status-icon {
+  color: var(--semantic-muted);
+}
+
+.slug-input-status-icon .spin {
+  animation: input-status-spin 800ms linear infinite;
+}
+
+@keyframes input-status-spin {
+  to { transform: rotate(360deg); }
+}
+
+.employee-card-form .institutional-field input:disabled {
+  border-color: color-mix(in srgb, var(--semantic-text) 12%, transparent);
+  background: color-mix(in srgb, var(--semantic-surface-solid) 88%, var(--semantic-text) 12%);
+  color: var(--semantic-subtle);
+  -webkit-text-fill-color: var(--semantic-subtle);
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.employee-card-form .url-prefix-field,
+.employee-card-form .email-suffix-field {
+  border-color: color-mix(in srgb, #ffffff 24%, transparent);
+  background: color-mix(in srgb, var(--semantic-surface-solid) 76%, #000000);
+}
+
+.employee-card-form .url-prefix-label,
+.employee-card-form .email-suffix-label {
+  align-self: stretch;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  background: color-mix(in srgb, var(--semantic-surface-solid) 58%, #000000);
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
+.employee-card-form .url-prefix-field .url-prefix-input,
+.employee-card-form .email-suffix-field .email-suffix-input,
+.employee-card-form .email-suffix-field .email-suffix-input:disabled {
+  border: 0;
+  border-radius: 0;
+  background: #ffffff;
+  color: #111111;
+  -webkit-text-fill-color: #111111;
+  opacity: 1;
+}
+
+.avatar-editor {
+  min-width: 0;
+  display: grid;
+  gap: 9px;
+}
+
+.avatar-editor-label {
+  color: var(--admin-text);
+  font-size: 0.92rem;
+  font-weight: 750;
+}
+
+.avatar-photo-stage,
+.avatar-upload-empty {
+  width: min(230px, 100%);
+  aspect-ratio: 1;
+  border: 1px dashed color-mix(in srgb, var(--semantic-text) 28%, transparent);
+  border-radius: 22px;
+}
+
+.avatar-photo-stage {
+  position: relative;
+  overflow: hidden;
+  background: var(--semantic-surface-solid);
+  box-shadow: 0 18px 42px rgb(0 0 0 / 0.2);
+}
+
+.avatar-photo-stage > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.avatar-photo-actions {
+  position: absolute;
+  inset: auto 0 0;
+  min-height: 74px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 9px;
+  padding: 14px;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.82), transparent);
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: visibility 150ms ease, transform 150ms ease;
+}
+
+.avatar-photo-stage:hover .avatar-photo-actions,
+.avatar-photo-stage:focus-within .avatar-photo-actions {
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.avatar-photo-actions button {
+  width: 40px;
+  height: 40px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 0.34);
+  border-radius: 999px;
+  background: rgb(12 12 12 / 0.88);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.avatar-photo-actions button:hover,
+.avatar-photo-actions button:focus-visible {
+  border-color: #ffffff;
+  background: #ffffff;
+  color: #111111;
+}
+
+.avatar-photo-actions button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.avatar-upload-empty {
+  min-height: 168px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  padding: 20px;
+  background: color-mix(in srgb, var(--semantic-surface-solid) 82%, transparent);
+  color: var(--semantic-text);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  text-align: center;
+}
+
+.avatar-upload-empty svg {
+  width: 30px;
+  height: 30px;
+}
+
+.avatar-upload-empty small {
+  color: var(--semantic-muted);
+  font-size: 0.76rem;
+  font-weight: 550;
+  line-height: 1.35;
+}
+
+.avatar-editor.is-dragging .avatar-photo-stage,
+.avatar-editor.is-dragging .avatar-upload-empty {
+  border-color: var(--semantic-focus);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--semantic-focus) 28%, transparent);
+}
+
+.desktop-card-preview-sticky {
+  position: sticky;
+  top: 22px;
+  display: grid;
+  gap: 14px;
+}
+
+.desktop-card-preview-sticky > .card-preview {
+  position: static;
+}
+
+.desktop-card-save-actions {
+  padding: 12px;
+  border: 1px solid var(--semantic-border);
+  border-radius: 18px;
+  background: var(--semantic-surface-raised);
+  box-shadow: 0 16px 44px rgb(0 0 0 / 0.2);
+}
+
+.desktop-card-save-actions .primary-button {
+  width: 100%;
+  min-height: 48px;
+}
+
+.employee-card-form .admin-card-form-actions {
+  display: none;
+}
+
+.card-preview.public-card-variant-light-image-4 .card-preview-contact-list {
+  padding: 14px 16px;
+  border: 1px solid rgb(17 17 17 / 0.12);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 0.84);
+  box-shadow: 0 12px 30px rgb(17 17 17 / 0.12);
+}
+
+.card-preview.public-card-variant-light-image-4 .card-preview-contact-list p {
+  color: #111111;
+}
+
+.card-preview.public-card-variant-light-image-4 .card-preview-contact-list span {
+  color: rgb(17 17 17 / 0.7);
+}
+
+@media (hover: none) {
+  .avatar-photo-actions {
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slug-input-status-icon .spin {
+    animation-duration: 1600ms;
+  }
+
+  .avatar-photo-actions {
+    transition: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .employee-card-form .admin-card-form-actions {
+    display: grid;
+  }
+
+  .avatar-photo-stage,
+  .avatar-upload-empty {
+    width: min(200px, 100%);
+  }
+}
+
 /* Admin dashboard */
 
 .admin-login-shell,

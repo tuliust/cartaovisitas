@@ -3,6 +3,7 @@ export type PixelCrop = { x: number; y: number; width: number; height: number }
 function loadImage(source: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image()
+    if (/^https?:\/\//i.test(source)) image.crossOrigin = 'anonymous'
     image.onload = () => resolve(image)
     image.onerror = () => reject(new Error('Não foi possível carregar a imagem selecionada.'))
     image.src = source

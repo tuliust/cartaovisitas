@@ -8,6 +8,7 @@ import { useCollaboratorCardActions } from '../lib/collaboratorCardActions'
 import { requireActiveUser } from '../lib/roles'
 import { useToast } from './ToastContext'
 import { CollaboratorContext } from './CollaboratorContext'
+import { useVisualMode } from './VisualModeContext'
 
 type CollaboratorProviderProps = { children: ReactNode; required?: boolean }
 
@@ -15,6 +16,7 @@ export function CollaboratorProvider({ children, required = true }: Collaborator
   const navigate = useNavigate()
   const location = useLocation()
   const toast = useToast()
+  const { applyAuthenticatedDefault, clearAuthenticatedDefault } = useVisualMode()
   const [card, setCard] = useState<AdminBusinessCard | null>(null)
   const [authenticated, setAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -28,9 +30,10 @@ export function CollaboratorProvider({ children, required = true }: Collaborator
   }, [])
 
   const logout = useCallback(async () => {
+    clearAuthenticatedDefault()
     await signOut().catch(() => undefined)
     navigate('/entrar', { replace: true })
-  }, [navigate])
+  }, [clearAuthenticatedDefault, navigate])
 
   useEffect(() => {
     let mounted = true
@@ -42,7 +45,13 @@ export function CollaboratorProvider({ children, required = true }: Collaborator
       }
       await requireActiveUser()
       const ownCard = await getMyCard()
-      if (mounted) { setAuthenticated(true); setCard(ownCard); setLoading(false) }
+      if (mounted) {
+        if (ownCard) {
+          const sessionKey = `${session.user.id}:${session.expires_at ?? ''}`
+          applyAuthenticatedDefault(ownCard.public_visual_variant ?? 'dark_black', sessionKey)
+        }
+        setAuthenticated(true); setCard(ownCard); setLoading(false)
+      }
     })().catch(async (error) => {
       if (!mounted) return
       const message = getFriendlyErrorMessage(error)
@@ -53,7 +62,7 @@ export function CollaboratorProvider({ children, required = true }: Collaborator
       if (required) setRedirect('/entrar')
     })
     return () => { mounted = false }
-  }, [required, toast])
+  }, [applyAuthenticatedDefault, required, toast])
 
   const value = useMemo(() => ({ card, loading, authenticated, actions, refreshCard, logout }), [actions, authenticated, card, loading, logout, refreshCard])
 

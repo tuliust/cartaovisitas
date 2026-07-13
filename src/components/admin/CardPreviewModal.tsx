@@ -5,11 +5,12 @@ import CardPreview from './CardPreview'
 
 type CardPreviewModalProps = {
   values: CardFormValues
+  showStatus?: boolean
   onClose: () => void
   returnFocusRef: RefObject<HTMLButtonElement | null>
 }
 
-export default function CardPreviewModal({ values, onClose, returnFocusRef }: CardPreviewModalProps) {
+export default function CardPreviewModal({ values, showStatus = true, onClose, returnFocusRef }: CardPreviewModalProps) {
   const titleId = useId()
   const closeRef = useRef<HTMLButtonElement>(null)
   const modalRef = useRef<HTMLElement>(null)
@@ -62,7 +63,7 @@ export default function CardPreviewModal({ values, onClose, returnFocusRef }: Ca
           </button>
         </header>
         <div className="card-preview-modal-body">
-          <CardPreview values={values} />
+          <CardPreview values={values} showStatus={showStatus} />
         </div>
       </section>
     </div>

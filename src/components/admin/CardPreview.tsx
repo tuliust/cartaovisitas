@@ -4,13 +4,14 @@ import { getVariantClassName, getVariantLogo, getVariantStyle } from '../../lib/
 
 type CardPreviewProps = {
   values: CardFormValues
+  showStatus?: boolean
 }
 
 function buildAddress(values: CardFormValues) {
   return [values.address_line, values.city, values.state, values.country].filter(Boolean).join(', ')
 }
 
-export default function CardPreview({ values }: CardPreviewProps) {
+export default function CardPreview({ values, showStatus = true }: CardPreviewProps) {
   const { settings } = useBrandSettings()
   const name = values.display_name || values.full_name || 'Nome completo'
   const phone = values.mobile_phone || values.work_phone
@@ -23,9 +24,9 @@ export default function CardPreview({ values }: CardPreviewProps) {
         <img className="public-card-logo card-preview-logo" src={logoUrl} alt="Invest RS" />
         <div className="card-preview-top-actions">
           {values.show_avatar_public && values.avatar_url ? <div className="public-card-avatar-wrapper preview"><img className="public-card-avatar" src={values.avatar_url} alt={`Foto de ${name}`} /></div> : null}
-          <span className={values.is_active ? 'status-pill active' : 'status-pill inactive'}>
+          {showStatus ? <span className={values.is_active ? 'status-pill active' : 'status-pill inactive'}>
             {values.is_active ? 'Ativo' : 'Inativo'}
-          </span>
+          </span> : null}
         </div>
       </div>
 

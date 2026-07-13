@@ -3,13 +3,13 @@ import Cropper, { type Area, type Point } from 'react-easy-crop'
 import { createCroppedAvatar } from '../../lib/imageCrop'
 
 type ImageCropModalProps = {
-  file: File
+  image: File | string
   onCancel: () => void
   onConfirm: (file: File) => Promise<void> | void
 }
 
-export default function ImageCropModal({ file, onCancel, onConfirm }: ImageCropModalProps) {
-  const source = useMemo(() => URL.createObjectURL(file), [file])
+export default function ImageCropModal({ image, onCancel, onConfirm }: ImageCropModalProps) {
+  const source = useMemo(() => typeof image === 'string' ? image : URL.createObjectURL(image), [image])
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
   const [pixels, setPixels] = useState<Area | null>(null)
@@ -17,8 +17,9 @@ export default function ImageCropModal({ file, onCancel, onConfirm }: ImageCropM
   const [error, setError] = useState('')
 
   useEffect(() => {
+    if (typeof image === 'string') return
     return () => URL.revokeObjectURL(source)
-  }, [source])
+  }, [image, source])
 
   async function confirm() {
     if (!pixels) return

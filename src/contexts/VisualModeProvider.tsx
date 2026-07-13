@@ -4,6 +4,7 @@ import { getEffectiveVisualVariant, getVariantImage, getVariantSemanticTokens, g
 import { VisualModeContext } from './VisualModeContext'
 
 export const VISUAL_MODE_STORAGE_KEY = 'invest-rs-public-visual-mode'
+const AUTHENTICATED_VISUAL_SESSION_KEY = 'invest-rs-authenticated-visual-session'
 
 const validModes = new Set<PublicVisualVariant>(publicVisualVariantOptions.map(({ value }) => value))
 
@@ -26,6 +27,19 @@ export function VisualModeProvider({ children }: { children: ReactNode }) {
     const safeMode = validModes.has(mode) ? mode : 'dark_black'
     window.localStorage.setItem(VISUAL_MODE_STORAGE_KEY, safeMode)
     setPreference({ visualMode: safeMode, hasVisualModePreference: true })
+  }, [])
+
+  const applyAuthenticatedDefault = useCallback((mode: PublicVisualVariant, sessionKey: string) => {
+    if (window.sessionStorage.getItem(AUTHENTICATED_VISUAL_SESSION_KEY) === sessionKey) return
+
+    const safeMode = validModes.has(mode) ? mode : 'dark_black'
+    window.localStorage.setItem(VISUAL_MODE_STORAGE_KEY, safeMode)
+    window.sessionStorage.setItem(AUTHENTICATED_VISUAL_SESSION_KEY, sessionKey)
+    setPreference({ visualMode: safeMode, hasVisualModePreference: true })
+  }, [])
+
+  const clearAuthenticatedDefault = useCallback(() => {
+    window.sessionStorage.removeItem(AUTHENTICATED_VISUAL_SESSION_KEY)
   }, [])
 
   useEffect(() => {
@@ -52,6 +66,13 @@ export function VisualModeProvider({ children }: { children: ReactNode }) {
     Object.entries(getVariantSemanticTokens(settings, visualMode)).forEach(([name, value]) => root.style.setProperty(name, value))
   }, [settings, visualMode])
 
-  const value = useMemo(() => ({ visualMode, setVisualMode, visualModeOptions: publicVisualVariantOptions, hasVisualModePreference }), [visualMode, setVisualMode, hasVisualModePreference])
+  const value = useMemo(() => ({
+    visualMode,
+    setVisualMode,
+    applyAuthenticatedDefault,
+    clearAuthenticatedDefault,
+    visualModeOptions: publicVisualVariantOptions,
+    hasVisualModePreference,
+  }), [applyAuthenticatedDefault, clearAuthenticatedDefault, visualMode, setVisualMode, hasVisualModePreference])
   return <VisualModeContext.Provider value={value}>{children}</VisualModeContext.Provider>
 }
