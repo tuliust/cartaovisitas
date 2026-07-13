@@ -1,7 +1,7 @@
 /*
-  Alinhamento óptico da marca Invest RS.
-  O arquivo do logo tem respiro interno; por isso a borda visível da marca
-  precisa ser deslocada levemente para a esquerda para alinhar com o conteúdo.
+  Alinhamento optico da marca Invest RS.
+  O arquivo do logo tem respiro interno; por isso alguns contextos precisam
+  de uma compensacao horizontal discreta para alinhar a borda visivel da marca.
 */
 
 :root {
@@ -9,19 +9,18 @@
   --brand-logo-optical-offset: -12px;
 }
 
-/* Header das áreas administrativas e do colaborador */
+/* Header das areas administrativas e do colaborador */
 .admin-topbar {
-  padding-left: var(--page-inline-gutter) !important;
-  padding-right: var(--page-inline-gutter) !important;
+  padding-left: var(--page-inline-gutter);
+  padding-right: var(--page-inline-gutter);
 }
 
-/* Conteúdo abaixo do header usa o mesmo gutter */
+/* Conteudo abaixo do header usa o mesmo gutter */
 .admin-page {
-  width: min(1180px, calc(100% - (var(--page-inline-gutter) * 2))) !important;
+  width: min(1180px, calc(100% - (var(--page-inline-gutter) * 2)));
 }
 
-/* Logos devem alinhar pela esquerda visual */
-.auth-logo,
+/* Logos que devem alinhar visualmente pela esquerda */
 .public-card-logo,
 .admin-logo,
 .card-preview-logo,
@@ -29,17 +28,23 @@
 .asset-preview.logo,
 .brand-asset-preview.logo,
 .brand-preview > img {
-  object-position: left center !important;
+  object-position: left center;
 }
 
-/* Compensação óptica do respiro interno do arquivo do logo */
-.auth-logo,
+/* Compensacao optica apenas onde o alinhamento pela esquerda e desejado */
 .public-card-logo,
 .admin-logo,
 .card-preview-logo,
 .brand-logo-main {
   transform: translateX(var(--brand-logo-optical-offset));
   transform-origin: left center;
+}
+
+/* Autenticacao e estados de carregamento permanecem centralizados */
+.auth-logo,
+.admin-state-card .auth-page-logo {
+  object-position: center;
+  transform: none;
 }
 
 .admin-brand {
@@ -53,20 +58,26 @@
   overflow: visible;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 820px) {
   :root {
     --page-inline-gutter: 16px;
     --brand-logo-optical-offset: -8px;
   }
 
   .admin-page {
-    width: min(100% - (var(--page-inline-gutter) * 2), 1180px) !important;
+    width: min(100% - (var(--page-inline-gutter) * 2), 1180px);
   }
 }
 
-@media (max-width: 360px) {
+@media (max-width: 560px) {
   :root {
-    --page-inline-gutter: 14px;
-    --brand-logo-optical-offset: -6px;
+    --brand-logo-optical-offset: -7px;
+  }
+}
+
+@media (max-width: 380px) {
+  :root {
+    --page-inline-gutter: 12px;
+    --brand-logo-optical-offset: -5px;
   }
 }
