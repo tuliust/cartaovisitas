@@ -5457,7 +5457,7 @@ html.app-visual-mode-light .password-input-field:focus-within { border-color: va
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgb(0 0 0 / 0.62);
+  background: var(--semantic-modal-backdrop);
 }
 
 .install-modal {
@@ -5470,7 +5470,7 @@ html.app-visual-mode-light .password-input-field:focus-within { border-color: va
   padding: clamp(22px, 4vw, 30px);
   border: 1px solid var(--semantic-border);
   border-radius: 22px;
-  background: var(--semantic-modal-bg);
+  background: var(--semantic-surface-raised);
   color: var(--semantic-text);
   box-shadow: 0 30px 80px rgb(0 0 0 / 0.36);
 }
