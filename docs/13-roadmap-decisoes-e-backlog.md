@@ -78,7 +78,7 @@ Depende de Issuer Account, Google Cloud, Service Account, IDs e publicação.
 
 - seletor visual global;
 - assinatura de e-mail;
-- Guia de Utilização;
+- Guia de Utilização público, ilustrado e gerenciado;
 - Termos;
 - estatísticas básicas;
 - PWA;

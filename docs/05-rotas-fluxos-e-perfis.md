@@ -4,7 +4,7 @@
 
 | Perfil | Fonte | Permissões |
 |---|---|---|
-| Visitante | sem sessão | Home, autenticação, Termos e endpoints técnicos autorizados. |
+| Visitante | sem sessão | Home, Guia de Utilização, autenticação, Termos e endpoints técnicos autorizados. |
 | Colaborador | Auth + perfil ativo | editar e acompanhar o próprio cartão. |
 | Admin | Auth + perfil admin ativo | administrar o sistema. |
 
@@ -16,6 +16,7 @@
 /cadastro
 /recuperar-senha
 /definir-senha
+/guia-de-utilizacao
 /termos-de-uso-e-privacidade
 ```
 
@@ -24,13 +25,14 @@
 ```text
 /meu-cartao
 /meu-cartao/editar
-/meu-cartao/guia
 /meu-cartao/assinatura-de-email
 /meu-cartao/estatisticas
 /:slug
 ```
 
-Essas rotas usam `CollaboratorProvider`, exceto Termos, que pode montar o provider em modo não obrigatório.
+As rotas do colaborador usam `CollaboratorProvider` obrigatório. Guia e Termos montam o provider em modo não obrigatório para preservar o header compartilhado sem exigir sessão.
+
+A rota legada `/meu-cartao/guia` redireciona para `/guia-de-utilizacao`.
 
 ## Rota `/:slug`
 
@@ -111,5 +113,6 @@ Vínculo:
 ## Conteúdo gerenciado
 
 - Termos: público.
-- Guia: autenticado.
+- Guia: público, publicado em `/guia-de-utilizacao`.
 - Fallback local quando o Supabase falha, o registro não existe ou o conteúdo é inválido.
+- o conteúdo do Guia permanece administrável; ícones e apresentação são definidos pela interface a partir dos IDs das seções.

@@ -19,7 +19,7 @@ O produto combina:
 
 | Perfil | Capacidades |
 |---|---|
-| Visitante | Acessa Home, cadastro, login, Termos e endpoints técnicos autorizados. |
+| Visitante | Acessa Home, Guia de Utilização, cadastro, login, Termos e endpoints técnicos autorizados. |
 | Colaborador | Acessa, edita e acompanha o próprio cartão. |
 | Admin | Administra cartões, usuários, auditoria, identidade visual, conteúdos e importações. |
 
@@ -46,7 +46,7 @@ Os endpoints técnicos de vCard e QR mantêm suas regras próprias e podem ser u
 - QR Code com tracking;
 - compartilhamento nativo do vCard quando suportado;
 - assinatura de e-mail com QR Code;
-- Guia de Utilização;
+- Guia de Utilização público, ilustrado e gerenciado;
 - Termos de Uso e Privacidade gerenciados;
 - estatísticas do cartão;
 - PWA instalável;

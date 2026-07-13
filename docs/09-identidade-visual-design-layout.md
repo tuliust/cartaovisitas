@@ -105,6 +105,17 @@ Configuráveis:
 - Apple Touch Icon;
 - Open Graph.
 
+## Guia de Utilização
+
+O Guia público usa:
+
+- índice responsivo com números, ícones compactos e âncoras;
+- cards ilustrados com hierarquia de tópico, título e conteúdo;
+- ícones de `lucide-react` associados aos IDs canônicos;
+- ícone genérico quando uma seção gerenciada utiliza ID não mapeado;
+- superfícies e estados de foco derivados dos tokens semânticos;
+- uma coluna no mobile e índice em duas colunas no tablet quando houver espaço.
+
 ## PWA
 
 Existe manifest. A documentação específica está em `14-pwa-instalacao-e-compartilhamento.md`.

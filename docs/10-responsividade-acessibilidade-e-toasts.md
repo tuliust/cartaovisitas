@@ -105,6 +105,12 @@ Em mobile:
 
 ## Cartão por slug
 
+### Desktop
+
+- a barra compacta da coluna esquerda permanece oculta;
+- o toggle PT, ES e EN aparece à direita de “Ferramentas da minha página”;
+- ações completas permanecem na coluna direita.
+
 ### Mobile
 
 A primeira dobra deve incluir:
@@ -121,6 +127,17 @@ A barra inicial:
 - permanece visível sem scroll quando a altura disponível permitir;
 - leva o usuário à seção inferior por scroll suave;
 - não repete o toggle na área inferior.
+
+## Guia de Utilização
+
+- rota pública e header compatível com visitante ou colaborador autenticado;
+- índice com âncoras, números e ícones;
+- índice sticky apenas quando houver espaço vertical e layout em duas colunas;
+- cards em uma coluna;
+- foco visível em todos os links;
+- ícones decorativos com `aria-hidden`;
+- sem rolagem horizontal em 320 px;
+- conteúdo legível nas seis variantes e em zoom de 200%.
 
 ## Estatísticas
 

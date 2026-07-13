@@ -106,9 +106,11 @@ Campos:
 Registros atuais:
 
 ```text
-terms_and_privacy
-usage_guide
+terms_and_privacy — público
+usage_guide — público
 ```
+
+O Guia utiliza a rota canônica `/guia-de-utilizacao`. Registros públicos e publicados são legíveis por visitantes conforme a policy existente.
 
 ### `password_reset_rate_limits`
 

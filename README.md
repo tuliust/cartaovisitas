@@ -17,7 +17,8 @@ Sistema institucional de cartões de visita digitais da Invest RS, com páginas 
 ### Públicas
 
 - `/` — página inicial.
-- `/:slug` — cartão público do colaborador.
+- `/guia-de-utilizacao` — Guia de Utilização público.
+- `/termos-de-uso-e-privacidade` — Termos de Uso e Privacidade.
 - `/api/vcard/:slug?lang=pt|es|en` — vCard UTF-8.
 - `/qr/:slug?lang=pt|es|en` — tracking real de QR Code e redirecionamento para o vCard.
 
@@ -27,6 +28,7 @@ Sistema institucional de cartões de visita digitais da Invest RS, com páginas 
 - `/cadastro` — cadastro com e-mail `@investrs.org.br`.
 - `/meu-cartao` — redirecionamento para a área do cartão.
 - `/meu-cartao/editar` — edição do próprio cartão.
+- `/:slug` — interface autenticada do proprietário, restrita ao cartão da sessão.
 - `/recuperar-senha` — solicitação de redefinição.
 - `/definir-senha` — definição/redefinição de senha.
 
@@ -110,6 +112,7 @@ Implementado:
 - importação CSV;
 - branding dinâmico;
 - seis variantes visuais institucionais;
+- Guia de Utilização público e gerenciado;
 - favicon e Apple Touch Icon configuráveis;
 - toasts globais;
 - Wallet em standby.

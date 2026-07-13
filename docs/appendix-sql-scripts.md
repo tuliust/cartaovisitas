@@ -24,6 +24,17 @@ Cria:
 
 Os seeds não sobrescrevem conteúdo existente.
 
+### `202607130002_make_usage_guide_public.sql`
+
+Atualiza de forma idempotente o registro `usage_guide`:
+
+- rota canônica para `/guia-de-utilizacao`;
+- visibilidade para `public`;
+- publicação ativa;
+- conteúdo ampliado dos 14 tópicos.
+
+A migration preserva o identificador e a data de criação do registro. A policy pública existente passa a autorizar a leitura anônima depois da mudança de visibilidade.
+
 ## Repair
 
 ### `supabase/repairs/repair_managed_pages_utf8.sql`

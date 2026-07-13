@@ -127,7 +127,7 @@ Duas frentes:
 ### Conteúdo das páginas
 
 - Termos;
-- Guia;
+- Guia público em `/guia-de-utilizacao`;
 - título e subtítulo;
 - aviso;
 - seções;

@@ -25,7 +25,7 @@ git diff --name-only
 
 - três CTAs principais;
 - seletor visual;
-- Guia e Termos;
+- Guia e Termos acessíveis sem login;
 - logos corretos;
 - seis variantes;
 - persistência após reload;
@@ -103,6 +103,8 @@ Após a implementação do Resend:
 - endereço;
 - QR;
 - idioma;
+- toggle na coluna direita no desktop;
+- barra compacta da coluna esquerda oculta no desktop;
 - ações;
 - barra inicial mobile;
 - scroll suave para área inferior;
@@ -111,6 +113,19 @@ Após a implementação do Resend:
 - Wallet standby;
 - sem acesso a slug arbitrário;
 - Termos não aparece nessa rota.
+
+## Guia de Utilização
+
+- `/guia-de-utilizacao` acessível sem sessão;
+- `/meu-cartao/guia` redireciona para a rota canônica;
+- Home e Minha Página apontam para a rota pública;
+- conteúdo publicado de `managed_pages`;
+- fallback local;
+- 14 tópicos;
+- números, ícones e âncoras;
+- foco visível;
+- seis variantes;
+- mobile, tablet, desktop e zoom de 200%.
 
 ## vCard
 
