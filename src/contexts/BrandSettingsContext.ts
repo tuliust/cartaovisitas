@@ -4,6 +4,7 @@ import type { BrandSettings } from '../lib/brandSettings'
 export type BrandSettingsContextValue = {
   settings: BrandSettings
   setSettings: (settings: BrandSettings) => void
+  status: 'loading' | 'ready' | 'error'
 }
 
 export const BrandSettingsContext = createContext<BrandSettingsContextValue | null>(null)

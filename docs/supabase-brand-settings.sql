@@ -6,17 +6,23 @@ create table if not exists public.brand_settings (
   favicon_url text,
   og_image_url text,
   background_image_url text,
+  browser_title text,
+  apple_touch_title text,
   primary_color text not null default '#050505',
   secondary_color text not null default '#f7f3eb',
   background_color text not null default '#050505',
   surface_color text not null default '#111111',
   text_color text not null default '#ffffff',
+  visual_variant_settings jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
 alter table public.brand_settings
-  add column if not exists background_image_url text;
+  add column if not exists background_image_url text,
+  add column if not exists browser_title text,
+  add column if not exists apple_touch_title text,
+  add column if not exists visual_variant_settings jsonb;
 
 insert into public.brand_settings (singleton)
 values (true)

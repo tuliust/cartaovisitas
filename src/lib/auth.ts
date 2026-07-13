@@ -41,10 +41,10 @@ export async function signUpWithPassword(email: string, password: string) {
 
 export async function sendPasswordReset(email: string) {
   if (!isInvestRsEmail(email)) throw new Error('Use um e-mail institucional @investrs.org.br.')
-  const { error } = await requireSupabase().auth.resetPasswordForEmail(email.toLowerCase(), {
-    redirectTo: `${window.location.origin}/definir-senha`,
-  })
+  const { data, error } = await requireSupabase().functions.invoke<{ status?: string }>('request-password-reset', { body: { email: email.trim().toLowerCase() } })
   if (error) throw error
+  if (data?.status === 'not_registered') throw new Error('E-mail não cadastrado.')
+  if (data?.status !== 'sent') throw new Error('Não foi possível solicitar a recuperação de senha.')
 }
 
 export async function updatePassword(password: string) {

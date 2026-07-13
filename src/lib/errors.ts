@@ -24,6 +24,7 @@ export function getFriendlyErrorMessage(error: unknown): string {
     text.startsWith('logo:') ||
     text.startsWith('asset de marca:') ||
     text.includes('use um e-mail institucional')
+    || text.includes('e-mail não cadastrado')
   ) {
     return rawText
   }

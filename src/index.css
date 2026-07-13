@@ -17,6 +17,13 @@
   --visual-page-text: #ffffff;
   --visual-page-muted: rgba(255, 255, 255, 0.72);
   --visual-card-surface: rgba(8, 8, 8, 0.78);
+  --variant-primary: #050505;
+  --variant-accent: #f7f3eb;
+  --variant-background: #050505;
+  --variant-surface: #111111;
+  --variant-text: #ffffff;
+  --variant-overlay-color: rgba(0, 0, 0, 0);
+  --variant-card-surface: rgba(17, 17, 17, 0.78);
   --visual-card-border: rgba(255, 255, 255, 0.18);
   --visual-action-color: #ffffff;
   --visual-action-muted: rgba(255, 255, 255, 0.72);
@@ -75,18 +82,18 @@ body {
 }
 
 html.app-visual-mode-dark body {
-  color: #ffffff;
-  background-color: #050505;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.78)), var(--app-visual-variant-image), radial-gradient(circle at top left, #202020, #050505 58%);
+  color: var(--variant-text);
+  background-color: var(--variant-background);
+  background-image: linear-gradient(var(--variant-overlay-color), var(--variant-overlay-color)), var(--app-visual-variant-image), radial-gradient(circle at top left, #202020, var(--variant-background) 58%);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
 }
 
 html.app-visual-mode-light body {
-  color: #111111;
-  background-color: #f4f1eb;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.84)), var(--app-visual-variant-image), linear-gradient(135deg, #ffffff, #e8e3da);
+  color: var(--variant-text);
+  background-color: var(--variant-background);
+  background-image: linear-gradient(var(--variant-overlay-color), var(--variant-overlay-color)), var(--app-visual-variant-image), linear-gradient(135deg, #ffffff, var(--variant-background));
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -165,7 +172,7 @@ button {
   padding: 40px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 34px;
-  background: rgba(0, 0, 0, 0.72);
+  background: var(--variant-card-surface);
   box-shadow: 0 30px 90px rgba(0, 0, 0, 0.42);
   display: flex;
   flex-direction: column;
@@ -236,7 +243,7 @@ button {
   backdrop-filter: blur(20px);
 }
 
-.visual-mode-popover > p {
+.visual-mode-group > p {
   margin: 0 0 11px;
   color: #cfcfcf;
   font-size: 0.73rem;
@@ -251,6 +258,8 @@ button {
   gap: 8px;
 }
 
+.visual-mode-group + .visual-mode-group { margin-top: 14px; }
+
 .visual-mode-option {
   min-width: 0;
   padding: 5px;
@@ -262,15 +271,6 @@ button {
   display: grid;
   gap: 6px;
   text-align: left;
-}
-
-.visual-mode-option > span:last-child {
-  overflow: hidden;
-  font-size: 0.69rem;
-  font-weight: 650;
-  line-height: 1.25;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .visual-mode-option:hover {
@@ -320,12 +320,12 @@ button {
 
 .visual-mode-option-preview.public-card-variant-dark-image-1,
 .visual-mode-option-preview.public-card-variant-dark-image-2 {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.3)), var(--public-card-variant-image);
+  background-image: linear-gradient(rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity)), rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity))), var(--public-card-variant-image);
 }
 
 .visual-mode-option-preview.public-card-variant-light-image-3,
 .visual-mode-option-preview.public-card-variant-light-image-4 {
-  background-image: linear-gradient(rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.28)), var(--public-card-variant-image);
+  background-image: linear-gradient(rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity)), rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity))), var(--public-card-variant-image);
 }
 
 .visual-mode-option-check {
@@ -355,7 +355,7 @@ html.app-visual-mode-light .state-card,
 html.app-visual-mode-light .action-panel,
 html.app-visual-mode-light .admin-topbar {
   border-color: rgba(0, 0, 0, 0.14);
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--variant-card-surface);
   color: #111111;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.14);
 }
@@ -509,7 +509,7 @@ p {
 .action-panel,
 .state-card {
   border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(0, 0, 0, 0.78);
+  background: var(--variant-card-surface);
   box-shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
 }
 
@@ -527,9 +527,9 @@ p {
   --public-card-muted: #d8d8d8;
   --public-card-subtle: #9f9f9f;
   --public-card-label: #a7a7a7;
-  color: var(--public-card-foreground);
+  color: var(--variant-text, var(--public-card-foreground));
   border-color: rgba(255, 255, 255, 0.16);
-  background-color: #050505;
+  background-color: var(--variant-background, #050505);
 }
 
 .public-card-theme-light {
@@ -537,15 +537,15 @@ p {
   --public-card-muted: #303030;
   --public-card-subtle: #555555;
   --public-card-label: #666666;
-  color: var(--public-card-foreground);
+  color: var(--variant-text, var(--public-card-foreground));
   border-color: rgba(0, 0, 0, 0.14);
-  background-color: #ffffff;
+  background-color: var(--variant-background, #ffffff);
   box-shadow: 0 28px 80px rgba(0, 0, 0, 0.22);
 }
 
 .public-card-variant-dark-image-1,
 .public-card-variant-dark-image-2 {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.66), rgba(0, 0, 0, 0.78)), var(--public-card-variant-image);
+  background-image: linear-gradient(rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity)), rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity))), var(--public-card-variant-image);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -553,7 +553,7 @@ p {
 
 .public-card-variant-light-image-3,
 .public-card-variant-light-image-4 {
-  background-image: linear-gradient(rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.82)), var(--public-card-variant-image);
+  background-image: linear-gradient(rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity)), rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity))), var(--public-card-variant-image);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -815,7 +815,7 @@ p {
 .admin-card,
 .admin-form-section {
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.055);
+  background: var(--variant-card-surface);
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
   border-radius: 24px;
 }
@@ -1791,7 +1791,7 @@ html.app-visual-mode-light .admin-card,
 html.app-visual-mode-light .admin-form-section,
 html.app-visual-mode-light .admin-topbar {
   border-color: var(--visual-card-border);
-  background-color: var(--visual-card-surface);
+  background-color: var(--variant-card-surface);
   color: var(--visual-page-text);
   box-shadow: 0 20px 58px rgba(17, 17, 17, 0.12);
 }
@@ -1856,8 +1856,8 @@ html.app-visual-mode-light textarea::placeholder {
   --visual-action-border: rgba(255, 255, 255, 0.18);
   --visual-action-tile: rgba(255, 255, 255, 0.07);
   --visual-action-tile-hover: rgba(255, 255, 255, 0.12);
-  --visual-action-primary-bg: #ffffff;
-  --visual-action-primary-text: #050505;
+  --visual-action-primary-bg: var(--variant-accent);
+  --visual-action-primary-text: var(--variant-primary);
 }
 
 .action-panel-theme-light {
@@ -1867,14 +1867,14 @@ html.app-visual-mode-light textarea::placeholder {
   --visual-action-border: rgba(17, 17, 17, 0.14);
   --visual-action-tile: rgba(17, 17, 17, 0.055);
   --visual-action-tile-hover: rgba(17, 17, 17, 0.1);
-  --visual-action-primary-bg: #111111;
-  --visual-action-primary-text: #ffffff;
+  --visual-action-primary-bg: var(--variant-accent);
+  --visual-action-primary-text: var(--variant-primary);
 }
 
 .action-panel.action-panel-theme-dark,
 .action-panel.action-panel-theme-light {
   border-color: var(--visual-action-border);
-  background: var(--visual-action-surface);
+  background: var(--variant-card-surface);
   color: var(--visual-action-color);
   box-shadow: 0 22px 64px rgba(17, 17, 17, 0.16);
 }
@@ -1950,7 +1950,7 @@ html.app-visual-mode-light textarea::placeholder {
 
 .card-visual.public-card-variant-light-image-3,
 .card-visual.public-card-variant-light-image-4 {
-  background-image: linear-gradient(rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.86)), var(--public-card-variant-image);
+  background-image: linear-gradient(rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity)), rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity))), var(--public-card-variant-image);
 }
 
 html.app-visual-mode-light .visual-mode-popover {
@@ -1960,7 +1960,7 @@ html.app-visual-mode-light .visual-mode-popover {
   box-shadow: 0 24px 64px rgba(17, 17, 17, 0.18);
 }
 
-html.app-visual-mode-light .visual-mode-popover > p,
+html.app-visual-mode-light .visual-mode-group > p,
 html.app-visual-mode-light .visual-mode-option {
   color: #333333;
 }
@@ -1981,15 +1981,15 @@ html.app-visual-mode-light .visual-mode-option.active {
 .card-visual.public-card-theme-dark,
 .card-preview.public-card-theme-dark,
 .visual-variant-thumbnail.public-card-theme-dark {
-  background-color: #050505;
-  color: #ffffff;
+  background-color: var(--variant-background, #050505);
+  color: var(--variant-text, #ffffff);
 }
 
 .card-visual.public-card-theme-light,
 .card-preview.public-card-theme-light,
 .visual-variant-thumbnail.public-card-theme-light {
-  background-color: #ffffff;
-  color: #111111;
+  background-color: var(--variant-background, #ffffff);
+  color: var(--variant-text, #111111);
 }
 
 .public-panel-controls {
@@ -2033,7 +2033,7 @@ html.app-visual-mode-light .visual-mode-option.active {
 .card-preview.public-card-variant-dark-image-2,
 .visual-variant-thumbnail.public-card-variant-dark-image-1,
 .visual-variant-thumbnail.public-card-variant-dark-image-2 {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.66), rgba(0, 0, 0, 0.78)), var(--public-card-variant-image);
+  background-image: linear-gradient(rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity)), rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity))), var(--public-card-variant-image);
 }
 
 .card-visual.public-card-variant-light-image-3,
@@ -2042,7 +2042,7 @@ html.app-visual-mode-light .visual-mode-option.active {
 .card-preview.public-card-variant-light-image-4,
 .visual-variant-thumbnail.public-card-variant-light-image-3,
 .visual-variant-thumbnail.public-card-variant-light-image-4 {
-  background-image: linear-gradient(rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.82)), var(--public-card-variant-image);
+  background-image: linear-gradient(rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity)), rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity))), var(--public-card-variant-image);
 }
 
 .public-card-theme-light .contact-list a:hover,
@@ -2064,12 +2064,12 @@ body,
 .admin-form-section,
 .card-preview {
   border-color: color-mix(in srgb, var(--brand-text, #fff) 14%, transparent);
-  background-color: color-mix(in srgb, var(--brand-surface, #111) 88%, transparent);
+  background-color: var(--variant-card-surface);
 }
 
 .primary-button {
-  background: var(--brand-accent, #f7f3eb);
-  color: var(--brand-primary, #050505);
+  background: var(--variant-accent, var(--brand-accent, #f7f3eb));
+  color: var(--variant-primary, var(--brand-primary, #050505));
 }
 
 .brand-settings-grid {
@@ -2470,7 +2470,11 @@ body,
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--preview-text) 16%, transparent);
   border-radius: 24px;
-  background: var(--preview-background);
+  background-color: var(--preview-background);
+  background-image: linear-gradient(rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity)), rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity))), var(--public-card-variant-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: var(--preview-text);
   padding: 28px;
   display: flex;
@@ -2492,7 +2496,7 @@ body,
 .brand-preview-card {
   padding: 24px;
   border-radius: 20px;
-  background: var(--preview-surface);
+  background: rgb(var(--variant-surface-rgb) / var(--variant-card-opacity));
 }
 
 .brand-preview-card p,
@@ -2771,29 +2775,50 @@ body,
   padding-top: 3px;
 }
 
-.slug-availability {
+.slug-status {
   min-height: 1.2em;
   font-size: 0.8rem;
   font-weight: 600;
   line-height: 1.4;
 }
 
-.slug-availability:empty {
+.slug-status:empty {
   display: none;
 }
 
-.slug-availability.checking {
+.slug-status--checking,
+.slug-status--idle {
   color: rgba(247, 243, 235, 0.68);
 }
 
-.slug-availability.available {
+.slug-status--available {
   color: #9ef0bb;
 }
 
-.slug-availability.unavailable,
-.slug-availability.error {
+.slug-status--unavailable,
+.slug-status--error {
   color: #ffb2b2;
 }
+
+.slug-preview { overflow-wrap: anywhere; }
+.slug-preview span { font-weight: 650; }
+.metadata-field-footer { display: flex; justify-content: space-between; gap: 12px; color: var(--admin-muted); font-size: 0.8rem; }
+.metadata-preview { min-width: 0; overflow-wrap: anywhere; }
+.variant-tab-group { display: grid; gap: 8px; }
+.variant-tab-group h3 { margin: 0; font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.variant-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.variant-tabs button { min-width: 0; min-height: 44px; border: 1px solid var(--admin-border); border-radius: 12px; background: transparent; color: inherit; padding: 8px; cursor: pointer; font: inherit; font-size: 0.78rem; }
+.variant-tabs button.active { border-color: #6aa9ff; box-shadow: 0 0 0 2px color-mix(in srgb, #6aa9ff 25%, transparent); }
+.variant-tabs button:focus-visible { outline: 3px solid #6aa9ff; outline-offset: 2px; }
+.variant-opacity-grid { display: grid; gap: 18px; }
+.opacity-field { display: grid; gap: 8px; }
+.opacity-field > span { display: flex; justify-content: space-between; gap: 12px; }
+.opacity-field input[type="range"] { width: 100%; accent-color: var(--variant-accent); }
+.brand-loading-shell { min-height: 100dvh; display: grid; place-items: center; background: #f2f2f2; }
+.brand-loading-placeholder { width: min(280px, calc(100% - 48px)); height: 112px; border-radius: 18px; background: linear-gradient(90deg, #e2e2e2, #f8f8f8, #e2e2e2); background-size: 200% 100%; animation: brand-loading 1.4s ease-in-out infinite; }
+@keyframes brand-loading { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .brand-loading-placeholder { animation: none; } }
+@media (max-width: 560px) { .variant-tabs { grid-template-columns: 1fr; } }
 
 .admin-form .admin-checkbox-field {
   grid-template-columns: auto minmax(0, 1fr);
@@ -2997,7 +3022,7 @@ html.app-visual-mode-light .admin-card,
 html.app-visual-mode-light .admin-form-section,
 html.app-visual-mode-light .admin-topbar {
   border-color: var(--visual-card-border);
-  background-color: var(--visual-card-surface);
+  background-color: var(--variant-card-surface);
   color: var(--visual-page-text);
 }
 
@@ -3020,7 +3045,7 @@ html.app-visual-mode-light :is(.admin-search-input, .admin-filter-select, .admin
 .action-panel.action-panel-theme-dark,
 .action-panel.action-panel-theme-light {
   border-color: var(--visual-action-border);
-  background: var(--visual-action-surface);
+  background: var(--variant-card-surface);
   color: var(--visual-action-color);
 }
 
@@ -3075,7 +3100,7 @@ html.app-visual-mode-light :is(.admin-search-input, .admin-filter-select, .admin
 
 .card-visual.public-card-variant-light-image-3,
 .card-visual.public-card-variant-light-image-4 {
-  background-image: linear-gradient(rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.86)), var(--public-card-variant-image);
+  background-image: linear-gradient(rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity)), rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity))), var(--public-card-variant-image);
 }
 
 html.app-visual-mode-light .visual-mode-popover {
@@ -3084,7 +3109,7 @@ html.app-visual-mode-light .visual-mode-popover {
   color: #111111;
 }
 
-html.app-visual-mode-light .visual-mode-popover > p,
+html.app-visual-mode-light .visual-mode-group > p,
 html.app-visual-mode-light .visual-mode-option {
   color: #333333;
 }
@@ -3100,14 +3125,14 @@ html.app-visual-mode-light .home-actions .primary-button:link,
 html.app-visual-mode-light .home-actions .primary-button:visited,
 html.app-visual-mode-light .home-actions .primary-button:hover,
 html.app-visual-mode-light .home-actions .primary-button:focus-visible {
-  background: #111111;
-  color: #ffffff;
+  background: var(--variant-accent);
+  color: var(--variant-primary);
   opacity: 1;
 }
 
 html.app-visual-mode-light .home-actions .primary-button:hover,
 html.app-visual-mode-light .home-actions .primary-button:focus-visible {
-  background: #242424;
+  background: color-mix(in srgb, var(--variant-accent) 86%, var(--variant-text));
 }
 
 .card-visual.public-card-variant-light-image-4 {
@@ -3116,8 +3141,8 @@ html.app-visual-mode-light .home-actions .primary-button:focus-visible {
   --public-card-subtle: rgba(15, 15, 15, 0.7);
   --public-card-label: rgba(15, 15, 15, 0.72);
   border-color: rgba(17, 17, 17, 0.12);
-  background-color: rgba(255, 255, 255, 0.92);
-  background-image: linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.94)), var(--public-card-variant-image);
+  background-color: var(--variant-background);
+  background-image: linear-gradient(rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity)), rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity))), var(--public-card-variant-image);
   box-shadow: 0 22px 58px rgba(17, 17, 17, 0.13);
   color: var(--public-card-foreground);
   opacity: 1;
@@ -3522,7 +3547,7 @@ html.app-visual-mode-light .visual-variant-warning {
   color: #704500;
 }
 
-html.app-visual-mode-light .slug-availability.checking {
+html.app-visual-mode-light .slug-status--checking {
   color: var(--admin-muted);
 }
 
@@ -4511,7 +4536,7 @@ html.app-visual-mode-light .auth-page-card {
   padding: 12px;
   border: 1px solid var(--admin-border);
   border-radius: 18px;
-  background: color-mix(in srgb, var(--visual-card-surface) 96%, transparent);
+  background: color-mix(in srgb, var(--variant-card-surface) 96%, transparent);
   box-shadow: 0 16px 44px rgba(0, 0, 0, 0.24);
   backdrop-filter: blur(14px);
 }
@@ -4622,7 +4647,7 @@ html.app-visual-mode-light .auth-page-card {
   padding: 12px;
   border: 1px solid var(--admin-border);
   border-radius: 18px;
-  background: color-mix(in srgb, var(--visual-card-surface) 96%, transparent);
+  background: color-mix(in srgb, var(--variant-card-surface) 96%, transparent);
   box-shadow: 0 16px 44px rgba(0, 0, 0, 0.24);
   backdrop-filter: blur(14px);
 }

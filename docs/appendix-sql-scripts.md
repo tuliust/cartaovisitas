@@ -37,6 +37,14 @@ Adiciona:
 
 Cria/configura `brand_settings` e campos iniciais de branding.
 
+Para ambientes existentes, aplicar em ordem as migrations locais:
+
+1. `supabase/migrations/202607120001_add_visual_variant_settings_and_titles.sql`;
+2. `supabase/migrations/202607120002_add_password_reset_rate_limits.sql`.
+
+Depois, publicar `supabase/functions/request-password-reset` com os secrets
+documentados em `docs/11-seguranca-governanca-e-operacao.md`.
+
 O campo `logo_url` desses scripts deve ser preservado por compatibilidade e funciona apenas como fallback técnico/legado. A operação administrativa dos logos usa `logo_on_dark_url` e `logo_on_light_url`.
 
 ### `docs/supabase-governance-users-audit-import.sql`

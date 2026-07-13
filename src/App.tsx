@@ -16,14 +16,17 @@ import ToastProvider from './components/ToastProvider'
 import AdminUsersPage from './pages/admin/AdminUsersPage'
 import AdminAuditPage from './pages/admin/AdminAuditPage'
 import { VisualModeProvider } from './contexts/VisualModeProvider'
+import { useBrandSettings } from './contexts/BrandSettingsContext'
 
-function App() {
+function ResolvedApplication() {
+  const { status } = useBrandSettings()
+  if (status === 'loading') return <main className="brand-loading-shell"><div className="brand-loading-placeholder" role="status"><span className="sr-only">Carregando configurações...</span></div></main>
   return (
-    <BrandSettingsProvider>
     <VisualModeProvider>
-    <ToastProvider>
-    <BrowserRouter>
-      <Routes>
+      <ToastProvider>
+        <BrowserRouter>
+          <Routes>
+
         <Route path="/" element={<HomePage />} />
         <Route path="/entrar" element={<EmployeeLoginPage />} />
         <Route path="/cadastro" element={<RegisterPage />} />
@@ -42,10 +45,17 @@ function App() {
         <Route path="/admin/auditoria" element={<AdminAuditPage />} />
 
         <Route path="/:slug" element={<PublicCardPage />} />
-      </Routes>
-    </BrowserRouter>
-    </ToastProvider>
+          </Routes>
+        </BrowserRouter>
+      </ToastProvider>
     </VisualModeProvider>
+  )
+}
+
+function App() {
+  return (
+    <BrandSettingsProvider>
+      <ResolvedApplication />
     </BrandSettingsProvider>
   )
 }

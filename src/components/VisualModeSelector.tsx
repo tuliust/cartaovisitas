@@ -19,11 +19,16 @@ export default function VisualModeSelector() {
     function closeOnEscape(event: KeyboardEvent) {
       if (event.key === 'Escape') setOpen(false)
     }
+    const close = () => setOpen(false)
     document.addEventListener('mousedown', closeOnOutsideClick)
     document.addEventListener('keydown', closeOnEscape)
+    window.addEventListener('resize', close)
+    window.addEventListener('scroll', close, true)
     return () => {
       document.removeEventListener('mousedown', closeOnOutsideClick)
       document.removeEventListener('keydown', closeOnEscape)
+      window.removeEventListener('resize', close)
+      window.removeEventListener('scroll', close, true)
     }
   }, [open])
 
@@ -35,15 +40,17 @@ export default function VisualModeSelector() {
     </button>
 
     {open ? <section className="visual-mode-popover" role="dialog" aria-label="Escolha o visual">
-      <p>Escolha o visual</p>
+      {(['dark', 'light'] as const).map((group) => <div className="visual-mode-group" key={group}>
+      <p>{group === 'dark' ? 'Modo Escuro' : 'Modo Claro'}</p>
       <div className="visual-mode-grid">
-        {visualModeOptions.map((option) => {
+        {visualModeOptions.filter(({ value }) => value.startsWith(`${group}_`)).map((option) => {
           const hasImage = Boolean(getVariantImage(settings, option.value))
           const active = visualMode === option.value
           return <button
             className={`visual-mode-option${active ? ' active' : ''}`}
             type="button"
             aria-label={`Usar visual: ${option.label}`}
+            title={option.label}
             aria-pressed={active}
             key={option.value}
             onClick={() => { setVisualMode(option.value); setOpen(false) }}
@@ -51,10 +58,10 @@ export default function VisualModeSelector() {
             <span className={`visual-mode-option-preview visual-mode-option-${option.value.replace(/_/g, '-')}${hasImage ? ' has-image' : ''} ${getVariantClassName(settings, option.value)}`} style={getVariantStyle(settings, option.value)} aria-hidden="true">
               {active ? <span className="visual-mode-option-check"><Check size={13} /></span> : null}
             </span>
-            <span>{option.label}</span>
           </button>
         })}
       </div>
+      </div>)}
     </section> : null}
   </div>
 }

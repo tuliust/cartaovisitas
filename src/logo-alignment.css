@@ -7,6 +7,7 @@
 :root {
   --page-inline-gutter: clamp(20px, 2.5vw, 32px);
   --brand-logo-optical-offset: -12px;
+  --auth-logo-optical-offset: -12px;
 }
 
 /* Header das areas administrativas e do colaborador */
@@ -40,8 +41,13 @@
   transform-origin: left center;
 }
 
-/* Autenticacao e estados de carregamento permanecem centralizados */
-.auth-logo,
+/* Compensação específica: o padding do card mantém área segura em telas estreitas. */
+.auth-page-card .auth-page-logo {
+  object-position: left center;
+  transform: translateX(var(--auth-logo-optical-offset));
+  transform-origin: left center;
+}
+
 .admin-state-card .auth-page-logo {
   object-position: center;
   transform: none;
@@ -62,6 +68,7 @@
   :root {
     --page-inline-gutter: 16px;
     --brand-logo-optical-offset: -8px;
+    --auth-logo-optical-offset: -8px;
   }
 
   .admin-page {
@@ -79,5 +86,6 @@
   :root {
     --page-inline-gutter: 12px;
     --brand-logo-optical-offset: -5px;
+    --auth-logo-optical-offset: -5px;
   }
 }

@@ -28,6 +28,7 @@ type CardFormProps = {
 }
 
 type SlugAvailability = 'idle' | 'checking' | 'available' | 'unavailable' | 'error'
+const COLLABORATOR_PAGE_DISPLAY_BASE = 'investrs.org.br/rs-em-dados/usuario/'
 
 const languageLabels: Record<Language, string> = { pt: 'PT', es: 'ES', en: 'EN' }
 
@@ -165,7 +166,7 @@ export default function CardForm({
         <label>Nome completo *<input required value={values.full_name} onChange={(event) => updateField('full_name', event.target.value)} placeholder="Alexandre Elmi" /></label>
         <label>Nome de exibição<input value={values.display_name} onChange={(event) => updateField('display_name', event.target.value)} placeholder="Alexandre Elmi" /></label>
         <div className="admin-field-with-action">
-          <label>Slug da página *<input required value={values.slug} onChange={(event) => updateSlug(event.target.value)} placeholder="alexandre-elmi" aria-describedby="slug-help slug-availability" aria-invalid={slugAvailability === 'unavailable'} /><small className="field-help" id="slug-help">Sua página será investrs.org/{values.slug || '[slug]'}</small><small className={`slug-availability ${slugAvailability}`} id="slug-availability" aria-live="polite">{slugAvailability === 'checking' ? 'Verificando disponibilidade...' : slugAvailability === 'available' ? 'Endereço disponível.' : slugAvailability === 'unavailable' ? 'Este endereço já está em uso. Escolha outro slug.' : slugValidationError}</small></label>
+          <label>Slug da página *<input required value={values.slug} onChange={(event) => updateSlug(event.target.value)} placeholder="alexandre-elmi" aria-describedby="slug-help slug-availability" aria-invalid={slugAvailability === 'unavailable' || slugAvailability === 'error'} /><small className="field-help slug-preview" id="slug-help">Sua página será: <span>{COLLABORATOR_PAGE_DISPLAY_BASE}{values.slug || ':slug'}</span></small><small className={`slug-status slug-status--${slugAvailability}`} id="slug-availability" aria-live="polite" role="status">{slugAvailability === 'checking' ? 'Verificando disponibilidade...' : slugAvailability === 'available' ? 'Endereço disponível.' : slugAvailability === 'unavailable' ? 'Endereço já utilizado.' : slugAvailability === 'error' ? slugValidationError : ''}</small></label>
           <button type="button" className="secondary-button compact-button" onClick={() => updateSlug(values.full_name)}>Gerar slug</button>
         </div>
         {allowStatusEdit ? <label>Status<select value={values.is_active ? 'true' : 'false'} onChange={(event) => updateField('is_active', event.target.value === 'true')}><option value="true">Ativo</option><option value="false">Inativo</option></select></label> : null}

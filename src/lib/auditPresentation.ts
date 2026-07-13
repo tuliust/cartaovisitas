@@ -57,6 +57,9 @@ const changedFieldLabels: Record<string, string> = {
   background_color: 'Alteração da cor de fundo',
   surface_color: 'Alteração da cor das superfícies',
   text_color: 'Alteração da cor dos textos',
+  visual_variant_settings: 'Configurações das variantes visuais atualizadas',
+  browser_title: 'Título das janelas do navegador atualizado',
+  apple_touch_title: 'Título do Apple Touch atualizado',
   favicon_url: 'Atualização do favicon',
   og_image_url: 'Atualização da imagem de compartilhamento',
   background_image_url: 'Atualização da imagem de fundo',
@@ -77,6 +80,7 @@ const colorFields = new Set([
   'background_color',
   'surface_color',
   'text_color',
+  'visual_variant_settings',
 ])
 
 const assetFields = new Set([

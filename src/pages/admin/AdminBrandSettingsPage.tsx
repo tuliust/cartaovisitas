@@ -4,19 +4,21 @@ import { useBrandSettings } from '../../contexts/BrandSettingsContext'
 import { getCurrentSession } from '../../lib/auth'
 import {
   defaultBrandSettings,
+  defaultVisualVariantSettings,
   getBrandSettings,
   isValidHexColor,
   updateBrandSettings,
   uploadBrandAsset,
   type BrandAssetType,
   type BrandSettings,
+  type VisualVariantSettings,
 } from '../../lib/brandSettings'
 import { getFriendlyErrorMessage } from '../../lib/errors'
 import { requireAdmin } from '../../lib/roles'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '../../contexts/ToastContext'
 import { recordAuditLog } from '../../lib/audit'
-import { getVariantClassName, getVariantLogo, getVariantStyle, publicVisualVariantOptions } from '../../lib/cardVisualVariants'
+import { getVariantClassName, getVariantLogo, getVariantStyle, publicVisualVariantOptions, type PublicVisualVariant } from '../../lib/cardVisualVariants'
 
 type ColorKey = 'primary_color' | 'secondary_color' | 'background_color' | 'surface_color' | 'text_color'
 type AssetUrlKey = 'favicon_url' | 'og_image_url' | 'background_image_url' | 'apple_touch_icon_url' | 'logo_on_dark_url' | 'logo_on_light_url' | 'card_bg_dark_image_1_url' | 'card_bg_dark_image_2_url' | 'card_bg_light_image_3_url' | 'card_bg_light_image_4_url'
@@ -41,6 +43,10 @@ const colorFields: Array<{ key: ColorKey; label: string }> = [
   { key: 'surface_color', label: 'Cor de superfície' },
   { key: 'text_color', label: 'Cor de texto' },
 ]
+const opacityFields: Array<{ key: 'background_overlay_opacity' | 'card_surface_opacity'; label: string; help: string }> = [
+  { key: 'background_overlay_opacity', label: 'Opacidade da camada sobre o background', help: '0% não aplica camada; 100% cobre totalmente a imagem.' },
+  { key: 'card_surface_opacity', label: 'Opacidade da superfície dos cards', help: 'Valores altos escondem mais a imagem de fundo.' },
+]
 
 const brandSettingKeys = Object.keys(defaultBrandSettings) as Array<keyof BrandSettings>
 
@@ -59,6 +65,7 @@ export default function AdminBrandSettingsPage() {
   const [uploading, setUploading] = useState<BrandAssetType | ''>('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [activeVariant, setActiveVariant] = useState<PublicVisualVariant>('dark_black')
 
   useEffect(() => {
     let mounted = true
@@ -76,6 +83,11 @@ export default function AdminBrandSettingsPage() {
     setSuccess('')
   }
 
+  function updateVariant<K extends keyof VisualVariantSettings>(key: K, value: VisualVariantSettings[K]) {
+    setValues((current) => ({ ...current, visual_variant_settings: { ...current.visual_variant_settings, [activeVariant]: { ...current.visual_variant_settings[activeVariant], [key]: value } } }))
+    setSuccess('')
+  }
+
   async function upload(event: ChangeEvent<HTMLInputElement>, type: BrandAssetType, key: AssetUrlKey) {
     const file = event.target.files?.[0]
     if (!file) return
@@ -89,13 +101,18 @@ export default function AdminBrandSettingsPage() {
   }
 
   async function save() {
-    const invalid = colorFields.find(({ key }) => !isValidHexColor(values[key]))
-    if (invalid) { const message = `${invalid.label}: informe uma cor hexadecimal no formato #050505.`; setError(message); toast.error(message); return }
+    const invalidGlobal = colorFields.find(({ key }) => !isValidHexColor(values[key]))
+    const invalidVariant = publicVisualVariantOptions.find(({ value }) => colorFields.some(({ key }) => !isValidHexColor(values.visual_variant_settings[value][key])))
+    if (invalidGlobal || invalidVariant) { const message = 'Informe todas as cores no formato hexadecimal #050505.'; setError(message); toast.error(message); return }
+    const browserTitle = values.browser_title.replace(/[\r\n]+/g, ' ').trim()
+    const appleTouchTitle = values.apple_touch_title.replace(/[\r\n]+/g, ' ').trim()
+    if (!browserTitle || browserTitle.length > 100 || /[<>]/.test(browserTitle) || !appleTouchTitle || appleTouchTitle.length > 40 || /[<>]/.test(appleTouchTitle)) { const message = 'Revise os títulos: não use HTML ou quebras de linha e respeite os limites informados.'; setError(message); toast.error(message); return }
+    const valuesToSave = { ...values, browser_title: browserTitle, apple_touch_title: appleTouchTitle }
     setSaving(true); setError(''); setSuccess('')
     try {
       const previousValues = savedValues
-      const changedFields = getChangedBrandFields(previousValues, values)
-      const saved = await updateBrandSettings(values)
+      const changedFields = getChangedBrandFields(previousValues, valuesToSave)
+      const saved = await updateBrandSettings(valuesToSave)
 
       if (changedFields.length > 0) {
         await recordAuditLog({
@@ -117,13 +134,8 @@ export default function AdminBrandSettingsPage() {
 
   if (booting) return <main className="admin-login-shell admin-state-shell"><div className="admin-login-card admin-state-card" role="status">Carregando configurações...</div></main>
 
-  const previewStyle = {
-    '--preview-background': values.background_color,
-    '--preview-surface': values.surface_color,
-    '--preview-text': values.text_color,
-    '--preview-primary': values.primary_color,
-    '--preview-accent': values.secondary_color,
-  } as CSSProperties
+  const activeTokens = values.visual_variant_settings[activeVariant]
+  const previewStyle = { ...getVariantStyle(values, activeVariant), '--preview-background': activeTokens.background_color, '--preview-surface': activeTokens.surface_color, '--preview-text': activeTokens.text_color, '--preview-primary': activeTokens.primary_color, '--preview-accent': activeTokens.secondary_color } as CSSProperties
 
   return (
     <AdminLayout title="Configurações" subtitle="Gerencie os assets e as cores da identidade visual do sistema.">
@@ -131,6 +143,19 @@ export default function AdminBrandSettingsPage() {
       {success ? <p className="admin-success" role="status">{success}</p> : null}
       <div className="brand-settings-grid">
         <div className="brand-settings-form">
+          <section className="brand-settings-section">
+            <h2>Metadados do site</h2>
+            <label htmlFor="browser-title">Título das janelas do navegador</label>
+            <input id="browser-title" value={values.browser_title} maxLength={100} onChange={(event) => update('browser_title', event.target.value.replace(/[\r\n]+/g, ' '))} />
+            <small className="field-help">Usado na aba ou janela do navegador em todas as páginas.</small>
+            <div className="metadata-field-footer"><span className="metadata-preview">Prévia: {values.browser_title || defaultBrandSettings.browser_title}</span><span>{values.browser_title.length}/100</span></div>
+            <button className="secondary-button compact-button" type="button" onClick={() => update('browser_title', defaultBrandSettings.browser_title)}>Restaurar título padrão</button>
+            <label htmlFor="apple-touch-title">Título do Apple Touch</label>
+            <input id="apple-touch-title" value={values.apple_touch_title} maxLength={40} onChange={(event) => update('apple_touch_title', event.target.value.replace(/[\r\n]+/g, ' '))} />
+            <small className="field-help">Usado como nome do atalho quando o site é adicionado à Tela de Início do iPhone ou iPad.</small>
+            <div className="metadata-field-footer"><span className="metadata-preview">Prévia: {values.apple_touch_title || defaultBrandSettings.apple_touch_title}</span><span>{values.apple_touch_title.length}/40</span></div>
+            <button className="secondary-button compact-button" type="button" onClick={() => update('apple_touch_title', defaultBrandSettings.apple_touch_title)}>Restaurar título padrão</button>
+          </section>
           <section className="brand-settings-section">
             <h2>Favicon</h2>
             <p className="field-help">Usado na aba do navegador. Prefira SVG quadrado ou ICO com 16, 32 e 48 px.</p>
@@ -156,11 +181,13 @@ export default function AdminBrandSettingsPage() {
             <label>Enviar imagem<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void upload(event, 'og-image', 'og_image_url')} /></label>
           </section>
 
-          <section className="brand-settings-section">
-            <h2>Cores</h2>
-            <div className="brand-color-grid">
-              {colorFields.map(({ key, label }) => <label className="color-field" key={key}><span>{label}</span><span className="color-input-row"><input type="color" value={isValidHexColor(values[key]) ? values[key] : defaultBrandSettings[key]} onChange={(event) => update(key, event.target.value)} /><input value={values[key]} onChange={(event) => update(key, event.target.value)} maxLength={7} /></span></label>)}
-            </div>
+          <section className="brand-settings-section visual-token-settings">
+            <h2>Cores e transparências por visual</h2>
+            <p className="field-help">Cada visual possui configuração independente. Variantes claras usam camada branca; variantes escuras usam camada preta.</p>
+            {(['dark', 'light'] as const).map((group) => <div className="variant-tab-group" key={group}><h3>{group === 'dark' ? 'Modo Escuro' : 'Modo Claro'}</h3><div className="variant-tabs" role="tablist" aria-label={group === 'dark' ? 'Variantes escuras' : 'Variantes claras'}>{publicVisualVariantOptions.filter(({ value }) => value.startsWith(`${group}_`)).map((option) => <button type="button" role="tab" aria-selected={activeVariant === option.value} className={activeVariant === option.value ? 'active' : ''} key={option.value} onClick={() => setActiveVariant(option.value)}>{option.label}</button>)}</div></div>)}
+            <div className="brand-color-grid">{colorFields.map(({ key, label }) => <label className="color-field" key={key}><span>{label}</span><span className="color-input-row"><input type="color" value={isValidHexColor(activeTokens[key]) ? activeTokens[key] : defaultVisualVariantSettings[activeVariant][key]} onChange={(event) => updateVariant(key, event.target.value)} /><input value={activeTokens[key]} onChange={(event) => updateVariant(key, event.target.value)} maxLength={7} /></span></label>)}</div>
+            <div className="variant-opacity-grid">{opacityFields.map(({ key, label, help }) => { const percent = Math.round(activeTokens[key] * 100); return <label className="opacity-field" key={key}><span>{label}: <output>{percent}%</output></span><input type="range" min="0" max="100" step="1" value={percent} onChange={(event) => updateVariant(key, Number(event.target.value) / 100)} /><small className="field-help">{help}</small></label> })}</div>
+            <button className="secondary-button compact-button" type="button" onClick={() => setValues((current) => ({ ...current, visual_variant_settings: { ...current.visual_variant_settings, [activeVariant]: { ...defaultVisualVariantSettings[activeVariant] } } }))}>Restaurar padrão desta variante</button>
           </section>
           <section className="brand-settings-section">
             <h2>Imagem de fundo</h2>
@@ -178,8 +205,8 @@ export default function AdminBrandSettingsPage() {
           </section>
         </div>
 
-        <aside className="brand-preview" style={previewStyle} aria-label="Prévia da identidade visual">
-          <img src={values.logo_on_dark_url || values.logo_url || defaultBrandSettings.logo_url} alt="Invest RS" />
+        <aside className={`brand-preview ${getVariantClassName(values, activeVariant)}`} style={previewStyle} aria-label="Prévia da identidade visual">
+          <img src={getVariantLogo(values, activeVariant)} alt="Invest RS" />
           <div className="brand-preview-card"><p>Cartão institucional</p><h2>Identidade Invest RS</h2><span>Texto de exemplo para conferir contraste e legibilidade.</span><div><button type="button">Botão primário</button><button type="button">Secundário</button></div></div>
         </aside>
       </div>

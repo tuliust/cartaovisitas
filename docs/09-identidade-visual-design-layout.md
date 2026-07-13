@@ -56,6 +56,22 @@ Os shells de autenticação e das áreas restritas permanecem transparentes para
 - `logo_on_light_url`: logo preta/escura para fundos claros.
 - `logo_url`: fallback técnico/legado, sem edição em `/admin/configuracoes`.
 
+## Configuração por variante e metadados
+
+As seis variantes têm tokens próprios para cores, opacidade da camada de fundo e
+opacidade das superfícies. Variantes claras compõem overlay branco e variantes
+escuras compõem overlay preto. A mesma função gera o estilo da aplicação, cartão,
+seletor e previews administrativos.
+
+`browser_title` controla um único `document.title` para todas as rotas.
+`apple_touch_title` controla `apple-mobile-web-app-title`, independentemente do
+Apple Touch Icon e do Apple Wallet. Não há manifesto neste projeto; atalhos iOS
+existentes precisam ser removidos e adicionados novamente para refletir o nome.
+
+O branding público é mantido em cache local versionado. Sem cache, a aplicação
+preserva o espaço da marca e só renderiza as rotas após a consulta; o fallback
+institucional só é usado depois de falha confirmada.
+
 ## Fundos institucionais
 
 Recomendação:

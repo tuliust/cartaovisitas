@@ -85,11 +85,14 @@ create table if not exists public.brand_settings (
   card_bg_light_image_3_url text,
   card_bg_light_image_4_url text,
   apple_touch_icon_url text,
+  browser_title text default 'Cartões Digitais | Invest RS',
+  apple_touch_title text default 'Cartões Digitais',
   primary_color text not null default '#050505',
   secondary_color text not null default '#f7f3eb',
   background_color text not null default '#050505',
   surface_color text not null default '#111111',
   text_color text not null default '#ffffff',
+  visual_variant_settings jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

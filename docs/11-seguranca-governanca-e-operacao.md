@@ -32,6 +32,15 @@ Nunca deixe o sistema sem ao menos um admin ativo. Antes de bloquear, remover ou
 
 `SUPABASE_SERVICE_ROLE_KEY` é usada apenas no endpoint server-side de convite.
 
+A Edge Function `request-password-reset` também usa `SUPABASE_SERVICE_ROLE_KEY`
+somente no runtime server-side. Ela exige `SUPABASE_URL`, `SUPABASE_ANON_KEY`,
+`SUPABASE_SERVICE_ROLE_KEY`, `PUBLIC_SITE_URL` e um
+`PASSWORD_RESET_RATE_LIMIT_SALT` aleatório. O salt não deve usar valores públicos
+nem ser incluído no repositório. O cliente nunca consulta `auth.users`.
+A função é pública porque atende usuários sem sessão (`verify_jwt = false`), mas
+aceita somente o domínio institucional e aplica os dois limites duráveis antes de
+consultar o Auth.
+
 Nunca:
 
 - usar no frontend;

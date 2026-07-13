@@ -107,6 +107,16 @@ Campos:
 
 ### `brand_settings`
 
+Além dos assets e dos cinco tokens globais legados, a tabela possui `browser_title`,
+`apple_touch_title` e `visual_variant_settings`. O JSON usa como chaves os seis
+identificadores persistidos (`dark_black`, `dark_image_1`, `dark_image_2`,
+`light_white`, `light_image_3`, `light_image_4`) e armazena cores, overlay e
+opacidade de superfície. Os campos globais permanecem como fallback compatível.
+
+`password_reset_rate_limits` é uma tabela privada, sem policies para `anon` ou
+`authenticated`. Somente a Edge Function, via `service_role`, consome a função
+atômica de rate limit; os identificadores são hashes e não guardam e-mails ou IPs.
+
 Configura branding.
 
 Campos:
