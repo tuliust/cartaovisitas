@@ -87,7 +87,9 @@ Em mobile:
 ### Desktop
 
 - formulário e preview lado a lado;
-- preview permanente;
+- preview permanente e sticky;
+- botão “Salvar alterações” abaixo do preview na coluna direita;
+- preview e botão acompanham o scroll como um único painel lateral;
 - botão “Ver Preview” oculto.
 
 ### Mobile
@@ -102,6 +104,28 @@ Em mobile:
 - acessibilidade preservada por `aria-label`, `title` e `aria-pressed`;
 - toggle PT/ES/EN sem espaço excedente;
 - input e sufixo de e-mail na mesma linha.
+
+### Formulário e estados
+
+- “Link da página” usa check, X e carregamento dentro do input;
+- o texto equivalente permanece disponível por `aria-live`;
+- cartões novos geram a sugestão pelo primeiro e pelo último nome;
+- cartões existentes preservam o link salvo até edição explícita;
+- campos institucionais desabilitados mantêm contraste sem `opacity` no container;
+- inputs de LinkedIn e Instagram usam fundo sólido, separado do prefixo;
+- prefixos sociais e sufixo de e-mail usam texto branco;
+- a badge de status não aparece no preview do colaborador;
+- contatos permanecem legíveis no preview de `light_image_4`.
+
+### Foto
+
+- com foto, o thumbnail destacado oferece Remover, Alterar e Reposicionar/Zoom;
+- ações aparecem por hover e `focus-within` no desktop;
+- ações permanecem acessíveis em touch;
+- sem foto, uma área com borda oferece Upload;
+- clique, teclado e drag-and-drop são suportados;
+- arquivos inválidos preservam a foto atual e geram mensagem de erro;
+- reposicionamento usa o modal de crop existente.
 
 ## Cartão por slug
 

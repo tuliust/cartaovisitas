@@ -83,6 +83,10 @@ Depende de Issuer Account, Google Cloud, Service Account, IDs e publicação.
 - estatísticas básicas;
 - PWA;
 - modal PWA com superfície sólida nas seis variantes;
+- edição do cartão com link automático e validado por ícones;
+- variante salva como padrão de novas sessões autenticadas;
+- preview e salvamento sticky no desktop;
+- editor de foto com drag-and-drop, ações compactas e recrop;
 - conteúdo gerenciado.
 
 ## Decisões adiadas

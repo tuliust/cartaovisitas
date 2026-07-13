@@ -32,9 +32,10 @@ O seletor visual:
 
 - aparece na Home e em headers aplicáveis;
 - usa miniaturas reais;
-- persiste a preferência em `localStorage`;
+- persiste a preferência de navegação em `localStorage`;
 - acompanha a navegação;
-- não altera o cartão salvo no banco.
+- não altera o cartão salvo no banco;
+- pode alterar temporariamente a interface durante uma sessão autenticada.
 
 Chave:
 
@@ -50,11 +51,26 @@ O seletor do formulário altera somente:
 public_visual_variant
 ```
 
-Ele não altera:
+Para o colaborador:
 
-- `VisualModeContext`;
-- preferência local;
-- branding global.
+- a variante salva se torna o padrão visual após cada novo login;
+- salvar o formulário aplica imediatamente a variante na interface atual;
+- escolhas posteriores no seletor global continuam temporárias durante o acesso;
+- o próximo login reaplica o padrão salvo no cartão;
+- não há criação de tema livre nem alteração do branding global.
+
+No preview de `/meu-cartao/editar`, a variante `light_image_4` usa uma superfície branca semitransparente específica atrás dos contatos. A superfície utiliza background com canal alpha e não aplica `opacity` ao container ou ao texto.
+
+## Formulário do colaborador
+
+- “Link da página” substitui a nomenclatura técnica “slug” na interface;
+- cartões novos sugerem o link com o primeiro e o último nome;
+- links já salvos não são sobrescritos automaticamente;
+- check verde e X vermelho apresentam o resultado visual da disponibilidade;
+- campos institucionais bloqueados usam estado inativo de alto contraste;
+- prefixos de redes sociais e o sufixo de e-mail mantêm texto branco sobre fundo destacado;
+- o editor de foto usa thumbnail, ações compactas, drag-and-drop e crop;
+- o preview e o salvamento formam um painel lateral sticky no desktop.
 
 ## Tokens semânticos
 

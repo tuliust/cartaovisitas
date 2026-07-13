@@ -73,8 +73,11 @@ O aceite é obrigatório no frontend e ainda não possui registro dedicado no ba
 1. Validar credenciais.
 2. Verificar sessão.
 3. Verificar perfil e status.
-4. Redirecionar usuário ativo.
-5. Bloquear usuário com `status=blocked`.
+4. Carregar o cartão vinculado e aplicar `public_visual_variant` como padrão visual da sessão.
+5. Redirecionar usuário ativo.
+6. Bloquear usuário com `status=blocked`.
+
+O padrão visual salvo no cartão é reaplicado uma vez a cada nova sessão autenticada. O seletor global pode alterar a interface durante o acesso, sem substituir o padrão persistente; o próximo login volta à variante salva em `/meu-cartao/editar`.
 
 ## Recuperação de senha
 

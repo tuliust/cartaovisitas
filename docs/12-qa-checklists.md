@@ -78,9 +78,21 @@ Após a implementação do Resend:
 ## Edição
 
 - dados institucionais bloqueados quando previsto;
-- avatar;
-- slug;
+- Empresa, Telefone comercial, Site, Endereço, Cidade, Estado e País com aparência inativa;
+- textos auxiliares redundantes dos campos institucionais removidos;
+- Link da página gerado pelo primeiro e último nome em cartão novo;
+- link existente preservado até edição explícita;
+- campo do link editável;
+- check verde, X vermelho e carregamento dentro do input;
+- status do link anunciado por `aria-live`;
+- avatar com thumbnail destacado;
+- upload por botão e drag-and-drop;
+- Remover, Alterar e Reposicionar/Zoom por ícones;
+- ações da foto acessíveis por hover, teclado e touch;
+- recrop de foto já salva;
 - seis variantes;
+- variante salva aplicada imediatamente e como padrão do próximo login;
+- escolha global temporária não substitui o padrão salvo;
 - três colunas por grupo no mobile;
 - nomes visíveis das variantes removidos;
 - acessibilidade preservada;
@@ -88,7 +100,9 @@ Após a implementação do Resend:
 - toggle sem espaço excedente;
 - e-mail e sufixo na mesma linha;
 - salvar;
-- preview lateral no desktop;
+- preview e botão Salvar sticky na coluna direita no desktop;
+- badge de status ausente no preview do colaborador;
+- box de contraste dos contatos em `light_image_4`;
 - botão “Ver Preview” no mobile;
 - modal usa valores ainda não salvos;
 - nenhuma perda de dados.
