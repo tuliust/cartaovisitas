@@ -43,7 +43,10 @@ zoom 200%
 
 - seletor visual no topo do card;
 - três CTAs principais;
-- links de apoio abaixo do card.
+- links de apoio abaixo do card;
+- em desktops de baixa altura, painel, logo, título e espaçamentos são compactados sem alterar o zoom da página;
+- Guia e Termos permanecem visíveis na primeira tela quando a altura útil comportar o conteúdo;
+- monitores com altura normal preservam a composição ampla.
 
 ### Mobile
 
@@ -52,6 +55,14 @@ zoom 200%
 - seletor visual fora do topo do card;
 - seletor posicionado acima dos links de apoio;
 - Guia e Termos no rodapé da página.
+
+## Autenticação pública
+
+- `/entrar`, `/cadastro`, `/recuperar-senha`, `/definir-senha` e `/admin/login` compartilham o mesmo contrato responsivo;
+- cards permanecem centralizados em monitores normais e desktops de baixa altura enquanto couberem na viewport;
+- alturas reduzidas compactam logo, paddings, margens e gaps antes de alterar o alinhamento;
+- alinhamento no topo é usado apenas em mobile baixo ou desktop de altura crítica;
+- não usar `zoom`, `transform: scale()` ou rolagem interna no card.
 
 ## Cadastro
 

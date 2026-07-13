@@ -31,6 +31,9 @@ git diff --name-only
 - persistência após reload;
 - seletor mobile abaixo do card;
 - links de apoio no rodapé mobile;
+- Home integralmente visível em desktop de baixa altura quando houver espaço físico;
+- painel, logo, título e espaçamentos compactados sem `zoom` em viewport desktop baixo;
+- composição ampla preservada em monitor de altura normal;
 - mobile e desktop.
 
 ## Cadastro
@@ -48,6 +51,11 @@ git diff --name-only
 
 ## Login e recuperação
 
+- cards de `/entrar`, `/cadastro`, `/recuperar-senha`, `/definir-senha` e `/admin/login` centralizados enquanto couberem na viewport;
+- desktop de baixa altura compactado antes de permitir alinhamento no topo;
+- monitor externo de altura normal preservado;
+- escala do Windows em 100%, 125% e 150%, quando disponível;
+- ausência de rolagem interna no card;
 - login ativo;
 - bloqueado negado;
 - e-mail inválido;

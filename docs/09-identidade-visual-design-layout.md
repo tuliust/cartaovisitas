@@ -61,6 +61,15 @@ Para o colaborador:
 
 No preview de `/meu-cartao/editar`, a variante `light_image_4` usa uma superfície branca semitransparente específica atrás dos contatos. A superfície utiliza background com canal alpha e não aplica `opacity` ao container ou ao texto.
 
+## Home e autenticação
+
+- desktops com baixa altura usam uma composição compacta sem aplicar `zoom` ou `transform: scale()`;
+- a Home reduz painel, logo, título e espaçamentos somente quando a altura útil é limitada;
+- monitores com altura normal preservam a composição ampla;
+- cards compartilhados de autenticação permanecem centralizados enquanto couberem na viewport;
+- alinhamento no topo é reservado para mobile baixo ou alturas desktop críticas em que o conteúdo não cabe;
+- áreas clicáveis preservam dimensão mínima e os cards usam a rolagem da página como proteção.
+
 ## Formulário do colaborador
 
 - “Link da página” substitui a nomenclatura técnica “slug” na interface;
