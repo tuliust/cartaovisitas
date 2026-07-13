@@ -1,5 +1,5 @@
-import { useState, type FormEvent } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
+import { Eye, EyeOff, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { signUpWithPassword } from '../lib/auth'
 import { getFriendlyErrorMessage } from '../lib/errors'
@@ -8,14 +8,21 @@ import { useBrandSettings } from '../contexts/BrandSettingsContext'
 import { useVisualMode } from '../contexts/VisualModeContext'
 import { getVariantLogo } from '../lib/cardVisualVariants'
 import { useToast } from '../contexts/ToastContext'
+import { getManagedPage } from '../lib/managedPages'
+import { managedPageDefaults, type ManagedPage } from '../lib/managedPageDefaults'
 
 export default function RegisterPage() {
   const { settings } = useBrandSettings()
   const { visualMode } = useVisualMode()
   const toast = useToast()
+  const termsTriggerRef = useRef<HTMLButtonElement>(null)
+  const termsAcceptanceRef = useRef<HTMLDivElement>(null)
   const [prefix, setPrefix] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
+  const [termsError, setTermsError] = useState('')
+  const [termsOpen, setTermsOpen] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -31,6 +38,14 @@ export default function RegisterPage() {
     if (password.length < 6) {
       const validationMessage = 'Use uma senha mais segura.'
       toast.error(validationMessage)
+      return
+    }
+
+    if (!acceptedTerms) {
+      const validationMessage = 'Confirme o aceite dos termos de uso para continuar.'
+      setTermsError(validationMessage)
+      toast.error(validationMessage)
+      termsAcceptanceRef.current?.focus()
       return
     }
 
@@ -133,16 +148,114 @@ export default function RegisterPage() {
             </span>
           </div>
 
+          <div className={`terms-acceptance${termsError ? ' has-error' : ''}`} ref={termsAcceptanceRef} tabIndex={-1}>
+            <label>
+              <input
+                type="checkbox"
+                checked={acceptedTerms}
+                aria-describedby={termsError ? 'terms-acceptance-error' : undefined}
+                onChange={(event) => {
+                  setAcceptedTerms(event.target.checked)
+                  if (event.target.checked) setTermsError('')
+                }}
+              />
+              <span>
+                Confirmo que aceito os{' '}
+                <button
+                  ref={termsTriggerRef}
+                  className="terms-inline-link"
+                  type="button"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    event.stopPropagation()
+                    setTermsOpen(true)
+                  }}
+                >
+                  termos de uso
+                </button>
+              </span>
+            </label>
+            {termsError ? <p id="terms-acceptance-error" className="auth-inline-error" role="alert">{termsError}</p> : null}
+          </div>
+
           <button className="primary-button auth-page-submit" disabled={loading}>
             {loading ? 'Criando...' : 'Criar cadastro'}
           </button>
         </form>
 
-
         <div className="auth-links auth-page-links">
           <Link to="/">Voltar</Link>
         </div>
       </section>
+      {termsOpen ? <TermsModal onClose={() => setTermsOpen(false)} returnFocusRef={termsTriggerRef} /> : null}
     </main>
+  )
+}
+
+function TermsModal({ onClose, returnFocusRef }: { onClose: () => void; returnFocusRef: React.RefObject<HTMLButtonElement | null> }) {
+  const titleId = useId()
+  const descriptionId = useId()
+  const closeRef = useRef<HTMLButtonElement>(null)
+  const modalRef = useRef<HTMLElement>(null)
+  const [page, setPage] = useState<ManagedPage>(() => managedPageDefaults.terms_and_privacy)
+
+  useEffect(() => {
+    let mounted = true
+    void getManagedPage('terms_and_privacy').then((loaded) => { if (mounted) setPage(loaded) })
+    return () => { mounted = false }
+  }, [])
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow
+    const returnFocusElement = returnFocusRef.current
+    document.body.style.overflow = 'hidden'
+    closeRef.current?.focus()
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') onClose()
+      if (event.key !== 'Tab' || !modalRef.current) return
+      const focusable = Array.from(modalRef.current.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter((element) => !element.hasAttribute('disabled'))
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (!first || !last) return
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      document.removeEventListener('keydown', handleKeyDown)
+      returnFocusElement?.focus()
+    }
+  }, [onClose, returnFocusRef])
+
+  return (
+    <div
+      className="terms-modal-backdrop"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose()
+      }}
+    >
+      <section className="terms-modal" role="dialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={descriptionId} ref={modalRef}>
+        <button className="terms-modal-close" type="button" aria-label="Fechar" onClick={onClose} ref={closeRef}><X aria-hidden="true" /></button>
+        <header className="terms-modal-header">
+          <p className="eyebrow">Termos</p>
+          <h2 id={titleId}>{page.title}</h2>
+          {page.subtitle ? <p id={descriptionId}>{page.subtitle}</p> : <p id={descriptionId}>Leia os termos antes de concluir seu cadastro.</p>}
+        </header>
+        <div className="terms-modal-content">
+          {page.content.notice ? <aside role="note"><strong>{page.content.notice.title}</strong><p>{page.content.notice.body}</p></aside> : null}
+          {page.content.sections.map((section) => <section id={`modal-${section.id}`} key={section.id}><h3>{section.title}</h3><p>{section.body}</p></section>)}
+          {page.version_label ? <footer><h3>Data e versão do documento</h3><p>{page.version_label}</p></footer> : null}
+        </div>
+      </section>
+    </div>
   )
 }

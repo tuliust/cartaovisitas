@@ -33,7 +33,9 @@ export function BrandSettingsProvider({ children }: { children: ReactNode }) {
     const faviconUrl = favicon.href.toLowerCase()
     favicon.type = faviconUrl.endsWith('.svg') ? 'image/svg+xml' : faviconUrl.endsWith('.png') ? 'image/png' : 'image/x-icon'
     let appleTouch = document.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]')
-    if (settings.apple_touch_icon_url) { if (!appleTouch) { appleTouch = document.createElement('link'); appleTouch.rel = 'apple-touch-icon'; document.head.appendChild(appleTouch) }; appleTouch.href = settings.apple_touch_icon_url; appleTouch.setAttribute('sizes', '180x180') } else appleTouch?.remove()
+    if (!appleTouch) { appleTouch = document.createElement('link'); appleTouch.rel = 'apple-touch-icon'; document.head.appendChild(appleTouch) }
+    appleTouch.href = settings.apple_touch_icon_url || '/icons/app-192.png'
+    appleTouch.setAttribute('sizes', '180x180')
   }, [settings, status])
 
   const setSettings = useCallback((value: typeof settings) => { setSettingsState(value); cacheBrandSettings(value); setStatus('ready') }, [])

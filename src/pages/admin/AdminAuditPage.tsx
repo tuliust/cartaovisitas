@@ -19,6 +19,8 @@ import {
 import { getFriendlyErrorMessage } from '../../lib/errors'
 import { requireAdmin } from '../../lib/roles'
 
+const AUDIT_PAGE_SIZE = 30
+
 function normalizeSearchValue(value: string) {
   return value
     .normalize('NFD')
@@ -50,6 +52,7 @@ export default function AdminAuditPage() {
   const [start, setStart] = useState('')
   const [end, setEnd] = useState('')
   const [detail, setDetail] = useState<AuditLog | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
 
   const loadLogs = useCallback(async () => {
     setLoading(true)
@@ -134,6 +137,13 @@ export default function AdminAuditPage() {
     })
   }, [action, end, logs, search, start, target])
 
+  const pageCount = Math.max(1, Math.ceil(visibleLogs.length / AUDIT_PAGE_SIZE))
+  const safeCurrentPage = Math.min(currentPage, pageCount)
+  const pageStartIndex = (safeCurrentPage - 1) * AUDIT_PAGE_SIZE
+  const paginatedLogs = visibleLogs.slice(pageStartIndex, pageStartIndex + AUDIT_PAGE_SIZE)
+  const shownStart = visibleLogs.length ? pageStartIndex + 1 : 0
+  const shownEnd = Math.min(pageStartIndex + paginatedLogs.length, visibleLogs.length)
+
   if (booting) {
     return (
       <main className="admin-login-shell admin-state-shell">
@@ -143,6 +153,7 @@ export default function AdminAuditPage() {
   }
 
   const recordCountLabel = logs.length === 1 ? 'registro' : 'registros'
+  const filteredCountLabel = visibleLogs.length === 1 ? 'registro' : 'registros'
   const detailPresentation = detail ? getAuditEventPresentation(detail) : null
   const detailChangedFields = detail ? getAuditChangedFields(detail) : []
 
@@ -152,7 +163,7 @@ export default function AdminAuditPage() {
 
       <div className="admin-card">
         <div className="admin-table-header">
-          <strong>{visibleLogs.length} de {logs.length} {recordCountLabel}</strong>
+          <strong>{visibleLogs.length ? `Mostrando ${shownStart}–${shownEnd} de ${visibleLogs.length} ${filteredCountLabel}` : `0 de ${logs.length} ${recordCountLabel}`}</strong>
           <button className="secondary-button compact-button" type="button" onClick={loadLogs} disabled={loading}>
             {loading ? 'Atualizando...' : 'Atualizar'}
           </button>
@@ -166,7 +177,7 @@ export default function AdminAuditPage() {
                 className="admin-search-input"
                 type="search"
                 value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                onChange={(event) => { setSearch(event.target.value); setCurrentPage(1) }}
                 placeholder="Responsável, evento ou alvo"
               />
             </label>
@@ -176,7 +187,7 @@ export default function AdminAuditPage() {
               <select
                 className="admin-filter-select"
                 value={action}
-                onChange={(event) => setAction(event.target.value)}
+                onChange={(event) => { setAction(event.target.value); setCurrentPage(1) }}
               >
                 <option value="all">Todas</option>
                 {actions.map((item) => (
@@ -190,7 +201,7 @@ export default function AdminAuditPage() {
               <select
                 className="admin-filter-select"
                 value={target}
-                onChange={(event) => setTarget(event.target.value)}
+                onChange={(event) => { setTarget(event.target.value); setCurrentPage(1) }}
               >
                 <option value="all">Todos</option>
                 {targets.map((item) => (
@@ -205,7 +216,7 @@ export default function AdminAuditPage() {
                 className="admin-filter-select"
                 type="date"
                 value={start}
-                onChange={(event) => setStart(event.target.value)}
+                onChange={(event) => { setStart(event.target.value); setCurrentPage(1) }}
               />
             </label>
 
@@ -215,7 +226,7 @@ export default function AdminAuditPage() {
                 className="admin-filter-select"
                 type="date"
                 value={end}
-                onChange={(event) => setEnd(event.target.value)}
+                onChange={(event) => { setEnd(event.target.value); setCurrentPage(1) }}
               />
             </label>
           </div>
@@ -249,7 +260,7 @@ export default function AdminAuditPage() {
                 </thead>
 
                 <tbody>
-                  {visibleLogs.map((log) => {
+                  {paginatedLogs.map((log) => {
                     const presentation = getAuditEventPresentation(log)
 
                     return (
@@ -261,7 +272,7 @@ export default function AdminAuditPage() {
                           <strong>{log.actor_email || 'Sistema'}</strong>
                         </td>
                         <td className="admin-audit-event-cell">
-                          <strong>{presentation.title}</strong>
+                          <span className="admin-audit-event-title">{presentation.title}</span>
                           {presentation.context !== 'Identidade visual' ? <small>{presentation.context}</small> : null}
                         </td>
                         <td className="admin-actions-cell">
@@ -275,14 +286,14 @@ export default function AdminAuditPage() {
             </div>
 
             <div className="admin-mobile-cards admin-audit-mobile-cards">
-              {visibleLogs.map((log) => {
+              {paginatedLogs.map((log) => {
                 const presentation = getAuditEventPresentation(log)
 
                 return (
                   <article className="admin-mobile-card admin-audit-mobile-card" key={log.id}>
                     <div className="admin-mobile-card-heading">
                       <div className="admin-audit-event-cell">
-                        <strong>{presentation.title}</strong>
+                        <span className="admin-audit-event-title">{presentation.title}</span>
                         {presentation.context !== 'Identidade visual' ? <small>{presentation.context}</small> : null}
                       </div>
 
@@ -303,6 +314,26 @@ export default function AdminAuditPage() {
                 )
               })}
             </div>
+            {pageCount > 1 ? (
+              <nav className="admin-pagination" aria-label="Paginação da auditoria">
+                <button className="secondary-button compact-button" type="button" disabled={safeCurrentPage === 1} onClick={() => setCurrentPage((page) => Math.max(1, page - 1))} aria-label="Página anterior">Anterior</button>
+                <div className="admin-pagination-pages" aria-label={`Página ${safeCurrentPage} de ${pageCount}`}>
+                  {Array.from({ length: pageCount }, (_, index) => index + 1).map((page) => (
+                    <button
+                      key={page}
+                      className={`admin-pagination-page${page === safeCurrentPage ? ' active' : ''}`}
+                      type="button"
+                      aria-label={`Página ${page}`}
+                      aria-current={page === safeCurrentPage ? 'page' : undefined}
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+                <button className="secondary-button compact-button" type="button" disabled={safeCurrentPage === pageCount} onClick={() => setCurrentPage((page) => Math.min(pageCount, page + 1))} aria-label="Próxima página">Próxima</button>
+              </nav>
+            ) : null}
           </>
         ) : null}
       </div>

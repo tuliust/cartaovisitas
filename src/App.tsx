@@ -18,6 +18,7 @@ import AdminAuditPage from './pages/admin/AdminAuditPage'
 import { VisualModeProvider } from './contexts/VisualModeProvider'
 import { useBrandSettings } from './contexts/BrandSettingsContext'
 import { CollaboratorProvider } from './contexts/CollaboratorProvider'
+import { InstallAppProvider } from './contexts/InstallAppProvider'
 import MyCardGuidePage from './pages/MyCardGuidePage'
 import MyCardEmailSignaturePage from './pages/MyCardEmailSignaturePage'
 import MyCardAnalyticsPage from './pages/MyCardAnalyticsPage'
@@ -33,35 +34,35 @@ function ResolvedApplication() {
     <VisualModeProvider>
       <ToastProvider>
         <BrowserRouter>
-          <ScrollToTop />
-          <Routes>
+          <InstallAppProvider>
+            <ScrollToTop />
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/entrar" element={<EmployeeLoginPage />} />
+              <Route path="/cadastro" element={<RegisterPage />} />
+              <Route path="/recuperar-senha" element={<PasswordResetRequestPage />} />
+              <Route path="/definir-senha" element={<PasswordUpdatePage />} />
+              <Route path="/termos-de-uso-e-privacidade" element={<CollaboratorProvider required={false}><TermsAndPrivacyPage /></CollaboratorProvider>} />
 
-        <Route path="/" element={<HomePage />} />
-        <Route path="/entrar" element={<EmployeeLoginPage />} />
-        <Route path="/cadastro" element={<RegisterPage />} />
-        <Route path="/recuperar-senha" element={<PasswordResetRequestPage />} />
-        <Route path="/definir-senha" element={<PasswordUpdatePage />} />
-        <Route path="/termos-de-uso-e-privacidade" element={<CollaboratorProvider required={false}><TermsAndPrivacyPage /></CollaboratorProvider>} />
+              <Route element={<PrivateCollaboratorRoutes />}>
+                <Route path="/meu-cartao" element={<MyCardRedirectPage />} />
+                <Route path="/meu-cartao/editar" element={<MyCardEditPage />} />
+                <Route path="/meu-cartao/guia" element={<MyCardGuidePage />} />
+                <Route path="/meu-cartao/assinatura-de-email" element={<MyCardEmailSignaturePage />} />
+                <Route path="/meu-cartao/estatisticas" element={<MyCardAnalyticsPage />} />
+                <Route path="/:slug" element={<PublicCardPage />} />
+              </Route>
 
-        <Route element={<PrivateCollaboratorRoutes />}>
-          <Route path="/meu-cartao" element={<MyCardRedirectPage />} />
-          <Route path="/meu-cartao/editar" element={<MyCardEditPage />} />
-          <Route path="/meu-cartao/guia" element={<MyCardGuidePage />} />
-          <Route path="/meu-cartao/assinatura-de-email" element={<MyCardEmailSignaturePage />} />
-          <Route path="/meu-cartao/estatisticas" element={<MyCardAnalyticsPage />} />
-          <Route path="/:slug" element={<PublicCardPage />} />
-        </Route>
-
-        <Route path="/admin" element={<Navigate to="/admin/cartoes" replace />} />
-        <Route path="/admin/login" element={<AdminLoginPage />} />
-        <Route path="/admin/cartoes" element={<AdminCardsPage />} />
-        <Route path="/admin/cartoes/novo" element={<AdminCardFormPage />} />
-        <Route path="/admin/cartoes/:id/editar" element={<AdminCardFormPage />} />
-        <Route path="/admin/configuracoes" element={<AdminBrandSettingsPage />} />
-        <Route path="/admin/usuarios" element={<AdminUsersPage />} />
-        <Route path="/admin/auditoria" element={<AdminAuditPage />} />
-
-          </Routes>
+              <Route path="/admin" element={<Navigate to="/admin/cartoes" replace />} />
+              <Route path="/admin/login" element={<AdminLoginPage />} />
+              <Route path="/admin/cartoes" element={<AdminCardsPage />} />
+              <Route path="/admin/cartoes/novo" element={<AdminCardFormPage />} />
+              <Route path="/admin/cartoes/:id/editar" element={<AdminCardFormPage />} />
+              <Route path="/admin/configuracoes" element={<AdminBrandSettingsPage />} />
+              <Route path="/admin/usuarios" element={<AdminUsersPage />} />
+              <Route path="/admin/auditoria" element={<AdminAuditPage />} />
+            </Routes>
+          </InstallAppProvider>
         </BrowserRouter>
       </ToastProvider>
     </VisualModeProvider>

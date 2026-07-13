@@ -41,6 +41,10 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      <div className="home-secondary-actions" aria-label="Links de apoio">
+        <Link to="/meu-cartao/guia">Guia de Uso</Link>
+        <Link to="/termos-de-uso-e-privacidade">Termos de Uso e Privacidade</Link>
+      </div>
     </main>
   )
 }

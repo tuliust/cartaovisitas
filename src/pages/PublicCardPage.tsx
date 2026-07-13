@@ -1,14 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
 import QRCode from 'qrcode'
-import { Copy, Pencil, QrCode, Wallet } from 'lucide-react'
+import { Copy, Pencil, QrCode, Smartphone, Wallet } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import CollaboratorLayout from '../components/collaborator/CollaboratorLayout'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
 import { useCollaborator } from '../contexts/CollaboratorContext'
 import { useVisualMode } from '../contexts/VisualModeContext'
+import { useInstallApp } from '../hooks/useInstallApp'
 import { getEffectiveVisualVariant, getVariantClassName, getVariantLogo, getVariantStyle, isLightVisualVariant } from '../lib/cardVisualVariants'
 import { recordCardEvent } from '../lib/cards'
 import { getLocalizedProfessionalData, getStoredPublicCardLanguage, publicCardCopy, publicCardLanguageLabels, storePublicCardLanguage, type PublicCardLanguage } from '../lib/publicCardLocale'
+
+type PublicVisualLanguage = PublicCardLanguage
 
 function normalizePhoneForLink(phone: string) { return phone.replace(/[^\d+]/g, '') }
 function buildAddress(card: NonNullable<ReturnType<typeof useCollaborator>['card']>) { return [card.address_line, card.city, card.state, card.country].filter(Boolean).join(', ') }
@@ -18,6 +21,7 @@ export default function PublicCardPage() {
   const { card, actions } = useCollaborator()
   const { settings } = useBrandSettings()
   const { visualMode, hasVisualModePreference } = useVisualMode()
+  const { isInstalled, openInstallModal } = useInstallApp()
   const [language, setLanguage] = useState<PublicVisualLanguage>(getStoredPublicCardLanguage)
   const [qrDataUrl, setQrDataUrl] = useState('')
   const [failedLogoUrl, setFailedLogoUrl] = useState('')
@@ -50,12 +54,13 @@ export default function PublicCardPage() {
         <div className="public-panel-controls"><div className="public-language-toggle" aria-label="Idioma do cartão">{(Object.keys(publicCardLanguageLabels) as PublicCardLanguage[]).map((item) => <button key={item} type="button" className={language === item ? 'active' : ''} aria-pressed={language === item} onClick={() => changeLanguage(item)}>{publicCardLanguageLabels[item]}</button>)}</div></div>
         <p className="eyebrow">Ferramentas da minha página</p><h2>Gerencie e compartilhe seu cartão</h2>
         <div className="button-grid collaborator-owner-actions">
-          <button className="primary-button" type="button" disabled={Boolean(actions.running)} onClick={() => void actions.shareVCard()}>{actions.running === 'share' ? 'Preparando vCard...' : 'Compartilhar meu cartão'}</button>
+          {actions.shareSupportChecked && actions.canShareVCard ? <button className="primary-button" type="button" disabled={Boolean(actions.running)} onClick={() => void actions.shareVCard()}>{actions.running === 'share' ? 'Preparando vCard...' : 'Compartilhar contato'}</button> : null}
+          {!isInstalled ? <button className="secondary-button install-page-button" type="button" onClick={openInstallModal}><Smartphone aria-hidden="true" />Instale esta página como app</button> : null}
           <Link className="secondary-button" to="/meu-cartao/guia">Guia de Utilização</Link>
-          <Link className="secondary-button" to="/termos-de-uso-e-privacidade">Termos de Uso e Privacidade</Link>
           <Link className="secondary-button" to="/meu-cartao/assinatura-de-email">Gerar Rodapé para E-mail</Link>
           <Link className="secondary-button" to="/meu-cartao/estatisticas">Estatísticas de Compartilhamento</Link>
         </div>
+        <p className="public-card-secondary-link"><Link to="/termos-de-uso-e-privacidade">Termos de Uso e Privacidade</Link></p>
         <section className="extra-functions" aria-labelledby="extra-functions-title">
           <h3 id="extra-functions-title">Funcionalidades adicionais</h3>
           <div className="extra-actions-grid">
@@ -69,5 +74,3 @@ export default function PublicCardPage() {
     </section>
   </CollaboratorLayout>
 }
-
-type PublicVisualLanguage = PublicCardLanguage

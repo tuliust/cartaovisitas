@@ -5409,7 +5409,8 @@ html.app-visual-mode-light .password-input-field:focus-within { border-color: va
 @media (max-height: 520px) {
   .confirmation-backdrop,
   .crop-modal-backdrop,
-  .wallet-modal-backdrop {
+  .wallet-modal-backdrop,
+  .install-modal-backdrop {
     place-items: start center;
   }
 
@@ -5420,4 +5421,484 @@ html.app-visual-mode-light .password-input-field:focus-within { border-color: va
   .wallet-modal {
     max-height: none;
   }
+}
+
+.install-page-button {
+  gap: 8px;
+}
+
+.install-page-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.public-card-secondary-link {
+  margin: 12px 0 0;
+  text-align: center;
+  font-size: 0.82rem;
+}
+
+.public-card-secondary-link a {
+  color: inherit;
+  opacity: 0.78;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.public-card-secondary-link a:hover,
+.public-card-secondary-link a:focus-visible {
+  opacity: 1;
+}
+
+.install-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(0 0 0 / 0.62);
+}
+
+.install-modal {
+  position: relative;
+  width: min(720px, 100%);
+  max-height: min(760px, calc(100dvh - 40px));
+  overflow-y: auto;
+  display: grid;
+  gap: 18px;
+  padding: clamp(22px, 4vw, 30px);
+  border: 1px solid var(--semantic-border);
+  border-radius: 22px;
+  background: var(--semantic-modal-bg);
+  color: var(--semantic-text);
+  box-shadow: 0 30px 80px rgb(0 0 0 / 0.36);
+}
+
+.install-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 42px;
+  height: 42px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--semantic-border);
+  border-radius: 999px;
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-secondary-text);
+  cursor: pointer;
+}
+
+.install-modal-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.install-modal-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+  padding-right: 42px;
+  align-items: start;
+}
+
+.install-modal-header h2 {
+  margin: 2px 0 6px;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+}
+
+.install-modal-header p:last-child {
+  margin: 0;
+  color: var(--semantic-muted);
+}
+
+.install-modal-icon {
+  width: 52px;
+  height: 52px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 16px;
+  background: var(--semantic-primary-bg);
+  color: var(--semantic-primary-text);
+}
+
+.install-modal-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.install-device-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.install-device-tabs button {
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid var(--semantic-border);
+  border-radius: 999px;
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-secondary-text);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.install-device-tabs button.active {
+  background: var(--semantic-primary-bg);
+  color: var(--semantic-primary-text);
+}
+
+.install-modal-content {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.7fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.install-illustration {
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+  gap: 14px;
+  padding: 22px;
+  border: 1px solid var(--semantic-border);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--semantic-primary-bg) 6%, transparent);
+}
+
+.install-device-frame {
+  position: relative;
+  width: 118px;
+  height: 178px;
+  display: grid;
+  place-items: center;
+  border: 3px solid currentColor;
+  border-radius: 26px;
+  color: var(--semantic-text);
+}
+
+.install-illustration-desktop .install-device-frame {
+  width: 158px;
+  height: 118px;
+  border-radius: 18px;
+}
+
+.install-device-frame svg {
+  width: 48px;
+  height: 48px;
+}
+
+.install-device-frame span {
+  position: absolute;
+  bottom: 10px;
+  width: 34px;
+  height: 4px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.install-illustration-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.install-illustration-actions svg {
+  width: 34px;
+  height: 34px;
+  padding: 7px;
+  border-radius: 999px;
+  background: var(--semantic-primary-bg);
+  color: var(--semantic-primary-text);
+}
+
+.install-steps {
+  display: grid;
+  align-content: center;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--semantic-border);
+  border-radius: 18px;
+}
+
+.install-steps p {
+  margin: 0;
+  color: var(--semantic-muted);
+  line-height: 1.55;
+}
+
+.install-steps ol {
+  margin: 0;
+  padding-left: 22px;
+  display: grid;
+  gap: 8px;
+  line-height: 1.5;
+}
+
+.install-note {
+  font-size: 0.92rem;
+}
+
+.install-menu-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.install-menu-hint svg {
+  width: 18px;
+  height: 18px;
+}
+
+.install-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.install-modal-actions .primary-button,
+.install-modal-actions .secondary-button {
+  width: auto;
+  min-width: 132px;
+  gap: 8px;
+}
+
+.install-modal-actions svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .install-modal {
+    animation: modal-enter 160ms ease-out;
+  }
+}
+
+@keyframes modal-enter {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 700px) {
+  .install-modal-content {
+    grid-template-columns: 1fr;
+  }
+
+  .install-illustration {
+    min-height: 180px;
+  }
+}
+
+.home-secondary-actions {
+  width: min(100%, 760px);
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.home-secondary-actions a {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border: 1px solid var(--semantic-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--semantic-secondary-bg) 72%, transparent);
+  color: var(--semantic-secondary-text);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.home-secondary-actions a:hover,
+.home-secondary-actions a:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--semantic-focus);
+}
+
+.terms-acceptance {
+  border-radius: 14px;
+  outline: none;
+}
+
+.terms-acceptance:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--semantic-focus) 34%, transparent);
+}
+
+.terms-acceptance label {
+  min-height: 44px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 10px 0;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.terms-acceptance input {
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  accent-color: var(--semantic-primary-bg);
+}
+
+.terms-inline-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.terms-inline-link:hover,
+.terms-inline-link:focus-visible {
+  color: var(--semantic-focus);
+}
+
+.auth-inline-error {
+  margin: 2px 0 0 30px;
+  color: var(--semantic-danger);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.terms-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(0 0 0 / 0.62);
+}
+
+.terms-modal {
+  position: relative;
+  width: min(820px, 100%);
+  max-height: min(820px, calc(100dvh - 40px));
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 16px;
+  padding: clamp(22px, 4vw, 30px);
+  border: 1px solid var(--semantic-border);
+  border-radius: 22px;
+  background: var(--semantic-modal-bg);
+  color: var(--semantic-text);
+  box-shadow: 0 30px 80px rgb(0 0 0 / 0.36);
+}
+
+.terms-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 42px;
+  height: 42px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--semantic-border);
+  border-radius: 999px;
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-secondary-text);
+  cursor: pointer;
+}
+
+.terms-modal-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.terms-modal-header {
+  padding-right: 46px;
+}
+
+.terms-modal-header h2 {
+  margin: 4px 0 6px;
+}
+
+.terms-modal-header p {
+  margin: 0;
+  color: var(--semantic-muted);
+}
+
+.terms-modal-content {
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  gap: 14px;
+  padding-right: 6px;
+}
+
+.terms-modal-content :is(aside, section, footer) {
+  padding: 16px;
+  border: 1px solid var(--semantic-border);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--semantic-surface) 84%, transparent);
+}
+
+.terms-modal-content h3 {
+  margin: 0 0 8px;
+}
+
+.terms-modal-content p {
+  margin: 0;
+  color: var(--semantic-muted);
+  line-height: 1.6;
+}
+
+.admin-audit-event-title {
+  display: block;
+  color: var(--admin-text);
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.admin-pagination {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.admin-pagination-pages {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.admin-pagination-page {
+  min-width: 42px;
+  min-height: 42px;
+  border: 1px solid var(--admin-border);
+  border-radius: 999px;
+  background: var(--admin-surface);
+  color: var(--admin-text);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.admin-pagination-page.active {
+  background: var(--admin-primary-button-bg);
+  color: var(--admin-primary-button-text);
+}
+
+.admin-pagination-page:focus-visible,
+.admin-pagination .compact-button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--semantic-focus) 45%, transparent);
+  outline-offset: 2px;
 }

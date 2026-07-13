@@ -2,6 +2,7 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 import type { AdminBusinessCard } from './adminCards'
 import { recordCardEvent } from './cards'
 import { downloadQrCodePng } from './qrcode'
+import { canShareVCardFile } from './shareSupport'
 import { getAppleWalletUrl, isIosDevice, isWalletPublicEnabled } from './wallet'
 
 export type CollaboratorAction = 'share' | 'copy-vcard' | 'qr' | 'wallet'
@@ -12,6 +13,7 @@ function downloadBlob(blob: Blob, filename: string) { const url = URL.createObje
 export function useCollaboratorCardActions(card: AdminBusinessCard | null, notify: { success: (message: string) => void; error: (message: string) => void; info: (message: string) => void }) {
   const [running, setRunning] = useState<CollaboratorAction | null>(null)
   const [walletModalOpen, setWalletModalOpen] = useState(false)
+  const [canShareVCard] = useState(() => canShareVCardFile())
   const runningRef = useRef(false)
   const vcardUrl = useMemo(() => card ? `${baseUrl()}/api/vcard/${encodeURIComponent(card.slug)}?lang=pt` : '', [card])
   const qrUrl = useMemo(() => card ? `${baseUrl()}/qr/${encodeURIComponent(card.slug)}?lang=pt` : '', [card])
@@ -63,7 +65,19 @@ export function useCollaboratorCardActions(card: AdminBusinessCard | null, notif
     setWalletModalOpen(true)
   }), [card, notify, run])
 
-  return { running, vcardUrl, qrUrl, copyVCard, downloadQrCode, shareVCard, openWallet, walletModalOpen, closeWalletModal: () => setWalletModalOpen(false) }
+  return {
+    running,
+    vcardUrl,
+    qrUrl,
+    canShareVCard,
+    shareSupportChecked: true,
+    copyVCard,
+    downloadQrCode,
+    shareVCard,
+    openWallet,
+    walletModalOpen,
+    closeWalletModal: () => setWalletModalOpen(false),
+  }
 }
 
 export type CollaboratorCardActions = ReturnType<typeof useCollaboratorCardActions>
