@@ -6634,3 +6634,238 @@ html.app-visual-mode-light .password-input-field:focus-within { border-color: va
     font-size: 1rem;
   }
 }
+
+/* Public-card responsive toolbar and public usage-guide presentation. */
+.public-card-initial-toolbar {
+  display: none;
+}
+
+.public-card-actions-heading {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.public-card-actions-heading .eyebrow {
+  min-width: 0;
+  margin: 0;
+}
+
+.public-card-language-desktop {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.guide-layout {
+  grid-template-columns: minmax(250px, 0.34fr) minmax(0, 1fr);
+  gap: 26px;
+}
+
+.guide-index {
+  padding: 16px;
+  border-color: var(--semantic-border);
+  background: var(--semantic-surface-raised);
+  color: var(--semantic-text);
+  box-shadow: 0 20px 54px rgb(0 0 0 / 0.16);
+}
+
+.guide-index-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 4px 14px;
+}
+
+.guide-index-heading > span,
+.guide-section-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  background: var(--semantic-primary-bg);
+  color: var(--semantic-primary-text);
+}
+
+.guide-index-heading > span {
+  width: 36px;
+  height: 36px;
+}
+
+.guide-index-heading svg {
+  width: 18px;
+  height: 18px;
+}
+
+.guide-index-heading h2 {
+  margin: 0;
+  color: var(--semantic-text);
+}
+
+.guide-index ol {
+  padding: 0;
+  gap: 4px;
+  list-style: none;
+}
+
+.guide-index li {
+  min-width: 0;
+}
+
+.guide-index a {
+  min-width: 0;
+  min-height: 44px;
+  display: grid;
+  grid-template-columns: 28px 18px minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+  padding: 8px 9px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: var(--semantic-muted);
+  font-size: 0.84rem;
+  font-weight: 680;
+  line-height: 1.25;
+  text-decoration: none;
+}
+
+.guide-index a:hover {
+  border-color: var(--semantic-border);
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-text);
+}
+
+.guide-index a:focus-visible {
+  border-color: var(--semantic-focus);
+  outline: 3px solid color-mix(in srgb, var(--semantic-focus) 32%, transparent);
+  outline-offset: 2px;
+  color: var(--semantic-text);
+}
+
+.guide-index a > svg {
+  width: 17px;
+  height: 17px;
+}
+
+.guide-index-number {
+  color: var(--semantic-subtle);
+  font: 700 0.68rem/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  letter-spacing: 0.05em;
+}
+
+.guide-content {
+  gap: 18px;
+}
+
+.guide-content section {
+  padding: clamp(22px, 3vw, 32px);
+  border-color: var(--semantic-border);
+  background: var(--semantic-surface-raised);
+  color: var(--semantic-text);
+  box-shadow: 0 24px 64px rgb(0 0 0 / 0.14);
+}
+
+.guide-section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 18px;
+}
+
+.guide-section-icon {
+  width: 46px;
+  height: 46px;
+}
+
+.guide-section-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.guide-section-header > div {
+  min-width: 0;
+}
+
+.guide-section-kicker {
+  margin: 1px 0 5px;
+  color: var(--semantic-muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.guide-section-header h2 {
+  margin: 0;
+  color: var(--semantic-text);
+  font-size: clamp(1.25rem, 2.3vw, 1.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+.guide-section-body {
+  display: grid;
+  gap: 12px;
+}
+
+.guide-section-body p {
+  margin: 0;
+  color: var(--semantic-muted);
+  line-height: 1.72;
+}
+
+@media (max-width: 860px) {
+  .guide-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .guide-index {
+    position: static;
+    max-height: none;
+  }
+
+  .guide-index ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .public-card-initial-toolbar {
+    display: flex;
+  }
+
+  .public-card-language-desktop {
+    display: none;
+  }
+
+  .public-card-actions-heading {
+    margin-bottom: 10px;
+  }
+
+  .guide-index {
+    padding: 13px;
+    border-radius: 18px;
+  }
+
+  .guide-index ol {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .guide-content section {
+    padding: 20px 18px;
+    border-radius: 20px;
+  }
+
+  .guide-section-header {
+    gap: 12px;
+  }
+
+  .guide-section-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+  }
+}

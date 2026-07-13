@@ -16,6 +16,18 @@ type PublicVisualLanguage = PublicCardLanguage
 function normalizePhoneForLink(phone: string) { return phone.replace(/[^\d+]/g, '') }
 function buildAddress(card: NonNullable<ReturnType<typeof useCollaborator>['card']>) { return [card.address_line, card.city, card.state, card.country].filter(Boolean).join(', ') }
 
+type LanguageToggleProps = {
+  language: PublicCardLanguage
+  className?: string
+  onChange: (language: PublicCardLanguage) => void
+}
+
+function LanguageToggle({ language, className = '', onChange }: LanguageToggleProps) {
+  return <div className={`public-language-toggle${className ? ` ${className}` : ''}`} role="group" aria-label="Idioma do cartão">
+    {(Object.keys(publicCardLanguageLabels) as PublicCardLanguage[]).map((item) => <button key={item} type="button" className={language === item ? 'active' : ''} aria-pressed={language === item} onClick={() => onChange(item)}>{publicCardLanguageLabels[item]}</button>)}
+  </div>
+}
+
 export default function PublicCardPage() {
   const { slug } = useParams()
   const { card, actions } = useCollaborator()
@@ -52,7 +64,7 @@ export default function PublicCardPage() {
         <div className="card-main"><div className="person-block"><h1>{name}</h1>{professionalData?.jobTitle ? <p className="job-title">{professionalData.jobTitle}</p> : null}{professionalData?.department ? <p className="department">{professionalData.department}</p> : null}</div></div>
         <div className="card-footer"><div className="contact-list public-card-contact-list">{phone ? <a href={`tel:${normalizePhoneForLink(phone)}`}><span>{copy.phone}</span>{phone}</a> : null}{card.email ? <a href={`mailto:${card.email}`}><span>{copy.email}</span>{card.email}</a> : null}{card.website ? <a href={card.website} target="_blank" rel="noreferrer"><span>{copy.website}</span>{card.website.replace(/^https?:\/\//, '')}</a> : null}{address ? <p><span>{copy.address}</span>{address}</p> : null}</div>{qrDataUrl ? <img className="qr-code" src={qrDataUrl} alt={`QR Code de ${name}`} /> : null}</div>
         <div className="public-card-initial-toolbar" aria-label="Acoes rapidas do cartao">
-          <div className="public-language-toggle" aria-label="Idioma do cartao">{(Object.keys(publicCardLanguageLabels) as PublicCardLanguage[]).map((item) => <button key={item} type="button" className={language === item ? 'active' : ''} aria-pressed={language === item} onClick={() => changeLanguage(item)}>{publicCardLanguageLabels[item]}</button>)}</div>
+          <LanguageToggle language={language} className="public-card-language-mobile" onChange={changeLanguage} />
           <div className="public-card-initial-actions">
             <button type="button" aria-label="Editar" title="Editar" onClick={scrollToLowerArea}><Pencil aria-hidden="true" /></button>
             <button type="button" aria-label="Compartilhar" title="Compartilhar" onClick={scrollToLowerArea}><Share2 aria-hidden="true" /></button>
@@ -63,11 +75,15 @@ export default function PublicCardPage() {
         </div>
       </div>
       <div className={`action-panel public-card-actions-panel ${actionTheme}`} ref={actionPanelRef} id="card-lower-actions">
-        <p className="eyebrow">Ferramentas da minha página</p><h2>Gerencie e compartilhe seu cartão</h2>
+        <div className="public-card-actions-heading">
+          <p className="eyebrow">Ferramentas da minha página</p>
+          <LanguageToggle language={language} className="public-card-language-desktop" onChange={changeLanguage} />
+        </div>
+        <h2>Gerencie e compartilhe seu cartão</h2>
         <div className="button-grid collaborator-owner-actions">
           {actions.shareSupportChecked && actions.canShareVCard ? <button className="primary-button" type="button" disabled={Boolean(actions.running)} onClick={() => void actions.shareVCard()}>{actions.running === 'share' ? 'Preparando vCard...' : 'Compartilhar contato'}</button> : null}
           {!isInstalled ? <button className="secondary-button install-page-button" type="button" onClick={openInstallModal}><Smartphone aria-hidden="true" />Instale esta página como app</button> : null}
-          <Link className="secondary-button" to="/meu-cartao/guia">Guia de Utilização</Link>
+          <Link className="secondary-button" to="/guia-de-utilizacao">Guia de Utilização</Link>
           <Link className="secondary-button" to="/meu-cartao/assinatura-de-email">Gerar Rodapé para E-mail</Link>
           <Link className="secondary-button" to="/meu-cartao/estatisticas">Estatísticas de Compartilhamento</Link>
         </div>

@@ -43,11 +43,12 @@ function ResolvedApplication() {
               <Route path="/recuperar-senha" element={<PasswordResetRequestPage />} />
               <Route path="/definir-senha" element={<PasswordUpdatePage />} />
               <Route path="/termos-de-uso-e-privacidade" element={<CollaboratorProvider required={false}><TermsAndPrivacyPage /></CollaboratorProvider>} />
+              <Route path="/guia-de-utilizacao" element={<CollaboratorProvider required={false}><MyCardGuidePage /></CollaboratorProvider>} />
+              <Route path="/meu-cartao/guia" element={<Navigate to="/guia-de-utilizacao" replace />} />
 
               <Route element={<PrivateCollaboratorRoutes />}>
                 <Route path="/meu-cartao" element={<MyCardRedirectPage />} />
                 <Route path="/meu-cartao/editar" element={<MyCardEditPage />} />
-                <Route path="/meu-cartao/guia" element={<MyCardGuidePage />} />
                 <Route path="/meu-cartao/assinatura-de-email" element={<MyCardEmailSignaturePage />} />
                 <Route path="/meu-cartao/estatisticas" element={<MyCardAnalyticsPage />} />
                 <Route path="/:slug" element={<PublicCardPage />} />
