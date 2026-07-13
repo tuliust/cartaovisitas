@@ -2,6 +2,11 @@
 
 ## Responsividade
 
+O header compartilhado do colaborador mantém ícones e nomes acessíveis entre
+320 px e desktop. O seletor compacto usa opções circulares com `aria-pressed`.
+Menus fecham por Escape, clique externo, scroll e resize e restauram o foco.
+Os gráficos possuem descrição e resumo tabular equivalente.
+
 O layout público usa duas áreas principais:
 
 - card visual;

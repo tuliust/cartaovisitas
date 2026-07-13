@@ -70,17 +70,9 @@ export default function WalletSupportModal({
           </h2>
 
           {standby ? (
-            <>
-              <div className="wallet-option">
-                <p id="wallet-modal-description">
-                  A integração com Apple Wallet está tecnicamente preparada e será ativada após
-                  aprovação institucional da conta Apple Developer.
-                </p>
-              </div>
-              <div className="wallet-option disabled">
-                <p>Google Wallet será disponibilizado em uma próxima etapa.</p>
-              </div>
-            </>
+            <div className="wallet-option">
+              <p id="wallet-modal-description">A funcionalidade de integração dos cards com o Apple Wallet e Google Wallet está em desenvolvimento e será comunicada quando estiver em funcionamento.</p>
+            </div>
           ) : (
             <>
               <div className="wallet-option">

@@ -2,13 +2,25 @@
 
 ## Perfis
 
+> Atualização: a interface React `/:slug` pertence à área privada do proprietário.
+> Os endpoints técnicos de QR, vCard e Wallet permanecem acessíveis conforme suas
+> regras atuais; não existe catálogo público individual nesta etapa.
+
 | Perfil | Fonte | Permissões |
 |---|---|---|
-| Visitante | sem sessão | ver cartão público, salvar vCard, escanear QR, compartilhar. |
-| Colaborador | Supabase Auth + `user_profiles.role=user` | editar próprio cartão. |
+| Visitante | sem sessão | acessar Home, termos e endpoints técnicos de vCard/QR autorizados. |
+| Colaborador | Supabase Auth + `user_profiles.role=user` | acessar, editar e acompanhar o próprio cartão. |
 | Admin | Supabase Auth + `user_profiles.role=admin` | administrar cartões, usuários, auditoria e branding. |
 
 Status:
+
+As rotas `/meu-cartao`, `/meu-cartao/editar`, `/meu-cartao/guia`,
+`/meu-cartao/assinatura-de-email`, `/meu-cartao/estatisticas` e `/:slug` usam o
+`CollaboratorProvider`. Ele valida sessão e usuário ativo e carrega somente o
+cartão vinculado por `created_by` ou e-mail. Em `/:slug`, o parâmetro é apenas
+comparado ao slug do cartão autenticado e nunca alimenta uma consulta arbitrária.
+
+`/termos-de-uso-e-privacidade` permanece pública, com header reduzido sem sessão.
 
 - `active`: acesso normal.
 - `pending`: usuário convidado, aguardando ativação ou primeiro acesso.

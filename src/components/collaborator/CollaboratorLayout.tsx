@@ -1,0 +1,33 @@
+import type { ReactNode } from 'react'
+import { Link } from 'react-router-dom'
+import { useBrandSettings } from '../../contexts/BrandSettingsContext'
+import { useOptionalCollaborator } from '../../contexts/CollaboratorContext'
+import { useToast } from '../../contexts/ToastContext'
+import { useVisualMode } from '../../contexts/VisualModeContext'
+import { getVariantLogo } from '../../lib/cardVisualVariants'
+import { useCollaboratorCardActions } from '../../lib/collaboratorCardActions'
+import { isWalletPublicEnabled } from '../../lib/wallet'
+import WalletSupportModal from '../WalletSupportModal'
+import CollaboratorNavigation from './CollaboratorNavigation'
+
+type Props = { title?: string; subtitle?: string; children: ReactNode }
+
+export default function CollaboratorLayout({ title, subtitle, children }: Props) {
+  const collaborator = useOptionalCollaborator()
+  const { settings } = useBrandSettings()
+  const { visualMode } = useVisualMode()
+  const toast = useToast()
+  const actions = useCollaboratorCardActions(collaborator?.card ?? null, toast)
+  const authenticated = Boolean(collaborator?.authenticated)
+  return <main className="collaborator-shell">
+    <header className="collaborator-topbar">
+      <Link className="collaborator-brand" to="/" aria-label="Ir para a página inicial"><img className="collaborator-logo" src={getVariantLogo(settings, visualMode)} alt="Invest RS" /></Link>
+      <CollaboratorNavigation authenticated={authenticated} card={collaborator?.card ?? null} actions={authenticated ? actions : undefined} onLogout={() => void collaborator?.logout()} />
+    </header>
+    <section className="collaborator-page">
+      {title ? <div className="collaborator-page-header"><div><p className="eyebrow">{authenticated ? 'Área do colaborador' : 'Invest RS'}</p><h1>{title}</h1>{subtitle ? <p>{subtitle}</p> : null}</div></div> : null}
+      {children}
+    </section>
+    {actions.walletModalOpen && collaborator?.card ? <WalletSupportModal slug={collaborator.card.slug} standby={!isWalletPublicEnabled()} onClose={actions.closeWalletModal} /> : null}
+  </main>
+}

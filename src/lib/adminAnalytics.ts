@@ -14,6 +14,14 @@ type CardEventRow = {
   created_at: string | null
 }
 
+export type OwnerCardEvent = CardEventRow
+
+export async function getOwnerCardEvents(cardId: string, start: string, end: string) {
+  const { data, error } = await requireSupabase().from('card_scan_events').select('card_id,event_type,created_at').eq('card_id', cardId).gte('created_at', start).lte('created_at', end).order('created_at', { ascending: true })
+  if (error) throw error
+  return (data ?? []) as OwnerCardEvent[]
+}
+
 export const emptyCardAnalytics: CardAnalyticsSummary = {
   view_count: 0,
   vcard_count: 0,

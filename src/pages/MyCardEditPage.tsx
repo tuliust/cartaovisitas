@@ -1,147 +1,52 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
 import CardForm from '../components/admin/CardForm'
 import CardPreview from '../components/admin/CardPreview'
-import { getCurrentSession, signOut } from '../lib/auth'
+import CollaboratorLayout from '../components/collaborator/CollaboratorLayout'
+import { useCollaborator } from '../contexts/CollaboratorContext'
+import { useToast } from '../contexts/ToastContext'
 import { defaultCardFormValues, type CardFormValues } from '../lib/adminCards'
 import { getFriendlyErrorMessage } from '../lib/errors'
-import { createMyCardDraft, getMyCard, toMyCardFormValues, upsertMyCard } from '../lib/myCard'
-import { useToast } from '../contexts/ToastContext'
-import { requireActiveUser } from '../lib/roles'
-import { useBrandSettings } from '../contexts/BrandSettingsContext'
-import { useVisualMode } from '../contexts/VisualModeContext'
-import { getEffectiveVisualVariant, isLightVisualVariant } from '../lib/cardVisualVariants'
+import { createMyCardDraft, toMyCardFormValues, upsertMyCard } from '../lib/myCard'
 
 export default function MyCardEditPage() {
-  const navigate = useNavigate()
+  const { card, refreshCard } = useCollaborator()
   const toast = useToast()
-  const { settings } = useBrandSettings()
-  const { visualMode } = useVisualMode()
   const [booting, setBooting] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
-  const [savedSlug, setSavedSlug] = useState('')
-  const [cardId, setCardId] = useState('')
+  const [cardId, setCardId] = useState(card?.id ?? '')
   const [values, setValues] = useState<CardFormValues>({ ...defaultCardFormValues })
   const [preview, setPreview] = useState<CardFormValues>({ ...defaultCardFormValues })
 
   useEffect(() => {
+    let mounted = true
     void (async () => {
-      const session = await getCurrentSession()
-      if (!session) {
-        navigate('/entrar', { replace: true })
-        return
-      }
-
-      await requireActiveUser()
-      const card = await getMyCard()
       const initial = card ? toMyCardFormValues(card) : await createMyCardDraft()
-
-      setValues(initial)
-      setPreview(initial)
-      setSavedSlug(card?.slug ?? '')
-      setCardId(card?.id ?? '')
-      setBooting(false)
-    })().catch(async (err) => {
-      const message = getFriendlyErrorMessage(err)
-      setError(message)
-      toast.error(message)
-      await signOut().catch(() => undefined)
-      navigate('/entrar', { replace: true })
-      setBooting(false)
-    })
-  }, [navigate, toast])
+      if (!mounted) return
+      setValues(initial); setPreview(initial); setCardId(card?.id ?? ''); setBooting(false)
+    })().catch((error) => { if (mounted) { const message = getFriendlyErrorMessage(error); setError(message); toast.error(message); setBooting(false) } })
+    return () => { mounted = false }
+  }, [card, toast])
 
   async function save(form: CardFormValues) {
-    setSaving(true)
-    setError('')
-
+    setSaving(true); setError('')
     try {
-      const card = await upsertMyCard(form)
-      const current = toMyCardFormValues(card)
-
-      setValues(current)
-      setPreview(current)
-      setSavedSlug(card.slug)
-      setCardId(card.id)
+      const saved = await upsertMyCard(form)
+      const current = toMyCardFormValues(saved)
+      setValues(current); setPreview(current); setCardId(saved.id)
+      await refreshCard()
       toast.success('Cartão salvo com sucesso.')
-    } catch (err) {
-      const message = getFriendlyErrorMessage(err)
-      setError(message)
-      toast.error(message)
-    } finally {
-      setSaving(false)
-    }
+    } catch (error) { const message = getFriendlyErrorMessage(error); setError(message); toast.error(message) }
+    finally { setSaving(false) }
   }
 
-  async function logout() {
-    await signOut()
-    navigate('/entrar', { replace: true })
-  }
-
-  const logoUrl = isLightVisualVariant(getEffectiveVisualVariant(settings, visualMode))
-    ? settings.logo_on_light_url || settings.logo_on_dark_url || settings.logo_url || '/invest-rs-logo.png'
-    : settings.logo_on_dark_url || settings.logo_on_light_url || settings.logo_url || '/invest-rs-logo.png'
-
-  if (booting) {
-    return (
-      <main className="admin-login-shell admin-state-shell">
-        <div className="admin-login-card admin-state-card" role="status">
-          Carregando formulário...
-        </div>
-      </main>
-    )
-  }
-
-  return (
-    <main className="admin-shell">
-      <header className="admin-topbar collaborator-topbar">
-        <Link className="admin-brand" to="/" aria-label="Ir para a página inicial">
-          <img className="admin-logo collaborator-logo" src={logoUrl} alt="Invest RS" />
-        </Link>
-
-        <nav className="admin-nav collaborator-nav" aria-label="Navegação do colaborador">
-          <button className="admin-nav-logout" type="button" onClick={() => void logout()}>
-            <span>Sair</span>
-          </button>
-        </nav>
-      </header>
-
-      <section className="admin-page collaborator-page">
-        <div className="admin-page-header">
-          <div>
-            <p className="eyebrow">Área do colaborador</p>
-            <h1>Meu cartão</h1>
-            <p>Atualize os dados do seu cartão digital.</p>
-          </div>
-
-          {savedSlug ? (
-            <Link className="secondary-button" to={`/${savedSlug}`}>
-              Ver meu cartão
-            </Link>
-          ) : null}
-        </div>
-
-        {error ? <p className="admin-error" role="alert">{error}</p> : null}
-
-        <div className="admin-form-preview-layout collaborator-card-layout">
-          <CardForm
-            initialValues={values}
-            submitLabel="Salvar alterações"
-            loading={saving}
-            currentCardId={cardId || undefined}
-            onChange={setPreview}
-            onSubmit={save}
-            mode="employee"
-            lockedEmail={values.email}
-            allowStatusEdit={false}
-            allowLogoUpload={false}
-            allowAvatarUpload
-            lockInstitutionalFields
-          />
-          <CardPreview values={preview} />
-        </div>
-      </section>
-    </main>
-  )
+  return <CollaboratorLayout title="Editar meu cartão" subtitle="Atualize os dados exibidos em sua página e nos arquivos de contato.">
+    {booting ? <div className="state-card" role="status">Carregando formulário...</div> : <>
+      {error ? <p className="admin-error" role="alert">{error}</p> : null}
+      <div className="admin-form-preview-layout collaborator-card-layout">
+        <CardForm initialValues={values} submitLabel="Salvar alterações" loading={saving} currentCardId={cardId || undefined} onChange={setPreview} onSubmit={save} mode="employee" lockedEmail={values.email} allowStatusEdit={false} allowLogoUpload={false} allowAvatarUpload lockInstitutionalFields />
+        <CardPreview values={preview} />
+      </div>
+    </>}
+  </CollaboratorLayout>
 }

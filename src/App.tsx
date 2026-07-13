@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import PublicCardPage from './pages/PublicCardPage'
 import AdminLoginPage from './pages/admin/AdminLoginPage'
@@ -17,6 +17,13 @@ import AdminUsersPage from './pages/admin/AdminUsersPage'
 import AdminAuditPage from './pages/admin/AdminAuditPage'
 import { VisualModeProvider } from './contexts/VisualModeProvider'
 import { useBrandSettings } from './contexts/BrandSettingsContext'
+import { CollaboratorProvider } from './contexts/CollaboratorProvider'
+import MyCardGuidePage from './pages/MyCardGuidePage'
+import MyCardEmailSignaturePage from './pages/MyCardEmailSignaturePage'
+import MyCardAnalyticsPage from './pages/MyCardAnalyticsPage'
+import TermsAndPrivacyPage from './pages/TermsAndPrivacyPage'
+
+function PrivateCollaboratorRoutes() { return <CollaboratorProvider><Outlet /></CollaboratorProvider> }
 
 function ResolvedApplication() {
   const { status } = useBrandSettings()
@@ -30,10 +37,18 @@ function ResolvedApplication() {
         <Route path="/" element={<HomePage />} />
         <Route path="/entrar" element={<EmployeeLoginPage />} />
         <Route path="/cadastro" element={<RegisterPage />} />
-        <Route path="/meu-cartao" element={<MyCardRedirectPage />} />
-        <Route path="/meu-cartao/editar" element={<MyCardEditPage />} />
         <Route path="/recuperar-senha" element={<PasswordResetRequestPage />} />
         <Route path="/definir-senha" element={<PasswordUpdatePage />} />
+        <Route path="/termos-de-uso-e-privacidade" element={<CollaboratorProvider required={false}><TermsAndPrivacyPage /></CollaboratorProvider>} />
+
+        <Route element={<PrivateCollaboratorRoutes />}>
+          <Route path="/meu-cartao" element={<MyCardRedirectPage />} />
+          <Route path="/meu-cartao/editar" element={<MyCardEditPage />} />
+          <Route path="/meu-cartao/guia" element={<MyCardGuidePage />} />
+          <Route path="/meu-cartao/assinatura-de-email" element={<MyCardEmailSignaturePage />} />
+          <Route path="/meu-cartao/estatisticas" element={<MyCardAnalyticsPage />} />
+          <Route path="/:slug" element={<PublicCardPage />} />
+        </Route>
 
         <Route path="/admin" element={<Navigate to="/admin/cartoes" replace />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -44,7 +59,6 @@ function ResolvedApplication() {
         <Route path="/admin/usuarios" element={<AdminUsersPage />} />
         <Route path="/admin/auditoria" element={<AdminAuditPage />} />
 
-        <Route path="/:slug" element={<PublicCardPage />} />
           </Routes>
         </BrowserRouter>
       </ToastProvider>

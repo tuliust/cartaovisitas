@@ -1,6 +1,16 @@
 # 06 — Cartão público, vCard, QR e Wallet
 
-## Página pública
+## Interface do proprietário e endpoints técnicos
+
+A interface React `/:slug` exige autenticação e correspondência com o cartão do
+proprietário. O QR continua contendo `/qr/:slug`; esse endpoint registra a
+interação e redireciona para `/api/vcard/:slug`. QR Codes e vCards existentes não
+dependem do login da interface. Apple Wallet e sua feature flag não mudaram.
+
+O compartilhamento na área autenticada envia o arquivo vCard pela Web Share API
+quando possível e baixa o `.vcf` como fallback.
+
+## Rota da interface
 
 Rota:
 
