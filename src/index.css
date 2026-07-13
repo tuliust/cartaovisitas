@@ -4414,17 +4414,26 @@ html.app-visual-mode-light .auth-page-card {
 .admin-page,
 .admin-card,
 .admin-form,
+.admin-form > *,
 .admin-form-preview-layout,
 .admin-form-preview-layout > *,
 .admin-topbar > *,
 .admin-nav,
 .admin-table-wrap,
 .admin-mobile-card,
+.admin-mobile-card > *,
+.admin-list-controls,
+.admin-list-controls > *,
 .brand-settings-grid,
 .brand-settings-grid > *,
 .brand-settings-form,
 .brand-settings-section,
 .brand-preview,
+.card-preview,
+.card-preview > *,
+.card-preview-top,
+.card-preview-footer,
+.card-preview-contact-list,
 .confirmation-modal,
 .crop-modal,
 .import-modal,
@@ -4459,6 +4468,94 @@ html.app-visual-mode-light .auth-page-card {
   max-height: min(320px, calc(100dvh - 24px));
   overflow-y: auto;
   overscroll-behavior: contain;
+}
+
+.admin-card-form {
+  min-width: 0;
+}
+
+.admin-card-form .admin-form-section {
+  min-width: 0;
+}
+
+.admin-card-form input,
+.admin-card-form select,
+.admin-card-form textarea,
+.admin-card-form .email-suffix-field,
+.admin-card-form .url-prefix-field {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.admin-card-form input[type="file"] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-card-form .admin-checkbox-field {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+}
+
+.admin-card-form .admin-checkbox-field input {
+  width: 20px;
+  min-height: 20px;
+  margin-top: 1px;
+}
+
+.admin-card-form-actions {
+  position: sticky;
+  z-index: 8;
+  bottom: 12px;
+  margin-top: 4px;
+  padding: 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--visual-card-surface) 96%, transparent);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(14px);
+}
+
+.admin-card-form-actions .primary-button {
+  min-width: min(280px, 100%);
+}
+
+.card-preview {
+  overflow: hidden;
+}
+
+.card-preview-top,
+.card-preview-footer {
+  min-width: 0;
+}
+
+.card-preview-top {
+  flex-wrap: wrap;
+}
+
+.card-preview-top-actions {
+  min-width: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.card-preview-person,
+.card-preview-contact-list {
+  min-width: 0;
+}
+
+.card-preview-person h2,
+.card-preview-contact-list p,
+.card-preview-contact-list span {
+  overflow-wrap: anywhere;
+}
+
+.card-preview-footer {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.card-preview-qr {
+  align-self: end;
 }
 
 .confirmation-backdrop,
@@ -4576,12 +4673,29 @@ html.app-visual-mode-light .auth-page-card {
 }
 
 .admin-state-shell {
+  width: 100%;
   min-height: 100dvh;
+  padding: clamp(12px, 3vw, 24px);
+  display: grid;
+  place-items: center;
 }
 
 .admin-state-card {
   width: min(100%, 460px);
+  min-width: 0;
+  padding: clamp(24px, 4vw, 34px);
   text-align: center;
+}
+
+.admin-state-card .auth-page-logo {
+  margin-inline: auto;
+  object-position: center;
+}
+
+.admin-state-message {
+  margin: 0;
+  color: var(--admin-muted);
+  line-height: 1.5;
 }
 
 @media (min-width: 821px) and (max-width: 1040px) {
@@ -4628,6 +4742,10 @@ html.app-visual-mode-light .auth-page-card {
     position: static;
   }
 
+  .card-preview {
+    min-height: 440px;
+  }
+
   .brand-preview {
     min-height: 340px;
   }
@@ -4636,7 +4754,8 @@ html.app-visual-mode-light .auth-page-card {
     justify-content: stretch;
   }
 
-  .brand-settings-actions .primary-button {
+  .brand-settings-actions .primary-button,
+  .admin-card-form-actions .primary-button {
     width: 100%;
   }
 }
@@ -4718,6 +4837,10 @@ html.app-visual-mode-light .auth-page-card {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .admin-field-with-action .compact-button {
+    width: 100%;
+  }
+
   .admin-table {
     display: none;
   }
@@ -4745,6 +4868,15 @@ html.app-visual-mode-light .auth-page-card {
   .admin-mobile-card {
     overflow: visible;
   }
+
+  .form-section-heading {
+    align-items: stretch;
+  }
+
+  .language-toggle {
+    max-width: 100%;
+    overflow-x: auto;
+  }
 }
 
 @media (max-width: 640px) {
@@ -4767,12 +4899,19 @@ html.app-visual-mode-light .auth-page-card {
     width: 100%;
   }
 
+  .card-preview {
+    min-height: auto;
+    gap: 28px;
+  }
+
+  .card-preview-footer,
   .card-footer {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
   }
 
+  .card-preview-qr,
   .qr-code {
     justify-self: start;
   }
@@ -4895,6 +5034,59 @@ html.app-visual-mode-light .auth-page-card {
 
   .person-block h1 {
     overflow-wrap: anywhere;
+  }
+
+  .admin-card-form-actions,
+  .brand-settings-actions {
+    position: static;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .admin-card-form .email-suffix-field {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .admin-card-form .email-suffix-label {
+    width: 100%;
+    padding: 0 14px 12px;
+  }
+
+  .admin-card-form .url-prefix-field {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-card-form .url-prefix-label {
+    padding: 12px 14px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-preview-top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .card-preview-top-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .card-preview-logo {
+    width: min(210px, 72vw);
+  }
+
+  .admin-mobile-card-heading {
+    align-items: flex-start;
+  }
+
+  .admin-mobile-card-controls {
+    flex-shrink: 0;
   }
 }
 

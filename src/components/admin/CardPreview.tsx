@@ -18,7 +18,7 @@ export default function CardPreview({ values }: CardPreviewProps) {
   const logoUrl = getVariantLogo(settings, values.public_visual_variant, values.logo_url)
 
   return (
-    <aside className={`card-preview ${getVariantClassName(settings, values.public_visual_variant)}`} style={getVariantStyle(settings, values.public_visual_variant)} aria-label="Prévia do cartão">
+    <aside className={`card-preview card-preview--responsive ${getVariantClassName(settings, values.public_visual_variant)}`} style={getVariantStyle(settings, values.public_visual_variant)} aria-label="Prévia do cartão">
       <div className="card-preview-top">
         <img className="public-card-logo card-preview-logo" src={logoUrl} alt="Invest RS" />
         <div className="card-preview-top-actions">
@@ -37,7 +37,7 @@ export default function CardPreview({ values }: CardPreviewProps) {
       </div>
 
       <div className="card-preview-footer">
-        <div className="contact-list">
+        <div className="contact-list card-preview-contact-list">
           {phone ? (
             <p>
               <span>Telefone</span>

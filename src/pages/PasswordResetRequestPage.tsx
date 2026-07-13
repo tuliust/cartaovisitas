@@ -49,6 +49,10 @@ export default function PasswordResetRequestPage() {
             <span className="email-suffix-field">
               <input
                 required
+                id="password-reset-username"
+                name="username"
+                type="text"
+                inputMode="email"
                 value={prefix}
                 autoComplete="username"
                 onChange={(event) => setPrefix(normalizeInvestEmailInput(event.target.value))}

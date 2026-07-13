@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, type MouseEvent as ReactMouseEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { getCurrentSession } from '../../lib/auth'
@@ -82,6 +82,7 @@ export default function AdminCardsPage() {
   const [deleting, setDeleting] = useState(false)
   const [importOpen, setImportOpen] = useState(false)
   const [openActionsMenu, setOpenActionsMenu] = useState<string | null>(null)
+  const [upwardActionsMenu, setUpwardActionsMenu] = useState<string | null>(null)
 
   const visibleCards = useMemo(() => {
     const term = normalizeSearchValue(search.trim())
@@ -163,27 +164,53 @@ export default function AdminCardsPage() {
   useEffect(() => {
     if (!openActionsMenu) return
 
+    function closeActionsMenu() {
+      setOpenActionsMenu(null)
+      setUpwardActionsMenu(null)
+    }
+
     function closeOnOutsideClick(event: MouseEvent) {
       const target = event.target
       if (target instanceof Element && !target.closest('[data-admin-actions-root]')) {
-        setOpenActionsMenu(null)
+        closeActionsMenu()
       }
     }
 
     function closeOnEscape(event: KeyboardEvent) {
       if (event.key === 'Escape') {
-        setOpenActionsMenu(null)
+        closeActionsMenu()
       }
     }
 
     document.addEventListener('mousedown', closeOnOutsideClick)
     document.addEventListener('keydown', closeOnEscape)
+    window.addEventListener('resize', closeActionsMenu)
+    window.addEventListener('scroll', closeActionsMenu, true)
 
     return () => {
       document.removeEventListener('mousedown', closeOnOutsideClick)
       document.removeEventListener('keydown', closeOnEscape)
+      window.removeEventListener('resize', closeActionsMenu)
+      window.removeEventListener('scroll', closeActionsMenu, true)
     }
   }, [openActionsMenu])
+
+  function toggleActionsMenu(event: ReactMouseEvent<HTMLButtonElement>, menuKey: string) {
+    if (openActionsMenu === menuKey) {
+      setOpenActionsMenu(null)
+      setUpwardActionsMenu(null)
+      return
+    }
+
+    const triggerRect = event.currentTarget.getBoundingClientRect()
+    const estimatedMenuHeight = 320
+    const spaceBelow = window.innerHeight - triggerRect.bottom
+    const spaceAbove = triggerRect.top
+    const shouldOpenUpward = spaceBelow < estimatedMenuHeight && spaceAbove > spaceBelow
+
+    setUpwardActionsMenu(shouldOpenUpward ? menuKey : null)
+    setOpenActionsMenu(menuKey)
+  }
 
   async function copyToClipboard(text: string, label: string) {
     try {
@@ -259,7 +286,7 @@ export default function AdminCardsPage() {
 
     return (
       <div
-        className={`admin-actions-menu-root${isOpen ? ' is-open' : ''}`}
+        className={`admin-actions-menu-root${isOpen ? ' is-open' : ''}${upwardActionsMenu === menuKey ? ' opens-upward' : ''}`}
         data-admin-actions-root
       >
         <button
@@ -270,7 +297,7 @@ export default function AdminCardsPage() {
           aria-expanded={isOpen}
           aria-controls={menuId}
           title="Ações"
-          onClick={() => setOpenActionsMenu((current) => current === menuKey ? null : menuKey)}
+          onClick={(event) => toggleActionsMenu(event, menuKey)}
         >
           <MoreVertical aria-hidden="true" />
         </button>
@@ -285,7 +312,10 @@ export default function AdminCardsPage() {
             <Link
               to={`/admin/cartoes/${card.id}/editar`}
               role="menuitem"
-              onClick={() => setOpenActionsMenu(null)}
+              onClick={() => {
+                setOpenActionsMenu(null)
+                setUpwardActionsMenu(null)
+              }}
             >
               <Pencil aria-hidden="true" />
               <span>Editar</span>
@@ -296,7 +326,10 @@ export default function AdminCardsPage() {
               target="_blank"
               rel="noreferrer"
               role="menuitem"
-              onClick={() => setOpenActionsMenu(null)}
+              onClick={() => {
+                setOpenActionsMenu(null)
+                setUpwardActionsMenu(null)
+              }}
             >
               <ExternalLink aria-hidden="true" />
               <span>Abrir</span>
@@ -307,6 +340,7 @@ export default function AdminCardsPage() {
               role="menuitem"
               onClick={() => {
                 setOpenActionsMenu(null)
+                setUpwardActionsMenu(null)
                 void copyToClipboard(publicUrl, 'Link público copiado.')
               }}
             >
@@ -319,6 +353,7 @@ export default function AdminCardsPage() {
               role="menuitem"
               onClick={() => {
                 setOpenActionsMenu(null)
+                setUpwardActionsMenu(null)
                 void copyToClipboard(vcardUrl, 'Link do vCard copiado.')
               }}
             >
@@ -331,6 +366,7 @@ export default function AdminCardsPage() {
               role="menuitem"
               onClick={() => {
                 setOpenActionsMenu(null)
+                setUpwardActionsMenu(null)
                 void handleDownloadQrCode(card)
               }}
             >
@@ -343,6 +379,7 @@ export default function AdminCardsPage() {
               role="menuitem"
               onClick={() => {
                 setOpenActionsMenu(null)
+                setUpwardActionsMenu(null)
                 void handleToggleActive(card)
               }}
             >
@@ -356,6 +393,7 @@ export default function AdminCardsPage() {
               role="menuitem"
               onClick={() => {
                 setOpenActionsMenu(null)
+                setUpwardActionsMenu(null)
                 setDeleteTarget(card)
                 setDeleteConfirmation('')
               }}
@@ -375,8 +413,10 @@ export default function AdminCardsPage() {
 
   if (booting) {
     return (
-      <main className="admin-login-shell">
-        <div className="admin-login-card">Verificando acesso...</div>
+      <main className="admin-login-shell admin-state-shell">
+        <div className="admin-login-card admin-state-card" role="status" aria-live="polite">
+          <p className="admin-state-message">Verificando acesso...</p>
+        </div>
       </main>
     )
   }
@@ -400,8 +440,8 @@ export default function AdminCardsPage() {
       <div className="admin-card">
         <div className="admin-table-header">
           <strong>{visibleCards.length} de {cards.length} {cardCountLabel}</strong>
-          <button className="secondary-button compact-button" type="button" onClick={loadCards}>
-            Atualizar
+          <button className="secondary-button compact-button" type="button" onClick={loadCards} disabled={loading}>
+            {loading ? 'Atualizando...' : 'Atualizar'}
           </button>
         </div>
 
@@ -523,10 +563,10 @@ export default function AdminCardsPage() {
       </div>
       {deleteTarget ? (
         <div className="confirmation-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !deleting) setDeleteTarget(null) }}>
-          <section className="confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="delete-card-title">
+          <section className="confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="delete-card-title" aria-describedby="delete-card-description">
             <h2 id="delete-card-title">Apagar cartão permanentemente?</h2>
-            <p>Esta ação é permanente e removerá os dados do cartão e seus eventos associados.</p>
-            <label>Digite <strong>{deleteTarget.slug}</strong> para confirmar<input autoFocus value={deleteConfirmation} onChange={(event) => setDeleteConfirmation(event.target.value)} /></label>
+            <p id="delete-card-description">Esta ação é permanente e removerá os dados do cartão e seus eventos associados.</p>
+            <label htmlFor="delete-card-confirmation">Digite <strong>{deleteTarget.slug}</strong> para confirmar<input id="delete-card-confirmation" autoFocus autoComplete="off" value={deleteConfirmation} onChange={(event) => setDeleteConfirmation(event.target.value)} /></label>
             <div className="confirmation-actions">
               <button className="secondary-button" type="button" disabled={deleting} onClick={() => setDeleteTarget(null)}>Cancelar</button>
               <button className="danger-button" type="button" disabled={deleting || deleteConfirmation !== deleteTarget.slug} onClick={() => void handleDelete()}>{deleting ? 'Apagando...' : 'Apagar'}</button>

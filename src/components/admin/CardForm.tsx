@@ -159,8 +159,8 @@ export default function CardForm({
   const requiredMissing = !values.full_name.trim() || !values.slug.trim()
 
   return <>
-    <form className="admin-form" onSubmit={handleSubmit}>
-      <section className="admin-form-section">
+    <form className="admin-form admin-card-form" aria-busy={loading || validatingSlugOnSubmit || Boolean(uploading)} onSubmit={handleSubmit}>
+      <section className="admin-form-section admin-card-form-section">
         <h2>Identificação</h2>
         <label>Nome completo *<input required value={values.full_name} onChange={(event) => updateField('full_name', event.target.value)} placeholder="Alexandre Elmi" /></label>
         <label>Nome de exibição<input value={values.display_name} onChange={(event) => updateField('display_name', event.target.value)} placeholder="Alexandre Elmi" /></label>
@@ -171,20 +171,20 @@ export default function CardForm({
         {allowStatusEdit ? <label>Status<select value={values.is_active ? 'true' : 'false'} onChange={(event) => updateField('is_active', event.target.value === 'true')}><option value="true">Ativo</option><option value="false">Inativo</option></select></label> : null}
       </section>
 
-      <section className="admin-form-section">
+      <section className="admin-form-section admin-card-form-section">
         <h2>Visual do cartão</h2>
         <p className="field-help">Escolha uma das seis variações institucionais aprovadas.</p>
         <label>Visual do cartão<select value={values.public_visual_variant} onChange={(event) => updateField('public_visual_variant', event.target.value as CardFormValues['public_visual_variant'])}>{publicVisualVariantOptions.map((option) => <option value={option.value} key={option.value}>{option.label}</option>)}</select></label>
         {values.public_visual_variant.includes('image') && !getVariantImage(settings, values.public_visual_variant) ? <p className="visual-variant-warning">Imagem institucional ainda não configurada. Será usado o fallback.</p> : null}
       </section>
 
-      <section className="admin-form-section">
+      <section className="admin-form-section admin-card-form-section">
         <div className="form-section-heading"><h2>Dados profissionais</h2>{mode === 'employee' ? <div className="language-toggle" aria-label="Idioma dos dados profissionais">{(['pt', 'es', 'en'] as const).map((item) => <button key={item} type="button" className={language === item ? 'active' : ''} aria-pressed={language === item} onClick={() => setLanguage(item)}>{languageLabels[item]}</button>)}</div> : null}</div>
         {mode === 'employee' ? <><p className="field-help">Informe o cargo e a área no idioma selecionado.</p><label>Cargo ({languageLabels[language]})<input value={localizedJob} onChange={(event) => updateLocalizedField('job_title', event.target.value)} placeholder={language === 'pt' ? 'Assessor de Comunicação' : language === 'es' ? 'Asesor de Comunicación' : 'Communication Advisor'} /></label><label>Área/departamento ({languageLabels[language]})<input value={localizedDepartment} onChange={(event) => updateLocalizedField('department', event.target.value)} placeholder={language === 'pt' ? 'Comunicação' : language === 'es' ? 'Comunicación' : 'Communication'} /></label></> : <><label>Cargo<input value={values.job_title} onChange={(event) => setValues((current) => ({ ...current, job_title: event.target.value, job_title_pt: event.target.value }))} /></label><label>Área/departamento<input value={values.department} onChange={(event) => setValues((current) => ({ ...current, department: event.target.value, department_pt: event.target.value }))} /></label></>}
         <label>Empresa<input value={values.company} onChange={(event) => updateField('company', event.target.value)} disabled={lockInstitutionalFields} />{lockInstitutionalFields ? <small className="field-help">Dado institucional</small> : null}</label>
       </section>
 
-      <section className="admin-form-section">
+      <section className="admin-form-section admin-card-form-section">
         <h2>Contato</h2>
         <label>Celular<input inputMode="numeric" value={values.mobile_phone} onChange={(event) => updateField('mobile_phone', formatBrazilianPhone(event.target.value))} placeholder="+55 51 99999-9999" /></label>
         <label>Telefone comercial<input inputMode="numeric" value={values.work_phone} onChange={(event) => updateField('work_phone', formatBrazilianPhone(event.target.value))} disabled={lockInstitutionalFields} />{lockInstitutionalFields ? <small className="field-help">Telefone institucional</small> : null}</label>
@@ -192,14 +192,14 @@ export default function CardForm({
         <label>Site<input type="url" value={values.website} onChange={(event) => updateField('website', event.target.value)} placeholder="https://investrs.org.br" /></label>
       </section>
 
-      <section className="admin-form-section">
+      <section className="admin-form-section admin-card-form-section">
         <h2>Endereço institucional</h2>
         <label>Endereço<input value={values.address_line} onChange={(event) => updateField('address_line', event.target.value)} disabled={lockInstitutionalFields} /></label>
         <div className="admin-form-grid"><label>Cidade<input value={values.city} onChange={(event) => updateField('city', event.target.value)} disabled={lockInstitutionalFields} /></label><label>Estado<input value={values.state} onChange={(event) => updateField('state', event.target.value)} disabled={lockInstitutionalFields} /></label><label>País<input value={values.country} onChange={(event) => updateField('country', event.target.value)} disabled={lockInstitutionalFields} /></label></div>
         {lockInstitutionalFields ? <p className="field-help">Endereço institucional da Invest RS</p> : null}
       </section>
 
-      <section className="admin-form-section">
+      <section className="admin-form-section admin-card-form-section">
         <h2>Links e foto</h2>
         {mode === 'employee' ? <><label>LinkedIn<span className="url-prefix-field"><span className="url-prefix-label">linkedin.com/in/</span><input className="url-prefix-input" value={getLinkedinProfile(values.linkedin_url)} onChange={(event) => updateField('linkedin_url', buildLinkedinUrl(event.target.value))} placeholder="seu-perfil" /></span></label><label>Instagram<span className="url-prefix-field"><span className="url-prefix-label">instagram.com/</span><input className="url-prefix-input" value={getInstagramProfile(values.instagram_url)} onChange={(event) => updateField('instagram_url', buildInstagramUrl(event.target.value))} placeholder="seu.perfil" /></span></label></> : <><label>LinkedIn<input type="url" value={values.linkedin_url} onChange={(event) => updateField('linkedin_url', event.target.value)} /></label><label>Instagram<input type="url" value={values.instagram_url} onChange={(event) => updateField('instagram_url', event.target.value)} /></label></>}
         {mode === 'admin' ? <label>URL da foto/avatar<input type="url" value={values.avatar_url} onChange={(event) => updateField('avatar_url', event.target.value)} /></label> : null}
@@ -209,7 +209,7 @@ export default function CardForm({
         {allowLogoUpload ? <><label>URL do logo<input type="url" value={values.logo_url} onChange={(event) => updateField('logo_url', event.target.value)} /></label><label>Enviar logo<input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onChange={(event) => { const file = event.target.files?.[0]; if (file) void uploadImage('logo', file) }} /></label>{values.logo_url ? <img className="asset-preview logo" src={values.logo_url} alt="Prévia do logo" /> : null}</> : null}
         {uploading ? <p className="admin-muted">Enviando {uploading === 'avatar' ? 'foto' : 'logo'}...</p> : null}{uploadError ? <p className="admin-error">{uploadError}</p> : null}
       </section>
-      <div className="admin-form-actions"><button className="primary-button" type="submit" disabled={loading || validatingSlugOnSubmit || Boolean(uploading) || requiredMissing || slugAvailability === 'unavailable'}>{validatingSlugOnSubmit ? 'Verificando...' : loading ? 'Salvando...' : submitLabel}</button></div>
+      <div className="admin-form-actions admin-card-form-actions"><button className="primary-button" type="submit" disabled={loading || validatingSlugOnSubmit || Boolean(uploading) || requiredMissing || slugAvailability === 'unavailable'}>{validatingSlugOnSubmit ? 'Verificando...' : loading ? 'Salvando...' : submitLabel}</button></div>
     </form>
     {avatarToCrop ? <ImageCropModal file={avatarToCrop} onCancel={() => setAvatarToCrop(null)} onConfirm={async (file) => { if (!(await uploadImage('avatar', file))) throw new Error('Não foi possível enviar a foto. Tente novamente.') }} /> : null}
   </>

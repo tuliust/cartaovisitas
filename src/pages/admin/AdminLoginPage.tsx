@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { getCurrentSession, signInWithPassword, signOut } from '../../lib/auth'
 import { getFriendlyErrorMessage } from '../../lib/errors'
@@ -16,6 +17,7 @@ export default function AdminLoginPage() {
   const navigate = useNavigate()
   const [prefix, setPrefix] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [checking, setChecking] = useState(true)
   const [loading, setLoading] = useState(false)
 
@@ -94,18 +96,30 @@ export default function AdminLoginPage() {
             </span>
           </label>
 
-          <label>
-            Senha
-            <input
-              required
-              id="admin-login-password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-            />
-          </label>
+          <div className="auth-form-field">
+            <label htmlFor="admin-login-password">Senha</label>
+            <span className="password-input-field">
+              <input
+                required
+                id="admin-login-password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+              />
+              <button
+                className="password-visibility-button"
+                type="button"
+                aria-label={showPassword ? 'Ocultar senha' : 'Exibir senha'}
+                aria-pressed={showPassword}
+                title={showPassword ? 'Ocultar senha' : 'Exibir senha'}
+                onClick={() => setShowPassword((current) => !current)}
+              >
+                {showPassword ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+              </button>
+            </span>
+          </div>
 
           <button className="primary-button auth-page-submit" disabled={loading}>
             {loading ? 'Entrando...' : 'Entrar'}

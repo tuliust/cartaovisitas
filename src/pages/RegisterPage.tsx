@@ -68,6 +68,10 @@ export default function RegisterPage() {
             <span className="email-suffix-field">
               <input
                 required
+                id="register-username"
+                name="username"
+                type="text"
+                inputMode="email"
                 value={prefix}
                 autoComplete="username"
                 onChange={(event) => setPrefix(normalizeInvestEmailInput(event.target.value))}
