@@ -2,50 +2,76 @@
 
 ## Objetivo
 
-O sistema de cartões digitais da Invest RS centraliza a criação, edição, publicação e governança de cartões institucionais de colaboradores. Cada colaborador possui uma página pública por slug, com dados profissionais, vCard, QR Code e ações rápidas de contato.
+O sistema centraliza a criação, edição, distribuição e governança de cartões digitais institucionais da Invest RS.
 
-## Usuários
+O produto combina:
 
-| Perfil | Descrição |
+- identidade visual controlada;
+- dados profissionais multilíngues;
+- vCard;
+- QR Code;
+- assinatura de e-mail;
+- área autenticada do colaborador;
+- administração e auditoria;
+- instalação como aplicativo web.
+
+## Perfis
+
+| Perfil | Capacidades |
 |---|---|
-| Visitante | Acessa cartão público, salva contato, escaneia QR Code ou compartilha link. |
-| Colaborador | Acessa `/meu-cartao/editar` e edita o próprio cartão. |
-| Admin | Gerencia cartões, usuários, convites, auditoria, identidade visual e importações. |
+| Visitante | Acessa Home, cadastro, login, Termos e endpoints técnicos autorizados. |
+| Colaborador | Acessa, edita e acompanha o próprio cartão. |
+| Admin | Administra cartões, usuários, auditoria, identidade visual, conteúdos e importações. |
+
+## Decisão sobre `/:slug`
+
+A interface React `/:slug` pertence à área autenticada do proprietário.
+
+O parâmetro deve corresponder ao slug do cartão carregado para a sessão. Não existe, nesta fase, catálogo público individual de colaboradores.
+
+Os endpoints técnicos de vCard e QR mantêm suas regras próprias e podem ser usados sem abrir a interface React do cartão.
 
 ## Escopo implementado
 
-- Cartões públicos por slug.
-- Edição do próprio cartão.
-- Painel admin de cartões.
-- Painel admin de usuários.
-- Convite por Supabase Auth Admin.
-- Auditoria de ações administrativas.
-- Importação CSV com modelo.
-- vCard multilíngue.
-- QR Code com tracking real.
+- Home institucional;
+- cadastro com e-mail `@investrs.org.br`;
+- aceite obrigatório dos Termos;
+- login;
+- recuperação de senha com rate limit;
+- edição do próprio cartão;
+- dados profissionais em PT, ES e EN;
+- avatar opcional;
+- seis variantes visuais institucionais;
+- vCard multilíngue;
+- QR Code com tracking;
+- compartilhamento nativo do vCard quando suportado;
+- assinatura de e-mail com QR Code;
+- Guia de Utilização;
+- Termos de Uso e Privacidade gerenciados;
+- estatísticas do cartão;
+- PWA instalável;
+- painel administrativo;
+- usuários, convites, bloqueios e perfis;
+- auditoria;
+- importação CSV;
+- branding, metadados e assets;
 - Wallet em standby.
-- Branding dinâmico.
-- Seis variantes visuais institucionais.
-- Toasts globais.
-- Regras de RLS e permissões por role/status.
 
-## Fora de escopo atual
+## Princípios do produto
 
-- Wallet real em produção.
-- Google Wallet real.
-- Aprovação editorial de cartões.
-- Página pública por área/equipe.
-- Busca pública de contatos.
-- Dashboard executivo avançado.
-- Assinatura de e-mail.
-- FAQ pública.
-- Modo evento.
+- Personalização visual livre não é permitida.
+- O colaborador escolhe somente entre as seis variantes aprovadas.
+- O e-mail institucional é obrigatório.
+- O idioma selecionado usa fallback para PT e depois para campos legados.
+- O QR de impressão registra interação antes de abrir o vCard.
+- O frontend não usa `service_role`.
+- Conteúdo editorial é estruturado, sem HTML arbitrário.
 
-## Decisões de produto
+## Frentes ainda abertas
 
-- O sistema é institucional; não há personalização visual livre pelo colaborador.
-- O colaborador pode escolher apenas uma das seis variações visuais aprovadas.
-- E-mails devem ser do domínio `@investrs.org.br`.
-- O vCard deve preservar idioma selecionado.
-- A coluna de ações da página pública permanece em português; o idioma altera apenas o conteúdo profissional do cartão.
-- O QR Code para impressão deve apontar para `/qr/:slug?lang=pt` para registrar scan real antes de abrir o vCard.
+- correções finais desktop e mobile;
+- superfície sólida do modal PWA;
+- substituição ou complementação dos e-mails com Resend;
+- Apple Wallet real;
+- Google Wallet real;
+- catálogo público ou busca de contatos, se aprovado.

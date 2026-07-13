@@ -2,102 +2,119 @@
 
 ## Princípios
 
-- Menor privilégio.
-- RLS habilitado.
-- Service role somente no backend.
-- E-mail institucional obrigatório.
-- Logs de auditoria para ações administrativas.
-- Não commitar segredos.
+- menor privilégio;
+- RLS habilitado;
+- service role somente no backend;
+- e-mail institucional;
+- auditoria;
+- sem segredos no Git;
+- validação defensiva de dados remotos.
 
 ## Domínio institucional
 
-Acesso de usuário depende de e-mail `@investrs.org.br`.
+Usuários devem utilizar:
 
-## Roles
+```text
+@investrs.org.br
+```
 
-- `admin`: acesso administrativo.
-- `user`: colaborador.
+## Roles e status
 
-O primeiro admin deve ser promovido manualmente via SQL, após a criação do usuário no Supabase Authentication. Depois desse bootstrap, novos admins devem ser geridos por `/admin/usuarios`.
+Roles:
 
-Nunca deixe o sistema sem ao menos um admin ativo. Antes de bloquear, remover ou rebaixar um admin, confirme que outro admin ativo consegue acessar a área administrativa.
+```text
+admin
+user
+```
 
-## Status
+Status:
 
-- `active`: acesso normal.
-- `pending`: convidado/pendente.
-- `blocked`: bloqueado.
-
-## Service role
-
-`SUPABASE_SERVICE_ROLE_KEY` é usada apenas no endpoint server-side de convite.
-
-A Edge Function `request-password-reset` também usa `SUPABASE_SERVICE_ROLE_KEY`
-somente no runtime server-side. Ela exige `SUPABASE_URL`, `SUPABASE_ANON_KEY`,
-`SUPABASE_SERVICE_ROLE_KEY`, `PUBLIC_SITE_URL` e um
-`PASSWORD_RESET_RATE_LIMIT_SALT` aleatório. O salt não deve usar valores públicos
-nem ser incluído no repositório. O cliente nunca consulta `auth.users`.
-A função é pública porque atende usuários sem sessão (`verify_jwt = false`), mas
-aceita somente o domínio institucional e aplica os dois limites duráveis antes de
-consultar o Auth.
-
-Nunca:
-
-- usar no frontend;
-- prefixar com `VITE_`;
-- commitar em arquivo;
-- colar em documentação com valor real.
-
-## RLS
-
-Verificações essenciais:
-
-- `Authenticated users can manage cards` não deve existir.
-- `Public can read active cards` antiga não deve existir se substituída pela policy atual.
-- `events public insert` deve validar cartão ativo.
-- `audit_logs` deve ser lido apenas por admin.
-- `brand_settings` deve ser escrito apenas por admin.
-
-## Auditoria
-
-Registrar:
-
-- alterações de cartão;
-- ativação/desativação;
-- exclusão;
-- convites;
-- promoção/remoção de admin;
-- bloqueios;
-- alterações de branding;
-- importações.
-
-Falha de auditoria não deve quebrar ação crítica, mas deve ser registrada em console controlado.
-
-## Apagar cartão
-
-Ação permanente:
-
-- remove eventos associados;
-- remove o cartão;
-- não remove automaticamente `auth.users`;
-- exige confirmação pelo slug.
-
-## Bloquear usuário
+```text
+active
+pending
+blocked
+```
 
 Bloqueio deve impedir:
 
-- admin;
-- edição do próprio cartão;
-- passagem em `is_admin()`.
+- área do colaborador;
+- administração;
+- passagem em `public.is_admin()`.
 
-## Checklist de segurança antes de deploy
+## Service role
+
+Usos atuais:
+
+- convite server-side;
+- recuperação de senha server-side;
+- operações administrativas necessárias.
+
+Nunca:
+
+- expor no frontend;
+- prefixar com `VITE_`;
+- commitar;
+- incluir valor real na documentação.
+
+## Recuperação de senha
+
+A Edge Function:
+
+- aceita solicitação pública;
+- valida domínio;
+- aplica limite por IP e e-mail;
+- usa hashes;
+- evita consulta de `auth.users` pelo cliente;
+- retorna respostas controladas.
+
+## Conteúdo gerenciado
+
+- JSON estruturado;
+- sem HTML arbitrário;
+- sem scripts;
+- normalização;
+- IDs de seção únicos;
+- fallback local;
+- detecção de mojibake;
+- escrita exclusiva de admin.
+
+## Mojibake
+
+Proteções:
+
+- detecção no frontend;
+- conteúdo remoto inválido cai para fallback;
+- script ASCII-only de reparo;
+- sem substituições automáticas inseguras no cliente.
+
+## Auditoria
+
+Registrar ações administrativas relevantes.
+
+Falha de auditoria não deve expor dados sensíveis nem quebrar uma ação crítica já concluída.
+
+## E-mails
+
+O fluxo atual depende do Supabase Auth para convite e redefinição.
+
+A futura integração com Resend deve preservar:
+
+- geração segura de links;
+- proteção contra enumeração;
+- rate limiting;
+- segredos server-side;
+- validação do domínio;
+- auditoria;
+- mensagens sem dados sensíveis.
+
+## Checklist de segurança
 
 ```powershell
 git status
 git diff --check
 ```
 
-Conferir ausência de:
+Não incluir:
 
 ```text
 .env
@@ -107,15 +124,16 @@ Conferir ausência de:
 *.cer
 *.pem
 *.key
+dist
+node_modules
+supabase/.temp
 ```
 
 ## Operação
 
-Rotina recomendada:
-
-- revisar auditoria periodicamente;
+- revisar auditoria;
+- revisar admins ativos;
 - validar convites pendentes;
-- remover admins desnecessários;
-- testar vCard após mudanças de banco;
-- testar RLS após mudanças de policy;
-- manter scripts SQL preservados.
+- testar RLS depois de policies;
+- testar vCard depois de mudanças de schema;
+- preservar migrations e repairs.

@@ -1,161 +1,117 @@
 # Apêndice — Scripts SQL
 
-Este apêndice lista scripts SQL do projeto e sua finalidade. Não excluir scripts executados; eles servem como rastreabilidade técnica.
+Este apêndice registra scripts, migrations e reparos. Não excluir arquivos executados: eles compõem a rastreabilidade técnica.
 
-## Scripts principais
+## Migrations recentes
 
-### `supabase/migrations/202607130001_add_managed_pages.sql`
+### `202607120001_add_visual_variant_settings_and_titles.sql`
 
-Cria `managed_pages`, trigger de `updated_at`, seeds idempotentes e RLS por visibilidade. Aplicar depois de `public.is_admin()`; os seeds não sobrescrevem conteúdo existente.
+Adiciona configurações por variante e títulos de navegador/Apple Touch.
 
-### `docs/supabase-base-schema.sql`
+### `202607120002_add_password_reset_rate_limits.sql`
 
-Cria o schema canônico mínimo para bootstrap de ambientes novos. Deve ser revisado antes da execução e não deve ser aplicado automaticamente em produção.
+Adiciona estrutura de rate limit para recuperação de senha.
 
-### `docs/supabase-storage-business-card-assets.sql`
+### `202607130001_add_managed_pages.sql`
 
-Cria/configura bucket `business-card-assets` e policies de Storage.
+Cria:
 
-### `docs/supabase-auth-roles-and-card-policies.sql`
+- `managed_pages`;
+- trigger de `updated_at`;
+- RLS;
+- grants;
+- seeds idempotentes para Termos e Guia.
 
-Script inicial de roles e policies. Pode ter sido substituído parcialmente por scripts posteriores.
+Os seeds não sobrescrevem conteúdo existente.
 
-### `docs/supabase-card-localized-fields.sql`
+## Repair
 
-Adiciona campos localizados:
+### `supabase/repairs/repair_managed_pages_utf8.sql`
 
-- `job_title_pt`
-- `job_title_es`
-- `job_title_en`
-- `department_pt`
-- `department_es`
-- `department_en`
+- corrige Termos e Guia;
+- ASCII-only;
+- escapes Unicode;
+- sem BOM;
+- idempotente;
+- preserva IDs, rotas e publicação.
 
-### `docs/supabase-card-public-photo-flag.sql`
+## Scripts canônicos de bootstrap
 
-Adiciona:
+- `docs/supabase-base-schema.sql`
+- `docs/supabase-storage-business-card-assets.sql`
+- `docs/supabase-governance-users-audit-import.sql`
+- `docs/supabase-visual-variants-and-icons.sql`
 
-- `show_avatar_public`
+Scripts complementares legados devem permanecer por compatibilidade e rastreabilidade.
 
-### `docs/supabase-brand-settings.sql`
+## Ordem conceitual
 
-Cria/configura `brand_settings` e campos iniciais de branding.
+1. schema base;
+2. Storage;
+3. governança, roles e auditoria;
+4. variantes e assets;
+5. migrations posteriores;
+6. primeiro admin;
+7. validação de policies.
 
-Para ambientes existentes, aplicar em ordem as migrations locais:
+`managed_pages` depende de `public.is_admin()` para as policies administrativas.
 
-1. `supabase/migrations/202607120001_add_visual_variant_settings_and_titles.sql`;
-2. `supabase/migrations/202607120002_add_password_reset_rate_limits.sql`.
+## Histórico da CLI
 
-Depois, publicar `supabase/functions/request-password-reset` com os secrets
-documentados em `docs/11-seguranca-governanca-e-operacao.md`.
+Quando um SQL é aplicado manualmente, reparar o histórico:
 
-O campo `logo_url` desses scripts deve ser preservado por compatibilidade e funciona apenas como fallback técnico/legado. A operação administrativa dos logos usa `logo_on_dark_url` e `logo_on_light_url`.
-
-### `docs/supabase-governance-users-audit-import.sql`
-
-Adiciona governança operacional:
-
-- campos de status em `user_profiles`;
-- `audit_logs`;
-- `public.is_admin()`;
-- RLS revisada;
-- policies de cartões, eventos, branding, usuários e auditoria;
-- índices.
-
-### `docs/supabase-visual-variants-and-icons.sql`
-
-Adiciona:
-
-- `public_visual_variant`;
-- constraint das seis variantes;
-- `logo_on_dark_url`;
-- `logo_on_light_url`;
-- fundos institucionais;
-- `apple_touch_icon_url`.
-
-## Ordem recomendada para ambiente novo
-
-1. `supabase-base-schema.sql`
-2. `supabase-storage-business-card-assets.sql`
-3. `supabase-card-localized-fields.sql`, se ainda necessário em ambiente legado
-4. `supabase-card-public-photo-flag.sql`, se ainda necessário em ambiente legado
-5. `supabase-brand-settings.sql`, se ainda necessário em ambiente legado
-6. `supabase-governance-users-audit-import.sql`
-7. `supabase-visual-variants-and-icons.sql`
-
-Em ambientes novos, alguns scripts complementares podem ser redundantes porque o schema base já contém suas colunas. Eles devem permanecer no repositório e na sequência operacional por rastreabilidade histórica e por serem idempotentes.
-
-## Verificação de tabelas
-
-```sql
-select
-  'business_cards' as item,
-  to_regclass('public.business_cards') is not null as ok
-union all
-select 'card_scan_events', to_regclass('public.card_scan_events') is not null
-union all
-select 'user_profiles', to_regclass('public.user_profiles') is not null
-union all
-select 'brand_settings', to_regclass('public.brand_settings') is not null
-union all
-select 'audit_logs', to_regclass('public.audit_logs') is not null;
+```powershell
+npx.cmd supabase migration repair <versao> --status applied
+npx.cmd supabase migration list
+npx.cmd supabase db push --dry-run
 ```
 
-## Verificação de policies perigosas
+Não executar `db push` normal depois de aplicar o mesmo SQL manualmente.
+
+## Verificações
+
+### Tabelas
 
 ```sql
 select
-  tablename,
-  policyname,
-  cmd,
-  roles,
-  qual,
-  with_check
+  to_regclass('public.business_cards') as business_cards,
+  to_regclass('public.user_profiles') as user_profiles,
+  to_regclass('public.card_scan_events') as card_scan_events,
+  to_regclass('public.brand_settings') as brand_settings,
+  to_regclass('public.audit_logs') as audit_logs,
+  to_regclass('public.managed_pages') as managed_pages;
+```
+
+### Policies
+
+```sql
+select tablename, policyname, cmd, roles, qual, with_check
 from pg_policies
 where schemaname = 'public'
-  and tablename in ('business_cards', 'card_scan_events', 'user_profiles', 'brand_settings', 'audit_logs')
 order by tablename, policyname;
 ```
 
-Não deve existir:
-
-```text
-Authenticated users can manage cards
-```
-
-A policy pública de eventos deve validar cartão ativo e não expirado.
-
-## Verificação de variantes visuais
+### Mojibake
 
 ```sql
-select column_name, data_type
-from information_schema.columns
-where table_schema = 'public'
-  and table_name in ('business_cards', 'brand_settings')
-  and column_name in (
-    'public_visual_variant',
-    'logo_on_dark_url',
-    'logo_on_light_url',
-    'card_bg_dark_image_1_url',
-    'card_bg_dark_image_2_url',
-    'card_bg_light_image_3_url',
-    'card_bg_light_image_4_url',
-    'apple_touch_icon_url'
-  )
-order by table_name, column_name;
+select page_key
+from public.managed_pages
+where
+  strpos(title, U&'\00C3') > 0
+  or strpos(coalesce(subtitle, ''), U&'\00C3') > 0
+  or strpos(coalesce(version_label, ''), U&'\00C3') > 0
+  or strpos(content::text, U&'\00C3') > 0
+  or strpos(content::text, U&'\00C2') > 0
+  or strpos(content::text, U&'\FFFD') > 0;
 ```
 
-## Verificação do primeiro admin
-
-```sql
-select email, role, status
-from public.user_profiles
-where lower(email) = 'tulius.souza@investrs.org.br';
-```
+Resultado esperado: zero linhas.
 
 ## Cuidados
 
-- Não executar scripts destrutivos sem backup.
-- Manter SQLs idempotentes.
-- Registrar mudanças relevantes na documentação.
-- Revalidar RLS após mudanças de policy.
+- revisar SQL antes de executar;
+- não usar scripts destrutivos sem backup;
+- manter idempotência;
+- revalidar RLS;
+- sincronizar `database.types.ts`;
+- não alterar production automaticamente.

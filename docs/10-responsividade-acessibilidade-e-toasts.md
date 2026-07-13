@@ -1,111 +1,128 @@
 # 10 — Responsividade, acessibilidade e toasts
 
-Mudanças de rota retornam ao topo; hashes do Guia são preservados. Menus fecham por Escape, clique externo, scroll e resize e restauram o foco.
+## Breakpoints de QA
 
-## Responsividade
+Testar, no mínimo:
 
-O header compartilhado do colaborador mantém ícones e nomes acessíveis entre
-320 px e desktop. O seletor compacto usa opções circulares com `aria-pressed`.
-Menus fecham por Escape, clique externo, scroll e resize e restauram o foco.
-Os gráficos possuem descrição e resumo tabular equivalente.
+```text
+1440 × 900
+1366 × 768
+1024 × 768
+768 × 1024
+430 × 932
+390 × 844
+375 × 667
+360 × 800
+320 × 568
+zoom 125%
+zoom 200%
+```
 
-O layout público usa duas áreas principais:
+## Regras gerais
 
-- card visual;
-- painel de ações.
+- sem rolagem horizontal indevida;
+- botões com área clicável suficiente;
+- grids adaptáveis;
+- labels legíveis;
+- logos com `contain`;
+- QR legível;
+- headers sem corte;
+- modais dentro da viewport.
 
-Em desktop, a composição pode aparecer em colunas. Em mobile, deve empilhar preservando legibilidade e acesso aos botões.
+## Navegação e scroll
 
-## Admin em mobile
+- mudanças de rota retornam ao topo;
+- hashes do Guia são preservados;
+- links reais para navegação;
+- botões reais para ações.
 
-A tabela de `/admin/cartoes` tem versão mobile em cards, evitando scroll horizontal excessivo. Slugs devem permanecer em uma linha quando exibidos em tabela e podem usar truncamento com ellipsis.
+## Área do colaborador
+
+O header compartilhado deve manter:
+
+- logo;
+- Home;
+- Minha Página;
+- Editar;
+- Mais;
+- seletor visual;
+- Sair.
+
+Em mobile, o layout pode compactar gaps e ícones, mas não deve remover ações.
 
 ## Formulários
 
-Regras:
-
 - labels visíveis;
-- mensagens claras;
-- botões com estados de loading;
-- erros técnicos convertidos em mensagens amigáveis;
-- autocomplete habilitado em login;
-- prefixo/sufixo de e-mail preservando compatibilidade com gerenciadores de senha.
+- loading;
+- erros amigáveis;
+- autocomplete apropriado;
+- prefixos e sufixos sem quebra indevida;
+- foco direcionado ao campo inválido;
+- checkbox e texto alinhados.
+
+## Modais
+
+Requisitos:
+
+- `role="dialog"`;
+- `aria-modal="true"`;
+- título associado;
+- Escape;
+- backdrop;
+- foco inicial;
+- foco preso;
+- restauração de foco;
+- scroll do body bloqueado;
+- superfície sólida;
+- contraste nas seis variantes;
+- `prefers-reduced-motion`.
+
+Usos atuais incluem:
+
+- Termos no cadastro;
+- Wallet;
+- instalação PWA;
+- importação;
+- convite;
+- auditoria;
+- crop;
+- exclusão;
+- preview do cartão, quando aplicável.
+
+## Menus e popovers
+
+- fechamento por Escape;
+- clique externo;
+- scroll;
+- resize;
+- restauração de foco;
+- prevenção de saída da viewport.
 
 ## Toasts
 
-O sistema usa toast global para:
+Tipos:
 
 - sucesso;
 - erro;
 - informação.
 
-Características esperadas:
+Características:
 
-- múltiplas mensagens empilhadas;
-- expiração automática;
+- pilha;
+- expiração;
 - fechamento manual;
 - `aria-live`;
-- funcionamento em desktop e mobile.
+- compatibilidade mobile e desktop.
 
-Exemplos de uso:
+Não exibir simultaneamente toast e box inline com a mesma confirmação.
 
-- salvar cartão;
-- upload de asset;
-- erro de login;
-- copiar vCard;
-- baixar QR Code;
-- enviar convite;
-- importar CSV;
-- Wallet em standby.
+## Gráficos e estatísticas
 
-## Modais
+- descrição acessível;
+- resumo tabular quando necessário;
+- filtros responsivos;
+- KPIs sem corte.
 
-Usados para:
+## Estado de revisão visual
 
-- confirmação de apagar cartão;
-- convite de usuário;
-- detalhes de auditoria;
-- Wallet standby;
-- importação CSV.
-
-Regras:
-
-- `role="dialog"`;
-- `aria-modal="true"`;
-- título com `aria-labelledby`;
-- fechamento por botão;
-- fechamento por backdrop quando seguro;
-- não fechar durante operação crítica.
-
-Modais administrativos usam tokens próprios de backdrop, superfície, texto, inputs e botões para manter contraste nos modos claros e escuros. Transparência deve existir apenas no background; o container e seu conteúdo não usam opacidade global.
-
-Headers de tabela, labels e textos auxiliares administrativos usam tokens semânticos (`--admin-text`, `--admin-muted` e `--admin-table-heading`) em vez de cores fixas. Containers com texto não devem receber opacidade reduzida.
-
-## Acessibilidade
-
-Regras mínimas:
-
-- `focus-visible` preservado;
-- botões reais para ações;
-- links reais para navegação;
-- imagens com `alt`;
-- campos com labels;
-- contraste adequado nas seis variantes;
-- QR Code com `alt`;
-- toasts com `aria-live`.
-
-## Seletor global de modo visual
-
-O botão compacto de visual exibido na Home abre um popover com seis miniaturas. O controle informa `aria-haspopup` e `aria-expanded`, usa botões com nomes acessíveis, preserva foco visível e fecha por clique externo ou `Escape`. A preferência fica em `localStorage` e pode ser alterada retornando à Home.
-
-No cartão público, o mesmo seletor fica alinhado ao toggle PT/ES/EN e pode quebrar de linha no mobile. Em `/admin/usuarios`, ações compactas usam ícone, texto quando houver espaço, `aria-label` e `title`.
-
-Nos modos claros, botões primários com fundo escuro mantêm texto branco em todos os estados. A transparência visual é aplicada somente aos backgrounds das superfícies; textos, ícones e ações disponíveis permanecem opacos.
-
-## QR e mobile
-
-QR Code precisa ser legível em mobile e desktop. Downloads devem gerar PNG com nome baseado no slug.
-
-## Erros
-
-Usar `getFriendlyErrorMessage` quando aplicável. Evitar exibir stack trace ou mensagens técnicas internas ao usuário final.
+Pequenas correções desktop e mobile continuam em andamento. Depois da estabilização, este documento deve ser comparado novamente com `src/index.css` e as páginas afetadas.

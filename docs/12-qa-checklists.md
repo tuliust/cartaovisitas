@@ -1,178 +1,204 @@
 # 12 — QA e checklists
 
-- validar fallback e RLS de `managed_pages`;
-- validar âncoras do Guia, ações compartilhadas e modal Wallet;
-
-## Checklist antes do deploy
+## Antes do commit
 
 ```powershell
 npm.cmd run lint
 npm.cmd run build
 git diff --check
 git status
+git diff --stat
+git diff --name-only
 ```
 
-Conferir ausência de segredos.
+## Segurança
 
-## Checklist pós-deploy
+- nenhum secret staged;
+- nenhuma `.env`;
+- nenhum certificado;
+- nenhuma pasta `.vercel`;
+- nenhum `dist`;
+- nenhum `node_modules`;
+- nenhuma pasta temporária do Supabase.
 
-Testar:
+## Home
 
-```text
-/
- /entrar
- /cadastro
- /recuperar-senha
- /definir-senha
- /meu-cartao/editar
- /admin/cartoes
- /admin/usuarios
- /admin/auditoria
- /admin/configuracoes
- /:slug
- /qr/:slug?lang=pt
- /api/vcard/:slug?lang=pt
-```
+- três CTAs principais;
+- links Guia e Termos;
+- seletor visual;
+- logos corretos;
+- seis variantes;
+- persistência após reload;
+- mobile e desktop.
+
+## Cadastro
+
+- e-mail institucional;
+- senha e confirmação;
+- aceite obrigatório;
+- modal de Termos;
+- fallback de conteúdo;
+- foco no erro;
+- checkbox alinhado;
+- criação válida.
+
+## Login e recuperação
+
+- login ativo;
+- bloqueado negado;
+- e-mail inválido;
+- reset com rate limit;
+- e-mail inexistente sem enumeração indevida;
+- redirect para definição de senha.
+
+## Área do colaborador
+
+- sessão;
+- logout;
+- cartão próprio;
+- slug divergente redireciona;
+- header;
+- menu Mais;
+- seletor compacto;
+- mobile.
+
+## Edição
+
+- dados institucionais bloqueados quando previsto;
+- avatar;
+- slug;
+- seis variantes;
+- idioma;
+- e-mail;
+- salvar;
+- preview;
+- nenhuma perda de dados.
+
+## Cartão por slug
+
+- logo;
+- avatar;
+- nome;
+- cargo e área localizados;
+- contatos;
+- endereço;
+- QR;
+- idioma;
+- ações;
+- compartilhar somente quando suportado;
+- instalação PWA;
+- Wallet standby;
+- sem acesso a slug arbitrário.
 
 ## vCard
 
-- abre no iPhone;
-- acentos corretos;
-- `lang=pt`;
-- `lang=es`;
-- `lang=en`;
-- cargo correto;
-- departamento correto;
-- telefone correto;
-- e-mail correto;
-- endereço correto.
+- PT, ES e EN;
+- UTF-8;
+- acentos;
+- telefone;
+- e-mail;
+- endereço;
+- cargo;
+- departamento;
+- abertura no iPhone e Android.
 
 ## QR
 
-- QR baixado no admin aponta para `/qr/:slug?lang=pt`;
-- `/qr/:slug?lang=pt` registra evento `qr`;
-- redirect 302 abre vCard;
-- funciona em iPhone;
-- funciona em Android.
+- `/qr/:slug`;
+- registro do evento;
+- redirect;
+- QR de impressão;
+- QR PNG da assinatura;
+- leitura física.
 
-## Página pública
+## Assinatura
 
-- card carrega;
-- idioma altera apenas conteúdo profissional;
-- ações rápidas em português;
-- salvar contato;
-- copiar vCard;
-- compartilhar;
-- baixar QR;
-- Wallet standby.
-- usa a preferência visual local quando existente;
-- sem preferência local, usa `public_visual_variant` do cartão;
-- variante sem imagem usa o fallback preto ou branco correspondente.
+- PT, ES e EN;
+- QR abaixo do logo;
+- WhatsApp;
+- `mailto:`;
+- site;
+- aviso LGPD;
+- HTML;
+- texto simples;
+- colagem no Gmail;
+- imagens HTTPS.
+
+## Estatísticas
+
+- períodos;
+- personalizado;
+- contagens;
+- gráfico;
+- comparação;
+- estado vazio;
+- responsividade.
 
 ## Admin cartões
 
 - busca;
 - filtros;
-- ordenação;
-- ativar/desativar;
-- editar;
-- apagar com confirmação;
-- baixar QR;
-- copiar link;
-- copiar vCard;
-- importação CSV;
-- analytics.
-- headers da tabela legíveis nos modos claro e escuro;
-- contagem usa corretamente `cartão` ou `cartões`, sem forma parentética;
-- textos auxiliares do formulário permanecem legíveis em criação e edição.
+- criação;
+- edição;
+- ativação;
+- exclusão;
+- QR;
+- vCard;
+- CSV;
+- auditoria.
 
 ## Admin usuários
 
-- listar usuários;
-- buscar;
-- filtrar;
-- promover admin;
+- convite;
+- reenviar;
+- promover;
 - remover admin;
 - bloquear;
 - desbloquear;
-- convidar;
-- reenviar convite;
-- impedir auto-bloqueio.
+- proteção do último admin;
+- cartão vinculado.
 
 ## Auditoria
 
-- ação aparece após editar cartão;
-- ação aparece após bloquear usuário;
-- ação aparece após convite;
-- filtros funcionam;
-- modal de detalhes abre.
-- JSON e botão do modal permanecem legíveis nos modos claro e escuro.
+- filtros;
+- busca;
+- período;
+- 30 itens;
+- paginação;
+- menu;
+- detalhes;
+- eventos sem corte;
+- mobile.
 
-## Importação CSV
+## Configurações
 
-- baixar modelo;
-- importar válido;
-- importar com e-mail inválido;
-- importar com slug duplicado;
-- importar com booleano inválido;
-- prévia mostra erros;
-- modos de importação funcionam;
-- auditoria registra.
-- modal, input de arquivo, preview e ações mantêm contraste nos modos claro e escuro.
+- assets;
+- títulos;
+- seis variantes;
+- preview;
+- tokens;
+- salvar com toast;
+- cards opacos;
+- editor de Termos e Guia;
+- publicação;
+- restauração;
+- auditoria.
 
-## Modais administrativos
+## PWA
 
-- convite de usuário legível nos modos claro e escuro;
-- confirmação de apagar mantém título, input e botões legíveis;
-- crop de avatar mantém instruções, zoom e ações legíveis;
-- modais não aplicam opacidade ao container com conteúdo.
+- manifest válido;
+- ícones;
+- iOS;
+- Android;
+- desktop;
+- `beforeinstallprompt`;
+- `appinstalled`;
+- modo standalone;
+- app instalado oculta ação;
+- modal acessível;
+- superfície sólida;
+- ausência de service worker deliberada.
 
-## Branding
+## Pós-deploy
 
-- upload logo fundo escuro;
-- upload logo fundo claro;
-- upload fundos;
-- upload favicon;
-- upload Apple Touch;
-- preview das seis variantes;
-- persistência após reload.
-
-## Modo visual global
-
-- botão compacto abre popover com seis miniaturas na Home;
-- clique externo e `Escape` fecham o popover;
-- clique em uma miniatura seleciona a variante e fecha o popover;
-- opção ativa possui destaque e marcador visíveis;
-- escolha persiste em `invest-rs-public-visual-mode` após reload;
-- `dark_black` acompanha a navegação para `/entrar`;
-- `light_white` acompanha a navegação para `/cadastro`;
-- preferência local altera apenas a renderização do cartão público;
-- limpar a chave restaura o `public_visual_variant` salvo no cartão;
-- vCard, QR, idioma e Wallet permanecem inalterados.
-- seletor visual aparece à direita do toggle PT/ES/EN no cartão público;
-- “Copiar vCard” copia a URL `/api/vcard/:slug?lang=:idioma`;
-- área do colaborador exibe o logo institucional no header;
-- `/admin/usuarios` mostra nome sobre e-mail e ações compactas com ícones.
-- CTA principal da Home mantém texto branco em `light_white`, `light_image_3` e `light_image_4`;
-- preferência visual persiste em cadastro, login, recuperação, definição de senha, área do colaborador e cartão público;
-- `light_image_4` exibe card público quase branco, com texto, labels e QR legíveis.
-
-## RLS
-
-- visitante vê cartão ativo;
-- visitante não vê cartão inativo;
-- colaborador edita apenas próprio cartão;
-- admin edita todos;
-- bloqueado não acessa.
-
-## Wallet
-
-Standby:
-
-- botão visível;
-- modal “Wallet em breve”;
-- endpoint Apple não chamado.
-
-Futuro:
-
-- testar `.pkpass` em iPhone quando credenciais forem ativadas.
+Validar as rotas listadas em `03-ambientes-variaveis-deploy.md` e conferir logs da Vercel e Supabase quando aplicável.

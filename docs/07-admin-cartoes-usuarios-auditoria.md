@@ -1,8 +1,6 @@
-# 07 — Admin: cartões, usuários e auditoria
+# 07 — Admin: cartões, usuários, auditoria e configurações
 
-Páginas gerenciadas registram atualização, publicação, despublicação e restauração com target `managed_page`, campos alterados e estados anterior/posterior.
-
-## Menu administrativo
+## Navegação
 
 - Cartões
 - Usuários
@@ -10,127 +8,131 @@ Páginas gerenciadas registram atualização, publicação, despublicação e re
 - Configurações
 - Sair
 
-## `/admin/cartoes`
+## Cartões
 
-Finalidade: gerenciar conteúdo dos cartões.
+Rota:
 
-Funcionalidades:
+```text
+/admin/cartoes
+```
 
-- listar cartões;
-- buscar por nome, e-mail, slug, cargo e departamento;
-- filtrar por status;
+Capacidades:
+
+- listar;
+- buscar;
+- filtrar;
 - ordenar;
-- ver analytics básicos;
 - criar;
 - editar;
 - abrir;
-- copiar link público;
 - copiar vCard;
-- baixar QR Code;
-- ativar/desativar;
-- apagar com confirmação pelo slug;
-- baixar modelo CSV;
-- importar planilha.
+- baixar QR;
+- ativar ou desativar;
+- apagar com confirmação;
+- importar CSV;
+- baixar modelo;
+- consultar indicadores básicos.
 
-Diferença para `/admin/usuarios`: cartões representam conteúdo publicado; usuários representam acesso ao sistema.
+## Usuários
 
-## Apagar cartão
-
-A ação:
-
-- exige confirmação digitando o slug;
-- remove eventos associados;
-- remove o cartão;
-- registra auditoria `card_deleted`.
-
-Não remove necessariamente `auth.users`.
-
-## `/admin/usuarios`
-
-Finalidade: gerenciar acessos, perfis, status e convites.
-
-Funcionalidades:
-
-- listar usuários;
-- buscar por nome/e-mail;
-- filtrar por perfil;
-- filtrar por status;
-- visualizar cartão vinculado;
-- promover a admin;
-- remover admin;
-- bloquear;
-- desbloquear;
-- criar cartão para usuário;
-- enviar/reenviar convite.
-
-Regras:
-
-- admin não pode bloquear a si mesmo.
-- o único admin não deve remover o próprio acesso.
-- usuário bloqueado não acessa áreas restritas.
-
-## Convite
-
-Endpoint:
+Rota:
 
 ```text
-/api/admin/invite-user
+/admin/usuarios
 ```
+
+Capacidades:
+
+- listar;
+- buscar;
+- filtrar perfil e status;
+- localizar cartão vinculado;
+- convidar ou reenviar convite;
+- promover ou remover admin;
+- bloquear ou desbloquear;
+- criar cartão para usuário.
 
 Regras:
 
-- método POST;
-- exige Bearer token;
-- valida admin ativo;
-- aceita apenas `@investrs.org.br`;
-- usa `SUPABASE_SERVICE_ROLE_KEY` no backend;
-- cria/atualiza `user_profiles`;
-- registra `user_invited`.
+- não bloquear a si próprio;
+- não remover o último admin ativo;
+- usuário bloqueado não acessa áreas restritas.
 
-## `/admin/auditoria`
+## Auditoria
 
-Finalidade: rastrear ações administrativas.
+Rota:
 
-Filtros:
+```text
+/admin/auditoria
+```
+
+Características:
 
 - busca;
-- ação;
-- alvo;
-- data inicial;
-- data final.
+- filtro por ação;
+- filtro por alvo;
+- período;
+- ordenação por mais recentes;
+- 30 itens por página;
+- paginação;
+- menu de ações;
+- modal de detalhes;
+- dados anteriores e posteriores quando disponíveis.
 
-Ações registradas:
+Ações incluem cartões, usuários, branding, assets, importação e páginas gerenciadas.
 
-- `card_created`
-- `card_updated`
-- `card_deleted`
-- `card_activated`
-- `card_deactivated`
-- `user_invited`
-- `user_promoted_admin`
-- `user_removed_admin`
-- `user_blocked`
-- `user_unblocked`
-- `brand_settings_updated`
-- `brand_asset_uploaded`
-- `bulk_import_started`
-- `bulk_import_completed`
-- `bulk_import_failed`
+## Configurações
 
-## `/admin/configuracoes`
+Rota:
 
-Finalidade: gerenciar identidade visual e assets.
+```text
+/admin/configuracoes
+```
 
-Inclui:
+Duas frentes:
+
+### Identidade visual
 
 - favicon;
 - Apple Touch Icon;
-- OG image;
-- cores;
-- background global;
-- logo para fundo escuro;
-- logo para fundo claro;
-- quatro fundos institucionais;
-- preview das seis variantes.
+- Open Graph;
+- títulos;
+- logos por contraste;
+- backgrounds;
+- seis variantes;
+- cores e opacidades;
+- previews.
 
-Os logos institucionais editáveis são exclusivamente `logo_on_dark_url` e `logo_on_light_url`. O campo `logo_url` permanece apenas como fallback técnico/legado e não é editável nesta página.
+### Conteúdo das páginas
+
+- Termos;
+- Guia;
+- título e subtítulo;
+- aviso;
+- seções;
+- versão;
+- publicação;
+- preview;
+- restauração;
+- auditoria.
+
+## Auditoria de páginas gerenciadas
+
+Ações esperadas:
+
+```text
+managed_page_updated
+managed_page_published
+managed_page_unpublished
+managed_page_restored
+```
+
+Target:
+
+```text
+managed_page
+```
+
+## Convites
+
+O endpoint atual usa Supabase Auth Admin. A migração para Resend está pendente e poderá alterar o fluxo operacional e a auditoria.

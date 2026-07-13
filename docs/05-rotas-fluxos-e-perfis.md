@@ -1,94 +1,115 @@
 # 05 — Rotas, fluxos e perfis
 
-Termos e Guia consultam `managed_pages` e usam conteúdo local como fallback. A terceira página editorial permanece pendente; nenhuma rota foi criada para ela.
-
 ## Perfis
-
-> Atualização: a interface React `/:slug` pertence à área privada do proprietário.
-> Os endpoints técnicos de QR, vCard e Wallet permanecem acessíveis conforme suas
-> regras atuais; não existe catálogo público individual nesta etapa.
 
 | Perfil | Fonte | Permissões |
 |---|---|---|
-| Visitante | sem sessão | acessar Home, termos e endpoints técnicos de vCard/QR autorizados. |
-| Colaborador | Supabase Auth + `user_profiles.role=user` | acessar, editar e acompanhar o próprio cartão. |
-| Admin | Supabase Auth + `user_profiles.role=admin` | administrar cartões, usuários, auditoria e branding. |
+| Visitante | sem sessão | Home, autenticação, Termos e endpoints técnicos autorizados. |
+| Colaborador | Auth + perfil ativo | editar e acompanhar o próprio cartão. |
+| Admin | Auth + perfil admin ativo | administrar o sistema. |
 
-Status:
+## Rotas públicas
 
-As rotas `/meu-cartao`, `/meu-cartao/editar`, `/meu-cartao/guia`,
-`/meu-cartao/assinatura-de-email`, `/meu-cartao/estatisticas` e `/:slug` usam o
-`CollaboratorProvider`. Ele valida sessão e usuário ativo e carrega somente o
-cartão vinculado por `created_by` ou e-mail. Em `/:slug`, o parâmetro é apenas
-comparado ao slug do cartão autenticado e nunca alimenta uma consulta arbitrária.
+```text
+/
+/entrar
+/cadastro
+/recuperar-senha
+/definir-senha
+/termos-de-uso-e-privacidade
+```
 
-`/termos-de-uso-e-privacidade` permanece pública, com header reduzido sem sessão.
+## Rotas do colaborador
 
-- `active`: acesso normal.
-- `pending`: usuário convidado, aguardando ativação ou primeiro acesso.
-- `blocked`: acesso bloqueado no app.
+```text
+/meu-cartao
+/meu-cartao/editar
+/meu-cartao/guia
+/meu-cartao/assinatura-de-email
+/meu-cartao/estatisticas
+/:slug
+```
 
-## Fluxo de cadastro
+Essas rotas usam `CollaboratorProvider`, exceto Termos, que pode montar o provider em modo não obrigatório.
 
-1. Usuário acessa `/cadastro`.
-2. Informa e-mail institucional e senha.
-3. Supabase envia confirmação, se configurado.
-4. Usuário acessa `/meu-cartao/editar`.
+## Rota `/:slug`
 
-Regra: e-mail precisa terminar em `@investrs.org.br`.
+- exige sessão;
+- carrega somente o cartão vinculado ao usuário;
+- compara o parâmetro ao slug do cartão autenticado;
+- não consulta um cartão arbitrário com base no parâmetro;
+- redireciona quando o slug não corresponde.
 
-## Fluxo de login
+## Rotas administrativas
 
-1. Usuário acessa `/entrar`.
-2. Informa e-mail/senha.
-3. Sistema verifica sessão.
-4. Sistema verifica perfil e status.
-5. Usuário bloqueado recebe erro amigável.
-6. Usuário ativo segue para a área correspondente.
+```text
+/admin
+/admin/login
+/admin/cartoes
+/admin/cartoes/novo
+/admin/cartoes/:id/editar
+/admin/usuarios
+/admin/auditoria
+/admin/configuracoes
+```
+
+`/admin` redireciona para `/admin/cartoes`.
+
+## Cadastro
+
+1. Usuário informa prefixo do e-mail institucional.
+2. Informa e confirma a senha.
+3. Aceita os Termos de Uso.
+4. O modal consulta `managed_pages` e usa fallback local.
+5. Supabase cria o usuário e pode enviar confirmação, conforme configuração.
+6. Depois da autenticação, o usuário acessa a área do cartão.
+
+O aceite é obrigatório no frontend e ainda não possui registro dedicado no banco.
+
+## Login
+
+1. Validar credenciais.
+2. Verificar sessão.
+3. Verificar perfil e status.
+4. Redirecionar usuário ativo.
+5. Bloquear usuário com `status=blocked`.
 
 ## Recuperação de senha
 
-- `/recuperar-senha` envia e-mail de redefinição.
-- `/definir-senha` atualiza senha após redirect do Supabase.
+1. Usuário acessa `/recuperar-senha`.
+2. Edge Function valida domínio e rate limit.
+3. A função verifica se o e-mail está cadastrado.
+4. Solicita o fluxo de redefinição.
+5. O link aponta para `/definir-senha`.
 
-## Fluxo admin
+O mecanismo de entrega será revisto na frente Resend.
 
-- Admin acessa `/admin/login`.
-- Depois de autenticado, `/admin` redireciona para `/admin/cartoes`.
-- `requireAdmin()` protege páginas administrativas.
+## Convite
 
-## Fluxo de convite
+Fluxo atual:
 
-1. Admin acessa `/admin/usuarios`.
-2. Clica em “Convidar usuário”.
-3. Informa e-mail institucional.
-4. Frontend chama `/api/admin/invite-user`.
-5. Endpoint valida token e role admin.
-6. Endpoint usa `SUPABASE_SERVICE_ROLE_KEY`.
-7. Supabase envia convite.
-8. `user_profiles` é criado/atualizado como `pending`.
-9. Auditoria registra `user_invited`.
+1. Admin envia e-mail em `/admin/usuarios`.
+2. Frontend chama `/api/admin/invite-user`.
+3. Endpoint valida o token e o perfil admin.
+4. Supabase Auth Admin envia o convite.
+5. `user_profiles` é criado ou atualizado como `pending`.
+6. Auditoria registra `user_invited`.
 
-## Criação de cartão
+## Criação do cartão
 
 Pode ocorrer por:
 
-- admin em `/admin/cartoes/novo`;
-- colaborador em `/meu-cartao/editar`, quando ainda não tem cartão;
+- admin;
+- colaborador sem cartão;
 - importação CSV.
 
-## Cartão vinculado a usuário
+Vínculo:
 
-O vínculo é identificado por:
+- `created_by`; ou
+- correspondência de e-mail institucional.
 
-- `business_cards.created_by = user_profiles.id`; ou
-- `business_cards.email = user_profiles.email`.
+## Conteúdo gerenciado
 
-## Bloqueio
-
-Usuário bloqueado:
-
-- não deve acessar `/meu-cartao/editar`;
-- não deve acessar admin;
-- não deve passar em `is_admin()`;
-- mantém registro em `auth.users` e `user_profiles`.
+- Termos: público.
+- Guia: autenticado.
+- Fallback local quando o Supabase falha, o registro não existe ou o conteúdo é inválido.
