@@ -130,6 +130,8 @@ O Guia público usa:
 - ícones de `lucide-react` associados aos IDs canônicos;
 - ícone genérico quando uma seção gerenciada utiliza ID não mapeado;
 - superfícies e estados de foco derivados dos tokens semânticos;
+- no desktop, índice lateral sticky, com altura de `100dvh`, sem rolagem interna e com botões de dimensões uniformes;
+- no desktop, os cards permanecem no fluxo e deslizam ao lado do índice fixado no topo;
 - uma coluna no mobile e índice em duas colunas no tablet quando houver espaço.
 
 ## PWA

@@ -137,6 +137,11 @@ Após a implementação do Resend:
 - fallback local;
 - 14 tópicos;
 - números, ícones e âncoras;
+- índice desktop sem rolagem interna;
+- botões do índice com dimensões uniformes;
+- índice sticky no topo com altura de `100dvh` no desktop;
+- cards da coluna direita rolando independentemente do índice sticky;
+- índice estático e responsivo em tablet e mobile;
 - foco visível;
 - seis variantes;
 - mobile, tablet, desktop e zoom de 200%.

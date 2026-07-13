@@ -156,7 +156,10 @@ A barra inicial:
 
 - rota pública e header compatível com visitante ou colaborador autenticado;
 - índice com âncoras, números e ícones;
-- índice sticky apenas quando houver espaço vertical e layout em duas colunas;
+- no desktop, índice lateral sticky quando alcança o topo, com altura de `100dvh` e sem rolagem interna;
+- os botões do índice desktop possuem dimensões uniformes e permanecem integralmente visíveis;
+- os cards da coluna direita permanecem no fluxo normal e deslizam durante a rolagem da página;
+- em tablet e mobile, o índice volta ao fluxo normal, em duas ou uma coluna conforme o espaço;
 - cards em uma coluna;
 - foco visível em todos os links;
 - ícones decorativos com `aria-hidden`;
