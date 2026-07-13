@@ -126,6 +126,12 @@ O modal deve:
 - bloquear scroll;
 - respeitar redução de movimento.
 
-## Pendência conhecida
+## Superfície do modal
 
-A superfície do modal está sendo corrigida porque pode herdar transparência em algumas variantes. A documentação deve ser atualizada depois da correção final.
+O modal de instalação usa:
+
+- `--semantic-surface-raised` no painel interno;
+- `--semantic-modal-backdrop` no backdrop;
+- tokens semânticos de texto, borda, botões e foco.
+
+A superfície é sólida nas seis variantes e não depende de `card_surface_opacity`, imagem de fundo ou overlay da variante.

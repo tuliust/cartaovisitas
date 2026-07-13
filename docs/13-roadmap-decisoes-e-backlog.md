@@ -12,9 +12,6 @@
 - estatísticas;
 - modais.
 
-### Modal PWA
-
-Corrigir a superfície transparente do modal de instalação nas seis variantes.
 
 ### Resend
 
@@ -85,6 +82,7 @@ Depende de Issuer Account, Google Cloud, Service Account, IDs e publicação.
 - Termos;
 - estatísticas básicas;
 - PWA;
+- modal PWA com superfície sólida nas seis variantes;
 - conteúdo gerenciado.
 
 ## Decisões adiadas

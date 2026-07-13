@@ -81,7 +81,7 @@ Componentes devem consumir os tokens semânticos e evitar paletas paralelas.
 - modais devem usar superfície sólida;
 - `card_surface_opacity` afeta somente superfícies previstas.
 
-O modal PWA possui uma correção visual ainda pendente para assegurar fundo sólido nas seis variantes.
+O modal PWA usa uma superfície elevada sólida e um backdrop semântico nas seis variantes, sem herdar `card_surface_opacity`.
 
 ## Logos
 

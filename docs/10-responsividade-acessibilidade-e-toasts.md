@@ -171,17 +171,16 @@ Usos atuais incluem:
 - exclusão;
 - preview do cartão.
 
-## Pendência do modal PWA
+## Modal PWA
 
-O modal de instalação ainda pode herdar transparência em algumas variantes.
+O modal de instalação mantém:
 
-A correção deve assegurar:
-
-- backdrop escurecido;
-- painel interno sólido;
+- backdrop escurecido por token semântico;
+- painel interno com superfície elevada sólida;
 - independência de `card_surface_opacity`;
-- contraste de textos, abas, passos e botões;
-- manutenção de foco, Escape e bloqueio de scroll.
+- contraste de textos, abas, passos, ícones e botões;
+- foco preso, Escape, restauração de foco e bloqueio de scroll;
+- comportamento consistente nas seis variantes.
 
 ## Menus e popovers
 

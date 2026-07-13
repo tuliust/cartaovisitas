@@ -227,16 +227,13 @@ Após a implementação do Resend:
 - bloqueio de scroll;
 - ausência de service worker deliberada.
 
-### Pendência conhecida
+### Modal de instalação
 
-A superfície sólida do modal ainda não está aprovada.
-
-Depois da correção:
-
-- validar fundo sólido nas seis variantes;
-- validar que `card_surface_opacity` não afeta o painel;
-- validar abas, passos, botões e textos;
-- validar mobile e desktop.
+- fundo sólido validado nas seis variantes;
+- `card_surface_opacity` não afeta o painel;
+- backdrop escurece a página;
+- abas, passos, ícones, botões e textos mantêm contraste;
+- mobile e desktop validados.
 
 ## Wallet
 
