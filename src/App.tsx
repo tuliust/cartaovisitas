@@ -22,6 +22,7 @@ import MyCardGuidePage from './pages/MyCardGuidePage'
 import MyCardEmailSignaturePage from './pages/MyCardEmailSignaturePage'
 import MyCardAnalyticsPage from './pages/MyCardAnalyticsPage'
 import TermsAndPrivacyPage from './pages/TermsAndPrivacyPage'
+import { ScrollToTop } from './components/ScrollToTop'
 
 function PrivateCollaboratorRoutes() { return <CollaboratorProvider><Outlet /></CollaboratorProvider> }
 
@@ -32,6 +33,7 @@ function ResolvedApplication() {
     <VisualModeProvider>
       <ToastProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
 
         <Route path="/" element={<HomePage />} />

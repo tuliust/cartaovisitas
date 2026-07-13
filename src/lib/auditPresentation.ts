@@ -22,6 +22,10 @@ const actionLabels: Record<string, string> = {
   user_unblocked: 'Usuário desbloqueado',
   brand_settings_updated: 'Identidade visual atualizada',
   brand_asset_uploaded: 'Upload de asset institucional',
+  managed_page_updated: 'Conteúdo de página atualizado',
+  managed_page_published: 'Página publicada',
+  managed_page_unpublished: 'Página despublicada',
+  managed_page_restored: 'Conteúdo padrão restaurado',
   bulk_import_started: 'Importação de cartões iniciada',
   bulk_import_completed: 'Importação de cartões concluída',
   bulk_import_failed: 'Falha na importação de cartões',
@@ -30,6 +34,7 @@ const actionLabels: Record<string, string> = {
 const targetTypeLabels: Record<string, string> = {
   auth_user: 'Cadastro',
   brand_settings: 'Identidade visual',
+  managed_page: 'Página gerenciada',
   business_card: 'Cartão',
   bulk_import: 'Importação em lote',
   profile: 'Perfil',

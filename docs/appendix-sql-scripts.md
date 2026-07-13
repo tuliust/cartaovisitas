@@ -4,6 +4,10 @@ Este apêndice lista scripts SQL do projeto e sua finalidade. Não excluir scrip
 
 ## Scripts principais
 
+### `supabase/migrations/202607130001_add_managed_pages.sql`
+
+Cria `managed_pages`, trigger de `updated_at`, seeds idempotentes e RLS por visibilidade. Aplicar depois de `public.is_admin()`; os seeds não sobrescrevem conteúdo existente.
+
 ### `docs/supabase-base-schema.sql`
 
 Cria o schema canônico mínimo para bootstrap de ambientes novos. Deve ser revisado antes da execução e não deve ser aplicado automaticamente em produção.

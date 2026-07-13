@@ -1,5 +1,8 @@
 # 12 — QA e checklists
 
+- validar fallback e RLS de `managed_pages`;
+- validar âncoras do Guia, ações compartilhadas e modal Wallet;
+
 ## Checklist antes do deploy
 
 ```powershell

@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import QRCode from 'qrcode'
+import { Copy, Pencil, QrCode, Wallet } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import CollaboratorLayout from '../components/collaborator/CollaboratorLayout'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
 import { useCollaborator } from '../contexts/CollaboratorContext'
-import { useToast } from '../contexts/ToastContext'
 import { useVisualMode } from '../contexts/VisualModeContext'
 import { getEffectiveVisualVariant, getVariantClassName, getVariantLogo, getVariantStyle, isLightVisualVariant } from '../lib/cardVisualVariants'
-import { useCollaboratorCardActions } from '../lib/collaboratorCardActions'
 import { recordCardEvent } from '../lib/cards'
 import { getLocalizedProfessionalData, getStoredPublicCardLanguage, publicCardCopy, publicCardLanguageLabels, storePublicCardLanguage, type PublicCardLanguage } from '../lib/publicCardLocale'
 
@@ -16,11 +15,9 @@ function buildAddress(card: NonNullable<ReturnType<typeof useCollaborator>['card
 
 export default function PublicCardPage() {
   const { slug } = useParams()
-  const { card } = useCollaborator()
+  const { card, actions } = useCollaborator()
   const { settings } = useBrandSettings()
   const { visualMode, hasVisualModePreference } = useVisualMode()
-  const toast = useToast()
-  const actions = useCollaboratorCardActions(card, toast)
   const [language, setLanguage] = useState<PublicVisualLanguage>(getStoredPublicCardLanguage)
   const [qrDataUrl, setQrDataUrl] = useState('')
   const [failedLogoUrl, setFailedLogoUrl] = useState('')
@@ -59,6 +56,15 @@ export default function PublicCardPage() {
           <Link className="secondary-button" to="/meu-cartao/assinatura-de-email">Gerar Rodapé para E-mail</Link>
           <Link className="secondary-button" to="/meu-cartao/estatisticas">Estatísticas de Compartilhamento</Link>
         </div>
+        <section className="extra-functions" aria-labelledby="extra-functions-title">
+          <h3 id="extra-functions-title">Funcionalidades adicionais</h3>
+          <div className="extra-actions-grid">
+            <Link className="extra-action-button" to="/meu-cartao/editar"><Pencil className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">Editar</span></Link>
+            <button className="extra-action-button" type="button" disabled={Boolean(actions.running)} onClick={() => void actions.copyVCard()}><Copy className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">{actions.running === 'copy-vcard' ? 'Copiando...' : 'Copiar vCard'}</span></button>
+            <button className="extra-action-button" type="button" disabled={Boolean(actions.running)} onClick={() => void actions.downloadQrCode()}><QrCode className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">{actions.running === 'qr' ? 'Gerando...' : 'Baixar QR-Code'}</span></button>
+            <button className="extra-action-button" type="button" disabled={Boolean(actions.running)} onClick={() => void actions.openWallet()}><Wallet className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">{actions.running === 'wallet' ? 'Abrindo...' : 'Adicionar à Wallet'}</span></button>
+          </div>
+        </section>
       </div>
     </section>
   </CollaboratorLayout>

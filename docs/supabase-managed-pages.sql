@@ -1,0 +1,4 @@
+-- Script espelho para consulta manual. Fonte canônica da mudança:
+-- supabase/migrations/202607130001_add_managed_pages.sql
+-- Não executar automaticamente; aplicar somente após revisão no ambiente Supabase.
+-- Copiar o conteúdo da migration acima ao SQL Editor após revisão; este arquivo não duplica o SQL para evitar divergência.

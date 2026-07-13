@@ -2,10 +2,8 @@ import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useBrandSettings } from '../../contexts/BrandSettingsContext'
 import { useOptionalCollaborator } from '../../contexts/CollaboratorContext'
-import { useToast } from '../../contexts/ToastContext'
 import { useVisualMode } from '../../contexts/VisualModeContext'
 import { getVariantLogo } from '../../lib/cardVisualVariants'
-import { useCollaboratorCardActions } from '../../lib/collaboratorCardActions'
 import { isWalletPublicEnabled } from '../../lib/wallet'
 import WalletSupportModal from '../WalletSupportModal'
 import CollaboratorNavigation from './CollaboratorNavigation'
@@ -16,8 +14,7 @@ export default function CollaboratorLayout({ title, subtitle, children }: Props)
   const collaborator = useOptionalCollaborator()
   const { settings } = useBrandSettings()
   const { visualMode } = useVisualMode()
-  const toast = useToast()
-  const actions = useCollaboratorCardActions(collaborator?.card ?? null, toast)
+  const actions = collaborator?.actions
   const authenticated = Boolean(collaborator?.authenticated)
   return <main className="collaborator-shell">
     <header className="collaborator-topbar">
@@ -28,6 +25,6 @@ export default function CollaboratorLayout({ title, subtitle, children }: Props)
       {title ? <div className="collaborator-page-header"><div><p className="eyebrow">{authenticated ? 'Área do colaborador' : 'Invest RS'}</p><h1>{title}</h1>{subtitle ? <p>{subtitle}</p> : null}</div></div> : null}
       {children}
     </section>
-    {actions.walletModalOpen && collaborator?.card ? <WalletSupportModal slug={collaborator.card.slug} standby={!isWalletPublicEnabled()} onClose={actions.closeWalletModal} /> : null}
+    {actions?.walletModalOpen && collaborator?.card ? <WalletSupportModal slug={collaborator.card.slug} standby={!isWalletPublicEnabled()} onClose={actions.closeWalletModal} /> : null}
   </main>
 }

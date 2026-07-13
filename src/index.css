@@ -5240,6 +5240,173 @@ html.app-visual-mode-light .auth-page-card {
   }
 }
 
+/* Shared card variant field and administrative surface corrections. */
+.visual-mode-selector--compact .visual-mode-option.active {
+  border-color: currentColor;
+  box-shadow: 0 0 0 2px var(--variant-card-surface), 0 0 0 4px color-mix(in srgb, currentColor 62%, transparent), 0 8px 18px rgba(0, 0, 0, 0.2);
+  transform: scale(1.04);
+}
+
+.card-visual-variant-picker { display: grid; gap: 18px; }
+.card-visual-variant-picker section { display: grid; gap: 10px; }
+.card-visual-variant-picker h3 { margin: 0; font-size: 0.92rem; }
+.card-visual-variant-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.card-visual-variant-grid button { min-width: 0; padding: 8px; border: 1px solid var(--admin-border); border-radius: 14px; background: transparent; color: var(--admin-text); cursor: pointer; display: grid; gap: 8px; text-align: left; font: inherit; }
+.card-visual-variant-grid button:hover { background: color-mix(in srgb, var(--admin-text) 7%, transparent); }
+.card-visual-variant-grid button.active { border-color: var(--admin-text); box-shadow: 0 0 0 2px color-mix(in srgb, var(--admin-text) 22%, transparent); }
+.card-visual-variant-thumbnail { display: block; width: 100%; aspect-ratio: 1.55; border-radius: 9px; background: var(--variant-background); background-size: cover; background-position: center; overflow: hidden; }
+.card-visual-variant-thumbnail.has-image { background-image: linear-gradient(rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity)), rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity))), var(--public-card-variant-image); }
+.card-visual-variant-grid button > span:last-child { overflow-wrap: anywhere; font-size: 0.82rem; font-weight: 700; }
+
+.brand-settings-section { background: var(--variant-surface); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); }
+
+@media (min-width: 761px) {
+  .admin-table th, .admin-table td { border-bottom: 0; align-self: stretch; display: flex; align-items: center; }
+  .admin-table tr { border-bottom: 1px solid var(--admin-border); align-items: stretch; }
+  .admin-table thead tr { border-bottom-color: var(--admin-border); }
+  .admin-audit-table tr { grid-template-columns: minmax(175px, .76fr) minmax(220px, 1fr) minmax(320px, 1.65fr) minmax(64px, .32fr); }
+  .admin-users-table tr { grid-template-columns: minmax(230px, 1.75fr) minmax(110px, .72fr) minmax(110px, .72fr) minmax(160px, 1fr) minmax(64px, .35fr); }
+  .admin-table .admin-actions-cell { align-items: center; }
+}
+
+@media (max-width: 560px) {
+  .card-visual-variant-grid { grid-template-columns: 1fr; }
+}
+
+.admin-settings-area { display: grid; gap: 18px; margin-bottom: 32px; }
+.admin-settings-area > h2, .admin-settings-area-heading h2 { margin: 0; color: var(--admin-text); }
+.admin-settings-area-heading p { margin: 6px 0 0; color: var(--admin-muted); }
+.managed-pages-editor { display: grid; gap: 16px; }
+.managed-page-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.managed-page-tabs button { min-height: 42px; padding: 9px 14px; border: 1px solid var(--admin-border); border-radius: 12px; background: transparent; color: var(--admin-text); font: inherit; font-weight: 700; cursor: pointer; }
+.managed-page-tabs button.active { background: var(--admin-text); color: var(--variant-background); }
+.managed-page-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, .72fr); gap: 18px; align-items: start; }
+.managed-page-form textarea { width: 100%; min-height: 120px; resize: vertical; border: 1px solid var(--admin-border); border-radius: 13px; background: color-mix(in srgb, var(--variant-background) 88%, transparent); color: var(--admin-text); padding: 11px 13px; font: inherit; line-height: 1.55; }
+.managed-page-form fieldset { min-width: 0; display: grid; gap: 13px; padding: 16px; border: 1px solid var(--admin-border); border-radius: 15px; }
+.managed-page-form legend { padding-inline: 6px; color: var(--admin-text); font-weight: 750; }
+.managed-page-form label > small { justify-self: end; color: var(--admin-muted); font-weight: 500; }
+.managed-page-sections { display: grid; gap: 14px; }
+.managed-page-sections > h3 { margin: 0; }
+.managed-page-preview { position: sticky; top: 100px; max-height: calc(100dvh - 120px); overflow: auto; }
+.managed-page-preview > section { padding-block: 10px; border-top: 1px solid var(--admin-border); }
+.managed-page-preview p { line-height: 1.6; white-space: pre-wrap; }
+
+@media (max-width: 980px) { .managed-page-layout { grid-template-columns: 1fr; } .managed-page-preview { position: static; max-height: none; } }
+
+/* Final semantic token contract. Values are derived from the selected visual variant. */
+:root {
+  --semantic-text: #ffffff;
+  --semantic-muted: rgba(255, 255, 255, 0.72);
+  --semantic-subtle: rgba(255, 255, 255, 0.56);
+  --semantic-surface: rgba(17, 17, 17, 0.78);
+  --semantic-surface-solid: #111111;
+  --semantic-surface-raised: #111111;
+  --semantic-border: rgba(255, 255, 255, 0.16);
+  --semantic-input-bg: #0d0d0d;
+  --semantic-input-text: #ffffff;
+  --semantic-input-placeholder: rgba(255, 255, 255, 0.48);
+  --semantic-header-bg: rgba(17, 17, 17, 0.88);
+  --semantic-primary-bg: #f7f3eb;
+  --semantic-primary-text: #050505;
+  --semantic-secondary-bg: rgba(255, 255, 255, 0.07);
+  --semantic-secondary-text: #ffffff;
+  --semantic-focus: #9bbfff;
+  --semantic-modal-backdrop: rgba(0, 0, 0, 0.72);
+  --semantic-danger: #ff9b9b;
+  --semantic-success: #72d898;
+  --semantic-warning: #e0ad52;
+}
+
+html.app-visual-mode-dark,
+html.app-visual-mode-light {
+  --visual-page-text: var(--semantic-text);
+  --visual-page-muted: var(--semantic-muted);
+  --visual-card-surface: var(--semantic-surface);
+  --visual-card-border: var(--semantic-border);
+  --visual-action-color: var(--semantic-text);
+  --visual-action-muted: var(--semantic-muted);
+  --admin-header-bg: var(--semantic-header-bg);
+  --admin-nav-text: var(--semantic-muted);
+  --admin-nav-text-hover: var(--semantic-text);
+  --admin-nav-text-active: var(--semantic-text);
+  --admin-nav-border: var(--semantic-border);
+  --admin-primary-button-bg: var(--semantic-primary-bg);
+  --admin-primary-button-text: var(--semantic-primary-text);
+  --admin-secondary-button-text: var(--semantic-secondary-text);
+  --admin-danger-button-text: var(--semantic-danger);
+  --admin-text: var(--semantic-text);
+  --admin-muted: var(--semantic-muted);
+  --admin-subtle: var(--semantic-subtle);
+  --admin-table-heading: var(--semantic-muted);
+  --admin-border: var(--semantic-border);
+  --modal-backdrop: var(--semantic-modal-backdrop);
+  --modal-surface: var(--semantic-surface-raised);
+  --modal-surface-strong: var(--semantic-surface-solid);
+  --modal-text: var(--semantic-text);
+  --modal-muted: var(--semantic-muted);
+  --modal-border: var(--semantic-border);
+  --modal-input-bg: var(--semantic-input-bg);
+  --modal-input-text: var(--semantic-input-text);
+  --modal-input-placeholder: var(--semantic-input-placeholder);
+  --modal-secondary-bg: var(--semantic-secondary-bg);
+  --modal-secondary-text: var(--semantic-secondary-text);
+  --modal-primary-bg: var(--semantic-primary-bg);
+  --modal-primary-text: var(--semantic-primary-text);
+}
+
+:is(.admin-shell, .auth-page-shell, .employee-login-shell) :is(input, select, textarea),
+.admin-list-controls :is(input, select),
+.audit-filters :is(input, select) {
+  border-color: var(--semantic-border);
+  background: var(--semantic-input-bg);
+  color: var(--semantic-input-text);
+  caret-color: var(--semantic-input-text);
+}
+
+:is(.admin-shell, .auth-page-shell, .employee-login-shell) :is(input, textarea)::placeholder { color: var(--semantic-input-placeholder); }
+:is(.admin-shell, .auth-page-shell, .employee-login-shell) :is(input, select, textarea, button, a):focus-visible { outline-color: var(--semantic-focus); }
+
+.admin-login-shell,
+.auth-page-shell,
+.employee-login-shell { color: var(--semantic-text); background-color: var(--variant-background); }
+.admin-login-card,
+.auth-page-card,
+.admin-card,
+.admin-form-section,
+.admin-mobile-card { border-color: var(--semantic-border); background: var(--semantic-surface); color: var(--semantic-text); }
+.admin-topbar,
+.collaborator-topbar { border-color: var(--semantic-border); background: var(--semantic-header-bg); color: var(--semantic-text); }
+.brand-settings-section { border-color: var(--semantic-border); background: var(--semantic-surface-solid); color: var(--semantic-text); }
+.admin-actions-popover,
+.collaborator-more-popover,
+.visual-mode-popover { border-color: var(--semantic-border); background: var(--semantic-surface-raised); color: var(--semantic-text); }
+.primary-button { background: var(--semantic-primary-bg); color: var(--semantic-primary-text); }
+.secondary-button { border-color: var(--semantic-border); background: var(--semantic-secondary-bg); color: var(--semantic-secondary-text); }
+.admin-error { color: var(--semantic-danger); }
+.admin-success { color: var(--semantic-success); }
+.legal-document aside { border-color: var(--semantic-warning); background: color-mix(in srgb, var(--semantic-warning) 12%, var(--semantic-surface)); }
+
+.brand-preview { border-color: var(--semantic-border); color: var(--semantic-text); }
+.brand-preview-card { background: var(--semantic-surface); color: var(--semantic-text); }
+.brand-preview-card :is(p, span) { color: var(--semantic-muted); }
+.brand-preview-card button { border-color: var(--semantic-primary-bg); background: var(--semantic-primary-bg); color: var(--semantic-primary-text); }
+.brand-preview-card button + button { border-color: var(--semantic-border); background: var(--semantic-secondary-bg); color: var(--semantic-secondary-text); }
+
+html.app-visual-mode-dark .auth-page-card,
+html.app-visual-mode-light .auth-page-card { --auth-autofill-bg: var(--semantic-input-bg); --auth-autofill-text: var(--semantic-input-text); }
+html.app-visual-mode-dark .auth-form-field > label,
+html.app-visual-mode-light .auth-form-field > label { color: var(--semantic-text); }
+html.app-visual-mode-dark .password-input-field,
+html.app-visual-mode-light .password-input-field { border-color: var(--semantic-border); background: var(--semantic-input-bg); }
+html.app-visual-mode-dark .admin-login-card .password-input-field input,
+html.app-visual-mode-light .admin-login-card .password-input-field input { color: var(--semantic-input-text); }
+html.app-visual-mode-dark .password-visibility-button,
+html.app-visual-mode-light .password-visibility-button { color: var(--semantic-muted); }
+html.app-visual-mode-dark .password-visibility-button:hover,
+html.app-visual-mode-light .password-visibility-button:hover { color: var(--semantic-text); }
+html.app-visual-mode-dark .password-input-field:focus-within,
+html.app-visual-mode-light .password-input-field:focus-within { border-color: var(--semantic-focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--semantic-focus) 30%, transparent); }
+
 @media (max-height: 520px) {
   .confirmation-backdrop,
   .crop-modal-backdrop,

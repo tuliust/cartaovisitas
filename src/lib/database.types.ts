@@ -3,6 +3,12 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      managed_pages: {
+        Row: { id: string; page_key: string; route_path: string; title: string; subtitle: string | null; content: Json; visibility: 'public' | 'authenticated'; is_published: boolean; version_label: string | null; updated_by: string | null; created_at: string; updated_at: string }
+        Insert: { id?: string; page_key: string; route_path: string; title: string; subtitle?: string | null; content: Json; visibility: 'public' | 'authenticated'; is_published?: boolean; version_label?: string | null; updated_by?: string | null; created_at?: string; updated_at?: string }
+        Update: Partial<Database['public']['Tables']['managed_pages']['Insert']>
+        Relationships: [{ foreignKeyName: 'managed_pages_updated_by_fkey'; columns: ['updated_by']; isOneToOne: false; referencedRelation: 'users'; referencedColumns: ['id'] }]
+      }
       brand_settings: {
         Row: {
           id: string; singleton: boolean; logo_url: string | null; favicon_url: string | null; og_image_url: string | null;

@@ -1,5 +1,7 @@
 # 10 — Responsividade, acessibilidade e toasts
 
+Mudanças de rota retornam ao topo; hashes do Guia são preservados. Menus fecham por Escape, clique externo, scroll e resize e restauram o foco.
+
 ## Responsividade
 
 O header compartilhado do colaborador mantém ícones e nomes acessíveis entre

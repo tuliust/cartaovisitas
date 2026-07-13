@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useBrandSettings } from './BrandSettingsContext'
-import { getEffectiveVisualVariant, getVariantImage, getVariantSettings, isLightVisualVariant, publicVisualVariantOptions, type PublicVisualVariant } from '../lib/cardVisualVariants'
+import { getEffectiveVisualVariant, getVariantImage, getVariantSemanticTokens, getVariantSettings, isLightVisualVariant, publicVisualVariantOptions, type PublicVisualVariant } from '../lib/cardVisualVariants'
 import { VisualModeContext } from './VisualModeContext'
 
 export const VISUAL_MODE_STORAGE_KEY = 'invest-rs-public-visual-mode'
@@ -49,6 +49,7 @@ export function VisualModeProvider({ children }: { children: ReactNode }) {
     root.style.setProperty('--variant-overlay-color', isLightVisualVariant(visualMode) ? `rgba(255, 255, 255, ${tokens.background_overlay_opacity})` : `rgba(0, 0, 0, ${tokens.background_overlay_opacity})`)
     root.style.setProperty('--variant-card-surface', `color-mix(in srgb, ${tokens.surface_color} ${tokens.card_surface_opacity * 100}%, transparent)`)
     root.style.setProperty('--visual-card-surface', `color-mix(in srgb, ${tokens.surface_color} ${tokens.card_surface_opacity * 100}%, transparent)`)
+    Object.entries(getVariantSemanticTokens(settings, visualMode)).forEach(([name, value]) => root.style.setProperty(name, value))
   }, [settings, visualMode])
 
   const value = useMemo(() => ({ visualMode, setVisualMode, visualModeOptions: publicVisualVariantOptions, hasVisualModePreference }), [visualMode, setVisualMode, hasVisualModePreference])

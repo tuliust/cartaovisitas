@@ -4,6 +4,7 @@ import { getCurrentSession, signOut } from '../lib/auth'
 import type { AdminBusinessCard } from '../lib/adminCards'
 import { getFriendlyErrorMessage } from '../lib/errors'
 import { getMyCard } from '../lib/myCard'
+import { useCollaboratorCardActions } from '../lib/collaboratorCardActions'
 import { requireActiveUser } from '../lib/roles'
 import { useToast } from './ToastContext'
 import { CollaboratorContext } from './CollaboratorContext'
@@ -18,6 +19,7 @@ export function CollaboratorProvider({ children, required = true }: Collaborator
   const [authenticated, setAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
   const [redirect, setRedirect] = useState('')
+  const actions = useCollaboratorCardActions(card, toast)
 
   const refreshCard = useCallback(async () => {
     const nextCard = await getMyCard()
@@ -53,7 +55,7 @@ export function CollaboratorProvider({ children, required = true }: Collaborator
     return () => { mounted = false }
   }, [required, toast])
 
-  const value = useMemo(() => ({ card, loading, authenticated, refreshCard, logout }), [authenticated, card, loading, logout, refreshCard])
+  const value = useMemo(() => ({ card, loading, authenticated, actions, refreshCard, logout }), [actions, authenticated, card, loading, logout, refreshCard])
 
   if (redirect) return <Navigate to={redirect} replace state={{ from: location.pathname }} />
   if (loading) return <main className="admin-login-shell admin-state-shell"><div className="admin-login-card admin-state-card" role="status" aria-live="polite"><p className="admin-state-message">Verificando acesso...</p></div></main>

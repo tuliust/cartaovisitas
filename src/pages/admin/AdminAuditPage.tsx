@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Eye } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/admin/AdminLayout'
+import { AdminActionsMenu } from '../../components/admin/AdminActionsMenu'
 import { useToast } from '../../contexts/ToastContext'
 import { getCurrentSession } from '../../lib/auth'
 import { getAuditLogs, type AuditLog } from '../../lib/audit'
@@ -261,19 +262,10 @@ export default function AdminAuditPage() {
                         </td>
                         <td className="admin-audit-event-cell">
                           <strong>{presentation.title}</strong>
-                          <small>{presentation.context}</small>
+                          {presentation.context !== 'Identidade visual' ? <small>{presentation.context}</small> : null}
                         </td>
                         <td className="admin-actions-cell">
-                          <button
-                            className="secondary-button compact-button audit-detail-button"
-                            type="button"
-                            onClick={() => setDetail(log)}
-                            aria-label={`Ver detalhes de ${presentation.title}`}
-                            title="Ver detalhes"
-                          >
-                            <Eye aria-hidden="true" />
-                            <span>Ver detalhes</span>
-                          </button>
+                          <AdminActionsMenu label={`Ações de ${presentation.title}`} items={[{ label: 'Ver detalhes', icon: Eye, onSelect: () => setDetail(log) }]} />
                         </td>
                       </tr>
                     )
@@ -291,18 +283,10 @@ export default function AdminAuditPage() {
                     <div className="admin-mobile-card-heading">
                       <div className="admin-audit-event-cell">
                         <strong>{presentation.title}</strong>
-                        <small>{presentation.context}</small>
+                        {presentation.context !== 'Identidade visual' ? <small>{presentation.context}</small> : null}
                       </div>
 
-                      <button
-                        className="admin-actions-trigger"
-                        type="button"
-                        onClick={() => setDetail(log)}
-                        aria-label={`Ver detalhes de ${presentation.title}`}
-                        title="Ver detalhes"
-                      >
-                        <Eye aria-hidden="true" />
-                      </button>
+                      <AdminActionsMenu label={`Ações de ${presentation.title}`} items={[{ label: 'Ver detalhes', icon: Eye, onSelect: () => setDetail(log) }]} />
                     </div>
 
                     <dl className="admin-audit-mobile-meta">

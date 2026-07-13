@@ -60,7 +60,7 @@ export default function VisualModeSelector({ variant = 'default' }: VisualModeSe
             onClick={() => { setVisualMode(option.value); setOpen(false); window.requestAnimationFrame(() => triggerRef.current?.focus()) }}
           >
             <span className={`visual-mode-option-preview visual-mode-option-${option.value.replace(/_/g, '-')}${hasImage ? ' has-image' : ''} ${getVariantClassName(settings, option.value)}`} style={getVariantStyle(settings, option.value)} aria-hidden="true">
-              {active ? <span className="visual-mode-option-check"><Check size={13} /></span> : null}
+              {active && !compact ? <span className="visual-mode-option-check"><Check size={13} /></span> : null}
             </span>
           </button>
         })}

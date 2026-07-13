@@ -1,5 +1,7 @@
 # 09 — Identidade visual, design e layout
 
+O seletor do formulário controla somente `public_visual_variant`. Superfícies administrativas de configuração são opacas e independem de `card_surface_opacity`.
+
 ## Princípio
 
 O sistema usa identidade institucional controlada. O colaborador não pode fazer upload de fundo próprio nem criar temas livres.

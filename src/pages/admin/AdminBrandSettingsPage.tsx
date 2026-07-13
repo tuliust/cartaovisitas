@@ -19,6 +19,7 @@ import { useNavigate } from 'react-router-dom'
 import { useToast } from '../../contexts/ToastContext'
 import { recordAuditLog } from '../../lib/audit'
 import { getVariantClassName, getVariantLogo, getVariantStyle, publicVisualVariantOptions, type PublicVisualVariant } from '../../lib/cardVisualVariants'
+import { ManagedPagesEditor } from '../../components/admin/ManagedPagesEditor'
 
 type ColorKey = 'primary_color' | 'secondary_color' | 'background_color' | 'surface_color' | 'text_color'
 type AssetUrlKey = 'favicon_url' | 'og_image_url' | 'background_image_url' | 'apple_touch_icon_url' | 'logo_on_dark_url' | 'logo_on_light_url' | 'card_bg_dark_image_1_url' | 'card_bg_dark_image_2_url' | 'card_bg_light_image_3_url' | 'card_bg_light_image_4_url'
@@ -64,7 +65,6 @@ export default function AdminBrandSettingsPage() {
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState<BrandAssetType | ''>('')
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const [activeVariant, setActiveVariant] = useState<PublicVisualVariant>('dark_black')
 
   useEffect(() => {
@@ -80,18 +80,16 @@ export default function AdminBrandSettingsPage() {
 
   function update<K extends keyof BrandSettings>(key: K, value: BrandSettings[K]) {
     setValues((current) => ({ ...current, [key]: value }))
-    setSuccess('')
   }
 
   function updateVariant<K extends keyof VisualVariantSettings>(key: K, value: VisualVariantSettings[K]) {
     setValues((current) => ({ ...current, visual_variant_settings: { ...current.visual_variant_settings, [activeVariant]: { ...current.visual_variant_settings[activeVariant], [key]: value } } }))
-    setSuccess('')
   }
 
   async function upload(event: ChangeEvent<HTMLInputElement>, type: BrandAssetType, key: AssetUrlKey) {
     const file = event.target.files?.[0]
     if (!file) return
-    setUploading(type); setError(''); setSuccess('')
+    setUploading(type); setError('')
     try {
       if (file.type === 'image/png' && (type === 'favicon' || type === 'apple-touch-icon')) { const dimensions = await getImageDimensions(file); if (dimensions.width !== dimensions.height) toast.info('Recomendamos uma imagem quadrada para este ícone.'); else if (type === 'apple-touch-icon' && (dimensions.width !== 180 || dimensions.height !== 180)) toast.info('O tamanho recomendado para o Ícone Apple Touch é 180 × 180 px.') }
       const url = await uploadBrandAsset(file, type); update(key, url); await recordAuditLog({ action: 'brand_asset_uploaded', targetType: 'brand_settings', targetLabel: type, afterData: { type, url } }); toast.success('Imagem enviada com sucesso. Salve as configurações para aplicar.')
@@ -108,7 +106,7 @@ export default function AdminBrandSettingsPage() {
     const appleTouchTitle = values.apple_touch_title.replace(/[\r\n]+/g, ' ').trim()
     if (!browserTitle || browserTitle.length > 100 || /[<>]/.test(browserTitle) || !appleTouchTitle || appleTouchTitle.length > 40 || /[<>]/.test(appleTouchTitle)) { const message = 'Revise os títulos: não use HTML ou quebras de linha e respeite os limites informados.'; setError(message); toast.error(message); return }
     const valuesToSave = { ...values, browser_title: browserTitle, apple_touch_title: appleTouchTitle }
-    setSaving(true); setError(''); setSuccess('')
+    setSaving(true); setError('')
     try {
       const previousValues = savedValues
       const changedFields = getChangedBrandFields(previousValues, valuesToSave)
@@ -127,7 +125,7 @@ export default function AdminBrandSettingsPage() {
       }
 
       const message = 'Identidade visual atualizada com sucesso.'
-      setValues(saved); setSavedValues(saved); setSettings(saved); setSuccess(message); toast.success(message)
+      setValues(saved); setSavedValues(saved); setSettings(saved); toast.success(message)
     } catch (saveError) { const message = getFriendlyErrorMessage(saveError); setError(message); toast.error(message) }
     finally { setSaving(false) }
   }
@@ -140,8 +138,7 @@ export default function AdminBrandSettingsPage() {
   return (
     <AdminLayout title="Configurações" subtitle="Gerencie os assets e as cores da identidade visual do sistema.">
       {error ? <p className="admin-error" role="alert">{error}</p> : null}
-      {success ? <p className="admin-success" role="status">{success}</p> : null}
-      <div className="brand-settings-grid">
+      <section className="admin-settings-area" aria-labelledby="visual-settings-title"><h2 id="visual-settings-title">Identidade visual</h2><div className="brand-settings-grid">
         <div className="brand-settings-form">
           <section className="brand-settings-section">
             <h2>Metadados do site</h2>
@@ -209,8 +206,9 @@ export default function AdminBrandSettingsPage() {
           <img src={getVariantLogo(values, activeVariant)} alt="Invest RS" />
           <div className="brand-preview-card"><p>Cartão institucional</p><h2>Identidade Invest RS</h2><span>Texto de exemplo para conferir contraste e legibilidade.</span><div><button type="button">Botão primário</button><button type="button">Secundário</button></div></div>
         </aside>
-      </div>
+      </div></section>
       <div className="brand-settings-actions"><button className="primary-button" type="button" disabled={saving || Boolean(uploading)} onClick={() => void save()}>{uploading ? 'Enviando asset...' : saving ? 'Salvando...' : 'Salvar configurações'}</button></div>
+      <section className="admin-settings-area" aria-labelledby="managed-pages-title"><div className="admin-settings-area-heading"><h2 id="managed-pages-title">Conteúdo das páginas</h2><p>Edite textos institucionais estruturados sem inserir HTML.</p></div><ManagedPagesEditor /></section>
     </AdminLayout>
   )
 }

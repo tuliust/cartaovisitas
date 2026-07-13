@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import type { AdminBusinessCard } from './adminCards'
 import { recordCardEvent } from './cards'
 import { downloadQrCodePng } from './qrcode'
@@ -12,14 +12,16 @@ function downloadBlob(blob: Blob, filename: string) { const url = URL.createObje
 export function useCollaboratorCardActions(card: AdminBusinessCard | null, notify: { success: (message: string) => void; error: (message: string) => void; info: (message: string) => void }) {
   const [running, setRunning] = useState<CollaboratorAction | null>(null)
   const [walletModalOpen, setWalletModalOpen] = useState(false)
+  const runningRef = useRef(false)
   const vcardUrl = useMemo(() => card ? `${baseUrl()}/api/vcard/${encodeURIComponent(card.slug)}?lang=pt` : '', [card])
   const qrUrl = useMemo(() => card ? `${baseUrl()}/qr/${encodeURIComponent(card.slug)}?lang=pt` : '', [card])
 
   const run = useCallback(async (action: CollaboratorAction, task: () => Promise<void>) => {
-    if (!card || running) return
+    if (!card || runningRef.current) return
+    runningRef.current = true
     setRunning(action)
-    try { await task() } finally { setRunning(null) }
-  }, [card, running])
+    try { await task() } finally { runningRef.current = false; setRunning(null) }
+  }, [card])
 
   const copyVCard = useCallback(() => run('copy-vcard', async () => {
     try { await navigator.clipboard.writeText(vcardUrl); notify.success('URL do vCard copiada.'); if (card) void recordCardEvent(card.id, 'vcard') }

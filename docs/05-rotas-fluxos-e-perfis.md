@@ -1,5 +1,7 @@
 # 05 — Rotas, fluxos e perfis
 
+Termos e Guia consultam `managed_pages` e usam conteúdo local como fallback. A terceira página editorial permanece pendente; nenhuma rota foi criada para ela.
+
 ## Perfis
 
 > Atualização: a interface React `/:slug` pertence à área privada do proprietário.

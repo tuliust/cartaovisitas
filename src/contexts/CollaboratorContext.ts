@@ -1,10 +1,12 @@
 import { createContext, useContext } from 'react'
 import type { AdminBusinessCard } from '../lib/adminCards'
+import type { CollaboratorCardActions } from '../lib/collaboratorCardActions'
 
 export type CollaboratorContextValue = {
   card: AdminBusinessCard | null
   loading: boolean
   authenticated: boolean
+  actions: CollaboratorCardActions
   refreshCard: () => Promise<AdminBusinessCard | null>
   logout: () => Promise<void>
 }

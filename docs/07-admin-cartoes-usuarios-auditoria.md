@@ -1,5 +1,7 @@
 # 07 — Admin: cartões, usuários e auditoria
 
+Páginas gerenciadas registram atualização, publicação, despublicação e restauração com target `managed_page`, campos alterados e estados anterior/posterior.
+
 ## Menu administrativo
 
 - Cartões

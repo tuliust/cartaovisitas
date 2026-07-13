@@ -9,7 +9,8 @@ import { checkSlugAvailability } from '../../lib/cardsValidation'
 import ImageCropModal from './ImageCropModal'
 import { useToast } from '../../contexts/ToastContext'
 import { useBrandSettings } from '../../contexts/BrandSettingsContext'
-import { getVariantImage, publicVisualVariantOptions } from '../../lib/cardVisualVariants'
+import { getVariantImage } from '../../lib/cardVisualVariants'
+import { CardVisualVariantPicker } from './CardVisualVariantPicker'
 
 type Language = 'pt' | 'es' | 'en'
 type CardFormProps = {
@@ -175,7 +176,7 @@ export default function CardForm({
       <section className="admin-form-section admin-card-form-section">
         <h2>Visual do cartão</h2>
         <p className="field-help">Escolha uma das seis variações institucionais aprovadas.</p>
-        <label>Visual do cartão<select value={values.public_visual_variant} onChange={(event) => updateField('public_visual_variant', event.target.value as CardFormValues['public_visual_variant'])}>{publicVisualVariantOptions.map((option) => <option value={option.value} key={option.value}>{option.label}</option>)}</select></label>
+        <CardVisualVariantPicker value={values.public_visual_variant} onChange={(variant) => updateField('public_visual_variant', variant)} />
         {values.public_visual_variant.includes('image') && !getVariantImage(settings, values.public_visual_variant) ? <p className="visual-variant-warning">Imagem institucional ainda não configurada. Será usado o fallback.</p> : null}
       </section>
 

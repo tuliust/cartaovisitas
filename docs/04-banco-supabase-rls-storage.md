@@ -2,6 +2,8 @@
 
 ## Bootstrap de ambiente novo
 
+`managed_pages` armazena conteúdo editorial estruturado. Publicações públicas são legíveis por `anon`; publicações autenticadas exigem sessão; escrita é exclusiva de `public.is_admin()`. O frontend mantém fallback local normalizado.
+
 O bootstrap deve ser revisado e executado manualmente, nesta sequência:
 
 1. Executar `supabase-base-schema.sql`.
