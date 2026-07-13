@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent, type RefObject } from 'react'
 import { type CardFormValues, normalizeSlug } from '../../lib/adminCards'
 import { getFriendlyErrorMessage } from '../../lib/errors'
 import { buildInvestEmail, getInvestEmailPrefix, INVEST_EMAIL_DOMAIN, normalizeInvestEmailInput } from '../../lib/investEmail'
@@ -26,6 +26,8 @@ type CardFormProps = {
   allowAvatarUpload?: boolean
   lockInstitutionalFields?: boolean
   currentCardId?: string
+  onPreview?: () => void
+  previewButtonRef?: RefObject<HTMLButtonElement | null>
 }
 
 type SlugAvailability = 'idle' | 'checking' | 'available' | 'unavailable' | 'error'
@@ -46,6 +48,8 @@ export default function CardForm({
   allowAvatarUpload = true,
   lockInstitutionalFields = mode === 'employee',
   currentCardId,
+  onPreview,
+  previewButtonRef,
 }: CardFormProps) {
   const toast = useToast()
   const { settings } = useBrandSettings()
@@ -211,7 +215,7 @@ export default function CardForm({
         {allowLogoUpload ? <><label>URL do logo<input type="url" value={values.logo_url} onChange={(event) => updateField('logo_url', event.target.value)} /></label><label>Enviar logo<input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onChange={(event) => { const file = event.target.files?.[0]; if (file) void uploadImage('logo', file) }} /></label>{values.logo_url ? <img className="asset-preview logo" src={values.logo_url} alt="Prévia do logo" /> : null}</> : null}
         {uploading ? <p className="admin-muted">Enviando {uploading === 'avatar' ? 'foto' : 'logo'}...</p> : null}{uploadError ? <p className="admin-error">{uploadError}</p> : null}
       </section>
-      <div className="admin-form-actions admin-card-form-actions"><button className="primary-button" type="submit" disabled={loading || validatingSlugOnSubmit || Boolean(uploading) || requiredMissing || slugAvailability === 'unavailable'}>{validatingSlugOnSubmit ? 'Verificando...' : loading ? 'Salvando...' : submitLabel}</button></div>
+      <div className="admin-form-actions admin-card-form-actions"><button className="primary-button" type="submit" disabled={loading || validatingSlugOnSubmit || Boolean(uploading) || requiredMissing || slugAvailability === 'unavailable'}>{validatingSlugOnSubmit ? 'Verificando...' : loading ? 'Salvando...' : submitLabel}</button>{onPreview ? <button className="secondary-button mobile-preview-button" type="button" onClick={onPreview} ref={previewButtonRef}>Ver Preview</button> : null}</div>
     </form>
     {avatarToCrop ? <ImageCropModal file={avatarToCrop} onCancel={() => setAvatarToCrop(null)} onConfirm={async (file) => { if (!(await uploadImage('avatar', file))) throw new Error('Não foi possível enviar a foto. Tente novamente.') }} /> : null}
   </>

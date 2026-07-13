@@ -44,8 +44,24 @@ export default function VisualModeSelector({ variant = 'default' }: VisualModeSe
     </button>
 
     {open ? <section className="visual-mode-popover" role="dialog" aria-label="Escolha o visual">
-      {(['dark', 'light'] as const).map((group) => <div className="visual-mode-group" key={group}>
-      {!compact ? <p>{group === 'dark' ? 'Modo Escuro' : 'Modo Claro'}</p> : null}
+      {compact ? <div className="visual-mode-grid">
+        {visualModeOptions.map((option) => {
+          const hasImage = Boolean(getVariantImage(settings, option.value))
+          const active = visualMode === option.value
+          return <button
+            className={`visual-mode-option${active ? ' active' : ''}`}
+            type="button"
+            aria-label={`Usar visual: ${option.label}`}
+            title={option.label}
+            aria-pressed={active}
+            key={option.value}
+            onClick={() => { setVisualMode(option.value); setOpen(false) }}
+          >
+            <span className={`visual-mode-option-preview visual-mode-option-${option.value.replace(/_/g, '-')}${hasImage ? ' has-image' : ''} ${getVariantClassName(settings, option.value)}`} style={getVariantStyle(settings, option.value)} aria-hidden="true" />
+          </button>
+        })}
+      </div> : (['dark', 'light'] as const).map((group) => <div className="visual-mode-group" key={group}>
+      <p>{group === 'dark' ? 'Modo Escuro' : 'Modo Claro'}</p>
       <div className="visual-mode-grid">
         {visualModeOptions.filter(({ value }) => value.startsWith(`${group}_`)).map((option) => {
           const hasImage = Boolean(getVariantImage(settings, option.value))
@@ -57,10 +73,10 @@ export default function VisualModeSelector({ variant = 'default' }: VisualModeSe
             title={option.label}
             aria-pressed={active}
             key={option.value}
-            onClick={() => { setVisualMode(option.value); setOpen(false); window.requestAnimationFrame(() => triggerRef.current?.focus()) }}
+            onClick={() => { setVisualMode(option.value); setOpen(false) }}
           >
             <span className={`visual-mode-option-preview visual-mode-option-${option.value.replace(/_/g, '-')}${hasImage ? ' has-image' : ''} ${getVariantClassName(settings, option.value)}`} style={getVariantStyle(settings, option.value)} aria-hidden="true">
-              {active && !compact ? <span className="visual-mode-option-check"><Check size={13} /></span> : null}
+              {active ? <span className="visual-mode-option-check"><Check size={13} /></span> : null}
             </span>
           </button>
         })}

@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import CardForm from '../components/admin/CardForm'
 import CardPreview from '../components/admin/CardPreview'
+import CardPreviewModal from '../components/admin/CardPreviewModal'
 import CollaboratorLayout from '../components/collaborator/CollaboratorLayout'
 import { useCollaborator } from '../contexts/CollaboratorContext'
 import { useToast } from '../contexts/ToastContext'
@@ -17,6 +18,8 @@ export default function MyCardEditPage() {
   const [cardId, setCardId] = useState(card?.id ?? '')
   const [values, setValues] = useState<CardFormValues>({ ...defaultCardFormValues })
   const [preview, setPreview] = useState<CardFormValues>({ ...defaultCardFormValues })
+  const [previewOpen, setPreviewOpen] = useState(false)
+  const previewButtonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     let mounted = true
@@ -44,9 +47,12 @@ export default function MyCardEditPage() {
     {booting ? <div className="state-card" role="status">Carregando formulário...</div> : <>
       {error ? <p className="admin-error" role="alert">{error}</p> : null}
       <div className="admin-form-preview-layout collaborator-card-layout">
-        <CardForm initialValues={values} submitLabel="Salvar alterações" loading={saving} currentCardId={cardId || undefined} onChange={setPreview} onSubmit={save} mode="employee" lockedEmail={values.email} allowStatusEdit={false} allowLogoUpload={false} allowAvatarUpload lockInstitutionalFields />
-        <CardPreview values={preview} />
+        <CardForm initialValues={values} submitLabel="Salvar alterações" loading={saving} currentCardId={cardId || undefined} onChange={setPreview} onSubmit={save} mode="employee" lockedEmail={values.email} allowStatusEdit={false} allowLogoUpload={false} allowAvatarUpload lockInstitutionalFields onPreview={() => setPreviewOpen(true)} previewButtonRef={previewButtonRef} />
+        <div className="desktop-card-preview">
+          <CardPreview values={preview} />
+        </div>
       </div>
+      {previewOpen ? <CardPreviewModal values={preview} onClose={() => setPreviewOpen(false)} returnFocusRef={previewButtonRef} /> : null}
     </>}
   </CollaboratorLayout>
 }

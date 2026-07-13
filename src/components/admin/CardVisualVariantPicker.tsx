@@ -10,7 +10,6 @@ export function CardVisualVariantPicker({ value, onChange }: CardVisualVariantPi
       <div className="card-visual-variant-grid">
         {publicVisualVariantOptions.filter((option) => option.value.startsWith(`${group}_`)).map((option) => <button key={option.value} type="button" className={value === option.value ? 'active' : ''} aria-label={`Selecionar visual: ${option.label}`} aria-pressed={value === option.value} title={option.label} onClick={() => onChange(option.value)}>
           <VisualVariantThumbnail variant={option.value} selected={value === option.value} />
-          <span>{option.label}</span>
         </button>)}
       </div>
     </section>)}

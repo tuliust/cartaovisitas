@@ -73,10 +73,6 @@ export default function RegisterPage() {
         />
 
         <h1 className="auth-page-title">Cadastro</h1>
-        <p className="auth-page-description">
-          Crie seu acesso com o e-mail institucional da Invest RS.
-        </p>
-
         <form className="auth-page-form" onSubmit={submit}>
           <label>
             E-mail institucional
