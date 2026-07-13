@@ -7090,6 +7090,34 @@ html.app-visual-mode-light .password-input-field:focus-within { border-color: va
   line-height: 1.72;
 }
 
+@media (min-width: 861px) {
+  .guide-index {
+    top: 0;
+    width: 100%;
+    height: 100dvh;
+    max-height: none;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .guide-index-heading {
+    flex: 0 0 auto;
+  }
+
+  .guide-index ol {
+    flex: 1 1 auto;
+    min-height: 0;
+    grid-auto-rows: minmax(0, 1fr);
+    align-content: stretch;
+  }
+
+  .guide-index li,
+  .guide-index a {
+    height: 100%;
+  }
+}
+
 @media (max-width: 860px) {
   .guide-layout {
     grid-template-columns: minmax(0, 1fr);
