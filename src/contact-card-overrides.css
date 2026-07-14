@@ -1,4 +1,4 @@
-/* Contact typography and icon alignment for the main collaborator card. */
+/* Contact typography, icon alignment and proportion adjustments for the main collaborator card. */
 .collaborator-own-card .public-card-contact-list :is(a, p) {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -26,4 +26,66 @@
   height: 28px;
   flex: 0 0 28px;
   margin: 0;
+}
+
+/* Lift the identity and contact blocks to use the card's vertical space better. */
+.collaborator-own-card .card-main,
+.collaborator-own-card .card-footer {
+  transform: translateY(-22px);
+}
+
+/* Give the portrait and embedded-contact QR greater visual prominence. */
+.collaborator-own-card .public-card-avatar-wrapper {
+  width: 154px;
+  height: 154px;
+  flex: 0 0 154px;
+}
+
+.collaborator-own-card .public-card-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.collaborator-own-card .qr-code {
+  width: 138px;
+  height: 138px;
+  padding: 8px;
+}
+
+@media (max-width: 760px) {
+  .collaborator-own-card .card-main,
+  .collaborator-own-card .card-footer {
+    transform: translateY(-30px);
+  }
+
+  .collaborator-own-card .public-card-avatar-wrapper {
+    width: 150px;
+    height: 150px;
+    flex-basis: 150px;
+  }
+
+  .collaborator-own-card .qr-code {
+    width: 126px;
+    height: 126px;
+    padding: 7px;
+  }
+}
+
+@media (max-width: 380px) {
+  .collaborator-own-card .card-main,
+  .collaborator-own-card .card-footer {
+    transform: translateY(-20px);
+  }
+
+  .collaborator-own-card .public-card-avatar-wrapper {
+    width: 132px;
+    height: 132px;
+    flex-basis: 132px;
+  }
+
+  .collaborator-own-card .qr-code {
+    width: 112px;
+    height: 112px;
+  }
 }
