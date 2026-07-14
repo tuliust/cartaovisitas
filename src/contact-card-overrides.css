@@ -1,20 +1,26 @@
 /* Contact typography, icon alignment and proportion adjustments for the main collaborator card. */
 .collaborator-own-card .public-card-contact-list :is(a, p) {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: start;
+  grid-template-columns: 28px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 8px;
   row-gap: 5px;
   margin: 0;
   font-size: 16px;
-  line-height: 1.45;
+  line-height: 1.35;
   text-align: left;
 }
 
+/* Flatten the label wrapper so icon, label and value share the same two-row grid. */
 .collaborator-own-card .public-card-contact-list .contact-label {
-  display: inline-flex;
+  display: contents;
+}
+
+.collaborator-own-card .public-card-contact-list .contact-label-text {
+  grid-column: 2;
+  grid-row: 1;
   width: fit-content;
-  align-items: center;
-  gap: 6px;
   margin: 0;
   font-size: 12px;
   line-height: 1;
@@ -22,16 +28,28 @@
 }
 
 .collaborator-own-card .public-card-contact-list .contact-label svg {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  align-self: stretch;
   width: 28px;
-  height: 28px;
-  flex: 0 0 28px;
+  height: 100%;
+  min-height: 38px;
+  max-height: 46px;
   margin: 0;
 }
 
-/* Lift the identity and contact blocks to use the card's vertical space better. */
+/* Lift the identity and contact blocks further to use the card's upper space. */
 .collaborator-own-card .card-main,
 .collaborator-own-card .card-footer {
-  transform: translateY(-22px);
+  transform: translateY(-52px);
+}
+
+/* Keep the QR aligned with the first contact row. */
+.collaborator-own-card .card-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 24px;
 }
 
 /* Give the portrait and embedded-contact QR greater visual prominence. */
@@ -48,15 +66,20 @@
 }
 
 .collaborator-own-card .qr-code {
-  width: 138px;
-  height: 138px;
-  padding: 8px;
+  width: 190px;
+  height: 190px;
+  align-self: start;
+  padding: 9px;
 }
 
 @media (max-width: 760px) {
   .collaborator-own-card .card-main,
   .collaborator-own-card .card-footer {
-    transform: translateY(-30px);
+    transform: translateY(-56px);
+  }
+
+  .collaborator-own-card .card-footer {
+    gap: 14px;
   }
 
   .collaborator-own-card .public-card-avatar-wrapper {
@@ -66,16 +89,39 @@
   }
 
   .collaborator-own-card .qr-code {
-    width: 126px;
-    height: 126px;
-    padding: 7px;
+    width: clamp(158px, 28vw, 180px);
+    height: clamp(158px, 28vw, 180px);
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .collaborator-own-card .card-main,
+  .collaborator-own-card .card-footer {
+    transform: translateY(-42px);
+  }
+
+  .collaborator-own-card .public-card-contact-list :is(a, p) {
+    grid-template-columns: 25px minmax(0, 1fr);
+    column-gap: 7px;
+  }
+
+  .collaborator-own-card .public-card-contact-list .contact-label svg {
+    width: 25px;
+    min-height: 34px;
+    max-height: 42px;
+  }
+
+  .collaborator-own-card .qr-code {
+    width: clamp(132px, 35vw, 158px);
+    height: clamp(132px, 35vw, 158px);
   }
 }
 
 @media (max-width: 380px) {
   .collaborator-own-card .card-main,
   .collaborator-own-card .card-footer {
-    transform: translateY(-20px);
+    transform: translateY(-32px);
   }
 
   .collaborator-own-card .public-card-avatar-wrapper {
@@ -85,7 +131,7 @@
   }
 
   .collaborator-own-card .qr-code {
-    width: 112px;
-    height: 112px;
+    width: 124px;
+    height: 124px;
   }
 }
