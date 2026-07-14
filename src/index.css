@@ -5637,6 +5637,335 @@ html.app-visual-mode-light .auth-page-card {
   }
 }
 
+/* Guide discovery, active topic and authenticated account menu. */
+.guide-search {
+  position: relative;
+  width: min(620px, 100%);
+  margin-top: 18px;
+}
+
+.guide-search > label {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid var(--semantic-border);
+  border-radius: 14px;
+  background: var(--semantic-surface-raised);
+  color: var(--semantic-muted);
+}
+
+.guide-search > label:focus-within {
+  border-color: var(--semantic-focus);
+  outline: 3px solid color-mix(in srgb, var(--semantic-focus) 28%, transparent);
+}
+
+.guide-search > label svg {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 auto;
+}
+
+.guide-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--semantic-text);
+  font: inherit;
+}
+
+.guide-search-suggestions {
+  position: absolute;
+  z-index: 35;
+  top: calc(100% + 8px);
+  right: 0;
+  left: 0;
+  display: grid;
+  gap: 3px;
+  padding: 8px;
+  border: 1px solid var(--semantic-border);
+  border-radius: 14px;
+  background: var(--semantic-surface-solid);
+  box-shadow: 0 20px 54px rgb(0 0 0 / 0.28);
+}
+
+.guide-search-suggestions button {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--semantic-text);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+}
+
+.guide-search-suggestions button:hover,
+.guide-search-suggestions button:focus-visible {
+  background: var(--semantic-secondary-bg);
+}
+
+.guide-search-suggestions button svg {
+  width: 17px;
+  height: 17px;
+  color: var(--semantic-primary-bg);
+}
+
+.guide-search-suggestions p {
+  margin: 0;
+  padding: 10px;
+}
+
+.guide-index a.active {
+  border-color: var(--semantic-border);
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-text);
+}
+
+.guide-index a.active > svg {
+  color: var(--semantic-primary-bg);
+  stroke-width: 2.35;
+}
+
+.collaborator-account-menu {
+  position: relative;
+}
+
+.collaborator-account-trigger {
+  width: 44px;
+  height: 44px;
+  display: inline-grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 2px;
+  border: 1px solid var(--admin-nav-border);
+  border-radius: 999px;
+  background: var(--semantic-primary-bg);
+  color: var(--semantic-primary-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.collaborator-account-trigger img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.collaborator-account-trigger svg {
+  width: 20px;
+  height: 20px;
+}
+
+.collaborator-account-trigger:focus-visible {
+  outline: 3px solid var(--semantic-focus);
+  outline-offset: 2px;
+}
+
+.collaborator-account-popover {
+  position: absolute;
+  z-index: 80;
+  top: calc(100% + 9px);
+  right: 0;
+  width: 220px;
+  display: grid;
+  gap: 3px;
+  padding: 9px;
+  border: 1px solid var(--semantic-border);
+  border-radius: 14px;
+  background: var(--semantic-surface-solid);
+  color: var(--semantic-text);
+  box-shadow: 0 20px 54px rgb(0 0 0 / 0.28);
+}
+
+.collaborator-account-popover > strong {
+  padding: 8px 10px 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.collaborator-account-popover :is(a, button) {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  text-decoration: none;
+}
+
+.collaborator-account-popover :is(a, button):hover,
+.collaborator-account-popover :is(a, button):focus-visible {
+  background: var(--semantic-secondary-bg);
+}
+
+.collaborator-account-popover svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* Batch user registration modal. */
+.invite-user-modal {
+  width: min(760px, calc(100vw - 28px));
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+}
+
+.invite-user-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.invite-user-row {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--modal-border);
+  border-radius: 14px;
+}
+
+.invite-user-row legend,
+.invite-delivery-options legend {
+  padding-inline: 6px;
+  color: var(--modal-text);
+  font-weight: 800;
+}
+
+.invite-user-modal .invite-user-row label,
+.invite-user-modal .invite-delivery-options label {
+  margin-top: 0;
+}
+
+.invite-user-row label {
+  position: relative;
+}
+
+.invite-user-row label > small {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.invite-user-row-columns {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.invite-remove-user {
+  position: absolute;
+  top: -13px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--modal-border);
+  border-radius: 999px;
+  background: var(--modal-surface);
+  color: var(--modal-text);
+  cursor: pointer;
+}
+
+.invite-remove-user svg,
+.invite-add-user svg {
+  width: 16px;
+  height: 16px;
+}
+
+.invite-add-user {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px 13px;
+  border: 1px dashed var(--modal-border);
+  border-radius: 11px;
+  background: transparent;
+  color: var(--modal-text);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.invite-delivery-options {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid var(--modal-border);
+  border-radius: 14px;
+}
+
+.invite-user-modal .invite-delivery-options label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.invite-user-modal .invite-delivery-options label:has(input:checked) {
+  background: color-mix(in srgb, var(--modal-text) 8%, transparent);
+}
+
+.invite-user-modal .invite-delivery-options input {
+  width: 18px;
+  min-height: 18px;
+  margin-top: 2px;
+  padding: 0;
+}
+
+.invite-delivery-options span {
+  display: grid;
+  gap: 3px;
+}
+
+.invite-delivery-options small {
+  font-weight: 500;
+}
+
+@media (max-width: 560px) {
+  .collaborator-account-trigger {
+    width: 34px;
+    height: 34px;
+  }
+
+  .guide-search {
+    margin-top: 14px;
+  }
+
+  .invite-user-row-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-height: 620px) {
   .home-panel {
     min-height: auto;
@@ -7893,5 +8222,77 @@ html.app-visual-mode-light .auth-page-card .email-suffix-label {
   .public-card-initial-actions :is(a, button) {
     width: 31px;
     height: 31px;
+  }
+}
+
+/* Card contact alignment and persistent visual preference. */
+.collaborator-own-card .person-block h1 {
+  margin-bottom: 18px;
+  transform: translateY(-8px);
+}
+
+.card-preview-person h2 {
+  margin-bottom: 18px;
+  transform: translateY(-6px);
+}
+
+.contact-label,
+.card-preview-contact-label {
+  align-items: center;
+  gap: 14px;
+  line-height: 1;
+}
+
+.contact-label svg,
+.card-preview-contact-label svg {
+  flex: 0 0 auto;
+  margin-right: 0;
+}
+
+.public-card-contact-list a:hover,
+.public-card-contact-list a:focus-visible,
+.card-preview-contact-list a:hover,
+.card-preview-contact-list a:focus-visible {
+  text-decoration: none;
+}
+
+.collaborator-own-card .extra-functions {
+  margin-top: auto;
+}
+
+.visual-mode-default-option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 12px;
+  padding: 12px 4px 2px;
+  border-top: 1px solid var(--semantic-border);
+  color: var(--semantic-text);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.visual-mode-default-option input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: var(--semantic-primary-bg);
+}
+
+.visual-mode-selector--compact .visual-mode-popover {
+  width: 210px;
+}
+
+@media (max-width: 560px) {
+  .collaborator-own-card .person-block h1 {
+    margin-bottom: 14px;
+    transform: translateY(-4px);
+  }
+
+  .card-preview-person h2 {
+    margin-bottom: 14px;
+    transform: translateY(-4px);
   }
 }

@@ -4,6 +4,7 @@ import { getEffectiveVisualVariant, getVariantImage, getVariantSemanticTokens, g
 import { VisualModeContext } from './VisualModeContext'
 
 export const VISUAL_MODE_STORAGE_KEY = 'invest-rs-public-visual-mode'
+const VISUAL_MODE_SESSION_KEY = 'invest-rs-public-visual-mode-session'
 const AUTHENTICATED_VISUAL_SESSION_KEY = 'invest-rs-authenticated-visual-session'
 
 const validModes = new Set<PublicVisualVariant>(publicVisualVariantOptions.map(({ value }) => value))
@@ -15,27 +16,43 @@ function readStoredMode() {
   return null
 }
 
+function readSessionMode() {
+  const stored = window.sessionStorage.getItem(VISUAL_MODE_SESSION_KEY)
+  if (stored && validModes.has(stored as PublicVisualVariant)) return stored as PublicVisualVariant
+  if (stored) window.sessionStorage.removeItem(VISUAL_MODE_SESSION_KEY)
+  return null
+}
+
 export function VisualModeProvider({ children }: { children: ReactNode }) {
   const { settings } = useBrandSettings()
   const [preference, setPreference] = useState(() => {
     const storedMode = readStoredMode()
-    return { visualMode: storedMode ?? 'dark_black' as PublicVisualVariant, hasVisualModePreference: Boolean(storedMode) }
+    const sessionMode = readSessionMode()
+    return { visualMode: storedMode ?? sessionMode ?? 'dark_black' as PublicVisualVariant, hasVisualModePreference: Boolean(storedMode || sessionMode), keepVisualModeAsDefault: Boolean(storedMode) }
   })
-  const { visualMode, hasVisualModePreference } = preference
+  const { visualMode, hasVisualModePreference, keepVisualModeAsDefault } = preference
 
   const setVisualMode = useCallback((mode: PublicVisualVariant) => {
     const safeMode = validModes.has(mode) ? mode : 'dark_black'
-    window.localStorage.setItem(VISUAL_MODE_STORAGE_KEY, safeMode)
-    setPreference({ visualMode: safeMode, hasVisualModePreference: true })
-  }, [])
+    window.sessionStorage.setItem(VISUAL_MODE_SESSION_KEY, safeMode)
+    if (keepVisualModeAsDefault) window.localStorage.setItem(VISUAL_MODE_STORAGE_KEY, safeMode)
+    setPreference((current) => ({ ...current, visualMode: safeMode, hasVisualModePreference: true }))
+  }, [keepVisualModeAsDefault])
+
+  const setKeepVisualModeAsDefault = useCallback((keep: boolean) => {
+    if (keep) window.localStorage.setItem(VISUAL_MODE_STORAGE_KEY, visualMode)
+    else window.localStorage.removeItem(VISUAL_MODE_STORAGE_KEY)
+    setPreference((current) => ({ ...current, keepVisualModeAsDefault: keep }))
+  }, [visualMode])
 
   const applyAuthenticatedDefault = useCallback((mode: PublicVisualVariant, sessionKey: string) => {
     if (window.sessionStorage.getItem(AUTHENTICATED_VISUAL_SESSION_KEY) === sessionKey) return
 
-    const safeMode = validModes.has(mode) ? mode : 'dark_black'
-    window.localStorage.setItem(VISUAL_MODE_STORAGE_KEY, safeMode)
+    const storedMode = readStoredMode()
+    const safeMode = storedMode ?? (validModes.has(mode) ? mode : 'dark_black')
+    window.sessionStorage.setItem(VISUAL_MODE_SESSION_KEY, safeMode)
     window.sessionStorage.setItem(AUTHENTICATED_VISUAL_SESSION_KEY, sessionKey)
-    setPreference({ visualMode: safeMode, hasVisualModePreference: true })
+    setPreference({ visualMode: safeMode, hasVisualModePreference: true, keepVisualModeAsDefault: Boolean(storedMode) })
   }, [])
 
   const clearAuthenticatedDefault = useCallback(() => {
@@ -69,10 +86,12 @@ export function VisualModeProvider({ children }: { children: ReactNode }) {
   const value = useMemo(() => ({
     visualMode,
     setVisualMode,
+    keepVisualModeAsDefault,
+    setKeepVisualModeAsDefault,
     applyAuthenticatedDefault,
     clearAuthenticatedDefault,
     visualModeOptions: publicVisualVariantOptions,
     hasVisualModePreference,
-  }), [applyAuthenticatedDefault, clearAuthenticatedDefault, visualMode, setVisualMode, hasVisualModePreference])
+  }), [applyAuthenticatedDefault, clearAuthenticatedDefault, keepVisualModeAsDefault, setKeepVisualModeAsDefault, visualMode, setVisualMode, hasVisualModePreference])
   return <VisualModeContext.Provider value={value}>{children}</VisualModeContext.Provider>
 }

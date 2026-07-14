@@ -21,7 +21,7 @@ function client() {
 async function identity() {
   const user = await getCurrentUser()
   if (!user?.email) throw new Error('Sua sessão expirou. Faça login novamente.')
-  return { id: user.id, email: user.email.toLowerCase() }
+  return { id: user.id, email: user.email.toLowerCase(), metadata: user.user_metadata }
 }
 
 function getChangedCardFields(before: CardFormValues, after: CardFormValues) {
@@ -57,6 +57,12 @@ export async function createMyCardDraft(): Promise<CardFormValues> {
 
   return {
     ...defaultCardFormValues,
+    full_name: typeof user.metadata.full_name === 'string' ? user.metadata.full_name : '',
+    display_name: typeof user.metadata.full_name === 'string' ? user.metadata.full_name : '',
+    job_title: typeof user.metadata.job_title === 'string' ? user.metadata.job_title : '',
+    job_title_pt: typeof user.metadata.job_title === 'string' ? user.metadata.job_title : '',
+    department: typeof user.metadata.department === 'string' ? user.metadata.department : '',
+    department_pt: typeof user.metadata.department === 'string' ? user.metadata.department : '',
     email: user.email,
     slug: normalizeSlug(prefix),
     company: 'Invest RS',

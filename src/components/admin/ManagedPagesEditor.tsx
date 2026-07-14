@@ -21,7 +21,6 @@ export function ManagedPagesEditor({ pageKey, showPreview = true, showTabs = tru
   const page = pages.find(({ page_key }) => page_key === selectedKey)
 
   useEffect(() => { let mounted = true; void getManagedPagesForAdmin().then((items) => { if (mounted) { setPages(items); setSavedPages(items) } }).catch((reason) => { if (mounted) setError(getFriendlyErrorMessage(reason)) }); return () => { mounted = false } }, [])
-  useEffect(() => { if (pageKey) setActive(pageKey) }, [pageKey])
   function update(next: ManagedPage) { setPages((current) => current.map((item) => item.page_key === next.page_key ? next : item)) }
 
   async function save() {

@@ -8,10 +8,12 @@ import {
   blockUser,
   getAdminUsers,
   inviteAdminUser,
+  inviteAdminUsers,
   unblockUser,
   updateUserRole,
   type AdminUser,
   type AdminUserStatus,
+  type AdminUserDraft,
 } from '../../lib/adminUsers'
 import { getFriendlyErrorMessage } from '../../lib/errors'
 import { requireAdmin } from '../../lib/roles'
@@ -22,12 +24,19 @@ import {
   LockOpen,
   Mail,
   MoreVertical,
+  Plus,
   ShieldCheck,
   ShieldOff,
+  Trash2,
 } from 'lucide-react'
 
 type RoleFilter = 'all' | 'admin' | 'user'
 type StatusFilter = 'all' | AdminUserStatus
+type InviteRow = AdminUserDraft & { id: string }
+
+function createInviteRow(): InviteRow {
+  return { id: crypto.randomUUID(), email: '', full_name: '', job_title: '', department: '' }
+}
 
 function getUserDisplayName(user: AdminUser) {
   const profileName = user.full_name?.trim()
@@ -43,6 +52,7 @@ function getUserRoleLabel(user: AdminUser) {
 function getUserStatusLabel(status: AdminUserStatus) {
   if (status === 'active') return 'Ativo'
   if (status === 'blocked') return 'Bloqueado'
+  if (status === 'inactive') return 'Inativo'
   return 'Pendente'
 }
 
@@ -55,7 +65,8 @@ export default function AdminUsersPage() {
   const [role, setRole] = useState<RoleFilter>('all')
   const [status, setStatus] = useState<StatusFilter>('all')
   const [inviteOpen, setInviteOpen] = useState(false)
-  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviteRows, setInviteRows] = useState<InviteRow[]>(() => [createInviteRow()])
+  const [inviteMode, setInviteMode] = useState<'send' | 'inactive'>('send')
   const [sending, setSending] = useState(false)
   const [openActionsMenu, setOpenActionsMenu] = useState<string | null>(null)
   const [openActionsUpward, setOpenActionsUpward] = useState(false)
@@ -180,19 +191,37 @@ export default function AdminUsersPage() {
     }
   }
 
-  async function sendInvite(email = inviteEmail) {
+  async function sendInvite(email: string, fullName?: string | null, jobTitle?: string | null, department?: string | null) {
     setSending(true)
 
     try {
-      toast.success(await inviteAdminUser(email))
-      setInviteOpen(false)
-      setInviteEmail('')
+      toast.success(await inviteAdminUser(email, fullName, jobTitle, department))
       await load()
     } catch (error) {
       toast.error(getFriendlyErrorMessage(error))
     } finally {
       setSending(false)
     }
+  }
+
+  async function saveInviteRows() {
+    setSending(true)
+    try {
+      const users = inviteRows.map((row) => ({ email: row.email, full_name: row.full_name, job_title: row.job_title, department: row.department }))
+      toast.success(await inviteAdminUsers(users, inviteMode === 'send'))
+      setInviteOpen(false)
+      setInviteRows([createInviteRow()])
+      setInviteMode('send')
+      await load()
+    } catch (error) {
+      toast.error(getFriendlyErrorMessage(error))
+    } finally {
+      setSending(false)
+    }
+  }
+
+  function updateInviteRow(id: string, field: keyof AdminUserDraft, value: string) {
+    setInviteRows((rows) => rows.map((row) => row.id === id ? { ...row, [field]: value } : row))
   }
 
   function renderActions(user: AdminUser, placement: 'desktop' | 'mobile') {
@@ -228,7 +257,7 @@ export default function AdminUsersPage() {
             role="menu"
             aria-label={`Ações do usuário ${userName}`}
           >
-            <button
+            {!user.staged ? <><button
               type="button"
               role="menuitem"
               onClick={() => {
@@ -280,7 +309,7 @@ export default function AdminUsersPage() {
                 <IdCard aria-hidden="true" />
                 <span>Criar cartão</span>
               </Link>
-            )}
+            )}</> : null}
 
             <button
               type="button"
@@ -288,7 +317,7 @@ export default function AdminUsersPage() {
               onClick={() => {
                 setOpenActionsMenu(null)
                 setOpenActionsUpward(false)
-                void sendInvite(user.email)
+                void sendInvite(user.email, user.full_name, user.job_title, user.department)
               }}
             >
               <Mail aria-hidden="true" />
@@ -309,16 +338,13 @@ export default function AdminUsersPage() {
       subtitle="Gerencie acessos, perfis, bloqueios e convites."
       action={
         <button className="primary-button" type="button" onClick={() => setInviteOpen(true)}>
-          Convidar usuário
+          Novo usuário
         </button>
       }
     >
       <div className="admin-card">
         <div className="admin-table-header">
           <strong>{visibleUsers.length} de {users.length} {userCountLabel}</strong>
-          <button className="secondary-button compact-button" type="button" onClick={load}>
-            Atualizar
-          </button>
         </div>
 
         {users.length > 0 ? (
@@ -358,6 +384,7 @@ export default function AdminUsersPage() {
                 <option value="active">Ativos</option>
                 <option value="blocked">Bloqueados</option>
                 <option value="pending">Pendentes</option>
+                <option value="inactive">Inativos</option>
               </select>
             </label>
           </div>
@@ -369,7 +396,7 @@ export default function AdminUsersPage() {
           <div className="admin-empty">
             <p>Nenhum usuário cadastrado ainda.</p>
             <button className="primary-button" type="button" onClick={() => setInviteOpen(true)}>
-              Convidar primeiro usuário
+              Cadastrar primeiro usuário
             </button>
           </div>
         ) : null}
@@ -480,18 +507,26 @@ export default function AdminUsersPage() {
             aria-modal="true"
             aria-labelledby="invite-title"
           >
-            <h2 id="invite-title">Convidar usuário</h2>
-            <p>O convite será enviado pelo Supabase para o e-mail institucional.</p>
-            <label>
-              E-mail institucional
-              <input
-                autoFocus
-                type="email"
-                value={inviteEmail}
-                onChange={(event) => setInviteEmail(event.target.value)}
-                placeholder="nome@investrs.org.br"
-              />
-            </label>
+            <h2 id="invite-title">Novo usuário</h2>
+            <p>Cadastre uma ou mais pessoas e escolha se o convite deve ser enviado agora.</p>
+            <div className="invite-user-list">
+              {inviteRows.map((row, index) => <fieldset className="invite-user-row" key={row.id}>
+                <legend>Pessoa {index + 1}</legend>
+                {inviteRows.length > 1 ? <button className="invite-remove-user" type="button" aria-label={`Remover pessoa ${index + 1}`} title="Remover pessoa" disabled={sending} onClick={() => setInviteRows((rows) => rows.filter((item) => item.id !== row.id))}><Trash2 aria-hidden="true" /></button> : null}
+                <label>E-mail institucional<input autoFocus={index === 0} required type="email" value={row.email} onChange={(event) => updateInviteRow(row.id, 'email', event.target.value)} placeholder="nome@investrs.org.br" /></label>
+                <label>Nome completo <small>Opcional</small><input type="text" value={row.full_name} onChange={(event) => updateInviteRow(row.id, 'full_name', event.target.value)} /></label>
+                <div className="invite-user-row-columns">
+                  <label>Cargo <small>Opcional</small><input type="text" value={row.job_title} onChange={(event) => updateInviteRow(row.id, 'job_title', event.target.value)} /></label>
+                  <label>Área <small>Opcional</small><input type="text" value={row.department} onChange={(event) => updateInviteRow(row.id, 'department', event.target.value)} /></label>
+                </div>
+              </fieldset>)}
+            </div>
+            <button className="invite-add-user" type="button" disabled={sending || inviteRows.length >= 20} onClick={() => setInviteRows((rows) => [...rows, createInviteRow()])}><Plus aria-hidden="true" />Adicionar pessoa</button>
+            <fieldset className="invite-delivery-options">
+              <legend>Após cadastrar</legend>
+              <label><input type="radio" name="invite-mode" value="send" checked={inviteMode === 'send'} onChange={() => setInviteMode('send')} /><span><strong>Enviar convite automaticamente</strong><small>O status será Pendente até a pessoa acessar.</small></span></label>
+              <label><input type="radio" name="invite-mode" value="inactive" checked={inviteMode === 'inactive'} onChange={() => setInviteMode('inactive')} /><span><strong>Apenas registrar como Inativo</strong><small>Nenhum e-mail será enviado agora.</small></span></label>
+            </fieldset>
             <div className="confirmation-actions">
               <button
                 className="secondary-button"
@@ -504,10 +539,10 @@ export default function AdminUsersPage() {
               <button
                 className="primary-button"
                 type="button"
-                disabled={sending || !inviteEmail}
-                onClick={() => void sendInvite()}
+                disabled={sending || inviteRows.some((row) => !row.email.trim())}
+                onClick={() => void saveInviteRows()}
               >
-                {sending ? 'Enviando...' : 'Enviar convite'}
+                {sending ? 'Salvando...' : inviteMode === 'send' ? 'Cadastrar e enviar' : 'Cadastrar como inativo'}
               </button>
             </div>
           </section>

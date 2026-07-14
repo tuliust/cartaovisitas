@@ -6,6 +6,8 @@ export type VisualModeOption = { value: PublicVisualVariant; label: string }
 export type VisualModeContextValue = {
   visualMode: PublicVisualVariant
   setVisualMode: (mode: PublicVisualVariant) => void
+  keepVisualModeAsDefault: boolean
+  setKeepVisualModeAsDefault: (keep: boolean) => void
   applyAuthenticatedDefault: (mode: PublicVisualVariant, sessionKey: string) => void
   clearAuthenticatedDefault: () => void
   visualModeOptions: VisualModeOption[]

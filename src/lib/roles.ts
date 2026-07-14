@@ -2,7 +2,7 @@ import { getCurrentUser } from './auth'
 import { supabase } from './supabase'
 
 export type UserRole = 'admin' | 'user'
-export type UserProfileStatus = 'active' | 'blocked' | 'pending'
+export type UserProfileStatus = 'active' | 'blocked' | 'pending' | 'inactive'
 export type UserProfile = { id: string; email: string; role: UserRole; full_name: string | null; status: UserProfileStatus }
 
 function client() {
@@ -35,7 +35,7 @@ export async function isCurrentUserAdmin() {
 
 export async function requireActiveUser() {
   const profile = await ensureUserProfile()
-  if (profile.status === 'blocked') throw new Error('Seu acesso está bloqueado. Entre em contato com um administrador.')
+  if (profile.status === 'blocked' || profile.status === 'inactive') throw new Error('Seu acesso está bloqueado. Entre em contato com um administrador.')
   return profile
 }
 

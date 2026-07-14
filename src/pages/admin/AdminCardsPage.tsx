@@ -451,9 +451,6 @@ export default function AdminCardsPage() {
       <div className="admin-card">
         <div className="admin-table-header">
           <strong>{visibleCards.length} de {cards.length} {cardCountLabel}</strong>
-          <button className="secondary-button compact-button" type="button" onClick={loadCards} disabled={loading}>
-            {loading ? 'Atualizando...' : 'Atualizar'}
-          </button>
         </div>
 
         {cards.length > 0 ? (

@@ -2,19 +2,29 @@ import { getCurrentUser } from './auth'
 import { recordAuditLog } from './audit'
 import { supabase } from './supabase'
 
-export type AdminUserStatus = 'active' | 'blocked' | 'pending'
-export type AdminUser = { id: string; email: string; full_name: string | null; role: 'admin' | 'user'; status: AdminUserStatus; blocked_at: string | null; invited_at: string | null; last_seen_at: string | null; card: { id: string; slug: string; full_name: string } | null }
+export type AdminUserStatus = 'active' | 'blocked' | 'pending' | 'inactive'
+export type AdminUserDraft = { email: string; full_name?: string; job_title?: string; department?: string }
+export type AdminUser = { id: string; email: string; full_name: string | null; job_title: string | null; department: string | null; role: 'admin' | 'user'; status: AdminUserStatus; blocked_at: string | null; invited_at: string | null; last_seen_at: string | null; staged: boolean; card: { id: string; slug: string; full_name: string } | null }
 
 function client() { if (!supabase) throw new Error('Supabase não configurado.'); return supabase }
 
 export async function getAdminUsers() {
-  const [{ data: profiles, error }, { data: cards, error: cardsError }] = await Promise.all([
+  const [{ data: profiles, error }, { data: cards, error: cardsError }, { data: registrations, error: registrationsError }] = await Promise.all([
     client().from('user_profiles').select('id,email,full_name,role,status,blocked_at,invited_at,last_seen_at').order('email'),
     client().from('business_cards').select('id,slug,full_name,email,created_by'),
+    client().from('user_pre_registrations').select('id,email,full_name,job_title,department,status,auth_user_id').order('email'),
   ])
   if (error) throw error
   if (cardsError) throw cardsError
-  return (profiles ?? []).map((profile) => ({ ...profile, card: (cards ?? []).find((card) => card.created_by === profile.id || card.email?.toLowerCase() === profile.email.toLowerCase()) ?? null })) as AdminUser[]
+  if (registrationsError) throw registrationsError
+  const draftsByEmail = new Map((registrations ?? []).map((registration) => [registration.email.toLowerCase(), registration]))
+  const profileUsers = (profiles ?? []).map((profile) => {
+    const draft = draftsByEmail.get(profile.email.toLowerCase())
+    return { ...profile, job_title: draft?.job_title ?? null, department: draft?.department ?? null, staged: false, card: (cards ?? []).find((card) => card.created_by === profile.id || card.email?.toLowerCase() === profile.email.toLowerCase()) ?? null }
+  }) as AdminUser[]
+  const profileEmails = new Set(profileUsers.map((profile) => profile.email.toLowerCase()))
+  const stagedUsers = (registrations ?? []).filter((registration) => !profileEmails.has(registration.email.toLowerCase())).map((registration) => ({ id: `staged:${registration.id}`, email: registration.email, full_name: registration.full_name, job_title: registration.job_title, department: registration.department, role: 'user' as const, status: registration.status as AdminUserStatus, blocked_at: null, invited_at: null, last_seen_at: null, staged: true, card: null }))
+  return [...profileUsers, ...stagedUsers].sort((a, b) => a.email.localeCompare(b.email, 'pt-BR'))
 }
 
 export async function updateUserRole(user: AdminUser, role: 'admin' | 'user', users: AdminUser[]) {
@@ -42,11 +52,15 @@ export async function unblockUser(user: AdminUser) {
 
 export function getUserLinkedCard(user: AdminUser) { return user.card }
 
-export async function inviteAdminUser(email: string) {
+export async function inviteAdminUsers(users: AdminUserDraft[], sendInvite: boolean) {
   const session = (await client().auth.getSession()).data.session
   if (!session) throw new Error('Sua sessão expirou. Faça login novamente.')
-  const response = await fetch('/api/admin/invite-user', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ email }) })
+  const response = await fetch('/api/admin/invite-user', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ users, sendInvite }) })
   const payload = await response.json() as { message?: string; error?: string }
-  if (!response.ok) throw new Error(payload.error || 'Não foi possível enviar o convite.')
-  return payload.message || 'Convite enviado com sucesso.'
+  if (!response.ok) throw new Error(payload.error || 'Não foi possível cadastrar os usuários.')
+  return payload.message || 'Usuários cadastrados com sucesso.'
+}
+
+export async function inviteAdminUser(email: string, full_name?: string | null, job_title?: string | null, department?: string | null) {
+  return inviteAdminUsers([{ email, full_name: full_name || undefined, job_title: job_title || undefined, department: department || undefined }], true)
 }

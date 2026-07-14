@@ -8,7 +8,7 @@ type VisualModeSelectorProps = { variant?: 'default' | 'compact' }
 
 export default function VisualModeSelector({ variant = 'default' }: VisualModeSelectorProps) {
   const { settings } = useBrandSettings()
-  const { visualMode, setVisualMode, visualModeOptions } = useVisualMode()
+  const { visualMode, setVisualMode, visualModeOptions, keepVisualModeAsDefault, setKeepVisualModeAsDefault } = useVisualMode()
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -55,7 +55,7 @@ export default function VisualModeSelector({ variant = 'default' }: VisualModeSe
             title={option.label}
             aria-pressed={active}
             key={option.value}
-            onClick={() => { setVisualMode(option.value); setOpen(false) }}
+            onClick={() => setVisualMode(option.value)}
           >
             <span className={`visual-mode-option-preview visual-mode-option-${option.value.replace(/_/g, '-')}${hasImage ? ' has-image' : ''} ${getVariantClassName(settings, option.value)}`} style={getVariantStyle(settings, option.value)} aria-hidden="true" />
           </button>
@@ -73,7 +73,7 @@ export default function VisualModeSelector({ variant = 'default' }: VisualModeSe
             title={option.label}
             aria-pressed={active}
             key={option.value}
-            onClick={() => { setVisualMode(option.value); setOpen(false) }}
+            onClick={() => setVisualMode(option.value)}
           >
             <span className={`visual-mode-option-preview visual-mode-option-${option.value.replace(/_/g, '-')}${hasImage ? ' has-image' : ''} ${getVariantClassName(settings, option.value)}`} style={getVariantStyle(settings, option.value)} aria-hidden="true">
               {active ? <span className="visual-mode-option-check"><Check size={13} /></span> : null}
@@ -82,6 +82,10 @@ export default function VisualModeSelector({ variant = 'default' }: VisualModeSe
         })}
       </div>
       </div>)}
+      <label className="visual-mode-default-option">
+        <input type="checkbox" checked={keepVisualModeAsDefault} onChange={(event) => setKeepVisualModeAsDefault(event.target.checked)} />
+        <span>Manter como padrão</span>
+      </label>
     </section> : null}
   </div>
 }

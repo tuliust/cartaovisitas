@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import QRCode from 'qrcode'
-import { BarChart3, Copy, Download, FileUp, Globe, Mail, MapPin, Pencil, Phone, QrCode, Smartphone, Wallet, type LucideIcon } from 'lucide-react'
+import { BarChart3, Copy, Download, FileUp, Globe, Mail, MapPin, MessageCircle, Pencil, QrCode, Smartphone, Wallet, type LucideIcon } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import CollaboratorLayout from '../components/collaborator/CollaboratorLayout'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
@@ -13,8 +13,9 @@ import { getLocalizedProfessionalData, getStoredPublicCardLanguage, publicCardCo
 
 type PublicVisualLanguage = PublicCardLanguage
 
-function normalizePhoneForLink(phone: string) { return phone.replace(/[^\d+]/g, '') }
+function normalizePhoneForWhatsApp(phone: string) { return phone.replace(/\D/g, '') }
 function buildAddress(card: NonNullable<ReturnType<typeof useCollaborator>['card']>) { return [card.address_line, card.city, card.state, card.country].filter(Boolean).join(', ') }
+const INVEST_RS_MAPS_URL = 'https://maps.app.goo.gl/Je4hp2P23VrX6Ctq8'
 
 type LanguageToggleProps = {
   language: PublicCardLanguage
@@ -65,7 +66,7 @@ export default function PublicCardPage() {
       <div className={`card-visual ${getVariantClassName(settings, variant)}`} style={getVariantStyle(settings, variant)}>
         <div className="card-topline">{failedLogoUrl === logoUrl ? <span className="brand-logo-fallback" role="img" aria-label="Invest RS">Invest RS</span> : <img className="public-card-logo" src={logoUrl} alt="Invest RS" onError={() => setFailedLogoUrl(logoUrl)} />}{card.show_avatar_public && card.avatar_url ? <div className="public-card-avatar-wrapper"><img className="public-card-avatar" src={card.avatar_url} alt={`Foto de ${name}`} /></div> : null}</div>
         <div className="card-main"><div className="person-block"><h1>{name}</h1>{professionalData?.jobTitle ? <p className="job-title">{professionalData.jobTitle}</p> : null}{professionalData?.department ? <p className="department">{professionalData.department}</p> : null}</div></div>
-        <div className="card-footer"><div className="contact-list public-card-contact-list">{phone ? <a href={`tel:${normalizePhoneForLink(phone)}`}><ContactLabel icon={Phone}>{copy.phone}</ContactLabel>{phone}</a> : null}{card.email ? <a href={`mailto:${card.email}`}><ContactLabel icon={Mail}>{copy.email}</ContactLabel>{card.email}</a> : null}{card.website ? <a href={card.website} target="_blank" rel="noreferrer"><ContactLabel icon={Globe}>{copy.website}</ContactLabel>{card.website.replace(/^https?:\/\//, '')}</a> : null}{address ? <p><ContactLabel icon={MapPin}>{copy.address}</ContactLabel>{address}</p> : null}</div>{qrDataUrl ? <img className="qr-code" src={qrDataUrl} alt={`QR Code de ${name}`} /> : null}</div>
+        <div className="card-footer"><div className="contact-list public-card-contact-list">{phone ? <a href={`https://wa.me/${normalizePhoneForWhatsApp(phone)}`} target="_blank" rel="noreferrer"><ContactLabel icon={MessageCircle}>WhatsApp</ContactLabel>{phone}</a> : null}{card.email ? <a href={`mailto:${card.email}`}><ContactLabel icon={Mail}>{copy.email}</ContactLabel>{card.email}</a> : null}{card.website ? <a href={card.website} target="_blank" rel="noreferrer"><ContactLabel icon={Globe}>{copy.website}</ContactLabel>{card.website.replace(/^https?:\/\//, '')}</a> : null}{address ? <a href={INVEST_RS_MAPS_URL} target="_blank" rel="noreferrer"><ContactLabel icon={MapPin}>{copy.address}</ContactLabel>{address}</a> : null}</div>{qrDataUrl ? <img className="qr-code" src={qrDataUrl} alt={`QR Code de ${name}`} /> : null}</div>
         <div className="public-card-initial-toolbar" aria-label="Acoes rapidas do cartao">
           <LanguageToggle language={language} className="public-card-language-mobile" onChange={changeLanguage} />
           <div className="public-card-initial-actions">

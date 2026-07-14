@@ -1,7 +1,7 @@
 import type { CardFormValues } from '../../lib/adminCards'
 import { useBrandSettings } from '../../contexts/BrandSettingsContext'
 import { getVariantClassName, getVariantLogo, getVariantStyle } from '../../lib/cardVisualVariants'
-import { Globe, Mail, MapPin, Phone, type LucideIcon } from 'lucide-react'
+import { Globe, Mail, MapPin, MessageCircle, type LucideIcon } from 'lucide-react'
 
 type CardPreviewProps = {
   values: CardFormValues
@@ -11,6 +11,9 @@ type CardPreviewProps = {
 function buildAddress(values: CardFormValues) {
   return [values.address_line, values.city, values.state, values.country].filter(Boolean).join(', ')
 }
+
+function normalizePhoneForWhatsApp(phone: string) { return phone.replace(/\D/g, '') }
+const INVEST_RS_MAPS_URL = 'https://maps.app.goo.gl/Je4hp2P23VrX6Ctq8'
 
 function PreviewContactLabel({ icon: Icon, children }: { icon: LucideIcon; children: string }) {
   return <span className="card-preview-contact-label"><Icon aria-hidden="true" />{children}</span>
@@ -44,28 +47,28 @@ export default function CardPreview({ values, showStatus = true }: CardPreviewPr
       <div className="card-preview-footer">
         <div className="contact-list card-preview-contact-list">
           {phone ? (
-            <p>
-              <PreviewContactLabel icon={Phone}>Telefone</PreviewContactLabel>
+            <a href={`https://wa.me/${normalizePhoneForWhatsApp(phone)}`} target="_blank" rel="noreferrer">
+              <PreviewContactLabel icon={MessageCircle}>WhatsApp</PreviewContactLabel>
               {phone}
-            </p>
+            </a>
           ) : null}
           {values.email ? (
-            <p>
+            <a href={`mailto:${values.email}`}>
               <PreviewContactLabel icon={Mail}>E-mail</PreviewContactLabel>
               {values.email}
-            </p>
+            </a>
           ) : null}
           {values.website ? (
-            <p>
+            <a href={values.website} target="_blank" rel="noreferrer">
               <PreviewContactLabel icon={Globe}>Site</PreviewContactLabel>
               {values.website.replace(/^https?:\/\//, '')}
-            </p>
+            </a>
           ) : null}
           {address ? (
-            <p>
+            <a href={INVEST_RS_MAPS_URL} target="_blank" rel="noreferrer">
               <PreviewContactLabel icon={MapPin}>Endereço</PreviewContactLabel>
               {address}
-            </p>
+            </a>
           ) : null}
         </div>
 
