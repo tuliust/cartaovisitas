@@ -31,6 +31,18 @@
   text-align: left;
 }
 
+.collaborator-own-card .public-card-contact-list .contact-value {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  margin: 0;
+  color: inherit;
+  font-size: 16px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
 .collaborator-own-card .public-card-contact-list .contact-label svg {
   grid-column: 1;
   grid-row: 1;
