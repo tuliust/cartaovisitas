@@ -1,4 +1,4 @@
-import { ArrowLeft, Contact, Home, LogIn, LogOut, Pencil } from 'lucide-react'
+import { ArrowLeft, Contact, Home, LayoutDashboard, LogIn, LogOut, Pencil } from 'lucide-react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import type { AdminBusinessCard } from '../../lib/adminCards'
 import type { CollaboratorCardActions } from '../../lib/collaboratorCardActions'
@@ -6,9 +6,9 @@ import VisualModeSelector from '../VisualModeSelector'
 import CollaboratorMoreMenu from './CollaboratorMoreMenu'
 import CollaboratorAccountMenu from './CollaboratorAccountMenu'
 
-type Props = { authenticated: boolean; card: AdminBusinessCard | null; actions?: CollaboratorCardActions; onLogout?: () => void; useBackButton?: boolean }
+type Props = { authenticated: boolean; isAdmin?: boolean; card: AdminBusinessCard | null; actions?: CollaboratorCardActions; onLogout?: () => void; useBackButton?: boolean }
 
-export default function CollaboratorNavigation({ authenticated, card, actions, onLogout, useBackButton = false }: Props) {
+export default function CollaboratorNavigation({ authenticated, isAdmin = false, card, actions, onLogout, useBackButton = false }: Props) {
   const navigate = useNavigate()
   const backButton = <button className="collaborator-nav-item" type="button" onClick={() => window.history.state?.idx > 0 ? navigate(-1) : navigate('/')}><ArrowLeft aria-hidden="true" /><span>Voltar</span></button>
   if (useBackButton) return <nav className="collaborator-nav" aria-label="Navegação">{backButton}<VisualModeSelector variant="compact" />{authenticated ? <CollaboratorAccountMenu card={card} onLogout={onLogout} /> : <Link className="collaborator-nav-item" to="/entrar"><LogIn aria-hidden="true" /><span>Entrar</span></Link>}</nav>
@@ -19,6 +19,7 @@ export default function CollaboratorNavigation({ authenticated, card, actions, o
     <NavLink className={({ isActive }) => `collaborator-nav-item${isActive && Boolean(card?.slug) ? ' active' : ''}`} to={pagePath} title="Minha Página"><Contact aria-hidden="true" /><span>Minha Página</span></NavLink>
     <NavLink className={({ isActive }) => `collaborator-nav-item${isActive ? ' active' : ''}`} to="/meu-cartao/editar" title="Editar"><Pencil aria-hidden="true" /><span>Editar</span></NavLink>
     {actions ? <CollaboratorMoreMenu disabled={!card} running={actions.running} onCopyVCard={actions.copyVCard} onDownloadQr={actions.downloadQrCode} onWallet={actions.openWallet} /> : null}
+    {isAdmin ? <NavLink className={({ isActive }) => `collaborator-nav-item${isActive ? ' active' : ''}`} to="/admin/cartoes" title="Admin"><LayoutDashboard aria-hidden="true" /><span>Admin</span></NavLink> : null}
     <VisualModeSelector variant="compact" />
     <button className="collaborator-nav-item collaborator-nav-logout" type="button" aria-label="Sair" title="Sair" onClick={onLogout}><LogOut aria-hidden="true" /><span>Sair</span></button>
   </nav>
