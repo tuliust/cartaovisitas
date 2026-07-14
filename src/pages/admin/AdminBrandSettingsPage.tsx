@@ -4,9 +4,8 @@ import { useBrandSettings } from '../../contexts/BrandSettingsContext'
 import { getCurrentSession } from '../../lib/auth'
 import {
   defaultBrandSettings,
-  defaultVisualVariantSettings,
   getBrandSettings,
-  isValidHexColor,
+  templateColorPalette,
   updateBrandSettings,
   uploadBrandAsset,
   type BrandAssetType,
@@ -20,35 +19,15 @@ import { useToast } from '../../contexts/ToastContext'
 import { recordAuditLog } from '../../lib/audit'
 import { getVariantClassName, getVariantLogo, getVariantStyle, publicVisualVariantOptions, type PublicVisualVariant } from '../../lib/cardVisualVariants'
 import { ManagedPagesEditor } from '../../components/admin/ManagedPagesEditor'
+import { TemplateOptionsEditor } from '../../components/admin/TemplateOptionsEditor'
 
-type ColorKey = 'primary_color' | 'secondary_color' | 'background_color' | 'surface_color' | 'text_color'
 type AssetUrlKey = 'favicon_url' | 'og_image_url' | 'background_image_url' | 'apple_touch_icon_url' | 'logo_on_dark_url' | 'logo_on_light_url' | 'card_bg_dark_image_1_url' | 'card_bg_dark_image_2_url' | 'card_bg_light_image_3_url' | 'card_bg_light_image_4_url'
 type SettingsTab = 'visual' | 'content' | 'usage_guide' | 'terms_and_privacy'
-
-const institutionalAssets: Array<{ key: AssetUrlKey; type: BrandAssetType; label: string; help: string; accept: string }> = [
-  { key: 'logo_on_dark_url', type: 'logo-on-dark', label: 'Logo para fundo escuro', help: 'Use uma versão branca ou clara. Recomendado: logo horizontal em PNG, SVG ou WebP, entre 600–1200 px de largura e 160–320 px de altura, preferencialmente com fundo transparente, área segura ao redor da marca e arquivo de até 2 MB. O sistema ajusta a imagem automaticamente para evitar cortes.', accept: 'image/png,image/svg+xml,image/webp' },
-  { key: 'logo_on_light_url', type: 'logo-on-light', label: 'Logo para fundo claro', help: 'Use uma versão preta ou escura. Recomendado: logo horizontal em PNG, SVG ou WebP, entre 600–1200 px de largura e 160–320 px de altura, preferencialmente com fundo transparente, área segura ao redor da marca e arquivo de até 2 MB. O sistema ajusta a imagem automaticamente para evitar cortes.', accept: 'image/png,image/svg+xml,image/webp' },
-  { key: 'card_bg_dark_image_1_url', type: 'card-bg-dark-1', label: 'Imagem escura 1', help: 'JPG, PNG ou WebP. Recomendado: 1600 × 1000 px ou maior.', accept: 'image/png,image/jpeg,image/webp' },
-  { key: 'card_bg_dark_image_2_url', type: 'card-bg-dark-2', label: 'Imagem escura 2', help: 'JPG, PNG ou WebP. Recomendado: 1600 × 1000 px ou maior.', accept: 'image/png,image/jpeg,image/webp' },
-  { key: 'card_bg_light_image_3_url', type: 'card-bg-light-3', label: 'Imagem clara 1', help: 'JPG, PNG ou WebP. Recomendado: 1600 × 1000 px ou maior.', accept: 'image/png,image/jpeg,image/webp' },
-  { key: 'card_bg_light_image_4_url', type: 'card-bg-light-4', label: 'Imagem clara 2', help: 'JPG, PNG ou WebP. Recomendado: 1600 × 1000 px ou maior.', accept: 'image/png,image/jpeg,image/webp' },
-]
 
 function getImageDimensions(file: File) {
   return new Promise<{ width: number; height: number }>((resolve, reject) => { const image = new Image(); const url = URL.createObjectURL(file); image.onload = () => { resolve({ width: image.naturalWidth, height: image.naturalHeight }); URL.revokeObjectURL(url) }; image.onerror = () => { reject(new Error('Não foi possível ler as dimensões da imagem.')); URL.revokeObjectURL(url) }; image.src = url })
 }
 
-const colorFields: Array<{ key: ColorKey; label: string }> = [
-  { key: 'primary_color', label: 'Cor primária' },
-  { key: 'secondary_color', label: 'Cor secundária/acento' },
-  { key: 'background_color', label: 'Cor de fundo' },
-  { key: 'surface_color', label: 'Cor de superfície' },
-  { key: 'text_color', label: 'Cor de texto' },
-]
-const opacityFields: Array<{ key: 'background_overlay_opacity' | 'card_surface_opacity'; label: string; help: string }> = [
-  { key: 'background_overlay_opacity', label: 'Opacidade da camada sobre o background', help: '0% não aplica camada; 100% cobre totalmente a imagem.' },
-  { key: 'card_surface_opacity', label: 'Opacidade da superfície dos cards', help: 'Valores altos escondem mais a imagem de fundo.' },
-]
 const settingsTabs: Array<{ key: SettingsTab; label: string }> = [
   { key: 'visual', label: 'Identidade Visual' },
   { key: 'content', label: 'Conteúdo' },
@@ -91,25 +70,36 @@ export default function AdminBrandSettingsPage() {
   }
 
   function updateVariant<K extends keyof VisualVariantSettings>(key: K, value: VisualVariantSettings[K]) {
-    setValues((current) => ({ ...current, visual_variant_settings: { ...current.visual_variant_settings, [activeVariant]: { ...current.visual_variant_settings[activeVariant], [key]: value } } }))
+    setValues((current) => {
+      const variant = { ...current.visual_variant_settings[activeVariant], [key]: value }
+      if (key === 'primary_button_color') variant.secondary_color = String(value)
+      if (key === 'background_opacity') variant.background_overlay_opacity = Number(value)
+      if (key === 'surface_opacity') variant.card_surface_opacity = Number(value)
+      return { ...current, visual_variant_settings: { ...current.visual_variant_settings, [activeVariant]: variant } }
+    })
   }
 
-  async function upload(event: ChangeEvent<HTMLInputElement>, type: BrandAssetType, key: AssetUrlKey) {
-    const file = event.target.files?.[0]
-    if (!file) return
+  async function uploadFile(file: File, type: BrandAssetType, key: AssetUrlKey) {
     setUploading(type); setError('')
     try {
       if (file.type === 'image/png' && (type === 'favicon' || type === 'apple-touch-icon')) { const dimensions = await getImageDimensions(file); if (dimensions.width !== dimensions.height) toast.info('Recomendamos uma imagem quadrada para este ícone.'); else if (type === 'apple-touch-icon' && (dimensions.width !== 180 || dimensions.height !== 180)) toast.info('O tamanho recomendado para o Ícone Apple Touch é 180 × 180 px.') }
       const url = await uploadBrandAsset(file, type); update(key, url); await recordAuditLog({ action: 'brand_asset_uploaded', targetType: 'brand_settings', targetLabel: type, afterData: { type, url } }); toast.success('Imagem enviada com sucesso. Salve as configurações para aplicar.')
     }
     catch (uploadError) { const message = getFriendlyErrorMessage(uploadError); setError(message); toast.error(message) }
-    finally { setUploading(''); event.target.value = '' }
+    finally { setUploading('') }
+  }
+
+  async function upload(event: ChangeEvent<HTMLInputElement>, type: BrandAssetType, key: AssetUrlKey) {
+    const file = event.target.files?.[0]
+    if (file) await uploadFile(file, type, key)
+    event.target.value = ''
   }
 
   async function save() {
-    const invalidGlobal = colorFields.find(({ key }) => !isValidHexColor(values[key]))
-    const invalidVariant = publicVisualVariantOptions.find(({ value }) => colorFields.some(({ key }) => !isValidHexColor(values.visual_variant_settings[value][key])))
-    if (invalidGlobal || invalidVariant) { const message = 'Informe todas as cores no formato hexadecimal #050505.'; setError(message); toast.error(message); return }
+    const allowedColors = new Set<string>(templateColorPalette)
+    const colorKeys = ['background_color', 'surface_color', 'border_color', 'icon_color', 'primary_button_color', 'secondary_button_color', 'auxiliary_button_color'] as const
+    const invalidVariant = publicVisualVariantOptions.find(({ value }) => colorKeys.some((key) => !allowedColors.has(values.visual_variant_settings[value][key])))
+    if (invalidVariant) { const message = 'Selecione apenas cores da paleta institucional.'; setError(message); toast.error(message); return }
     const browserTitle = values.browser_title.replace(/[\r\n]+/g, ' ').trim()
     const appleTouchTitle = values.apple_touch_title.replace(/[\r\n]+/g, ' ').trim()
     if (!browserTitle || browserTitle.length > 100 || /[<>]/.test(browserTitle) || !appleTouchTitle || appleTouchTitle.length > 40 || /[<>]/.test(appleTouchTitle)) { const message = 'Revise os títulos: não use HTML ou quebras de linha e respeite os limites informados.'; setError(message); toast.error(message); return }
@@ -141,7 +131,7 @@ export default function AdminBrandSettingsPage() {
   if (booting) return <main className="admin-login-shell admin-state-shell"><div className="admin-login-card admin-state-card" role="status">Carregando configurações...</div></main>
 
   const activeTokens = values.visual_variant_settings[activeVariant]
-  const previewStyle = { ...getVariantStyle(values, activeVariant), '--preview-background': activeTokens.background_color, '--preview-surface': activeTokens.surface_color, '--preview-text': activeTokens.text_color, '--preview-primary': activeTokens.primary_color, '--preview-accent': activeTokens.secondary_color } as CSSProperties
+  const previewStyle = { ...getVariantStyle(values, activeVariant), '--preview-background': activeTokens.background_color, '--preview-surface': activeTokens.surface_color, '--preview-text': activeTokens.text_color, '--preview-primary': 'var(--semantic-primary-text)', '--preview-accent': 'var(--semantic-primary-bg)' } as CSSProperties
 
   return (
     <AdminLayout title="Configurações" subtitle="Gerencie os assets e as cores da identidade visual do sistema.">
@@ -190,34 +180,13 @@ export default function AdminBrandSettingsPage() {
             <label>Enviar imagem<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void upload(event, 'og-image', 'og_image_url')} /></label>
           </section>
 
-          <section className="brand-settings-section visual-token-settings">
-            <h2>Cores e transparências por visual</h2>
-            <p className="field-help">Cada visual possui configuração independente. Variantes claras usam camada branca; variantes escuras usam camada preta.</p>
-            {(['dark', 'light'] as const).map((group) => <div className="variant-tab-group" key={group}><h3>{group === 'dark' ? 'Modo Escuro' : 'Modo Claro'}</h3><div className="variant-tabs" role="tablist" aria-label={group === 'dark' ? 'Variantes escuras' : 'Variantes claras'}>{publicVisualVariantOptions.filter(({ value }) => value.startsWith(`${group}_`)).map((option) => <button type="button" role="tab" aria-selected={activeVariant === option.value} className={activeVariant === option.value ? 'active' : ''} key={option.value} onClick={() => setActiveVariant(option.value)}>{option.label}</button>)}</div></div>)}
-            <div className="brand-color-grid">{colorFields.map(({ key, label }) => <label className="color-field" key={key}><span>{label}</span><span className="color-input-row"><input type="color" value={isValidHexColor(activeTokens[key]) ? activeTokens[key] : defaultVisualVariantSettings[activeVariant][key]} onChange={(event) => updateVariant(key, event.target.value)} /><input value={activeTokens[key]} onChange={(event) => updateVariant(key, event.target.value)} maxLength={7} /></span></label>)}</div>
-            <div className="variant-opacity-grid">{opacityFields.map(({ key, label, help }) => { const percent = Math.round(activeTokens[key] * 100); return <label className="opacity-field" key={key}><span>{label}: <output>{percent}%</output></span><input type="range" min="0" max="100" step="1" value={percent} onChange={(event) => updateVariant(key, Number(event.target.value) / 100)} /><small className="field-help">{help}</small></label> })}</div>
-            <button className="secondary-button compact-button" type="button" onClick={() => setValues((current) => ({ ...current, visual_variant_settings: { ...current.visual_variant_settings, [activeVariant]: { ...defaultVisualVariantSettings[activeVariant] } } }))}>Restaurar padrão desta variante</button>
-          </section>
-          <section className="brand-settings-section">
-            <h2>Imagem de fundo</h2>
-            <p className="field-help">JPG, PNG ou WebP com até 5 MB. Um overlay escuro preserva a legibilidade.</p>
-            {values.background_image_url ? <img className="brand-asset-preview background" src={values.background_image_url} alt="Imagem de fundo atual" /> : <p className="field-help">O fundo padrão está ativo.</p>}
-            <label>URL da imagem<input value={values.background_image_url} onChange={(event) => update('background_image_url', event.target.value)} /></label>
-            <label>Enviar imagem<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void upload(event, 'background', 'background_image_url')} /></label>
-            <button className="secondary-button compact-button" type="button" onClick={() => update('background_image_url', '')}>Remover imagem e restaurar fundo padrão</button>
-          </section>
-          <section className="brand-settings-section visual-variants-settings">
-            <h2>Variações visuais do cartão</h2>
-            <p className="field-help">Configure os logos oficiais por contraste. O logo para fundo escuro deve ser branco/claro. O logo para fundo claro deve ser preto/escuro.</p>
-            <div className="institutional-assets-grid">{institutionalAssets.map((asset) => <div className="institutional-asset-field" key={asset.key}><h3>{asset.label}</h3><p className="field-help">{asset.help}</p>{values[asset.key] ? <img className={`brand-asset-preview ${asset.type.startsWith('logo') ? 'logo' : 'background'}`} src={values[asset.key]} alt={`Prévia: ${asset.label}`} /> : null}<label>URL<input value={values[asset.key]} onChange={(event) => update(asset.key, event.target.value)} /></label><label>Enviar arquivo<input type="file" accept={asset.accept} onChange={(event) => void upload(event, asset.type, asset.key)} /></label><button className="secondary-button compact-button" type="button" onClick={() => update(asset.key, '')}>Remover e restaurar fallback</button></div>)}</div>
-            <div className="visual-variants-preview" aria-label="Prévia das seis variações">{publicVisualVariantOptions.map((option) => <article className={`visual-variant-thumbnail ${getVariantClassName(values, option.value)}`} style={getVariantStyle(values, option.value)} key={option.value}><img src={getVariantLogo(values, option.value)} alt="Invest RS" /><strong>{option.label}</strong></article>)}</div>
-          </section>
+          <TemplateOptionsEditor activeVariant={activeVariant} values={values} uploading={uploading} onActiveVariantChange={setActiveVariant} onAssetChange={update} onUpload={uploadFile} onVariantChange={updateVariant} />
         </div>
 
         <div className="brand-settings-preview-column">
           <aside className={`brand-preview ${getVariantClassName(values, activeVariant)}`} style={previewStyle} aria-label="Prévia da identidade visual">
             <img src={getVariantLogo(values, activeVariant)} alt="Invest RS" />
-            <div className="brand-preview-card"><p>Cartão institucional</p><h2>Identidade Invest RS</h2><span>Texto de exemplo para conferir contraste e legibilidade.</span><div><button type="button">Botão primário</button><button type="button">Secundário</button></div></div>
+            <div className="brand-preview-card"><span className="template-preview-icon" aria-hidden="true">◆</span><p>Cartão institucional</p><h2>Identidade Invest RS</h2><span>Texto de exemplo para conferir contraste e legibilidade.</span><div><button className="primary-button" type="button">Principal</button><button className="secondary-button" type="button">Secundário</button><button className="auxiliary-button" type="button">Auxiliar</button></div></div>
           </aside>
           <div className="brand-settings-actions"><button className="primary-button" type="button" disabled={saving || Boolean(uploading)} onClick={() => void save()}>{uploading ? 'Enviando asset...' : saving ? 'Salvando...' : 'Salvar configurações'}</button></div>
         </div>

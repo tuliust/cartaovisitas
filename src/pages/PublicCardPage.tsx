@@ -86,9 +86,9 @@ export default function PublicCardPage() {
         <div className="button-grid collaborator-owner-actions">
           {actions.shareSupportChecked && actions.canShareVCard ? <button className="primary-button" type="button" disabled={Boolean(actions.running)} onClick={() => void actions.shareVCard()}>{actions.running === 'share' ? 'Preparando vCard...' : 'Compartilhar contato'}</button> : null}
           {!isInstalled ? <button className="secondary-button install-page-button" type="button" onClick={openInstallModal}><Smartphone aria-hidden="true" />Instale esta página como app</button> : null}
-          <Link className="secondary-button" to="/guia-de-utilizacao">Guia de Utilização</Link>
-          <Link className="secondary-button" to="/meu-cartao/assinatura-de-email">Gerar Rodapé para E-mail</Link>
-          <Link className="secondary-button" to="/meu-cartao/estatisticas">Estatísticas de Compartilhamento</Link>
+          <Link className="auxiliary-button" to="/guia-de-utilizacao">Guia de Utilização</Link>
+          <Link className="auxiliary-button" to="/meu-cartao/assinatura-de-email">Gerar Rodapé para E-mail</Link>
+          <Link className="auxiliary-button" to="/meu-cartao/estatisticas">Estatísticas de Compartilhamento</Link>
         </div>
         <section className="extra-functions" aria-labelledby="extra-functions-title">
           <h3 id="extra-functions-title">Funcionalidades adicionais</h3>

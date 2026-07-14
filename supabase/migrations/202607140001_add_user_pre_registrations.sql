@@ -12,6 +12,9 @@ create table if not exists public.user_pre_registrations (
 
 alter table public.user_pre_registrations enable row level security;
 
+drop policy if exists "Admins can view user pre registrations"
+on public.user_pre_registrations;
+
 create policy "Admins can view user pre registrations"
 on public.user_pre_registrations for select
 to authenticated

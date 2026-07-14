@@ -38,7 +38,7 @@ export default function VisualModeSelector({ variant = 'default' }: VisualModeSe
 
   const compact = variant === 'compact'
   return <div className={`visual-mode-selector${compact ? ' visual-mode-selector--compact' : ''}`} ref={containerRef}>
-    <button ref={triggerRef} className="visual-mode-trigger" type="button" aria-label={`Escolher visual. Atual: ${activeOption?.label ?? 'Preto institucional'}`} aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
+    <button ref={triggerRef} className="visual-mode-trigger" type="button" aria-label={`Escolher visual. Atual: ${activeOption?.label ?? 'Modo Escuro 1'}`} aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
       <span className={`visual-mode-trigger-swatch ${getVariantClassName(settings, visualMode)}`} style={getVariantStyle(settings, visualMode)} aria-hidden="true" />
       {!compact ? <><span>Visual</span><ChevronDown className={open ? 'open' : ''} size={15} aria-hidden="true" /></> : null}
     </button>

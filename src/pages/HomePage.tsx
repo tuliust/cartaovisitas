@@ -40,15 +40,15 @@ export default function HomePage() {
             <Link className="secondary-button" to="/cadastro">
               Cadastro
             </Link>
-            <Link className="secondary-button" to="/admin/login">
+            <Link className="auxiliary-button" to="/admin/login">
               Área Restrita
             </Link>
           </div>
         </div>
       </section>
       <div className="home-secondary-actions" aria-label="Links de apoio">
-        <Link to="/guia-de-utilizacao">Guia de Uso</Link>
-        <Link to="/termos-de-uso-e-privacidade">Termos de Uso e Privacidade</Link>
+        <Link className="auxiliary-button" to="/guia-de-utilizacao">Guia de Uso</Link>
+        <Link className="auxiliary-button" to="/termos-de-uso-e-privacidade">Termos de Uso e Privacidade</Link>
       </div>
     </main>
   )

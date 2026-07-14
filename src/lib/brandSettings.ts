@@ -3,7 +3,10 @@ import type { PublicVisualVariant } from './cardVisualVariants'
 
 export const DEFAULT_BROWSER_TITLE = 'Cartões Digitais | Invest RS'
 export const DEFAULT_APPLE_TOUCH_TITLE = 'Cartões Digitais'
-export const BRAND_SETTINGS_CACHE_KEY = 'invest-rs-brand-settings-v2'
+export const BRAND_SETTINGS_CACHE_KEY = 'invest-rs-brand-settings-v3'
+
+export const templateColorPalette = ['#ffffff', '#808080', '#000000', '#00ac7c', '#fdb642', '#ee286e'] as const
+export type TemplateColor = typeof templateColorPalette[number]
 
 export type VisualVariantSettings = {
   primary_color: string
@@ -13,6 +16,18 @@ export type VisualVariantSettings = {
   text_color: string
   background_overlay_opacity: number
   card_surface_opacity: number
+  background_opacity: number
+  surface_opacity: number
+  border_color: TemplateColor
+  border_opacity: number
+  icon_color: TemplateColor
+  icon_opacity: number
+  primary_button_color: TemplateColor
+  primary_button_opacity: number
+  secondary_button_color: TemplateColor
+  secondary_button_opacity: number
+  auxiliary_button_color: TemplateColor
+  auxiliary_button_opacity: number
 }
 
 export type VisualVariantSettingsMap = Record<PublicVisualVariant, VisualVariantSettings>
@@ -42,22 +57,30 @@ export type BrandSettings = {
 
 export type BrandAssetType = 'logo' | 'favicon' | 'og-image' | 'background' | 'apple-touch-icon' | 'logo-on-dark' | 'logo-on-light' | 'card-bg-dark-1' | 'card-bg-dark-2' | 'card-bg-light-3' | 'card-bg-light-4'
 
-const darkDefaults = {
+const darkDefaults: Omit<VisualVariantSettings, 'background_overlay_opacity'> = {
   primary_color: '#050505', secondary_color: '#f7f3eb', background_color: '#050505',
   surface_color: '#111111', text_color: '#ffffff', card_surface_opacity: 0.78,
+  background_opacity: 0, surface_opacity: 0.78, border_color: '#ffffff', border_opacity: 0.14,
+  icon_color: '#ffffff', icon_opacity: 1, primary_button_color: '#fdb642', primary_button_opacity: 1,
+  secondary_button_color: '#808080', secondary_button_opacity: 0.18,
+  auxiliary_button_color: '#000000', auxiliary_button_opacity: 1,
 }
-const lightDefaults = {
+const lightDefaults: Omit<VisualVariantSettings, 'background_overlay_opacity'> = {
   primary_color: '#111111', secondary_color: '#555555', background_color: '#f4f1eb',
-  surface_color: '#ffffff', text_color: '#111111', card_surface_opacity: 0.82,
+  surface_color: '#ffffff', text_color: '#000000', card_surface_opacity: 0.82,
+  background_opacity: 0, surface_opacity: 0.82, border_color: '#000000', border_opacity: 0.14,
+  icon_color: '#000000', icon_opacity: 1, primary_button_color: '#00ac7c', primary_button_opacity: 1,
+  secondary_button_color: '#808080', secondary_button_opacity: 0.18,
+  auxiliary_button_color: '#ffffff', auxiliary_button_opacity: 1,
 }
 
 export const defaultVisualVariantSettings: VisualVariantSettingsMap = {
   dark_black: { ...darkDefaults, background_overlay_opacity: 0 },
-  dark_image_1: { ...darkDefaults, background_overlay_opacity: 0.72 },
-  dark_image_2: { ...darkDefaults, background_overlay_opacity: 0.72 },
+  dark_image_1: { ...darkDefaults, background_overlay_opacity: 0.72, background_opacity: 0.72, primary_button_color: '#ee286e' },
+  dark_image_2: { ...darkDefaults, background_overlay_opacity: 0.72, background_opacity: 0.72, primary_button_color: '#00ac7c' },
   light_white: { ...lightDefaults, background_overlay_opacity: 0 },
-  light_image_3: { ...lightDefaults, background_overlay_opacity: 0.75 },
-  light_image_4: { ...lightDefaults, background_overlay_opacity: 0.75 },
+  light_image_3: { ...lightDefaults, background_overlay_opacity: 0.75, background_opacity: 0.75, primary_button_color: '#808080' },
+  light_image_4: { ...lightDefaults, background_overlay_opacity: 0.75, background_opacity: 0.75, primary_button_color: '#fdb642' },
 }
 
 export const defaultBrandSettings: BrandSettings = {
@@ -88,22 +111,50 @@ function requireSupabase() { if (!supabase) throw new Error('Supabase não confi
 export function isValidHexColor(value: string) { return /^#[0-9a-f]{6}$/i.test(value) }
 function validOpacity(value: unknown, fallback: number) { const parsed = typeof value === 'number' ? value : Number(value); return Number.isFinite(parsed) ? Math.min(1, Math.max(0, parsed)) : fallback }
 function validColor(value: unknown, fallback: string) { return typeof value === 'string' && isValidHexColor(value) ? value : fallback }
+function nearestPaletteColor(value: unknown, fallback: TemplateColor): TemplateColor {
+  const color = validColor(value, fallback).toLowerCase()
+  if ((templateColorPalette as readonly string[]).includes(color)) return color as TemplateColor
+  const rgb = [1, 3, 5].map((start) => Number.parseInt(color.slice(start, start + 2), 16))
+  return templateColorPalette.reduce((nearest, candidate) => {
+    const candidateRgb = [1, 3, 5].map((start) => Number.parseInt(candidate.slice(start, start + 2), 16))
+    const distance = candidateRgb.reduce((total, channel, index) => total + ((channel - rgb[index]) ** 2), 0)
+    const nearestRgb = [1, 3, 5].map((start) => Number.parseInt(nearest.slice(start, start + 2), 16))
+    const nearestDistance = nearestRgb.reduce((total, channel, index) => total + ((channel - rgb[index]) ** 2), 0)
+    return distance < nearestDistance ? candidate : nearest
+  }, fallback)
+}
 function cleanTitle(value: unknown, fallback: string, maxLength: number) { if (typeof value !== 'string') return fallback; const clean = value.replace(/[\r\n]+/g, ' ').trim(); return clean && clean.length <= maxLength && !/[<>]/.test(clean) ? clean : fallback }
 
-function normalizeVariants(value: unknown, legacy: Pick<BrandSettings, 'primary_color' | 'secondary_color' | 'background_color' | 'surface_color' | 'text_color'>): VisualVariantSettingsMap {
+function normalizeVariants(value: unknown): VisualVariantSettingsMap {
   const source = value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}
   return Object.fromEntries((Object.keys(defaultVisualVariantSettings) as PublicVisualVariant[]).map((variant) => {
     const defaults = defaultVisualVariantSettings[variant]
     const entry = source[variant] && typeof source[variant] === 'object' && !Array.isArray(source[variant]) ? source[variant] as Record<string, unknown> : {}
-    const useLegacy = Object.keys(entry).length === 0
+    const dark = variant.startsWith('dark_')
+    const textColor = dark ? '#ffffff' : '#000000'
+    const backgroundOpacity = validOpacity(entry.background_opacity ?? entry.background_overlay_opacity, defaults.background_opacity)
+    const surfaceOpacity = validOpacity(entry.surface_opacity ?? entry.card_surface_opacity, defaults.surface_opacity)
+    const primaryButtonColor = nearestPaletteColor(entry.primary_button_color ?? entry.secondary_color, defaults.primary_button_color)
     return [variant, {
-      primary_color: validColor(entry.primary_color, useLegacy ? legacy.primary_color : defaults.primary_color),
-      secondary_color: validColor(entry.secondary_color, useLegacy ? legacy.secondary_color : defaults.secondary_color),
-      background_color: validColor(entry.background_color, useLegacy ? legacy.background_color : defaults.background_color),
-      surface_color: validColor(entry.surface_color, useLegacy ? legacy.surface_color : defaults.surface_color),
-      text_color: validColor(entry.text_color, useLegacy ? legacy.text_color : defaults.text_color),
-      background_overlay_opacity: validOpacity(entry.background_overlay_opacity, defaults.background_overlay_opacity),
-      card_surface_opacity: validOpacity(entry.card_surface_opacity, defaults.card_surface_opacity),
+      primary_color: textColor,
+      secondary_color: primaryButtonColor,
+      background_color: nearestPaletteColor(entry.background_color, dark ? '#000000' : '#ffffff'),
+      surface_color: nearestPaletteColor(entry.surface_color, dark ? '#000000' : '#ffffff'),
+      text_color: textColor,
+      background_overlay_opacity: backgroundOpacity,
+      card_surface_opacity: surfaceOpacity,
+      background_opacity: backgroundOpacity,
+      surface_opacity: surfaceOpacity,
+      border_color: nearestPaletteColor(entry.border_color, dark ? '#ffffff' : '#000000'),
+      border_opacity: validOpacity(entry.border_opacity, defaults.border_opacity),
+      icon_color: nearestPaletteColor(entry.icon_color, dark ? '#ffffff' : '#000000'),
+      icon_opacity: validOpacity(entry.icon_opacity, defaults.icon_opacity),
+      primary_button_color: primaryButtonColor,
+      primary_button_opacity: validOpacity(entry.primary_button_opacity, defaults.primary_button_opacity),
+      secondary_button_color: nearestPaletteColor(entry.secondary_button_color, '#808080'),
+      secondary_button_opacity: validOpacity(entry.secondary_button_opacity, defaults.secondary_button_opacity),
+      auxiliary_button_color: nearestPaletteColor(entry.auxiliary_button_color, dark ? '#000000' : '#ffffff'),
+      auxiliary_button_opacity: validOpacity(entry.auxiliary_button_opacity, defaults.auxiliary_button_opacity),
     }]
   })) as VisualVariantSettingsMap
 }
@@ -123,7 +174,7 @@ export function normalizeBrandSettings(data?: Partial<BrandSettings> | null): Br
     card_bg_light_image_3_url: merged.card_bg_light_image_3_url || '', card_bg_light_image_4_url: merged.card_bg_light_image_4_url || '',
     apple_touch_icon_url: merged.apple_touch_icon_url || '', browser_title: cleanTitle(merged.browser_title, DEFAULT_BROWSER_TITLE, 100),
     apple_touch_title: cleanTitle(merged.apple_touch_title, DEFAULT_APPLE_TOUCH_TITLE, 40),
-    visual_variant_settings: normalizeVariants(merged.visual_variant_settings, legacy),
+    visual_variant_settings: normalizeVariants(merged.visual_variant_settings),
   }
 }
 
