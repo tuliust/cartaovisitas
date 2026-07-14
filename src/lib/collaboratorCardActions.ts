@@ -3,6 +3,7 @@ import type { AdminBusinessCard } from './adminCards'
 import { recordCardEvent } from './cards'
 import { downloadQrCodePng } from './qrcode'
 import { canShareVCardFile } from './shareSupport'
+import { generateVCard } from './vcard'
 import { getAppleWalletUrl, isIosDevice, isWalletPublicEnabled } from './wallet'
 
 export type CollaboratorAction = 'share' | 'copy-vcard' | 'qr' | 'wallet'
@@ -16,7 +17,7 @@ export function useCollaboratorCardActions(card: AdminBusinessCard | null, notif
   const [canShareVCard] = useState(() => canShareVCardFile())
   const runningRef = useRef(false)
   const vcardUrl = useMemo(() => card ? `${baseUrl()}/api/vcard/${encodeURIComponent(card.slug)}?lang=pt` : '', [card])
-  const qrUrl = useMemo(() => card ? `${baseUrl()}/qr/${encodeURIComponent(card.slug)}?lang=pt` : '', [card])
+  const qrValue = useMemo(() => card ? generateVCard(card) : '', [card])
 
   const run = useCallback(async (action: CollaboratorAction, task: () => Promise<void>) => {
     if (!card || runningRef.current) return
@@ -32,9 +33,9 @@ export function useCollaboratorCardActions(card: AdminBusinessCard | null, notif
 
   const downloadQrCode = useCallback(() => run('qr', async () => {
     if (!card) return
-    try { await downloadQrCodePng(qrUrl, `qr-code-${card.slug}.png`); notify.success('QR Code baixado com sucesso.'); void recordCardEvent(card.id, 'qr') }
+    try { await downloadQrCodePng(qrValue, `qr-code-${card.slug}.png`); notify.success('QR Code baixado com sucesso.') }
     catch { notify.error('Não foi possível baixar o QR Code.') }
-  }), [card, notify, qrUrl, run])
+  }), [card, notify, qrValue, run])
 
   const shareVCard = useCallback(() => run('share', async () => {
     if (!card) return
@@ -68,7 +69,7 @@ export function useCollaboratorCardActions(card: AdminBusinessCard | null, notif
   return {
     running,
     vcardUrl,
-    qrUrl,
+    qrValue,
     canShareVCard,
     shareSupportChecked: true,
     copyVCard,
