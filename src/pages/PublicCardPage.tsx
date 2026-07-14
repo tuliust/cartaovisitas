@@ -44,9 +44,9 @@ export default function PublicCardPage() {
   const [qrDataUrl, setQrDataUrl] = useState('')
   const [failedLogoUrl, setFailedLogoUrl] = useState('')
 
-  const qrUrl = actions.qrUrl
+  const qrValue = actions.qrValue
   useEffect(() => { if (card && slug === card.slug) void recordCardEvent(card.id, 'view') }, [card, slug])
-  useEffect(() => { if (!qrUrl || !card || slug !== card.slug) return; QRCode.toDataURL(qrUrl, { width: 360, margin: 1, errorCorrectionLevel: 'M' }).then(setQrDataUrl).catch(() => setQrDataUrl('')) }, [card, qrUrl, slug])
+  useEffect(() => { if (!qrValue || !card || slug !== card.slug) return; QRCode.toDataURL(qrValue, { width: 360, margin: 1, errorCorrectionLevel: 'M' }).then(setQrDataUrl).catch(() => setQrDataUrl('')) }, [card, qrValue, slug])
   const professionalData = useMemo(() => card ? getLocalizedProfessionalData(card, language) : null, [card, language])
 
   if (!card) return <Navigate to="/meu-cartao/editar" replace />
