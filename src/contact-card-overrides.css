@@ -47,6 +47,18 @@
   text-align: left;
 }
 
+/* The address sits below the QR area and may use the available horizontal space. */
+.collaborator-own-card .public-card-contact-list .contact-address {
+  width: max-content;
+  max-width: none;
+}
+
+.collaborator-own-card .public-card-contact-list .contact-address .contact-value {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
 .collaborator-own-card .public-card-contact-list .contact-label svg {
   grid-column: 1;
   grid-row: 1;
