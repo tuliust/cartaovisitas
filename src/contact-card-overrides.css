@@ -116,6 +116,176 @@
   transform: translateY(-10px);
 }
 
+/*
+ * Shared proportional preview used in /meu-cartao/editar and /admin/cartoes/:id.
+ * The public card shown at 100% is the canonical 668 x 780 composition.
+ */
+.card-preview.card-preview--responsive {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 668px;
+  min-height: 0;
+  aspect-ratio: 668 / 780;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  padding: 5.8% 6.5% 5.4%;
+  overflow: hidden;
+  border-radius: 4.5cqi;
+}
+
+.card-preview--responsive .card-preview-top {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4cqi;
+}
+
+.card-preview--responsive .card-preview-logo {
+  width: 32%;
+  max-width: none;
+  height: auto;
+  object-fit: contain;
+  object-position: left top;
+}
+
+.card-preview--responsive .card-preview-top-actions {
+  position: relative;
+  flex: 0 0 23%;
+  display: grid;
+  justify-items: end;
+}
+
+.card-preview--responsive .public-card-avatar-wrapper.preview {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 4cqi;
+  overflow: hidden;
+}
+
+.card-preview--responsive .status-pill {
+  position: absolute;
+  top: calc(100% + 1.2cqi);
+  right: 0;
+  z-index: 1;
+  font-size: 1.6cqi;
+}
+
+.card-preview--responsive .card-preview-person {
+  align-self: center;
+  min-width: 0;
+  transform: translateY(-1.5cqi);
+}
+
+.card-preview--responsive .card-preview-person h2 {
+  max-width: 82%;
+  margin: 0 0 5.1cqi;
+  font-size: 10.2cqi;
+  line-height: 0.9;
+  letter-spacing: -0.075em;
+  overflow-wrap: normal;
+}
+
+.card-preview--responsive .card-preview-person p {
+  margin: 0;
+  font-size: 3cqi;
+  line-height: 1.25;
+}
+
+.card-preview--responsive .card-preview-job-title {
+  font-weight: 800;
+}
+
+.card-preview--responsive .card-preview-footer {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 25.5%;
+  align-items: start;
+  gap: 3.6cqi;
+}
+
+.card-preview--responsive .card-preview-contact-list {
+  min-width: 0;
+  display: grid;
+  gap: 3cqi;
+}
+
+.card-preview--responsive .card-preview-contact-list a {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 3.45cqi minmax(0, 1fr);
+  grid-template-rows: 1.8cqi 2.7cqi;
+  align-items: start;
+  column-gap: 1.2cqi;
+  row-gap: 0.75cqi;
+  margin: 0;
+  color: var(--public-card-foreground);
+  line-height: 1;
+  text-decoration: none;
+}
+
+.card-preview--responsive .card-preview-contact-label {
+  display: contents;
+}
+
+.card-preview--responsive .card-preview-contact-label svg {
+  grid-column: 1;
+  grid-row: 1;
+  width: 3.45cqi;
+  height: 3.45cqi;
+  margin: 0;
+}
+
+.card-preview--responsive .card-preview-contact-label-text {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  font-size: 1.8cqi;
+  font-weight: 800;
+  line-height: 1.8cqi;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.card-preview--responsive .card-preview-contact-value {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  margin: 0;
+  color: var(--public-card-foreground);
+  font-size: 2.7cqi;
+  font-weight: 400;
+  line-height: 2.7cqi;
+  letter-spacing: normal;
+  text-transform: none;
+  overflow-wrap: anywhere;
+}
+
+.card-preview--responsive .card-preview-contact-address {
+  width: max-content;
+  max-width: none;
+}
+
+.card-preview--responsive .card-preview-contact-address .card-preview-contact-value {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
+.card-preview--responsive .card-preview-qr {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  align-self: start;
+  box-sizing: border-box;
+  padding: 1.15cqi;
+  transform: translateY(-1.5cqi);
+  border-radius: 2.7cqi;
+  background: #ffffff;
+  object-fit: contain;
+}
+
 @media (max-width: 760px) {
   .collaborator-own-card .card-main,
   .collaborator-own-card .card-footer {
@@ -136,6 +306,12 @@
     width: clamp(145px, 26vw, 160px);
     height: clamp(145px, 26vw, 160px);
     padding: 7px;
+  }
+
+  .desktop-card-preview .card-preview--responsive,
+  .card-preview-modal .card-preview--responsive {
+    width: min(100%, 668px);
+    margin-inline: auto;
   }
 }
 
