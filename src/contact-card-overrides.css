@@ -70,8 +70,15 @@
   margin: 0;
 }
 
+/* Increase separation between the name and professional details. */
 .collaborator-own-card .person-block h1 {
-  margin-bottom: 20px;
+  margin-bottom: 40px;
+}
+
+.collaborator-own-card .person-block .job-title,
+.collaborator-own-card .person-block .department {
+  font-size: 20px;
+  line-height: 1.25;
 }
 
 /* Lift the identity and contact blocks further to use the card's upper space. */
