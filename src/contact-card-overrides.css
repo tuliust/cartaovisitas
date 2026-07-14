@@ -31,14 +31,18 @@
   text-align: left;
 }
 
+/* Match the department typography while keeping contact values white. */
 .collaborator-own-card .public-card-contact-list .contact-value {
   grid-column: 2;
   grid-row: 2;
   min-width: 0;
   margin: 0;
-  color: inherit;
-  font-size: 16px;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 400;
   line-height: 1.35;
+  letter-spacing: normal;
+  text-transform: none;
   overflow-wrap: anywhere;
   text-align: left;
 }
@@ -72,7 +76,7 @@
   gap: 24px;
 }
 
-/* Give the portrait and embedded-contact QR greater visual prominence. */
+/* Give the portrait visual prominence while keeping the QR secondary. */
 .collaborator-own-card .public-card-avatar-wrapper {
   width: 154px;
   height: 154px;
@@ -86,10 +90,10 @@
 }
 
 .collaborator-own-card .qr-code {
-  width: 190px;
-  height: 190px;
+  width: 170px;
+  height: 170px;
   align-self: start;
-  padding: 9px;
+  padding: 8px;
 }
 
 @media (max-width: 760px) {
@@ -109,9 +113,9 @@
   }
 
   .collaborator-own-card .qr-code {
-    width: clamp(158px, 28vw, 180px);
-    height: clamp(158px, 28vw, 180px);
-    padding: 8px;
+    width: clamp(145px, 26vw, 160px);
+    height: clamp(145px, 26vw, 160px);
+    padding: 7px;
   }
 }
 
@@ -126,8 +130,8 @@
   }
 
   .collaborator-own-card .qr-code {
-    width: clamp(132px, 35vw, 158px);
-    height: clamp(132px, 35vw, 158px);
+    width: clamp(125px, 32vw, 145px);
+    height: clamp(125px, 32vw, 145px);
   }
 }
 
@@ -144,7 +148,7 @@
   }
 
   .collaborator-own-card .qr-code {
-    width: 124px;
-    height: 124px;
+    width: 116px;
+    height: 116px;
   }
 }
