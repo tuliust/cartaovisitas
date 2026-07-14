@@ -256,11 +256,14 @@ Tipos:
 
 Características:
 
-- pilha;
+- um toast visível por vez;
+- posição fixa no canto inferior direito;
 - expiração;
 - fechamento manual;
 - `aria-live`;
 - compatibilidade mobile e desktop.
+- linha lateral verde para sucesso e erro;
+- linha lateral amarela para informações de atenção.
 
 Não exibir simultaneamente toast e box inline com a mesma confirmação.
 

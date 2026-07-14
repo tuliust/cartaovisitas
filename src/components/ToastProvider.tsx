@@ -20,7 +20,9 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
 
   const show = useCallback((kind: ToastKind, message: string) => {
     const id = ++nextId.current
-    setItems((current) => [...current, { id, kind, message }])
+    timers.current.forEach((timer) => window.clearTimeout(timer))
+    timers.current.clear()
+    setItems([{ id, kind, message }])
     const timer = window.setTimeout(() => {
       timers.current.delete(timer)
       dismiss(id)
