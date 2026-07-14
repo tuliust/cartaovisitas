@@ -7377,3 +7377,20 @@ html.app-visual-mode-light .password-input-field:focus-within { border-color: va
     height: auto;
   }
 }
+
+html.app-visual-mode-light .home-secondary-actions a {
+  border-color: rgba(17, 17, 17, 0.18);
+  background: #ffffff;
+  color: #111111;
+}
+
+html.app-visual-mode-light .home-secondary-actions a:hover,
+html.app-visual-mode-light .home-secondary-actions a:focus-visible {
+  border-color: var(--semantic-focus);
+  background: #ffffff;
+}
+
+html.app-visual-mode-light .auth-page-card .email-suffix-label {
+  color: #1f1f1f;
+  -webkit-text-fill-color: #1f1f1f;
+}
