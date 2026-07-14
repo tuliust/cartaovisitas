@@ -1,0 +1,21 @@
+/* Contact typography and icon alignment for the main collaborator card. */
+.collaborator-own-card .public-card-contact-list :is(a, p) {
+  font-size: 18px;
+  line-height: 1.45;
+}
+
+.collaborator-own-card .public-card-contact-list .contact-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.collaborator-own-card .public-card-contact-list .contact-label svg {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  margin: 0;
+}
