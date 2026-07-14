@@ -1,6 +1,6 @@
 /* Contact typography, icon alignment and proportion adjustments for the main collaborator card. */
 .collaborator-own-card .public-card-contact-list {
-  gap: 12px;
+  gap: 20px;
 }
 
 .collaborator-own-card .public-card-contact-list :is(a, p) {
@@ -9,7 +9,7 @@
   grid-template-rows: 12px 18px;
   align-items: start;
   column-gap: 8px;
-  row-gap: 2px;
+  row-gap: 5px;
   margin: 0;
   font-size: 16px;
   line-height: 1;
