@@ -23,6 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
+# Vercel local project metadata — never commit the local project link
 .vercel
 .env
 .env.local
