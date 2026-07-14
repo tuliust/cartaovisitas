@@ -19,6 +19,7 @@ export function CollaboratorProvider({ children, required = true }: Collaborator
   const { applyAuthenticatedDefault, clearAuthenticatedDefault } = useVisualMode()
   const [card, setCard] = useState<AdminBusinessCard | null>(null)
   const [authenticated, setAuthenticated] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
   const [redirect, setRedirect] = useState('')
   const actions = useCollaboratorCardActions(card, toast)
@@ -40,17 +41,17 @@ export function CollaboratorProvider({ children, required = true }: Collaborator
     void (async () => {
       const session = await getCurrentSession()
       if (!session) {
-        if (mounted) { setAuthenticated(false); setLoading(false); if (required) setRedirect('/entrar') }
+        if (mounted) { setAuthenticated(false); setIsAdmin(false); setLoading(false); if (required) setRedirect('/entrar') }
         return
       }
-      await requireActiveUser()
+      const profile = await requireActiveUser()
       const ownCard = await getMyCard()
       if (mounted) {
         if (ownCard) {
           const sessionKey = `${session.user.id}:${session.expires_at ?? ''}`
           applyAuthenticatedDefault(ownCard.public_visual_variant ?? 'dark_black', sessionKey)
         }
-        setAuthenticated(true); setCard(ownCard); setLoading(false)
+        setAuthenticated(true); setIsAdmin(profile.role === 'admin'); setCard(ownCard); setLoading(false)
       }
     })().catch(async (error) => {
       if (!mounted) return
@@ -58,13 +59,14 @@ export function CollaboratorProvider({ children, required = true }: Collaborator
       toast.error(message)
       await signOut().catch(() => undefined)
       setAuthenticated(false)
+      setIsAdmin(false)
       setLoading(false)
       if (required) setRedirect('/entrar')
     })
     return () => { mounted = false }
   }, [applyAuthenticatedDefault, required, toast])
 
-  const value = useMemo(() => ({ card, loading, authenticated, actions, refreshCard, logout }), [actions, authenticated, card, loading, logout, refreshCard])
+  const value = useMemo(() => ({ card, loading, authenticated, isAdmin, actions, refreshCard, logout }), [actions, authenticated, card, isAdmin, loading, logout, refreshCard])
 
   if (redirect) return <Navigate to={redirect} replace state={{ from: location.pathname }} />
   if (loading) return <main className="admin-login-shell admin-state-shell"><div className="admin-login-card admin-state-card" role="status" aria-live="polite"><p className="admin-state-message">Verificando acesso...</p></div></main>
