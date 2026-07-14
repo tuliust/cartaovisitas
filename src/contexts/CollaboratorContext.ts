@@ -6,6 +6,7 @@ export type CollaboratorContextValue = {
   card: AdminBusinessCard | null
   loading: boolean
   authenticated: boolean
+  isAdmin: boolean
   actions: CollaboratorCardActions
   refreshCard: () => Promise<AdminBusinessCard | null>
   logout: () => Promise<void>
