@@ -28,7 +28,7 @@ export const emailSignatureConfidentiality: Record<EmailSignatureLanguage, strin
   en: 'This message and its attachments may contain confidential information and/or information protected by applicable law, including Brazil’s General Data Protection Law (Law No. 13,709/2018 – LGPD). The content of this communication is intended solely for the recipient and must not be shared with third parties without express authorization. If you are not the intended recipient, any disclosure, distribution, or reproduction of this email is expressly prohibited. If you have received it in error, please notify the sender and delete it immediately. Invest RS is not responsible for conclusions, decisions, or actions taken based on this email without formal confirmation of its content.',
 }
 
-const iconPaths = { phone: '/email-signature/whatsapp.png', email: '/email-signature/email.png', website: '/email-signature/website.png' } as const
+const iconPaths = { phone: '/email-signature/whatsapp.png', email: '/email-signature/email.png', website: '/email-signature/website.png', address: '/email-signature/address.svg' } as const
 const trim = (value: string | null | undefined) => value?.trim() ?? ''
 const escapeHtml = (value: string) => value.replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[character] ?? character)
 const escapeAttribute = escapeHtml
@@ -84,7 +84,7 @@ export function buildEmailSignatureModel(
     contacts.push({ kind: 'website', text: website.replace(/\/$/, ''), href: website, iconUrl: publicAssetUrl(iconPaths.website, normalizedOrigin), alt: 'Site' })
   }
   if (addressUrl) {
-    contacts.push({ kind: 'address', text: emailSignatureAddress, href: addressUrl, iconUrl: '', alt: 'Endereço' })
+    contacts.push({ kind: 'address', text: emailSignatureAddress, href: addressUrl, iconUrl: publicAssetUrl(iconPaths.address, normalizedOrigin), alt: 'Endereço' })
   }
 
   const configuredLogo = trim(settings.logo_on_light_url) || trim(settings.logo_on_dark_url) || trim(settings.logo_url) || '/invest-rs-logo.png'

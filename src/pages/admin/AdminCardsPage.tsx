@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type MouseEvent as ReactMouseEvent } from 'react'
+import { useCallback, useEffect, useMemo, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { getCurrentSession } from '../../lib/auth'
@@ -83,6 +83,7 @@ export default function AdminCardsPage() {
   const [importOpen, setImportOpen] = useState(false)
   const [openActionsMenu, setOpenActionsMenu] = useState<string | null>(null)
   const [upwardActionsMenu, setUpwardActionsMenu] = useState<string | null>(null)
+  const [actionsMenuStyle, setActionsMenuStyle] = useState<CSSProperties>({})
 
   const visibleCards = useMemo(() => {
     const term = normalizeSearchValue(search.trim())
@@ -167,6 +168,7 @@ export default function AdminCardsPage() {
     function closeActionsMenu() {
       setOpenActionsMenu(null)
       setUpwardActionsMenu(null)
+      setActionsMenuStyle({})
     }
 
     function closeOnOutsideClick(event: MouseEvent) {
@@ -199,16 +201,21 @@ export default function AdminCardsPage() {
     if (openActionsMenu === menuKey) {
       setOpenActionsMenu(null)
       setUpwardActionsMenu(null)
+      setActionsMenuStyle({})
       return
     }
 
     const triggerRect = event.currentTarget.getBoundingClientRect()
     const estimatedMenuHeight = 320
+    const menuWidth = 220
     const spaceBelow = window.innerHeight - triggerRect.bottom
     const spaceAbove = triggerRect.top
     const shouldOpenUpward = spaceBelow < estimatedMenuHeight && spaceAbove > spaceBelow
+    const left = Math.min(window.innerWidth - menuWidth - 12, Math.max(12, triggerRect.right - menuWidth))
+    const top = shouldOpenUpward ? Math.max(12, triggerRect.top - estimatedMenuHeight - 8) : Math.min(window.innerHeight - 12, triggerRect.bottom + 8)
 
     setUpwardActionsMenu(shouldOpenUpward ? menuKey : null)
+    setActionsMenuStyle({ position: 'fixed', top, left, right: 'auto' })
     setOpenActionsMenu(menuKey)
   }
 
@@ -305,6 +312,7 @@ export default function AdminCardsPage() {
         {isOpen ? (
           <div
             className="admin-actions-popover"
+            style={actionsMenuStyle}
             id={menuId}
             role="menu"
             aria-label={`Ações do cartão de ${cardName}`}
@@ -514,7 +522,7 @@ export default function AdminCardsPage() {
               <tbody>
                 {visibleCards.map((card) => (
                   <tr key={card.id}>
-                    <td>
+                    <td className="admin-name-email-cell">
                       <strong>{card.display_name || card.full_name}</strong>
                       {card.email ? <small>{card.email}</small> : null}
                     </td>

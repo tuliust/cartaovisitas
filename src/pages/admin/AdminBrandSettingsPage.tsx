@@ -23,6 +23,7 @@ import { ManagedPagesEditor } from '../../components/admin/ManagedPagesEditor'
 
 type ColorKey = 'primary_color' | 'secondary_color' | 'background_color' | 'surface_color' | 'text_color'
 type AssetUrlKey = 'favicon_url' | 'og_image_url' | 'background_image_url' | 'apple_touch_icon_url' | 'logo_on_dark_url' | 'logo_on_light_url' | 'card_bg_dark_image_1_url' | 'card_bg_dark_image_2_url' | 'card_bg_light_image_3_url' | 'card_bg_light_image_4_url'
+type SettingsTab = 'visual' | 'content' | 'usage_guide' | 'terms_and_privacy'
 
 const institutionalAssets: Array<{ key: AssetUrlKey; type: BrandAssetType; label: string; help: string; accept: string }> = [
   { key: 'logo_on_dark_url', type: 'logo-on-dark', label: 'Logo para fundo escuro', help: 'Use uma versão branca ou clara. Recomendado: logo horizontal em PNG, SVG ou WebP, entre 600–1200 px de largura e 160–320 px de altura, preferencialmente com fundo transparente, área segura ao redor da marca e arquivo de até 2 MB. O sistema ajusta a imagem automaticamente para evitar cortes.', accept: 'image/png,image/svg+xml,image/webp' },
@@ -48,6 +49,12 @@ const opacityFields: Array<{ key: 'background_overlay_opacity' | 'card_surface_o
   { key: 'background_overlay_opacity', label: 'Opacidade da camada sobre o background', help: '0% não aplica camada; 100% cobre totalmente a imagem.' },
   { key: 'card_surface_opacity', label: 'Opacidade da superfície dos cards', help: 'Valores altos escondem mais a imagem de fundo.' },
 ]
+const settingsTabs: Array<{ key: SettingsTab; label: string }> = [
+  { key: 'visual', label: 'Identidade Visual' },
+  { key: 'content', label: 'Conteúdo' },
+  { key: 'usage_guide', label: 'Guia de Utilização' },
+  { key: 'terms_and_privacy', label: 'Termos de Uso' },
+]
 
 const brandSettingKeys = Object.keys(defaultBrandSettings) as Array<keyof BrandSettings>
 
@@ -66,6 +73,7 @@ export default function AdminBrandSettingsPage() {
   const [uploading, setUploading] = useState<BrandAssetType | ''>('')
   const [error, setError] = useState('')
   const [activeVariant, setActiveVariant] = useState<PublicVisualVariant>('dark_black')
+  const [activeSettingsTab, setActiveSettingsTab] = useState<SettingsTab>('visual')
 
   useEffect(() => {
     let mounted = true
@@ -138,6 +146,10 @@ export default function AdminBrandSettingsPage() {
   return (
     <AdminLayout title="Configurações" subtitle="Gerencie os assets e as cores da identidade visual do sistema.">
       {error ? <p className="admin-error" role="alert">{error}</p> : null}
+      <div className="admin-settings-tabs" role="tablist" aria-label="Seções de configuração">
+        {settingsTabs.map((tab) => <button key={tab.key} type="button" role="tab" aria-selected={activeSettingsTab === tab.key} className={activeSettingsTab === tab.key ? 'active' : ''} onClick={() => setActiveSettingsTab(tab.key)}>{tab.label}</button>)}
+      </div>
+      {activeSettingsTab === 'visual' ? <>
       <section className="admin-settings-area" aria-labelledby="visual-settings-title"><h2 id="visual-settings-title">Identidade visual</h2><div className="brand-settings-grid">
         <div className="brand-settings-form">
           <section className="brand-settings-section">
@@ -208,7 +220,10 @@ export default function AdminBrandSettingsPage() {
         </aside>
       </div></section>
       <div className="brand-settings-actions"><button className="primary-button" type="button" disabled={saving || Boolean(uploading)} onClick={() => void save()}>{uploading ? 'Enviando asset...' : saving ? 'Salvando...' : 'Salvar configurações'}</button></div>
-      <section className="admin-settings-area" aria-labelledby="managed-pages-title"><div className="admin-settings-area-heading"><h2 id="managed-pages-title">Conteúdo das páginas</h2><p>Edite textos institucionais estruturados sem inserir HTML.</p></div><ManagedPagesEditor /></section>
+      </> : null}
+      {activeSettingsTab === 'content' ? <section className="admin-settings-area" aria-labelledby="content-settings-title"><div className="admin-settings-area-heading"><h2 id="content-settings-title">Conteúdo</h2><p>Use as abas Guia de Utilização e Termos de Uso para editar textos institucionais estruturados sem HTML.</p></div></section> : null}
+      {activeSettingsTab === 'usage_guide' ? <section className="admin-settings-area" aria-labelledby="usage-guide-settings-title"><div className="admin-settings-area-heading"><h2 id="usage-guide-settings-title">Guia de Utilização</h2><p>Edite o conteúdo publicado em /guia-de-utilizacao.</p></div><ManagedPagesEditor pageKey="usage_guide" showPreview={false} showTabs={false} /></section> : null}
+      {activeSettingsTab === 'terms_and_privacy' ? <section className="admin-settings-area" aria-labelledby="terms-settings-title"><div className="admin-settings-area-heading"><h2 id="terms-settings-title">Termos de Uso</h2><p>Edite o conteúdo publicado em /termos-de-uso-e-privacidade.</p></div><ManagedPagesEditor pageKey="terms_and_privacy" showPreview={false} showTabs={false} /></section> : null}
     </AdminLayout>
   )
 }

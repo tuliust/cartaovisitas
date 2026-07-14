@@ -52,7 +52,7 @@ export default function MyCardEmailSignaturePage() {
   }
 
   return (
-    <CollaboratorLayout title="Gerar Rodapé para E-mail" subtitle="Monte uma assinatura institucional compatível com o Gmail.">
+    <CollaboratorLayout title="Gerar Rodapé para E-mail">
       {!card || !model ? (
         <p className="state-card">Salve seu cartão antes de gerar a assinatura.</p>
       ) : (

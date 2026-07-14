@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type MouseEvent as ReactMouseEvent } from 'react'
+import { useCallback, useEffect, useMemo, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { useToast } from '../../contexts/ToastContext'
@@ -29,7 +29,7 @@ type RoleFilter = 'all' | 'admin' | 'user'
 type StatusFilter = 'all' | AdminUserStatus
 
 function getUserDisplayName(user: AdminUser) {
-  return user.full_name?.trim() || 'Nome não informado'
+  return user.full_name?.trim() || user.card?.full_name?.trim() || 'Nome não informado'
 }
 
 function getUserRoleLabel(user: AdminUser) {
@@ -55,6 +55,7 @@ export default function AdminUsersPage() {
   const [sending, setSending] = useState(false)
   const [openActionsMenu, setOpenActionsMenu] = useState<string | null>(null)
   const [openActionsUpward, setOpenActionsUpward] = useState(false)
+  const [actionsMenuStyle, setActionsMenuStyle] = useState<CSSProperties>({})
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -86,6 +87,7 @@ export default function AdminUsersPage() {
     function closeActionsMenu() {
       setOpenActionsMenu(null)
       setOpenActionsUpward(false)
+      setActionsMenuStyle({})
     }
 
     function closeOnOutsideClick(event: MouseEvent) {
@@ -118,15 +120,21 @@ export default function AdminUsersPage() {
     if (openActionsMenu === menuKey) {
       setOpenActionsMenu(null)
       setOpenActionsUpward(false)
+      setActionsMenuStyle({})
       return
     }
 
     const triggerRect = event.currentTarget.getBoundingClientRect()
     const estimatedMenuHeight = 224
+    const menuWidth = 220
     const spaceBelow = window.innerHeight - triggerRect.bottom
     const spaceAbove = triggerRect.top
+    const shouldOpenUpward = spaceBelow < estimatedMenuHeight && spaceAbove > spaceBelow
+    const left = Math.min(window.innerWidth - menuWidth - 12, Math.max(12, triggerRect.right - menuWidth))
+    const top = shouldOpenUpward ? Math.max(12, triggerRect.top - estimatedMenuHeight - 8) : Math.min(window.innerHeight - 12, triggerRect.bottom + 8)
 
-    setOpenActionsUpward(spaceBelow < estimatedMenuHeight && spaceAbove > spaceBelow)
+    setOpenActionsUpward(shouldOpenUpward)
+    setActionsMenuStyle({ position: 'fixed', top, left, right: 'auto' })
     setOpenActionsMenu(menuKey)
   }
 
@@ -210,6 +218,7 @@ export default function AdminUsersPage() {
         {isOpen ? (
           <div
             className="admin-actions-popover"
+            style={actionsMenuStyle}
             id={menuId}
             role="menu"
             aria-label={`Ações do usuário ${userName}`}

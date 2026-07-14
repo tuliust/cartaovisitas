@@ -1,6 +1,7 @@
 import type { CardFormValues } from '../../lib/adminCards'
 import { useBrandSettings } from '../../contexts/BrandSettingsContext'
 import { getVariantClassName, getVariantLogo, getVariantStyle } from '../../lib/cardVisualVariants'
+import { Globe, Mail, MapPin, Phone, type LucideIcon } from 'lucide-react'
 
 type CardPreviewProps = {
   values: CardFormValues
@@ -9,6 +10,10 @@ type CardPreviewProps = {
 
 function buildAddress(values: CardFormValues) {
   return [values.address_line, values.city, values.state, values.country].filter(Boolean).join(', ')
+}
+
+function PreviewContactLabel({ icon: Icon, children }: { icon: LucideIcon; children: string }) {
+  return <span className="card-preview-contact-label"><Icon aria-hidden="true" />{children}</span>
 }
 
 export default function CardPreview({ values, showStatus = true }: CardPreviewProps) {
@@ -31,7 +36,6 @@ export default function CardPreview({ values, showStatus = true }: CardPreviewPr
       </div>
 
       <div className="card-preview-person">
-        <p className="label">Contato institucional</p>
         <h2>{name}</h2>
         {values.job_title ? <p>{values.job_title}</p> : null}
         {values.department ? <p>{values.department}</p> : null}
@@ -41,25 +45,25 @@ export default function CardPreview({ values, showStatus = true }: CardPreviewPr
         <div className="contact-list card-preview-contact-list">
           {phone ? (
             <p>
-              <span>Telefone</span>
+              <PreviewContactLabel icon={Phone}>Telefone</PreviewContactLabel>
               {phone}
             </p>
           ) : null}
           {values.email ? (
             <p>
-              <span>E-mail</span>
+              <PreviewContactLabel icon={Mail}>E-mail</PreviewContactLabel>
               {values.email}
             </p>
           ) : null}
           {values.website ? (
             <p>
-              <span>Site</span>
+              <PreviewContactLabel icon={Globe}>Site</PreviewContactLabel>
               {values.website.replace(/^https?:\/\//, '')}
             </p>
           ) : null}
           {address ? (
             <p>
-              <span>Endereço</span>
+              <PreviewContactLabel icon={MapPin}>Endereço</PreviewContactLabel>
               {address}
             </p>
           ) : null}

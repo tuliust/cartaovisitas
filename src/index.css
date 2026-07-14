@@ -64,6 +64,16 @@
   box-sizing: border-box;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 html,
 body,
 #root {
@@ -6631,6 +6641,93 @@ html.app-visual-mode-light .password-input-field:focus-within { border-color: va
 .admin-pagination .compact-button:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--semantic-focus) 45%, transparent);
   outline-offset: 2px;
+}
+
+.employee-card-form .url-prefix-field .url-prefix-input,
+.employee-card-form .url-prefix-field .url-prefix-input::placeholder {
+  color: #f7f3eb;
+  -webkit-text-fill-color: #f7f3eb;
+}
+
+.employee-card-form .url-prefix-field .url-prefix-input {
+  background: transparent;
+}
+
+.desktop-card-preview-sticky {
+  top: 84px;
+}
+
+.desktop-card-preview-sticky .public-card-avatar-wrapper.preview {
+  width: clamp(86px, 8.5vw, 118px);
+  border-radius: 22px;
+}
+
+.card-preview-contact-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-preview-contact-label svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2;
+}
+
+.card-preview-contact-list .card-preview-contact-label {
+  margin-bottom: 3px;
+}
+
+.admin-name-email-cell > strong,
+.admin-user-name-cell > strong {
+  display: block;
+}
+
+.admin-name-email-cell > small,
+.admin-user-name-cell > small {
+  display: block;
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+}
+
+.admin-actions-popover[style*="fixed"] {
+  z-index: 1200;
+}
+
+.admin-settings-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.admin-settings-tabs button {
+  min-height: 42px;
+  padding: 9px 14px;
+  border: 1px solid var(--admin-border);
+  border-radius: 999px;
+  background: var(--semantic-secondary-bg);
+  color: var(--admin-text);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.admin-settings-tabs button.active {
+  background: var(--admin-primary-button-bg);
+  color: var(--admin-primary-button-text);
+}
+
+.managed-page-layout--no-preview {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.collaborator-own-card .job-title {
+  font-weight: 800;
+}
+
+.contact-label {
+  gap: 9px;
 }
 
 /* Mobile collaborator refinements. */
