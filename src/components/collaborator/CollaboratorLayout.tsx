@@ -19,7 +19,7 @@ export default function CollaboratorLayout({ title, subtitle, headerContent, use
   return <main className="collaborator-shell">
     <header className="collaborator-topbar">
       <Link className="collaborator-brand" to="/" aria-label="Ir para a página inicial"><img className="collaborator-logo" src={getVariantLogo(settings, visualMode)} alt="Invest RS" /></Link>
-      <CollaboratorNavigation authenticated={authenticated} card={collaborator?.card ?? null} actions={authenticated ? actions : undefined} onLogout={() => void collaborator?.logout()} useBackButton={useBackButton} />
+      <CollaboratorNavigation authenticated={authenticated} isAdmin={Boolean(collaborator?.isAdmin)} card={collaborator?.card ?? null} actions={authenticated ? actions : undefined} onLogout={() => void collaborator?.logout()} useBackButton={useBackButton} />
     </header>
     <section className="collaborator-page">
       {title ? <div className="collaborator-page-header"><div><p className="eyebrow">{authenticated ? 'Área do colaborador' : 'Invest RS'}</p><h1>{title}</h1>{subtitle ? <p>{subtitle}</p> : null}{headerContent}</div></div> : null}
