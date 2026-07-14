@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import QRCode from 'qrcode'
-import { ChevronDown, Copy, Pencil, QrCode, Share2, Smartphone, Wallet } from 'lucide-react'
+import { ChevronDown, Copy, Globe, Mail, MapPin, Pencil, Phone, QrCode, Share2, Smartphone, Wallet, type LucideIcon } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import CollaboratorLayout from '../components/collaborator/CollaboratorLayout'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
@@ -26,6 +26,10 @@ function LanguageToggle({ language, className = '', onChange }: LanguageTogglePr
   return <div className={`public-language-toggle${className ? ` ${className}` : ''}`} role="group" aria-label="Idioma do cartão">
     {(Object.keys(publicCardLanguageLabels) as PublicCardLanguage[]).map((item) => <button key={item} type="button" className={language === item ? 'active' : ''} aria-pressed={language === item} onClick={() => onChange(item)}>{publicCardLanguageLabels[item]}</button>)}
   </div>
+}
+
+function ContactLabel({ icon: Icon, children }: { icon: LucideIcon; children: string }) {
+  return <span className="contact-label"><Icon aria-hidden="true" />{children}</span>
 }
 
 export default function PublicCardPage() {
@@ -62,7 +66,7 @@ export default function PublicCardPage() {
       <div className={`card-visual ${getVariantClassName(settings, variant)}`} style={getVariantStyle(settings, variant)}>
         <div className="card-topline">{failedLogoUrl === logoUrl ? <span className="brand-logo-fallback" role="img" aria-label="Invest RS">Invest RS</span> : <img className="public-card-logo" src={logoUrl} alt="Invest RS" onError={() => setFailedLogoUrl(logoUrl)} />}{card.show_avatar_public && card.avatar_url ? <div className="public-card-avatar-wrapper"><img className="public-card-avatar" src={card.avatar_url} alt={`Foto de ${name}`} /></div> : null}</div>
         <div className="card-main"><div className="person-block"><h1>{name}</h1>{professionalData?.jobTitle ? <p className="job-title">{professionalData.jobTitle}</p> : null}{professionalData?.department ? <p className="department">{professionalData.department}</p> : null}</div></div>
-        <div className="card-footer"><div className="contact-list public-card-contact-list">{phone ? <a href={`tel:${normalizePhoneForLink(phone)}`}><span>{copy.phone}</span>{phone}</a> : null}{card.email ? <a href={`mailto:${card.email}`}><span>{copy.email}</span>{card.email}</a> : null}{card.website ? <a href={card.website} target="_blank" rel="noreferrer"><span>{copy.website}</span>{card.website.replace(/^https?:\/\//, '')}</a> : null}{address ? <p><span>{copy.address}</span>{address}</p> : null}</div>{qrDataUrl ? <img className="qr-code" src={qrDataUrl} alt={`QR Code de ${name}`} /> : null}</div>
+        <div className="card-footer"><div className="contact-list public-card-contact-list">{phone ? <a href={`tel:${normalizePhoneForLink(phone)}`}><ContactLabel icon={Phone}>{copy.phone}</ContactLabel>{phone}</a> : null}{card.email ? <a href={`mailto:${card.email}`}><ContactLabel icon={Mail}>{copy.email}</ContactLabel>{card.email}</a> : null}{card.website ? <a href={card.website} target="_blank" rel="noreferrer"><ContactLabel icon={Globe}>{copy.website}</ContactLabel>{card.website.replace(/^https?:\/\//, '')}</a> : null}{address ? <p><ContactLabel icon={MapPin}>{copy.address}</ContactLabel>{address}</p> : null}</div>{qrDataUrl ? <img className="qr-code" src={qrDataUrl} alt={`QR Code de ${name}`} /> : null}</div>
         <div className="public-card-initial-toolbar" aria-label="Acoes rapidas do cartao">
           <LanguageToggle language={language} className="public-card-language-mobile" onChange={changeLanguage} />
           <div className="public-card-initial-actions">
