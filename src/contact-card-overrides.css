@@ -81,10 +81,10 @@
   line-height: 1.25;
 }
 
-/* Lift the identity and contact blocks further to use the card's upper space. */
+/* Position the identity and contact blocks while preserving their internal spacing. */
 .collaborator-own-card .card-main,
 .collaborator-own-card .card-footer {
-  transform: translateY(-52px);
+  transform: translateY(-27px);
 }
 
 /* Keep the QR aligned with the first contact row. */
@@ -119,7 +119,7 @@
 @media (max-width: 760px) {
   .collaborator-own-card .card-main,
   .collaborator-own-card .card-footer {
-    transform: translateY(-48px);
+    transform: translateY(-23px);
   }
 
   .collaborator-own-card .card-footer {
@@ -142,7 +142,7 @@
 @media (max-width: 480px) {
   .collaborator-own-card .card-main,
   .collaborator-own-card .card-footer {
-    transform: translateY(-42px);
+    transform: translateY(-17px);
   }
 
   .collaborator-own-card .public-card-contact-list :is(a, p) {
@@ -158,7 +158,7 @@
 @media (max-width: 380px) {
   .collaborator-own-card .card-main,
   .collaborator-own-card .card-footer {
-    transform: translateY(-32px);
+    transform: translateY(-7px);
   }
 
   .collaborator-own-card .public-card-avatar-wrapper {
