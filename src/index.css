@@ -6398,7 +6398,7 @@ html.app-visual-mode-light .password-input-field:focus-within { border-color: va
   padding: clamp(22px, 4vw, 30px);
   border: 1px solid var(--semantic-border);
   border-radius: 22px;
-  background: var(--semantic-modal-bg);
+  background: var(--modal-surface-strong);
   color: var(--semantic-text);
   box-shadow: 0 30px 80px rgb(0 0 0 / 0.36);
 }
@@ -6992,7 +6992,7 @@ html.app-visual-mode-light .password-input-field:focus-within { border-color: va
 }
 
 .guide-index {
-  padding: 16px;
+  padding: 14px;
   border-color: var(--semantic-border);
   background: var(--semantic-surface-raised);
   color: var(--semantic-text);
@@ -7146,29 +7146,20 @@ html.app-visual-mode-light .password-input-field:focus-within { border-color: va
 
 @media (min-width: 861px) {
   .guide-index {
-    top: 0;
-    width: 100%;
-    height: 100dvh;
-    max-height: none;
-    overflow: visible;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .guide-index-heading {
-    flex: 0 0 auto;
+    top: 18px;
+    width: calc(100% - 16px);
+    max-height: calc(100dvh - 36px);
+    margin-inline: 8px;
+    overflow-y: auto;
   }
 
   .guide-index ol {
-    flex: 1 1 auto;
-    min-height: 0;
-    grid-auto-rows: minmax(0, 1fr);
-    align-content: stretch;
+    gap: 3px;
   }
 
-  .guide-index li,
   .guide-index a {
-    height: 100%;
+    min-height: 41px;
+    padding-block: 7px;
   }
 }
 

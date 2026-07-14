@@ -56,7 +56,6 @@ export function ManagedPageView({ pageKey, variant }: ManagedPageViewProps) {
   if (variant === 'guide') return <CollaboratorLayout title={page.title} subtitle={page.subtitle}>
     <div className="guide-layout">
       <nav className="guide-index" aria-label="Índice do guia">
-        <div className="guide-index-heading"><span aria-hidden="true"><FileText /></span><h2>Neste guia</h2></div>
         <ol>{page.content.sections.map((section, index) => {
           const Icon = getGuideIcon(section.id)
           return <li key={section.id}><a href={`#${section.id}`}><span className="guide-index-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><Icon aria-hidden="true" /><span>{section.title}</span></a></li>

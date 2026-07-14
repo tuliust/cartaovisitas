@@ -28,13 +28,24 @@ export function normalizeManagedPageContent(value: unknown): ManagedPageContent 
   return { ...(notice ? { notice } : {}), sections }
 }
 
+function applyPagePresentationRules(key: ManagedPageKey, page: ManagedPage): ManagedPage {
+  if (key !== 'terms_and_privacy') return page
+  const fallback = managedPageDefaults.terms_and_privacy
+  return {
+    ...page,
+    subtitle: '',
+    version_label: fallback.version_label,
+    content: fallback.content,
+  }
+}
+
 function normalizeRow(key: ManagedPageKey, row: unknown): ManagedPage | null {
   if (!record(row)) return null
   if (containsMojibake({ title: row.title, subtitle: row.subtitle, version_label: row.version_label, content: row.content })) return null
   const content = normalizeManagedPageContent(row.content)
   const visibility = row.visibility === 'public' || row.visibility === 'authenticated' ? row.visibility : null
   if (!content || !visibility || !text(row.title)) return null
-  return { ...managedPageDefaults[key], ...row, page_key: key, title: text(row.title), subtitle: text(row.subtitle), version_label: text(row.version_label), visibility, content } as ManagedPage
+  return applyPagePresentationRules(key, { ...managedPageDefaults[key], ...row, page_key: key, title: text(row.title), subtitle: text(row.subtitle), version_label: text(row.version_label), visibility, content } as ManagedPage)
 }
 
 export async function getManagedPage(key: ManagedPageKey): Promise<ManagedPage> {

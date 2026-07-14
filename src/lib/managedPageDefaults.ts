@@ -3,40 +3,34 @@ export type ManagedPageSection = { id: string; title: string; body: string }
 export type ManagedPageContent = { notice?: { title: string; body: string }; sections: ManagedPageSection[] }
 export type ManagedPage = { id: string | null; page_key: ManagedPageKey; route_path: string; title: string; subtitle: string; content: ManagedPageContent; visibility: 'public' | 'authenticated'; is_published: boolean; version_label: string; updated_by: string | null; created_at: string | null; updated_at: string | null }
 
-const pending = 'Conteúdo sujeito à validação institucional e jurídica.'
-
 export const managedPageDefaults: Record<ManagedPageKey, ManagedPage> = {
   terms_and_privacy: {
     id: null,
     page_key: 'terms_and_privacy',
     route_path: '/termos-de-uso-e-privacidade',
     title: 'Termos de Uso e Privacidade',
-    subtitle: 'Minuta informativa da plataforma de cartões digitais.',
+    subtitle: '',
     visibility: 'public',
     is_published: true,
-    version_label: 'Versão preliminar 0.1 — 12 de julho de 2026. Pendente de aprovação institucional e jurídica.',
+    version_label: 'Versão informativa 0.2 - 13 de julho de 2026.',
     updated_by: null,
     created_at: null,
     updated_at: null,
     content: {
-      notice: {
-        title: 'Minuta em revisão',
-        body: `Este documento é uma versão inicial e não deve ser interpretado como parecer jurídico definitivo. ${pending}`,
-      },
       sections: [
-        { id: 'termos-de-uso', title: 'Termos de Uso', body: 'A plataforma oferece recursos para criação, manutenção e compartilhamento de cartões profissionais institucionais. O acesso à área do colaborador é pessoal e depende de credenciais válidas.' },
-        { id: 'controlador', title: 'Controlador', body: `A identificação formal do controlador e de seus representantes será confirmada na revisão institucional. ${pending}` },
-        { id: 'dados-coletados', title: 'Dados coletados', body: 'Podem ser tratados dados profissionais informados no cartão, identificadores de conta, imagem de perfil e eventos técnicos de interação, como visualizações, vCards, compartilhamentos e QR Code.' },
-        { id: 'finalidades', title: 'Finalidades', body: 'Os dados são utilizados para autenticar usuários, apresentar o cartão profissional, gerar arquivos solicitados, operar recursos da plataforma, proteger o acesso e produzir estatísticas para o proprietário.' },
-        { id: 'bases-legais', title: 'Bases legais', body: `As bases legais aplicáveis a cada operação serão definidas e documentadas após análise jurídica e institucional. ${pending}` },
-        { id: 'compartilhamento', title: 'Compartilhamento', body: 'Dados do cartão podem integrar arquivos vCard, QR Code e Wallet quando o usuário aciona essas funcionalidades. Fornecedores de infraestrutura podem processar dados estritamente para operar o serviço. A relação definitiva de operadores depende de validação institucional.' },
-        { id: 'armazenamento-e-retencao', title: 'Armazenamento e retenção', body: `Os critérios e prazos de retenção ainda serão formalizados considerando finalidade, obrigações aplicáveis e segurança. ${pending}` },
-        { id: 'cookies-e-localstorage', title: 'Cookies e localStorage', body: 'A aplicação utiliza armazenamento local para preferências públicas de identidade visual e cache de branding. Eventuais cookies de autenticação ou recursos equivalentes são gerenciados pelos serviços técnicos utilizados pela plataforma.' },
-        { id: 'seguranca', title: 'Segurança', body: 'São aplicadas medidas técnicas como autenticação, controle de acesso, políticas de banco e separação entre credenciais públicas e server-side. Nenhum mecanismo elimina integralmente os riscos inerentes a serviços conectados.' },
-        { id: 'direitos-do-titular', title: 'Direitos do titular', body: `Os procedimentos, prazos e canal responsável pelo atendimento dos direitos do titular serão publicados após validação institucional e jurídica. ${pending}` },
-        { id: 'responsabilidades-do-usuario', title: 'Responsabilidades do usuário', body: 'O usuário deve proteger suas credenciais, manter informações profissionais corretas, respeitar direitos de terceiros e comunicar suspeitas de uso indevido.' },
-        { id: 'disponibilidade-do-servico', title: 'Disponibilidade do serviço', body: 'A plataforma pode passar por manutenção, evolução ou indisponibilidade técnica. Condições formais de nível de serviço não estão estabelecidas nesta minuta.' },
-        { id: 'canal-de-contato', title: 'Canal de contato', body: `O canal oficial para privacidade e suporte será inserido após confirmação institucional. ${pending}` },
+        { id: 'termos-de-uso', title: 'Termos de Uso', body: 'A plataforma de cartões digitais da Invest RS reúne dados profissionais, página do cartão, vCard, QR Code, assinatura de e-mail e estatísticas de utilização. Home, Guia de Utilização e Termos são públicos; edição, área do colaborador e administração dependem de autenticação e permissões válidas.' },
+        { id: 'controlador', title: 'Controlador', body: 'A Invest RS é a instituição responsável pela operação da plataforma e pela governança dos cartões profissionais. Administradores autorizados gerenciam cartões, usuários, configurações visuais, auditoria e conteúdo institucional estruturado.' },
+        { id: 'dados-coletados', title: 'Dados coletados', body: 'Podem ser tratados dados de identidade e contato profissional, cargo, área, empresa, telefone, e-mail, website, endereço, links, imagem de perfil quando autorizada, slug público do cartão e preferências visuais. A plataforma também registra eventos técnicos de interação, como visualizações, vCards, compartilhamentos, QR Code e futura Wallet.' },
+        { id: 'finalidades', title: 'Finalidades', body: 'Os dados são utilizados para autenticar usuários, criar e manter cartões profissionais, gerar vCard, QR Code, QR PNG e assinatura de e-mail, apresentar informações institucionais autorizadas, preservar a segurança da plataforma, produzir estatísticas para o proprietário do cartão e apoiar auditoria administrativa.' },
+        { id: 'bases-legais', title: 'Bases legais', body: 'O tratamento ocorre para viabilizar recursos institucionais relacionados à identificação profissional, comunicação corporativa, segurança, administração da plataforma e cumprimento de obrigações aplicáveis. A definição jurídica final das bases legais deve acompanhar as políticas institucionais vigentes.' },
+        { id: 'compartilhamento', title: 'Compartilhamento', body: 'Dados do cartão podem ser compartilhados quando o usuário gera ou divulga vCards, QR Codes, assinaturas de e-mail ou materiais digitais. Serviços técnicos como Supabase, Vercel e provedores de e-mail podem processar dados estritamente para autenticação, armazenamento, funções server-side, entrega e operação da plataforma.' },
+        { id: 'armazenamento-e-retencao', title: 'Armazenamento e retenção', body: 'Os cartões, perfis, eventos, branding, auditoria e páginas gerenciadas são armazenados no banco Supabase. Avatares e assets institucionais ficam no bucket de Storage da plataforma. Prazos de retenção devem considerar finalidade, segurança, auditoria, obrigações institucionais e eventual desativação ou bloqueio de usuários.' },
+        { id: 'cookies-e-localstorage', title: 'Cookies e localStorage', body: 'A aplicação pode usar armazenamento local para preferências de idioma, identidade visual e cache de branding. Mecanismos de sessão, autenticação e recuperação de senha são gerenciados pelos serviços técnicos utilizados pela plataforma, com separação entre credenciais públicas e segredos server-side.' },
+        { id: 'seguranca', title: 'Segurança', body: 'A plataforma utiliza autenticação, domínio institucional, controle de perfis e status, RLS no banco, validação defensiva, rate limit no fluxo de recuperação de senha, service role apenas no backend, auditoria administrativa e conteúdo gerenciado em JSON estruturado, sem HTML arbitrário ou scripts.' },
+        { id: 'direitos-do-titular', title: 'Direitos do titular', body: 'Usuários podem solicitar revisão, correção ou orientação sobre seus dados profissionais pelos canais institucionais definidos pela Invest RS. Campos sob governança administrativa devem ser ajustados por responsáveis autorizados, preservando rastreabilidade e consistência institucional.' },
+        { id: 'responsabilidades-do-usuario', title: 'Responsabilidades do usuário', body: 'O usuário deve proteger suas credenciais, utilizar e-mail institucional, manter dados profissionais corretos, respeitar direitos de terceiros, não contornar campos bloqueados e comunicar suspeitas de uso indevido, inconsistências cadastrais ou problemas de segurança.' },
+        { id: 'disponibilidade-do-servico', title: 'Disponibilidade do serviço', body: 'A plataforma pode passar por manutenção, evolução, indisponibilidade técnica ou alterações de recursos. Funcionalidades como Apple Wallet e Google Wallet permanecem em standby até a conclusão dos requisitos técnicos, certificados, destino público adequado e validações institucionais.' },
+        { id: 'canal-de-contato', title: 'Canal de contato', body: 'Dúvidas sobre uso do cartão, privacidade, dados profissionais, acesso ou incidentes devem ser encaminhadas aos canais institucionais de suporte e governança da Invest RS. Solicitações administrativas devem ser tratadas por usuários com permissão adequada.' },
       ],
     },
   },
