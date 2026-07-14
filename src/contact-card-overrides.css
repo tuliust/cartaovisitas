@@ -1,15 +1,15 @@
 /* Contact typography, icon alignment and proportion adjustments for the main collaborator card. */
 .collaborator-own-card .public-card-contact-list {
-  gap: 8px;
+  gap: 12px;
 }
 
 .collaborator-own-card .public-card-contact-list :is(a, p) {
   display: grid;
-  grid-template-columns: 25px minmax(0, 1fr);
+  grid-template-columns: 23px minmax(0, 1fr);
   grid-template-rows: auto auto;
   align-items: start;
   column-gap: 8px;
-  row-gap: 5px;
+  row-gap: 2px;
   margin: 0;
   font-size: 16px;
   line-height: 1.35;
@@ -63,8 +63,8 @@
   grid-column: 1;
   grid-row: 1;
   align-self: start;
-  width: 25px;
-  height: 25px;
+  width: 23px;
+  height: 23px;
   min-height: 0;
   max-height: none;
   margin: 0;
