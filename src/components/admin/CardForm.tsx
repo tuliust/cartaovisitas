@@ -36,7 +36,7 @@ type CardFormProps = {
 }
 
 type SlugAvailability = 'idle' | 'checking' | 'available' | 'unavailable' | 'error'
-const COLLABORATOR_PAGE_DISPLAY_BASE = 'investrs.org.br/rs-em-dados/usuario/'
+const COLLABORATOR_PAGE_DISPLAY_BASE = 'rsemdados/usuarios/'
 
 const languageLabels: Record<Language, string> = { pt: 'PT', es: 'ES', en: 'EN' }
 
@@ -169,8 +169,7 @@ export default function CardForm({
     if (!file) return
     try {
       validateAvatarFile(file)
-      if (mode === 'employee') setAvatarToCrop(file)
-      else void uploadImage('avatar', file)
+      setAvatarToCrop(file)
     } catch (err) { const message = getFriendlyErrorMessage(err); setUploadError(message); toast.error(message) }
   }
 
@@ -224,15 +223,12 @@ export default function CardForm({
   const institutionalFieldClass = lockInstitutionalFields ? 'institutional-field' : undefined
 
   return <>
-    <form id={formId} className={`admin-form admin-card-form${mode === 'employee' ? ' employee-card-form' : ''}`} aria-busy={loading || validatingSlugOnSubmit || Boolean(uploading)} onSubmit={handleSubmit}>
+    <form id={formId} className={`admin-form admin-card-form${mode === 'employee' ? ' employee-card-form' : ''}${desktopActionsTarget ? ' admin-card-form--desktop-actions' : ''}`} aria-busy={loading || validatingSlugOnSubmit || Boolean(uploading)} onSubmit={handleSubmit}>
       <section className="admin-form-section admin-card-form-section">
         <h2>Identificação</h2>
         <label>Nome completo *<input required value={values.full_name} onChange={(event) => updateFullName(event.target.value)} placeholder="Alexandre Elmi" /></label>
         <label>Nome de exibição<input value={values.display_name} onChange={(event) => updateField('display_name', event.target.value)} placeholder="Alexandre Elmi" /></label>
-        {mode === 'employee' ? <label>Link da página *<span className={`slug-input-field slug-input-field--${slugAvailability}`}><input required value={values.slug} onChange={(event) => editSlug(event.target.value)} placeholder="alexandre-elmi" aria-describedby="slug-help slug-availability" aria-invalid={slugAvailability === 'unavailable' || slugAvailability === 'error'} />{slugAvailability !== 'idle' ? <span className="slug-input-status-icon" aria-hidden="true">{slugAvailability === 'checking' ? <LoaderCircle className="spin" /> : slugAvailability === 'available' ? <Check /> : <X />}</span> : null}</span><small className="field-help slug-preview" id="slug-help">Sua página será: <span>{COLLABORATOR_PAGE_DISPLAY_BASE}{values.slug || ':slug'}</span></small><small className="sr-only" id="slug-availability" aria-live="polite" role="status">{slugStatusText}</small></label> : <div className="admin-field-with-action">
-          <label>Slug da página *<input required value={values.slug} onChange={(event) => updateSlug(event.target.value)} placeholder="alexandre-elmi" aria-describedby="slug-help slug-availability" aria-invalid={slugAvailability === 'unavailable' || slugAvailability === 'error'} /><small className="field-help slug-preview" id="slug-help">Sua página será: <span>{COLLABORATOR_PAGE_DISPLAY_BASE}{values.slug || ':slug'}</span></small><small className={`slug-status slug-status--${slugAvailability}`} id="slug-availability" aria-live="polite" role="status">{slugAvailability === 'checking' ? 'Verificando disponibilidade...' : slugAvailability === 'available' ? 'Endereço disponível.' : slugAvailability === 'unavailable' ? 'Endereço já utilizado.' : slugAvailability === 'error' ? slugValidationError : ''}</small></label>
-          <button type="button" className="secondary-button compact-button" onClick={() => updateSlug(values.full_name)}>Gerar slug</button>
-        </div>}
+        {mode === 'employee' ? <label>Link da página *<span className={`slug-input-field slug-input-field--${slugAvailability}`}><input required value={values.slug} onChange={(event) => editSlug(event.target.value)} placeholder="alexandre-elmi" aria-describedby="slug-help slug-availability" aria-invalid={slugAvailability === 'unavailable' || slugAvailability === 'error'} />{slugAvailability !== 'idle' ? <span className="slug-input-status-icon" aria-hidden="true">{slugAvailability === 'checking' ? <LoaderCircle className="spin" /> : slugAvailability === 'available' ? <Check /> : <X />}</span> : null}</span><small className="field-help slug-preview" id="slug-help">Sua página será: <span>{COLLABORATOR_PAGE_DISPLAY_BASE}{values.slug || ':slug'}</span></small><small className="sr-only" id="slug-availability" aria-live="polite" role="status">{slugStatusText}</small></label> : <label>Slug da página *<input required value={values.slug} onChange={(event) => updateSlug(event.target.value)} placeholder="alexandre-elmi" aria-describedby="slug-help slug-availability" aria-invalid={slugAvailability === 'unavailable' || slugAvailability === 'error'} /><small className="field-help slug-preview" id="slug-help">Sua página será: <span>{COLLABORATOR_PAGE_DISPLAY_BASE}{values.slug || ':slug'}</span></small><small className={`slug-status slug-status--${slugAvailability}`} id="slug-availability" aria-live="polite" role="status">{slugAvailability === 'checking' ? 'Verificando disponibilidade...' : slugAvailability === 'available' ? 'Endereço disponível.' : slugAvailability === 'unavailable' ? 'Endereço já utilizado.' : slugAvailability === 'error' ? slugValidationError : ''}</small></label>}
         {allowStatusEdit ? <label>Status<select value={values.is_active ? 'true' : 'false'} onChange={(event) => updateField('is_active', event.target.value === 'true')}><option value="true">Ativo</option><option value="false">Inativo</option></select></label> : null}
       </section>
 
@@ -265,9 +261,8 @@ export default function CardForm({
 
       <section className="admin-form-section admin-card-form-section">
         <h2>Links e foto</h2>
-        {mode === 'employee' ? <><label>LinkedIn<span className="url-prefix-field"><span className="url-prefix-label">linkedin.com/in/</span><input className="url-prefix-input" value={getLinkedinProfile(values.linkedin_url)} onChange={(event) => updateField('linkedin_url', buildLinkedinUrl(event.target.value))} placeholder="seu-perfil" /></span></label><label>Instagram<span className="url-prefix-field"><span className="url-prefix-label">instagram.com/</span><input className="url-prefix-input" value={getInstagramProfile(values.instagram_url)} onChange={(event) => updateField('instagram_url', buildInstagramUrl(event.target.value))} placeholder="seu.perfil" /></span></label></> : <><label>LinkedIn<input type="url" value={values.linkedin_url} onChange={(event) => updateField('linkedin_url', event.target.value)} /></label><label>Instagram<input type="url" value={values.instagram_url} onChange={(event) => updateField('instagram_url', event.target.value)} /></label></>}
-        {mode === 'admin' ? <label>URL da foto/avatar<input type="url" value={values.avatar_url} onChange={(event) => updateField('avatar_url', event.target.value)} /></label> : null}
-        {allowAvatarUpload && mode === 'employee' ? <div className={`avatar-editor${avatarDragActive ? ' is-dragging' : ''}`} onDragEnter={(event) => { event.preventDefault(); setAvatarDragActive(true) }} onDragOver={(event) => event.preventDefault()} onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setAvatarDragActive(false) }} onDrop={handleAvatarDrop}>
+        <label>LinkedIn<span className="url-prefix-field"><span className="url-prefix-label">linkedin.com/in/</span><input className="url-prefix-input" value={getLinkedinProfile(values.linkedin_url)} onChange={(event) => updateField('linkedin_url', buildLinkedinUrl(event.target.value))} placeholder="seu-perfil" /></span></label><label>Instagram<span className="url-prefix-field"><span className="url-prefix-label">instagram.com/</span><input className="url-prefix-input" value={getInstagramProfile(values.instagram_url)} onChange={(event) => updateField('instagram_url', buildInstagramUrl(event.target.value))} placeholder="seu.perfil" /></span></label>
+        {allowAvatarUpload ? <div className={`avatar-editor${avatarDragActive ? ' is-dragging' : ''}`} onDragEnter={(event) => { event.preventDefault(); setAvatarDragActive(true) }} onDragOver={(event) => event.preventDefault()} onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setAvatarDragActive(false) }} onDrop={handleAvatarDrop}>
           <span className="avatar-editor-label">Enviar foto</span>
           <input ref={avatarInputRef} className="avatar-file-input" type="file" hidden tabIndex={-1} accept="image/png,image/jpeg,image/webp" onChange={(event) => { selectAvatar(event.target.files?.[0]); event.target.value = '' }} />
           {values.avatar_url ? <div className="avatar-photo-stage" role="group" tabIndex={0} aria-label="Foto atual. Use Tab para acessar as ações da foto.">
@@ -279,9 +274,7 @@ export default function CardForm({
             </div>
           </div> : <button className="avatar-upload-empty" type="button" onClick={openAvatarFilePicker}><Upload aria-hidden="true" /><span>Upload</span><small>ou arraste a fotografia para esta área</small></button>}
         </div> : null}
-        {allowAvatarUpload && mode === 'admin' ? <label>Enviar foto<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => selectAvatar(event.target.files?.[0])} /></label> : null}
         <label className="admin-checkbox-field"><input type="checkbox" checked={values.show_avatar_public} onChange={(event) => updateField('show_avatar_public', event.target.checked)} /><span>Exibir foto no cartão público</span></label>
-        {mode === 'admin' && values.avatar_url ? <img className="asset-preview" src={values.avatar_url} alt="Prévia do avatar" /> : null}
         {allowLogoUpload ? <><label>URL do logo<input type="url" value={values.logo_url} onChange={(event) => updateField('logo_url', event.target.value)} /></label><label>Enviar logo<input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onChange={(event) => { const file = event.target.files?.[0]; if (file) void uploadImage('logo', file) }} /></label>{values.logo_url ? <img className="asset-preview logo" src={values.logo_url} alt="Prévia do logo" /> : null}</> : null}
         {uploading ? <p className="admin-muted">Enviando {uploading === 'avatar' ? 'foto' : 'logo'}...</p> : null}{uploadError ? <p className="admin-error">{uploadError}</p> : null}
       </section>

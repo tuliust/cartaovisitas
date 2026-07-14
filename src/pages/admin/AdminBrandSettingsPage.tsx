@@ -214,12 +214,14 @@ export default function AdminBrandSettingsPage() {
           </section>
         </div>
 
-        <aside className={`brand-preview ${getVariantClassName(values, activeVariant)}`} style={previewStyle} aria-label="Prévia da identidade visual">
-          <img src={getVariantLogo(values, activeVariant)} alt="Invest RS" />
-          <div className="brand-preview-card"><p>Cartão institucional</p><h2>Identidade Invest RS</h2><span>Texto de exemplo para conferir contraste e legibilidade.</span><div><button type="button">Botão primário</button><button type="button">Secundário</button></div></div>
-        </aside>
+        <div className="brand-settings-preview-column">
+          <aside className={`brand-preview ${getVariantClassName(values, activeVariant)}`} style={previewStyle} aria-label="Prévia da identidade visual">
+            <img src={getVariantLogo(values, activeVariant)} alt="Invest RS" />
+            <div className="brand-preview-card"><p>Cartão institucional</p><h2>Identidade Invest RS</h2><span>Texto de exemplo para conferir contraste e legibilidade.</span><div><button type="button">Botão primário</button><button type="button">Secundário</button></div></div>
+          </aside>
+          <div className="brand-settings-actions"><button className="primary-button" type="button" disabled={saving || Boolean(uploading)} onClick={() => void save()}>{uploading ? 'Enviando asset...' : saving ? 'Salvando...' : 'Salvar configurações'}</button></div>
+        </div>
       </div></section>
-      <div className="brand-settings-actions"><button className="primary-button" type="button" disabled={saving || Boolean(uploading)} onClick={() => void save()}>{uploading ? 'Enviando asset...' : saving ? 'Salvando...' : 'Salvar configurações'}</button></div>
       </> : null}
       {activeSettingsTab === 'content' ? <section className="admin-settings-area" aria-labelledby="content-settings-title"><div className="admin-settings-area-heading"><h2 id="content-settings-title">Conteúdo</h2><p>Use as abas Guia de Utilização e Termos de Uso para editar textos institucionais estruturados sem HTML.</p></div></section> : null}
       {activeSettingsTab === 'usage_guide' ? <section className="admin-settings-area" aria-labelledby="usage-guide-settings-title"><div className="admin-settings-area-heading"><h2 id="usage-guide-settings-title">Guia de Utilização</h2><p>Edite o conteúdo publicado em /guia-de-utilizacao.</p></div><ManagedPagesEditor pageKey="usage_guide" showPreview={false} showTabs={false} /></section> : null}

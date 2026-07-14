@@ -33,6 +33,8 @@ export default function AdminCardFormPage() {
   const [previewValues, setPreviewValues] = useState<CardFormValues>({
     ...defaultCardFormValues,
   })
+  const [desktopActionsTarget, setDesktopActionsTarget] = useState<HTMLDivElement | null>(null)
+  const formId = 'admin-card-form'
 
   useEffect(() => {
     async function checkAccessAndLoadCard() {
@@ -127,8 +129,16 @@ export default function AdminCardFormPage() {
           currentCardId={id}
           onChange={setPreviewValues}
           onSubmit={handleSubmit}
+          allowLogoUpload={isEditing}
+          formId={formId}
+          desktopActionsTarget={desktopActionsTarget}
         />
-        <CardPreview values={previewValues} />
+        <div className="desktop-card-preview">
+          <div className="desktop-card-preview-sticky">
+            <CardPreview values={previewValues} showStatus={isEditing} />
+            <div ref={setDesktopActionsTarget} />
+          </div>
+        </div>
       </div>
     </AdminLayout>
   )

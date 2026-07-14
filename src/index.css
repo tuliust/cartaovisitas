@@ -6132,6 +6132,34 @@ html.app-visual-mode-light {
 .brand-preview-card button { border-color: var(--semantic-primary-bg); background: var(--semantic-primary-bg); color: var(--semantic-primary-text); }
 .brand-preview-card button + button { border-color: var(--semantic-border); background: var(--semantic-secondary-bg); color: var(--semantic-secondary-text); }
 
+/* Keep the preview and its save action together while long forms scroll. */
+.brand-settings-preview-column {
+  position: sticky;
+  top: 84px;
+  align-self: start;
+  display: grid;
+  gap: 14px;
+}
+
+.brand-settings-preview-column .brand-preview {
+  position: static;
+}
+
+.brand-settings-preview-column .brand-settings-actions {
+  position: static;
+  margin-top: 0;
+}
+
+.brand-settings-preview-column .brand-settings-actions .primary-button {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .brand-settings-preview-column {
+    position: static;
+  }
+}
+
 html.app-visual-mode-dark .auth-page-card,
 html.app-visual-mode-light .auth-page-card { --auth-autofill-bg: var(--semantic-input-bg); --auth-autofill-text: var(--semantic-input-text); }
 html.app-visual-mode-dark .auth-form-field > label,
@@ -7087,10 +7115,30 @@ html.app-visual-mode-light .password-input-field:focus-within { border-color: va
 
 .desktop-card-preview {
   min-width: 0;
+  align-self: stretch;
 }
 
 .desktop-card-preview > .card-preview {
   width: 100%;
+}
+
+/* The surface opacity is a separate layer from the light/dark background overlay. */
+.card-visual:is(
+  .public-card-variant-dark-image-1,
+  .public-card-variant-dark-image-2,
+  .public-card-variant-light-image-3,
+  .public-card-variant-light-image-4
+),
+.card-preview:is(
+  .public-card-variant-dark-image-1,
+  .public-card-variant-dark-image-2,
+  .public-card-variant-light-image-3,
+  .public-card-variant-light-image-4
+) {
+  background-image:
+    linear-gradient(rgb(var(--variant-surface-rgb) / var(--variant-card-opacity)), rgb(var(--variant-surface-rgb) / var(--variant-card-opacity))),
+    linear-gradient(rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity)), rgb(var(--variant-overlay-rgb) / var(--variant-overlay-opacity))),
+    var(--public-card-variant-image);
 }
 
 .card-preview-modal-backdrop {
@@ -8295,4 +8343,23 @@ html.app-visual-mode-light .auth-page-card .email-suffix-label {
     margin-bottom: 14px;
     transform: translateY(-4px);
   }
+}
+
+/* Final admin card form and identity-cell layout. */
+.admin-table td.admin-name-email-cell,
+.admin-table td.admin-user-name-cell {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 5px;
+}
+
+.admin-name-email-cell > :is(strong, small),
+.admin-user-name-cell > :is(strong, small) {
+  width: 100%;
+  margin-top: 0;
+}
+
+.admin-card-form--desktop-actions .admin-card-form-actions {
+  display: none;
 }
