@@ -178,13 +178,14 @@ Após a implementação do Resend:
 ## Assinatura
 
 - PT, ES e EN;
-- QR abaixo do logo;
+- QR centralizado abaixo do logo;
 - WhatsApp;
 - `mailto:`;
 - site;
+- endereço institucional com link de mapa;
 - aviso LGPD;
 - HTML;
-- texto simples;
+- texto simples usado apenas como fallback interno do clipboard;
 - colagem no Gmail;
 - imagens HTTPS.
 

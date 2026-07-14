@@ -9,30 +9,9 @@ import {
   buildEmailSignatureModel,
   buildEmailSignaturePlainText,
   emailSignatureLanguageLabels,
+  requiredEmailSignatureOptions,
   type EmailSignatureLanguage,
-  type EmailSignatureOptions,
 } from '../lib/emailSignature'
-
-const optionLabels: Record<keyof EmailSignatureOptions, string> = {
-  department: 'Área/departamento',
-  phone: 'Telefone/WhatsApp',
-  email: 'E-mail',
-  website: 'Site',
-  confidentiality: 'Incluir aviso de confidencialidade e LGPD',
-}
-const defaultOptions: EmailSignatureOptions = { department: true, phone: true, email: true, website: true, confidentiality: false }
-
-function legacyCopyText(value: string) {
-  const textarea = document.createElement('textarea')
-  textarea.value = value
-  textarea.style.position = 'fixed'
-  textarea.style.opacity = '0'
-  document.body.appendChild(textarea)
-  textarea.select()
-  const copied = document.execCommand('copy')
-  textarea.remove()
-  if (!copied) throw new Error('copy failed')
-}
 
 export default function MyCardEmailSignaturePage() {
   const { card } = useCollaborator()
@@ -40,11 +19,10 @@ export default function MyCardEmailSignaturePage() {
   const toast = useToast()
   const previewRef = useRef<HTMLDivElement>(null)
   const [language, setLanguage] = useState<EmailSignatureLanguage>('pt')
-  const [options, setOptions] = useState<EmailSignatureOptions>(defaultOptions)
   const origin = (import.meta.env.VITE_APP_BASE_URL || window.location.origin).replace(/\/$/, '')
   const model = useMemo(
-    () => card ? buildEmailSignatureModel(card, settings, language, options, origin) : null,
-    [card, language, options, origin, settings],
+    () => card ? buildEmailSignatureModel(card, settings, language, requiredEmailSignatureOptions, origin) : null,
+    [card, language, origin, settings],
   )
   const html = useMemo(() => model ? buildEmailSignatureHtml(model) : '', [model])
   const plain = useMemo(() => model ? buildEmailSignaturePlainText(model) : '', [model])
@@ -73,16 +51,6 @@ export default function MyCardEmailSignaturePage() {
     }
   }
 
-  async function copyPlain() {
-    try {
-      if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(plain)
-      else legacyCopyText(plain)
-      toast.success('Texto da assinatura copiado.')
-    } catch {
-      toast.error('Não foi possível copiar o texto.')
-    }
-  }
-
   return (
     <CollaboratorLayout title="Gerar Rodapé para E-mail" subtitle="Monte uma assinatura institucional compatível com o Gmail.">
       {!card || !model ? (
@@ -107,27 +75,9 @@ export default function MyCardEmailSignaturePage() {
                 ))}
               </div>
             </div>
-            <div>
-              <h2>Campos opcionais</h2>
-              <div className="signature-options">
-                {(Object.keys(optionLabels) as Array<keyof EmailSignatureOptions>).map((field) => (
-                  <label key={field}>
-                    <input
-                      type="checkbox"
-                      checked={options[field]}
-                      onChange={(event) => setOptions((current) => ({ ...current, [field]: event.target.checked }))}
-                    />
-                    {optionLabels[field]}
-                  </label>
-                ))}
-              </div>
-            </div>
             <div className="signature-actions">
               <button className="primary-button" type="button" onClick={() => void copyHtml()}>
                 Copiar assinatura para Gmail
-              </button>
-              <button className="secondary-button" type="button" onClick={() => void copyPlain()}>
-                Copiar texto simples
               </button>
               <a className="secondary-button" href="https://mail.google.com/mail/u/0/#settings/general" target="_blank" rel="noreferrer">
                 Abrir configurações do Gmail
@@ -142,8 +92,6 @@ export default function MyCardEmailSignaturePage() {
             <div className="signature-preview" ref={previewRef}>
               <EmailSignaturePreview model={model} />
             </div>
-            <h3>Texto simples</h3>
-            <pre className="signature-plain-preview">{plain}</pre>
           </section>
         </div>
       )}

@@ -16,13 +16,13 @@ export function EmailSignaturePreview({ model }: EmailSignaturePreviewProps) {
           <td width="182" style={{ width: 182, padding: '0 18px 0 0', verticalAlign: 'top', borderRight: '2px solid #111111' }}>
             <img src={model.logoUrl} alt="Invest RS" width="164" style={{ display: 'block', width: 164, maxWidth: 164, height: 'auto', border: 0 }} />
             <div style={{ height: 14, lineHeight: '14px' }}>&nbsp;</div>
-            <a href={model.vcardUrl}>
+            <a href={model.vcardUrl} style={{ display: 'block', width: 164, textAlign: 'center', textDecoration: 'none' }}>
               <img
                 src={model.qrImageUrl}
                 alt="QR Code para adicionar contato"
                 width="88"
                 height="88"
-                style={{ display: 'block', width: 88, height: 88, border: 0, background: '#ffffff' }}
+                style={{ display: 'block', width: 88, height: 88, margin: '0 auto', border: 0, background: '#ffffff' }}
               />
             </a>
           </td>
@@ -36,9 +36,11 @@ export function EmailSignaturePreview({ model }: EmailSignaturePreviewProps) {
                 {model.contacts.map((contact) => (
                   <tr key={contact.kind}>
                     <td style={{ width: 22, padding: '2px 7px 2px 0', verticalAlign: 'middle' }}>
-                      <a href={contact.href}>
-                        <img src={contact.iconUrl} alt={contact.alt} width="15" height="15" style={{ display: 'block', width: 15, height: 15, border: 0 }} />
-                      </a>
+                      {contact.iconUrl ? (
+                        <a href={contact.href}>
+                          <img src={contact.iconUrl} alt={contact.alt} width="15" height="15" style={{ display: 'block', width: 15, height: 15, border: 0 }} />
+                        </a>
+                      ) : '\u00a0'}
                     </td>
                     <td style={{ padding: '2px 0', verticalAlign: 'middle', font: '12px/1.45 Arial, Helvetica, sans-serif', color: '#444444' }}>
                       <a href={contact.href} style={{ color: '#444444', textDecoration: 'none' }}>

@@ -139,13 +139,14 @@ Recursos:
 
 - PT, ES e EN;
 - logo;
-- QR abaixo do logo;
+- QR centralizado abaixo do logo;
 - cargo e área localizados;
 - WhatsApp, e-mail e site;
+- endereço institucional com link para mapa;
 - ícones PNG públicos;
-- aviso opcional de confidencialidade e LGPD;
+- aviso de confidencialidade e LGPD;
 - HTML para Gmail;
-- texto simples;
+- texto simples somente como fallback interno do clipboard;
 - preview;
 - `ClipboardItem` com fallback legado.
 
