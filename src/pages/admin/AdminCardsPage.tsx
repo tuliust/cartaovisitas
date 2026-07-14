@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { getCurrentSession } from '../../lib/auth'
@@ -309,10 +310,11 @@ export default function AdminCardsPage() {
           <MoreVertical aria-hidden="true" />
         </button>
 
-        {isOpen ? (
+        {isOpen ? createPortal(
           <div
             className="admin-actions-popover"
             style={actionsMenuStyle}
+            data-admin-actions-root
             id={menuId}
             role="menu"
             aria-label={`Ações do cartão de ${cardName}`}
@@ -409,7 +411,8 @@ export default function AdminCardsPage() {
               <Trash2 aria-hidden="true" />
               <span>Apagar</span>
             </button>
-          </div>
+          </div>,
+          document.body,
         ) : null}
       </div>
     )
@@ -546,7 +549,10 @@ export default function AdminCardsPage() {
               {visibleCards.map((card) => (
                 <article className="admin-mobile-card" key={card.id}>
                   <div className="admin-mobile-card-heading">
-                    <strong>{card.display_name || card.full_name}</strong>
+                    <div className="admin-card-mobile-identity">
+                      <strong>{card.display_name || card.full_name}</strong>
+                      {card.email ? <small>{card.email}</small> : null}
+                    </div>
                     <div className="admin-mobile-card-controls">
                       <span className={card.is_active ? 'status-pill active' : 'status-pill inactive'}>
                         {card.is_active ? 'Ativo' : 'Inativo'}

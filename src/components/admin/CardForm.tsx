@@ -269,7 +269,7 @@ export default function CardForm({
         {mode === 'admin' ? <label>URL da foto/avatar<input type="url" value={values.avatar_url} onChange={(event) => updateField('avatar_url', event.target.value)} /></label> : null}
         {allowAvatarUpload && mode === 'employee' ? <div className={`avatar-editor${avatarDragActive ? ' is-dragging' : ''}`} onDragEnter={(event) => { event.preventDefault(); setAvatarDragActive(true) }} onDragOver={(event) => event.preventDefault()} onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setAvatarDragActive(false) }} onDrop={handleAvatarDrop}>
           <span className="avatar-editor-label">Enviar foto</span>
-          <input ref={avatarInputRef} className="sr-only avatar-file-input" type="file" tabIndex={-1} accept="image/png,image/jpeg,image/webp" onChange={(event) => { selectAvatar(event.target.files?.[0]); event.target.value = '' }} />
+          <input ref={avatarInputRef} className="avatar-file-input" type="file" hidden tabIndex={-1} accept="image/png,image/jpeg,image/webp" onChange={(event) => { selectAvatar(event.target.files?.[0]); event.target.value = '' }} />
           {values.avatar_url ? <div className="avatar-photo-stage" role="group" tabIndex={0} aria-label="Foto atual. Use Tab para acessar as ações da foto.">
             <img src={values.avatar_url} alt="Prévia da foto" />
             <div className="avatar-photo-actions" role="group" aria-label="Ações da foto">

@@ -6645,27 +6645,37 @@ html.app-visual-mode-light .password-input-field:focus-within { border-color: va
 
 .employee-card-form .url-prefix-field .url-prefix-input,
 .employee-card-form .url-prefix-field .url-prefix-input::placeholder {
-  color: #f7f3eb;
-  -webkit-text-fill-color: #f7f3eb;
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
 }
 
 .employee-card-form .url-prefix-field .url-prefix-input {
   background: transparent;
 }
 
+.employee-card-form .url-prefix-field {
+  background: color-mix(in srgb, var(--semantic-surface-solid) 70%, #000000);
+}
+
+.employee-card-form .url-prefix-label {
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+}
+
 .desktop-card-preview-sticky {
   top: 84px;
+  align-self: start;
 }
 
 .desktop-card-preview-sticky .public-card-avatar-wrapper.preview {
-  width: clamp(86px, 8.5vw, 118px);
-  border-radius: 22px;
+  width: clamp(112px, 10vw, 148px);
+  border-radius: 26px;
 }
 
 .card-preview-contact-label {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 11px;
 }
 
 .card-preview-contact-label svg {
@@ -6679,12 +6689,14 @@ html.app-visual-mode-light .password-input-field:focus-within { border-color: va
 }
 
 .admin-name-email-cell > strong,
-.admin-user-name-cell > strong {
+.admin-user-name-cell > strong,
+.admin-card-mobile-identity > strong {
   display: block;
 }
 
 .admin-name-email-cell > small,
-.admin-user-name-cell > small {
+.admin-user-name-cell > small,
+.admin-card-mobile-identity > small {
   display: block;
   margin-top: 5px;
   overflow-wrap: anywhere;
@@ -6727,7 +6739,16 @@ html.app-visual-mode-light .password-input-field:focus-within { border-color: va
 }
 
 .contact-label {
-  gap: 9px;
+  gap: 12px;
+}
+
+.contact-label svg,
+.card-preview-contact-label svg {
+  margin-right: 2px;
+}
+
+.job-title {
+  font-weight: 800;
 }
 
 /* Mobile collaborator refinements. */

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useNavigate } from 'react-router-dom'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { useToast } from '../../contexts/ToastContext'
@@ -29,7 +30,10 @@ type RoleFilter = 'all' | 'admin' | 'user'
 type StatusFilter = 'all' | AdminUserStatus
 
 function getUserDisplayName(user: AdminUser) {
-  return user.full_name?.trim() || user.card?.full_name?.trim() || 'Nome não informado'
+  const profileName = user.full_name?.trim()
+  const cardName = user.card?.full_name?.trim()
+  if (profileName && profileName.toLocaleLowerCase('pt-BR') !== 'nome não informado') return profileName
+  return cardName || profileName || 'Nome não informado'
 }
 
 function getUserRoleLabel(user: AdminUser) {
@@ -144,7 +148,7 @@ export default function AdminUsersPage() {
     return users.filter((user) => {
       const matchesRole = role === 'all' || user.role === role
       const matchesStatus = status === 'all' || user.status === status
-      const searchableText = `${user.full_name ?? ''} ${user.email}`.toLocaleLowerCase('pt-BR')
+      const searchableText = `${getUserDisplayName(user)} ${user.email}`.toLocaleLowerCase('pt-BR')
 
       return matchesRole && matchesStatus && (!term || searchableText.includes(term))
     })
@@ -215,10 +219,11 @@ export default function AdminUsersPage() {
           <MoreVertical aria-hidden="true" />
         </button>
 
-        {isOpen ? (
+        {isOpen ? createPortal(
           <div
             className="admin-actions-popover"
             style={actionsMenuStyle}
+            data-admin-actions-root
             id={menuId}
             role="menu"
             aria-label={`Ações do usuário ${userName}`}
@@ -289,7 +294,8 @@ export default function AdminUsersPage() {
               <Mail aria-hidden="true" />
               <span>{user.status === 'pending' ? 'Reenviar convite' : 'Enviar convite'}</span>
             </button>
-          </div>
+          </div>,
+          document.body,
         ) : null}
       </div>
     )
