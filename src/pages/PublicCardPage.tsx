@@ -30,7 +30,7 @@ function LanguageToggle({ language, className = '', onChange }: LanguageTogglePr
 }
 
 function ContactLabel({ icon: Icon, children }: { icon: LucideIcon; children: string }) {
-  return <span className="contact-label"><Icon aria-hidden="true" />{children}</span>
+  return <span className="contact-label"><Icon aria-hidden="true" /><span className="contact-label-text">{children}</span></span>
 }
 
 export default function PublicCardPage() {
