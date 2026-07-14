@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import QRCode from 'qrcode'
-import { ChevronDown, Copy, Globe, Mail, MapPin, Pencil, Phone, QrCode, Share2, Smartphone, Wallet, type LucideIcon } from 'lucide-react'
+import { BarChart3, Copy, Download, FileUp, Globe, Mail, MapPin, Pencil, Phone, QrCode, Smartphone, Wallet, type LucideIcon } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import CollaboratorLayout from '../components/collaborator/CollaboratorLayout'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
@@ -59,7 +59,6 @@ export default function PublicCardPage() {
   const logoUrl = getVariantLogo(settings, variant, card.logo_url)
   const copy = publicCardCopy[language]
   function changeLanguage(next: PublicCardLanguage) { setLanguage(next); storePublicCardLanguage(next) }
-  function scrollToLowerArea() { actionPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }) }
 
   return <CollaboratorLayout>
     <section className="digital-card collaborator-own-card">
@@ -70,11 +69,10 @@ export default function PublicCardPage() {
         <div className="public-card-initial-toolbar" aria-label="Acoes rapidas do cartao">
           <LanguageToggle language={language} className="public-card-language-mobile" onChange={changeLanguage} />
           <div className="public-card-initial-actions">
-            <button type="button" aria-label="Editar" title="Editar" onClick={scrollToLowerArea}><Pencil aria-hidden="true" /></button>
-            <button type="button" aria-label="Compartilhar" title="Compartilhar" onClick={scrollToLowerArea}><Share2 aria-hidden="true" /></button>
-            <button type="button" aria-label="QR Code" title="QR Code" onClick={scrollToLowerArea}><QrCode aria-hidden="true" /></button>
-            <button type="button" aria-label="Wallet" title="Wallet" onClick={scrollToLowerArea}><Wallet aria-hidden="true" /></button>
-            <button type="button" aria-label="Ver mais acoes" title="Ver mais acoes" onClick={scrollToLowerArea}><ChevronDown aria-hidden="true" /></button>
+            <Link to="/meu-cartao/editar" aria-label="Editar" title="Editar"><Pencil aria-hidden="true" /></Link>
+            <button type="button" aria-label="Baixar QR Code" title="Baixar QR Code" disabled={Boolean(actions.running)} onClick={() => void actions.downloadQrCode()}><Download aria-hidden="true" /></button>
+            <button type="button" aria-label="Exportar" title="Exportar" disabled={Boolean(actions.running)} onClick={() => void (actions.canShareVCard ? actions.shareVCard() : actions.copyVCard())}><FileUp aria-hidden="true" /></button>
+            <Link to="/meu-cartao/estatisticas" aria-label="Estatísticas" title="Estatísticas"><BarChart3 aria-hidden="true" /></Link>
           </div>
         </div>
       </div>

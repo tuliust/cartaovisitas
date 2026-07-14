@@ -20,6 +20,9 @@ export default function HomePage() {
           <div className="home-visual-selector-desktop">
             <VisualModeSelector />
           </div>
+          <div className="home-visual-selector-mobile">
+            <VisualModeSelector variant="compact" />
+          </div>
         </div>
 
         <div className="home-content">
@@ -43,9 +46,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-      <div className="home-visual-selector-mobile">
-        <VisualModeSelector />
-      </div>
       <div className="home-secondary-actions" aria-label="Links de apoio">
         <Link to="/guia-de-utilizacao">Guia de Uso</Link>
         <Link to="/termos-de-uso-e-privacidade">Termos de Uso e Privacidade</Link>
