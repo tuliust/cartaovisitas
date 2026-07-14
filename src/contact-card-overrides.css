@@ -6,13 +6,13 @@
 .collaborator-own-card .public-card-contact-list :is(a, p) {
   display: grid;
   grid-template-columns: 23px minmax(0, 1fr);
-  grid-template-rows: auto auto;
+  grid-template-rows: 12px 18px;
   align-items: start;
   column-gap: 8px;
   row-gap: 2px;
   margin: 0;
   font-size: 16px;
-  line-height: 1.35;
+  line-height: 1;
   text-align: left;
 }
 
@@ -27,7 +27,7 @@
   width: fit-content;
   margin: 0;
   font-size: 12px;
-  line-height: 1;
+  line-height: 12px;
   text-align: left;
 }
 
@@ -40,7 +40,7 @@
   color: #ffffff;
   font-size: 18px;
   font-weight: 400;
-  line-height: 1.35;
+  line-height: 18px;
   letter-spacing: normal;
   text-transform: none;
   overflow-wrap: anywhere;
