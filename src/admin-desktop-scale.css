@@ -1,7 +1,7 @@
 /*
  * Canonical desktop scale for every /admin/* route.
- * Browser 100% reproduces the visual density previously seen at browser 75%.
- * The rule is scoped to administrative shells and does not affect public pages.
+ * The header keeps the same physical dimensions as /:slug, while only the
+ * administrative page content reproduces the visual density of browser 75%.
  */
 @media (min-width: 901px) {
   :root {
@@ -16,21 +16,26 @@
     overflow-x: hidden;
   }
 
-  /* Authenticated /admin/* pages.
-   * Use a local transform rather than CSS zoom. The canvas is expanded before
-   * scaling, so its visible result still matches the complete viewport and all
-   * centered content remains centered after the 75% reduction.
-   */
+  /* Keep the shell and header at their real viewport dimensions. */
   .admin-shell {
-    width: calc(100vw * var(--admin-desktop-inverse-scale));
-    min-height: calc(100dvh * var(--admin-desktop-inverse-scale));
+    width: 100%;
+    min-height: 100dvh;
     margin: 0;
-    transform: scale(var(--admin-desktop-scale));
-    transform-origin: top left;
+    transform: none;
   }
 
   .admin-shell .admin-topbar {
     width: 100%;
+    min-height: 56px;
+    height: 56px;
+    padding: 6px 18px;
+    transform: none;
+  }
+
+  .admin-shell .admin-logo {
+    width: 112px;
+    height: auto;
+    max-height: 44px;
   }
 
   .admin-shell .admin-nav {
@@ -40,13 +45,20 @@
     flex-shrink: 0;
   }
 
+  /* Expand only the content canvas before scaling it. Translating from 50%
+   * keeps the visible 75% result centered in the browser viewport. */
   .admin-shell .admin-page {
-    margin-inline: auto;
+    position: relative;
+    left: 50%;
+    width: calc(100% * var(--admin-desktop-inverse-scale));
+    max-width: none;
+    min-height: calc((100dvh - 56px) * var(--admin-desktop-inverse-scale));
+    margin: 0;
+    transform: translateX(-50%) scale(var(--admin-desktop-scale));
+    transform-origin: top center;
   }
 
-  /* /admin/login already uses the shared auth scaling system. Override its
-   * reference from 82.5% to 75% instead of applying a second nested scale.
-   */
+  /* /admin/login uses the shared authentication scaling system. */
   .admin-login-shell.auth-page-shell {
     --auth-desktop-scale: var(--admin-desktop-scale);
   }
