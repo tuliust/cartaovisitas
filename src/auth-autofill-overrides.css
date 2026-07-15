@@ -1,0 +1,90 @@
+/*
+ * Authentication field color normalization.
+ *
+ * Chromium may temporarily apply its own preview/autofill colors while the
+ * credential suggestion popover is open. These overrides keep input text,
+ * placeholder, caret and autofill backgrounds legible in all six visual
+ * variants without disabling browser password-manager support.
+ */
+
+.auth-page-card {
+  --auth-input-bg: rgba(0, 0, 0, 0.28);
+  --auth-input-text: #f7f3eb;
+  --auth-input-placeholder: rgba(247, 243, 235, 0.58);
+  --auth-input-border: rgba(255, 255, 255, 0.16);
+
+  /* Keep the existing autofill contract aligned with the normal field state. */
+  --auth-autofill-bg: #101010;
+  --auth-autofill-text: #f7f3eb;
+}
+
+html.app-visual-mode-light .auth-page-card {
+  --auth-input-bg: rgba(255, 255, 255, 0.92);
+  --auth-input-text: #111111;
+  --auth-input-placeholder: rgba(17, 17, 17, 0.5);
+  --auth-input-border: rgba(17, 17, 17, 0.2);
+  --auth-autofill-bg: #ffffff;
+  --auth-autofill-text: #111111;
+}
+
+/* Normal, focused and browser-preview states. */
+.auth-page-card input {
+  color: var(--auth-input-text);
+  -webkit-text-fill-color: var(--auth-input-text);
+  caret-color: var(--auth-input-text);
+  opacity: 1;
+}
+
+.auth-page-card input::placeholder {
+  color: var(--auth-input-placeholder);
+  -webkit-text-fill-color: var(--auth-input-placeholder);
+  opacity: 1;
+}
+
+/* Composite fields keep their background and border on the wrapper. */
+.auth-page-card .email-suffix-field,
+.auth-page-card .password-input-field {
+  border-color: var(--auth-input-border);
+  background: var(--auth-input-bg);
+}
+
+.auth-page-card .email-suffix-field input,
+.auth-page-card .password-input-field input,
+html.app-visual-mode-light .auth-page-card .email-suffix-field input,
+html.app-visual-mode-light .auth-page-card .password-input-field input {
+  background: transparent;
+  color: var(--auth-input-text);
+  -webkit-text-fill-color: var(--auth-input-text);
+  caret-color: var(--auth-input-text);
+  opacity: 1;
+}
+
+/*
+ * Chromium autofill. The large inset shadow replaces the browser background
+ * while preserving native autocomplete and password-manager behavior.
+ */
+.auth-page-card input:-webkit-autofill,
+.auth-page-card input:-webkit-autofill:hover,
+.auth-page-card input:-webkit-autofill:focus,
+.auth-page-card input:-webkit-autofill:active {
+  color: var(--auth-autofill-text);
+  -webkit-text-fill-color: var(--auth-autofill-text);
+  caret-color: var(--auth-autofill-text);
+  -webkit-box-shadow: 0 0 0 1000px var(--auth-autofill-bg) inset;
+  box-shadow: 0 0 0 1000px var(--auth-autofill-bg) inset;
+  opacity: 1;
+  transition: background-color 9999s ease-out 0s;
+}
+
+.auth-page-card input:autofill {
+  color: var(--auth-autofill-text);
+  background: var(--auth-autofill-bg);
+  caret-color: var(--auth-autofill-text);
+  opacity: 1;
+}
+
+/* Disabled fields must remain readable in WebKit/Blink as well. */
+.auth-page-card input:disabled {
+  -webkit-text-fill-color: currentColor;
+  opacity: 1;
+}
