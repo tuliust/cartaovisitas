@@ -48,6 +48,11 @@
   transform-origin: left center;
 }
 
+/* Ajuste aprovado apenas para cadastro, login do colaborador e recuperação de senha. */
+.auth-logo-shift-page .auth-page-card .auth-page-logo {
+  transform: translateX(calc(var(--auth-logo-optical-offset) + 10px));
+}
+
 .admin-state-card .auth-page-logo {
   object-position: center;
   transform: none;
