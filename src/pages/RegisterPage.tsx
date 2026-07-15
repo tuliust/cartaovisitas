@@ -64,8 +64,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="admin-login-shell auth-page-shell auth-logo-shift-page">
-      <section className="admin-login-card auth-page-card">
+    <main className="admin-login-shell auth-page-shell auth-logo-shift-page registration-page-shell">
+      <section className="admin-login-card auth-page-card registration-page-card">
         <img
           className="auth-logo auth-page-logo"
           src={getVariantLogo(settings, visualMode)}
