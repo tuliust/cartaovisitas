@@ -7,6 +7,8 @@
   :root {
     --admin-desktop-scale: 0.75;
     --admin-desktop-inverse-scale: 1.3333333333;
+    --admin-visible-max-width: 1180px;
+    --admin-visible-side-gap: 10px;
   }
 
   html:has(.admin-shell),
@@ -45,12 +47,16 @@
     flex-shrink: 0;
   }
 
-  /* Expand only the content canvas before scaling it. Translating from 50%
-   * keeps the visible 75% result centered in the browser viewport. */
+  /* Match the visible content width used by /:slug: up to 1180 px, with a
+   * minimum 10 px side margin. The canvas is expanded before the 75% scale,
+   * so the final rendered margins remain symmetrical in the viewport. */
   .admin-shell .admin-page {
     position: relative;
     left: 50%;
-    width: calc(100% * var(--admin-desktop-inverse-scale));
+    width: min(
+      calc((100vw - (2 * var(--admin-visible-side-gap))) * var(--admin-desktop-inverse-scale)),
+      calc(var(--admin-visible-max-width) * var(--admin-desktop-inverse-scale))
+    );
     max-width: none;
     min-height: calc((100dvh - 56px) * var(--admin-desktop-inverse-scale));
     margin: 0;
