@@ -1,0 +1,88 @@
+/* Share menu for the authenticated public-card page. */
+.share-contact-control {
+  position: relative;
+  width: 100%;
+}
+
+.share-contact-trigger {
+  width: 100%;
+}
+
+.share-contact-popover {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 80;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--modal-surface-strong, #090909) 96%, transparent);
+  color: inherit;
+  box-shadow: 0 22px 60px rgb(0 0 0 / 0.42);
+  backdrop-filter: blur(18px);
+}
+
+.share-contact-popover button {
+  min-width: 0;
+  min-height: 70px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 7px;
+  padding: 9px 6px;
+  border: 1px solid color-mix(in srgb, currentColor 16%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, currentColor 7%, transparent);
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.1;
+  text-align: center;
+  cursor: pointer;
+}
+
+.share-contact-popover button:hover,
+.share-contact-popover button:focus-visible {
+  border-color: color-mix(in srgb, var(--semantic-focus, currentColor) 54%, transparent);
+  background: color-mix(in srgb, var(--semantic-focus, currentColor) 15%, transparent);
+  outline: none;
+}
+
+.share-contact-popover button:disabled {
+  cursor: wait;
+  opacity: 0.58;
+}
+
+.share-contact-popover svg {
+  width: 22px;
+  height: 22px;
+}
+
+@media (min-width: 901px) {
+  .public-card-desktop-canvas .share-contact-popover {
+    transform-origin: top center;
+  }
+}
+
+@media (max-width: 900px) {
+  .share-contact-popover {
+    position: fixed;
+    left: 14px;
+    right: 14px;
+    top: auto;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 12px;
+    border-radius: 22px;
+  }
+
+  .share-contact-popover button {
+    min-height: 68px;
+    font-size: 13px;
+  }
+}
