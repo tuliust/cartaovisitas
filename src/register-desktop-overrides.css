@@ -15,7 +15,7 @@
     width: min(620px, calc(100vw - 28px));
     max-height: calc(100dvh - 28px);
     min-height: 0;
-    padding: 30px 34px 24px;
+    padding: 15px 34px 24px;
     overflow: hidden;
   }
 
@@ -24,7 +24,7 @@
   }
 
   .registration-page-card .auth-page-title {
-    margin-bottom: 36px;
+    margin-bottom: 25px;
   }
 
   .registration-page-card .auth-page-form {
@@ -68,6 +68,10 @@
     width: 48px;
   }
 
+  .registration-page-card .terms-acceptance {
+    margin-block: -4px;
+  }
+
   .registration-page-card .terms-acceptance label {
     gap: 9px;
   }
@@ -79,6 +83,7 @@
 
   .registration-page-card .auth-page-submit {
     min-height: 48px;
+    margin-top: -4px;
     font-size: 16px;
   }
 
@@ -107,7 +112,8 @@
 
 @media (min-width: 901px) and (max-height: 760px) {
   .registration-page-card {
-    padding-block: 22px 18px;
+    padding-top: 15px;
+    padding-bottom: 18px;
   }
 
   .registration-page-card .auth-page-logo {
@@ -116,10 +122,10 @@
   }
 
   .registration-page-card .auth-page-title {
-    margin-bottom: 30px;
+    margin-bottom: 25px;
   }
 
   .registration-page-card .auth-page-form {
-    gap: 10px;
+    gap: 12px;
   }
 }
