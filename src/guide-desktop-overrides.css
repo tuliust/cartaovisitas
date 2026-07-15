@@ -5,7 +5,7 @@
   }
 
   .collaborator-page:has(.guide-layout) .collaborator-page-header h1 {
-    font-size: 56px;
+    font-size: 45px;
     line-height: 0.98;
     letter-spacing: -0.045em;
   }
@@ -14,37 +14,45 @@
     background: rgba(8, 8, 8, 0.78);
   }
 
-  .collaborator-page:has(.guide-layout) .guide-search input {
-    border: 0;
-    outline: 0;
-    background: transparent;
-    box-shadow: none;
-    color: #ffffff;
-    -webkit-text-fill-color: #ffffff;
+  .collaborator-page:has(.guide-layout) .guide-search input,
+  .collaborator-page:has(.guide-layout) .guide-search input:hover,
+  .collaborator-page:has(.guide-layout) .guide-search input:focus,
+  .collaborator-page:has(.guide-layout) .guide-search input:focus-visible,
+  .collaborator-page:has(.guide-layout) .guide-search input:active {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 0 !important;
+    outline: 0 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
   }
 
   .collaborator-page:has(.guide-layout) .guide-search input::placeholder {
-    color: rgba(255, 255, 255, 0.64);
+    color: rgba(255, 255, 255, 0.66) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, 0.66) !important;
     opacity: 1;
   }
 
-  .collaborator-page:has(.guide-layout) .guide-search input:focus,
-  .collaborator-page:has(.guide-layout) .guide-search input:focus-visible {
-    border: 0;
-    outline: 0;
-    background: transparent;
-    box-shadow: none;
+  .collaborator-page:has(.guide-layout) .guide-search input::-webkit-search-decoration,
+  .collaborator-page:has(.guide-layout) .guide-search input::-webkit-search-cancel-button,
+  .collaborator-page:has(.guide-layout) .guide-search input::-webkit-search-results-button,
+  .collaborator-page:has(.guide-layout) .guide-search input::-webkit-search-results-decoration {
+    display: none;
   }
 
   .collaborator-page:has(.guide-layout) .guide-index {
     max-height: 95dvh;
     overflow: hidden;
-    padding-block: 10px;
+    padding-block: 6px;
   }
 
   .collaborator-page:has(.guide-layout) .guide-index ol {
     display: grid;
-    gap: 2px;
+    gap: 0;
     margin: 0;
     padding: 0;
   }
@@ -54,19 +62,38 @@
   }
 
   .collaborator-page:has(.guide-layout) .guide-index a {
-    min-height: 36px;
-    padding: 4px 10px;
-    gap: 9px;
-    font-size: 14px;
-    line-height: 1.16;
+    min-height: 30px;
+    padding: 2px 8px;
+    gap: 8px;
+    font-size: 13px;
+    line-height: 1.12;
   }
 
   .collaborator-page:has(.guide-layout) .guide-index a svg {
-    width: 18px;
-    height: 18px;
+    width: 17px;
+    height: 17px;
   }
 
   .collaborator-page:has(.guide-layout) .guide-index-number {
-    font-size: 11px;
+    display: none;
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-section-kicker {
+    display: none;
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-section-header h2 {
+    font-size: 28px;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-section-body {
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-section-body p {
+    margin-block: 0 16px;
   }
 }
