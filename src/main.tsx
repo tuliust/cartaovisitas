@@ -10,6 +10,7 @@ import './public-card-notebook-overrides.css'
 import './public-card-desktop-scale.css'
 import './auth-autofill-overrides.css'
 import './register-desktop-overrides.css'
+import './auth-desktop-standard.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
