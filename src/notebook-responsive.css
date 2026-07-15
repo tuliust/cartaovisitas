@@ -139,20 +139,43 @@
     min-height: 76px;
   }
 
-  /* Home page */
-  .app-shell {
+  /* Home page: fixed notebook reference values. */
+  .home-page-shell.app-shell {
     padding: 14px;
   }
 
-  .home-panel {
+  .home-page-shell .home-panel {
     width: min(920px, 100%);
     min-height: calc(100dvh - 28px);
-    padding: 28px;
+    padding: 35px;
     border-radius: 28px;
+    justify-content: flex-start;
   }
 
-  .home-panel h1 {
-    font-size: clamp(2.3rem, 5.2vh, 3.4rem);
+  .home-page-shell .brand-logo-main {
+    transform: translateX(-2px);
+  }
+
+  .home-page-shell .home-content {
+    margin-top: 50px;
+  }
+
+  .home-page-shell .home-content h1 {
+    font-size: 72px;
+  }
+
+  .home-page-shell .home-description {
+    font-size: 22px;
+  }
+
+  .home-page-shell .home-actions {
+    gap: 20px;
+    margin-top: 35px;
+  }
+
+  .home-page-shell .home-secondary-actions .auxiliary-button {
+    font-size: 15px;
+    font-weight: 500;
   }
 
   /* Authentication pages */
