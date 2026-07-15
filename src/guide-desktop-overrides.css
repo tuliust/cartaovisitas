@@ -1,16 +1,33 @@
 /* Canonical desktop refinements for the usage guide and legal page. */
 @media (min-width: 901px) {
+  .collaborator-page:has(.guide-layout) {
+    width: min(1720px, calc(100% - clamp(28px, 3.25vw, 60px)));
+    max-width: none;
+  }
+
+  .collaborator-page:has(.guide-layout) .collaborator-page-header {
+    margin-bottom: clamp(18px, 1.65vw, 30px);
+  }
+
   .collaborator-page:has(.guide-layout) .collaborator-page-header .eyebrow {
     display: none;
   }
 
   .collaborator-page:has(.guide-layout) .collaborator-page-header h1 {
-    font-size: 38px;
+    font-size: clamp(30px, 2.07vw, 38px);
     line-height: 0.98;
     letter-spacing: -0.04em;
   }
 
+  .collaborator-page:has(.guide-layout) .guide-search {
+    width: min(906px, 52.7%);
+    margin-top: clamp(14px, 1.4vw, 26px);
+  }
+
   .collaborator-page:has(.guide-layout) .guide-search label {
+    min-height: clamp(52px, 3.8vw, 70px);
+    padding-inline: clamp(16px, 1.25vw, 23px);
+    border-radius: clamp(18px, 1.35vw, 25px);
     background: rgba(8, 8, 8, 0.78);
   }
 
@@ -29,6 +46,7 @@
     -webkit-box-shadow: none !important;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
+    font-size: clamp(16px, 1.2vw, 22px);
   }
 
   .collaborator-page:has(.guide-layout) .guide-search input::placeholder {
@@ -44,11 +62,17 @@
     display: none;
   }
 
+  .collaborator-page:has(.guide-layout) .guide-layout {
+    grid-template-columns: clamp(320px, 23.4vw, 430px) minmax(0, 1fr);
+    gap: clamp(18px, 1.52vw, 28px);
+  }
+
   .collaborator-page:has(.guide-layout) .guide-index {
     width: 100%;
     max-height: 95dvh;
     overflow: hidden;
-    padding-block: 6px;
+    padding: clamp(6px, 0.55vw, 10px);
+    border-radius: clamp(22px, 1.63vw, 30px);
   }
 
   .collaborator-page:has(.guide-layout) .guide-index ol {
@@ -66,13 +90,13 @@
 
   .collaborator-page:has(.guide-layout) .guide-index a {
     width: 100%;
-    min-height: 30px;
-    padding: 2px 8px;
+    min-height: clamp(25px, 1.63vw, 30px);
+    padding: clamp(1px, 0.12vw, 2px) clamp(6px, 0.44vw, 8px);
     display: grid;
-    grid-template-columns: 22px minmax(0, 1fr);
+    grid-template-columns: clamp(18px, 1.2vw, 22px) minmax(0, 1fr);
     align-items: center;
-    column-gap: 10px;
-    font-size: 13px;
+    column-gap: clamp(7px, 0.55vw, 10px);
+    font-size: clamp(11px, 0.71vw, 13px);
     line-height: 1.12;
   }
 
@@ -86,8 +110,8 @@
   }
 
   .collaborator-page:has(.guide-layout) .guide-index a svg {
-    width: 17px;
-    height: 17px;
+    width: clamp(15px, 0.92vw, 17px);
+    height: clamp(15px, 0.92vw, 17px);
     justify-self: center;
   }
 
@@ -96,9 +120,25 @@
     display: none;
   }
 
+  .collaborator-page:has(.guide-layout) .guide-content > section {
+    padding: clamp(28px, 2.45vw, 45px);
+    border-radius: clamp(22px, 1.63vw, 30px);
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-section-header {
+    gap: clamp(14px, 1.1vw, 20px);
+    margin-bottom: clamp(18px, 1.55vw, 28px);
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-section-icon {
+    width: clamp(52px, 3.7vw, 68px);
+    height: clamp(52px, 3.7vw, 68px);
+    border-radius: clamp(16px, 1.2vw, 22px);
+  }
+
   .collaborator-page:has(.guide-layout) .guide-section-header h2,
   .collaborator-page:has(.guide-layout) .legal-guide-version h2 {
-    font-size: 24px;
+    font-size: clamp(20px, 1.3vw, 24px);
     line-height: 1.08;
     letter-spacing: -0.03em;
   }
@@ -106,30 +146,30 @@
   .collaborator-page:has(.guide-layout) .guide-section-body,
   .collaborator-page:has(.guide-layout) .legal-guide-notice,
   .collaborator-page:has(.guide-layout) .legal-guide-version {
-    font-size: 14px;
+    font-size: clamp(12px, 0.76vw, 14px);
     line-height: 1.5;
   }
 
   .collaborator-page:has(.guide-layout) .guide-section-body p {
-    margin-block: 0 14px;
+    margin-block: 0 clamp(11px, 0.76vw, 14px);
   }
 
   .collaborator-page:has(.legal-guide-layout) .legal-guide-notice,
   .collaborator-page:has(.legal-guide-layout) .legal-guide-version {
-    padding: 18px 20px;
+    padding: clamp(15px, 1vw, 18px) clamp(16px, 1.1vw, 20px);
     border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
-    border-radius: 22px;
+    border-radius: clamp(18px, 1.2vw, 22px);
     background: color-mix(in srgb, currentColor 5%, transparent);
   }
 
   .collaborator-page:has(.legal-guide-layout) .legal-guide-notice {
-    margin-bottom: 14px;
+    margin-bottom: clamp(10px, 0.76vw, 14px);
   }
 
   .collaborator-page:has(.legal-guide-layout) .legal-guide-notice strong {
     display: block;
     margin-bottom: 6px;
-    font-size: 16px;
+    font-size: clamp(14px, 0.87vw, 16px);
   }
 
   .collaborator-page:has(.legal-guide-layout) .legal-guide-notice p,
@@ -138,7 +178,7 @@
   }
 
   .collaborator-page:has(.legal-guide-layout) .legal-guide-version {
-    margin-top: 14px;
+    margin-top: clamp(10px, 0.76vw, 14px);
   }
 
   .collaborator-page:has(.legal-guide-layout) .legal-guide-version h2 {
