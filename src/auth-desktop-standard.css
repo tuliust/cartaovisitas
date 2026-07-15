@@ -105,6 +105,35 @@
     margin-top: 10px;
   }
 
+  /* /cadastro: add 10 px after “Criar cadastro”. */
+  .registration-page-shell .auth-page-links {
+    margin-top: 20px;
+  }
+
+  /* /entrar, /recuperar-senha, /definir-senha and /admin/login:
+   * add 20 px before and after the primary submit button.
+   */
+  .auth-page-shell:has(#employee-login-username) .auth-page-submit,
+  .auth-page-shell:has(#password-reset-username) .auth-page-submit,
+  .auth-page-shell:has(#password-update-new) .auth-page-submit,
+  .auth-page-shell:has(#admin-login-username) .auth-page-submit {
+    margin-top: 16px;
+  }
+
+  .auth-page-shell:has(#employee-login-username) .auth-page-links,
+  .auth-page-shell:has(#password-reset-username) .auth-page-links,
+  .auth-page-shell:has(#password-update-new) .auth-page-links,
+  .auth-page-shell:has(#admin-login-username) .auth-page-links {
+    margin-top: 30px;
+  }
+
+  /* Move only /definir-senha and /admin/login logos 15 px to the right. */
+  .auth-page-shell:has(#password-update-new) .auth-page-logo,
+  .auth-page-shell:has(#admin-login-username) .auth-page-logo {
+    position: relative;
+    left: 15px;
+  }
+
   html.app-visual-mode-dark .auth-page-shell input:-webkit-autofill,
   html.app-visual-mode-dark .auth-page-shell input:-webkit-autofill:hover,
   html.app-visual-mode-dark .auth-page-shell input:-webkit-autofill:focus {
