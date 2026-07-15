@@ -47,7 +47,7 @@ export default function EmployeeLoginPage() {
   }
 
   return (
-    <main className="admin-login-shell auth-page-shell">
+    <main className="admin-login-shell auth-page-shell auth-logo-shift-page">
       <section className="admin-login-card auth-page-card">
         <img
           className="auth-logo auth-page-logo"
@@ -108,7 +108,6 @@ export default function EmployeeLoginPage() {
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
-
 
         <div className="auth-links auth-page-links">
           <Link to="/">Voltar</Link>
