@@ -27,11 +27,22 @@
   }
 
   .admin-shell .admin-topbar {
-    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    left: 0;
+    width: 100vw !important;
+    max-width: 100vw;
     min-height: 56px;
     height: 56px;
-    padding: 6px 18px;
-    transform: none;
+    margin: 0;
+    padding-block: 6px !important;
+    padding-inline: 18px !important;
+    transform: none !important;
+  }
+
+  .admin-shell .admin-brand {
+    margin: 0;
+    flex: 0 0 auto;
   }
 
   .admin-shell .admin-logo {
@@ -45,6 +56,7 @@
     visibility: visible;
     opacity: 1;
     flex-shrink: 0;
+    margin: 0;
   }
 
   /* Match the visible content width used by /:slug: up to 1180 px, with a
