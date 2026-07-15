@@ -35,6 +35,7 @@
 
   .home-page-shell .home-actions :is(.primary-button, .secondary-button, .auxiliary-button) {
     min-height: 52px;
+    padding-inline: 30px;
   }
 
   .home-page-shell .home-secondary-actions {
@@ -51,8 +52,8 @@
     border-radius: 0;
     background: transparent;
     box-shadow: none;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 14px;
+    font-weight: 600;
     text-decoration: underline;
     text-underline-offset: 3px;
   }
