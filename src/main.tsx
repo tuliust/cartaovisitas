@@ -15,6 +15,7 @@ import './guide-desktop-overrides.css'
 import './auth-autofill-overrides.css'
 import './public-card-share-popover.css'
 import './admin-desktop-scale.css'
+import './unified-site-header.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
