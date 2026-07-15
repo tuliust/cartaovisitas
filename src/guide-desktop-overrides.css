@@ -5,9 +5,9 @@
   }
 
   .collaborator-page:has(.guide-layout) .collaborator-page-header h1 {
-    font-size: 45px;
+    font-size: 38px;
     line-height: 0.98;
-    letter-spacing: -0.045em;
+    letter-spacing: -0.04em;
   }
 
   .collaborator-page:has(.guide-layout) .guide-search label {
@@ -45,12 +45,14 @@
   }
 
   .collaborator-page:has(.guide-layout) .guide-index {
+    width: 100%;
     max-height: 95dvh;
     overflow: hidden;
     padding-block: 6px;
   }
 
   .collaborator-page:has(.guide-layout) .guide-index ol {
+    width: 100%;
     display: grid;
     gap: 0;
     margin: 0;
@@ -58,20 +60,35 @@
   }
 
   .collaborator-page:has(.guide-layout) .guide-index li {
+    width: 100%;
     margin: 0;
   }
 
   .collaborator-page:has(.guide-layout) .guide-index a {
+    width: 100%;
     min-height: 30px;
     padding: 2px 8px;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    align-items: center;
+    column-gap: 10px;
     font-size: 13px;
     line-height: 1.12;
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-index a > span:last-child {
+    min-width: 0;
+    width: 100%;
+    word-break: normal;
+    overflow-wrap: normal;
+    hyphens: none;
+    white-space: normal;
   }
 
   .collaborator-page:has(.guide-layout) .guide-index a svg {
     width: 17px;
     height: 17px;
+    justify-self: center;
   }
 
   .collaborator-page:has(.guide-layout) .guide-index-number {
@@ -83,17 +100,17 @@
   }
 
   .collaborator-page:has(.guide-layout) .guide-section-header h2 {
-    font-size: 28px;
-    line-height: 1.05;
-    letter-spacing: -0.035em;
+    font-size: 24px;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
   }
 
   .collaborator-page:has(.guide-layout) .guide-section-body {
-    font-size: 16px;
-    line-height: 1.55;
+    font-size: 14px;
+    line-height: 1.5;
   }
 
   .collaborator-page:has(.guide-layout) .guide-section-body p {
-    margin-block: 0 16px;
+    margin-block: 0 14px;
   }
 }
