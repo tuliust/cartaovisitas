@@ -19,6 +19,10 @@
     overflow: hidden;
   }
 
+  .registration-page-card .auth-page-logo {
+    margin-bottom: 28px;
+  }
+
   .registration-page-card .auth-page-title {
     margin-bottom: 36px;
   }
@@ -34,23 +38,34 @@
   }
 
   .registration-page-card :is(.email-suffix-field, .password-input-field) {
-    min-height: 48px;
+    min-height: 42px;
+    height: 42px;
   }
 
   .registration-page-card :is(.email-suffix-field input, .password-input-field input) {
-    min-height: 48px;
-    padding-block: 10px;
+    min-height: 42px;
+    height: 42px;
+    padding-block: 6px;
     font-size: 15px;
+    line-height: 1.2;
+    color: var(--modal-input-text);
+    caret-color: var(--modal-input-text);
+  }
+
+  .registration-page-card :is(.email-suffix-field input, .password-input-field input)::placeholder {
+    color: var(--modal-input-placeholder);
+    opacity: 1;
   }
 
   .registration-page-card .email-suffix-label,
   .registration-page-card .password-visibility-button {
-    min-height: 48px;
+    min-height: 42px;
+    height: 42px;
     font-size: 15px;
   }
 
   .registration-page-card .password-visibility-button {
-    width: 52px;
+    width: 48px;
   }
 
   .registration-page-card .terms-acceptance label {
@@ -70,6 +85,24 @@
   .registration-page-card .auth-page-links {
     margin-top: 10px;
   }
+
+  html.app-visual-mode-dark .registration-page-card input:-webkit-autofill,
+  html.app-visual-mode-dark .registration-page-card input:-webkit-autofill:hover,
+  html.app-visual-mode-dark .registration-page-card input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #ffffff;
+    caret-color: #ffffff;
+    box-shadow: 0 0 0 1000px #202326 inset;
+    -webkit-box-shadow: 0 0 0 1000px #202326 inset;
+  }
+
+  html.app-visual-mode-light .registration-page-card input:-webkit-autofill,
+  html.app-visual-mode-light .registration-page-card input:-webkit-autofill:hover,
+  html.app-visual-mode-light .registration-page-card input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #111111;
+    caret-color: #111111;
+    box-shadow: 0 0 0 1000px #ffffff inset;
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
+  }
 }
 
 @media (min-width: 901px) and (max-height: 760px) {
@@ -79,6 +112,7 @@
 
   .registration-page-card .auth-page-logo {
     max-height: 62px;
+    margin-bottom: 24px;
   }
 
   .registration-page-card .auth-page-title {
