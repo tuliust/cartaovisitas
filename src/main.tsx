@@ -13,6 +13,7 @@ import './auth-desktop-standard.css'
 import './desktop-visual-contract.css'
 import './guide-desktop-overrides.css'
 import './auth-autofill-overrides.css'
+import './public-card-share-popover.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
