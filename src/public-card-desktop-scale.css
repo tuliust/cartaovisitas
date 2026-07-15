@@ -1,5 +1,11 @@
 /* Canonical desktop composition for the authenticated /:slug page. */
 @media (min-width: 901px) {
+  /* Use the available viewport width before reducing the approved composition. */
+  .collaborator-shell:has(.collaborator-own-card) .collaborator-page {
+    width: min(1180px, calc(100% - 24px));
+    max-width: none;
+  }
+
   .public-card-desktop-stage {
     width: 100%;
     min-width: 0;
@@ -8,10 +14,12 @@
   }
 
   .public-card-desktop-canvas {
-    width: 1108px;
+    width: min(1108px, 100%);
     height: 648px;
     min-height: 648px;
     margin: 0 auto;
+    grid-template-columns: 629px minmax(0, 1fr);
+    gap: 14px;
     transform: scale(var(--public-card-desktop-scale, 1));
     transform-origin: top center;
   }
@@ -20,6 +28,25 @@
   .public-card-desktop-canvas > .public-card-actions-panel {
     height: 648px;
     min-height: 0;
+  }
+}
+
+/* The left card keeps its approved width; only the tools panel becomes denser. */
+@media (min-width: 901px) and (max-width: 1050px) {
+  .public-card-desktop-canvas .public-card-actions-panel {
+    padding-inline: 18px;
+  }
+
+  .public-card-desktop-canvas .public-card-actions-panel h2 {
+    font-size: 26px;
+  }
+
+  .public-card-desktop-canvas .public-language-toggle button {
+    min-width: 40px;
+  }
+
+  .public-card-desktop-canvas .extra-actions-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
