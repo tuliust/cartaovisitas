@@ -7,6 +7,7 @@ import './notebook-responsive.css'
 import './home-notebook-overrides.css'
 import './home-desktop-scale.css'
 import './public-card-notebook-overrides.css'
+import './public-card-desktop-scale.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
