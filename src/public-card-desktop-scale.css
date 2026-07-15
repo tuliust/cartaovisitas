@@ -1,0 +1,38 @@
+/* Canonical desktop composition for the authenticated /:slug page. */
+@media (min-width: 901px) {
+  .public-card-desktop-stage {
+    width: 100%;
+    min-width: 0;
+    position: relative;
+    overflow: visible;
+  }
+
+  .public-card-desktop-canvas {
+    width: 1108px;
+    height: 648px;
+    min-height: 648px;
+    margin: 0 auto;
+    transform: scale(var(--public-card-desktop-scale, 1));
+    transform-origin: top center;
+  }
+
+  .public-card-desktop-canvas > .card-visual,
+  .public-card-desktop-canvas > .public-card-actions-panel {
+    height: 648px;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .public-card-desktop-stage {
+    height: auto !important;
+  }
+
+  .public-card-desktop-canvas {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    transform: none;
+  }
+}
