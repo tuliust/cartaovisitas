@@ -1,0 +1,91 @@
+/* Desktop registration contract: keep the complete /cadastro card inside the viewport. */
+@media (min-width: 901px) {
+  .registration-page-shell {
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    max-height: 100dvh;
+    padding: 14px;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+  }
+
+  .registration-page-card {
+    width: min(620px, calc(100vw - 28px));
+    max-height: calc(100dvh - 28px);
+    min-height: 0;
+    padding: 30px 34px 24px;
+    overflow: hidden;
+  }
+
+  .registration-page-card .auth-page-title {
+    margin-bottom: 36px;
+  }
+
+  .registration-page-card .auth-page-form {
+    gap: 12px;
+  }
+
+  .registration-page-card .auth-page-form > label,
+  .registration-page-card .auth-form-field > label,
+  .registration-page-card .terms-acceptance {
+    font-size: 15px;
+  }
+
+  .registration-page-card :is(.email-suffix-field, .password-input-field) {
+    min-height: 48px;
+  }
+
+  .registration-page-card :is(.email-suffix-field input, .password-input-field input) {
+    min-height: 48px;
+    padding-block: 10px;
+    font-size: 15px;
+  }
+
+  .registration-page-card .email-suffix-label,
+  .registration-page-card .password-visibility-button {
+    min-height: 48px;
+    font-size: 15px;
+  }
+
+  .registration-page-card .password-visibility-button {
+    width: 52px;
+  }
+
+  .registration-page-card .terms-acceptance label {
+    gap: 9px;
+  }
+
+  .registration-page-card .terms-acceptance input {
+    width: 20px;
+    height: 20px;
+  }
+
+  .registration-page-card .auth-page-submit {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .registration-page-card .auth-page-links {
+    margin-top: 10px;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 760px) {
+  .registration-page-card {
+    padding-block: 22px 18px;
+  }
+
+  .registration-page-card .auth-page-logo {
+    max-height: 62px;
+  }
+
+  .registration-page-card .auth-page-title {
+    margin-bottom: 30px;
+  }
+
+  .registration-page-card .auth-page-form {
+    gap: 10px;
+  }
+}
