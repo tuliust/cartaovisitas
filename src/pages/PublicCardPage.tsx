@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import QRCode from 'qrcode'
-import { Airplay, BarChart3, Clipboard, Copy, Download, FileUp, Globe, ImageDown, Mail, MapPin, MessageCircle, Pencil, QrCode, Smartphone, Wallet, type LucideIcon } from 'lucide-react'
+import { BarChart3, Copy, Download, FileUp, Globe, Mail, MapPin, MessageCircle, Pencil, QrCode, Smartphone, Wallet, type LucideIcon } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import CollaboratorLayout from '../components/collaborator/CollaboratorLayout'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
@@ -12,7 +12,7 @@ import { getEffectiveVisualVariant, getVariantClassName, getVariantLogo, getVari
 import { recordCardEvent } from '../lib/cards'
 import { getLocalizedProfessionalData, getStoredPublicCardLanguage, publicCardCopy, publicCardLanguageLabels, storePublicCardLanguage, type PublicCardLanguage } from '../lib/publicCardLocale'
 
- type PublicVisualLanguage = PublicCardLanguage
+type PublicVisualLanguage = PublicCardLanguage
 
 const PUBLIC_CARD_DESKTOP_WIDTH = 1108
 const PUBLIC_CARD_DESKTOP_HEIGHT = 648
@@ -68,7 +68,8 @@ async function cloneCardWithInlineStyles(source: HTMLElement) {
     if (!cloneNode) return
     const computed = window.getComputedStyle(sourceNode)
     const declarations: string[] = []
-    for (const property of Array.from(computed)) {
+    for (let propertyIndex = 0; propertyIndex < computed.length; propertyIndex += 1) {
+      const property = computed.item(propertyIndex)
       let value = computed.getPropertyValue(property)
       if (property === 'background-image' && value.includes('url(')) value = await inlineBackgroundImages(value)
       declarations.push(`${property}:${value};`)
@@ -234,8 +235,8 @@ export default function PublicCardPage() {
     try {
       const blob = await getCardPng()
       const file = new File([blob], `cartao-${card.slug}.png`, { type: 'image/png' })
-      const data = { files: [file], title: `${name} | Invest RS`, text: `Cartão profissional de ${name}. ${actions.vcardUrl}` }
-      if (typeof navigator.share === 'function' && (!navigator.canShare || navigator.canShare(data))) {
+      const data: ShareData = { files: [file], title: `${name} | Invest RS`, text: `Cartão profissional de ${name}. ${actions.vcardUrl}` }
+      if (typeof navigator.share === 'function' && (typeof navigator.canShare !== 'function' || navigator.canShare(data))) {
         await navigator.share(data)
       } else {
         downloadBlob(blob, file.name)
@@ -282,12 +283,12 @@ export default function PublicCardPage() {
             <div className="share-contact-control" ref={shareControlRef}>
               <button className="primary-button share-contact-trigger" type="button" aria-haspopup="menu" aria-expanded={shareMenuOpen} onClick={() => setShareMenuOpen((current) => !current)}>Compartilhar meu contato</button>
               {shareMenuOpen ? <div className="share-contact-popover" role="menu" aria-label="Opções para compartilhar contato">
-                <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void actions.copyVCard().then(() => setShareMenuOpen(false))}><Clipboard aria-hidden="true" /><span>Copiar</span></button>
+                <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void actions.copyVCard().then(() => setShareMenuOpen(false))}><Copy aria-hidden="true" /><span>Copiar</span></button>
                 <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={shareOnWhatsApp}><MessageCircle aria-hidden="true" /><span>WhatsApp</span></button>
-                <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void saveCardPng()}><ImageDown aria-hidden="true" /><span>{shareAction === 'card' ? 'Gerando...' : 'Salvar Card'}</span></button>
+                <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void saveCardPng()}><Download aria-hidden="true" /><span>{shareAction === 'card' ? 'Gerando...' : 'Salvar Card'}</span></button>
                 <button type="button" role="menuitem" disabled={Boolean(shareAction) || Boolean(actions.running)} onClick={() => void actions.downloadQrCode().then(() => setShareMenuOpen(false))}><QrCode aria-hidden="true" /><span>Salvar QR-Code</span></button>
                 <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void shareCardFile('gmail')}><Mail aria-hidden="true" /><span>{shareAction === 'gmail' ? 'Preparando...' : 'Gmail'}</span></button>
-                <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void shareCardFile('airdrop')}><Airplay aria-hidden="true" /><span>{shareAction === 'airdrop' ? 'Preparando...' : 'AirDrop'}</span></button>
+                <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void shareCardFile('airdrop')}><FileUp aria-hidden="true" /><span>{shareAction === 'airdrop' ? 'Preparando...' : 'AirDrop'}</span></button>
               </div> : null}
             </div>
             {!isInstalled ? <button className="secondary-button install-page-button" type="button" onClick={openInstallModal}><Smartphone aria-hidden="true" />Instale esta página como app</button> : null}
