@@ -1,7 +1,12 @@
 /* Approved notebook adjustments for the authenticated public card page only. */
 @media (min-width: 901px) and (max-height: 950px) {
   .collaborator-shell:has(.collaborator-own-card) .collaborator-page {
-    padding-bottom: 12px;
+    padding-bottom: 18px;
+  }
+
+  .collaborator-own-card .card-visual,
+  .collaborator-own-card .public-card-actions-panel {
+    height: min(680px, calc(100dvh - 104px));
   }
 
   .collaborator-own-card .card-visual {
@@ -10,10 +15,11 @@
 
   .collaborator-own-card .card-main {
     margin-top: 40px;
+    margin-bottom: 18px;
   }
 
   .collaborator-own-card .person-block h1 {
-    margin-bottom: 30px;
+    margin-bottom: 22px;
     font-size: 50px;
   }
 
@@ -22,6 +28,7 @@
   }
 
   .collaborator-own-card .public-card-actions-panel h2 {
+    margin-bottom: 25px;
     font-size: 30px;
   }
 
