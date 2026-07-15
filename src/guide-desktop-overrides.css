@@ -1,4 +1,4 @@
-/* Canonical desktop refinements for the usage guide. */
+/* Canonical desktop refinements for the usage guide and legal page. */
 @media (min-width: 901px) {
   .collaborator-page:has(.guide-layout) .collaborator-page-header .eyebrow {
     display: none;
@@ -91,26 +91,57 @@
     justify-self: center;
   }
 
-  .collaborator-page:has(.guide-layout) .guide-index-number {
-    display: none;
-  }
-
+  .collaborator-page:has(.guide-layout) .guide-index-number,
   .collaborator-page:has(.guide-layout) .guide-section-kicker {
     display: none;
   }
 
-  .collaborator-page:has(.guide-layout) .guide-section-header h2 {
+  .collaborator-page:has(.guide-layout) .guide-section-header h2,
+  .collaborator-page:has(.guide-layout) .legal-guide-version h2 {
     font-size: 24px;
     line-height: 1.08;
     letter-spacing: -0.03em;
   }
 
-  .collaborator-page:has(.guide-layout) .guide-section-body {
+  .collaborator-page:has(.guide-layout) .guide-section-body,
+  .collaborator-page:has(.guide-layout) .legal-guide-notice,
+  .collaborator-page:has(.guide-layout) .legal-guide-version {
     font-size: 14px;
     line-height: 1.5;
   }
 
   .collaborator-page:has(.guide-layout) .guide-section-body p {
     margin-block: 0 14px;
+  }
+
+  .collaborator-page:has(.legal-guide-layout) .legal-guide-notice,
+  .collaborator-page:has(.legal-guide-layout) .legal-guide-version {
+    padding: 18px 20px;
+    border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+    border-radius: 22px;
+    background: color-mix(in srgb, currentColor 5%, transparent);
+  }
+
+  .collaborator-page:has(.legal-guide-layout) .legal-guide-notice {
+    margin-bottom: 14px;
+  }
+
+  .collaborator-page:has(.legal-guide-layout) .legal-guide-notice strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 16px;
+  }
+
+  .collaborator-page:has(.legal-guide-layout) .legal-guide-notice p,
+  .collaborator-page:has(.legal-guide-layout) .legal-guide-version p {
+    margin: 0;
+  }
+
+  .collaborator-page:has(.legal-guide-layout) .legal-guide-version {
+    margin-top: 14px;
+  }
+
+  .collaborator-page:has(.legal-guide-layout) .legal-guide-version h2 {
+    margin: 0 0 8px;
   }
 }
