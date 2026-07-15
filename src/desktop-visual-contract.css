@@ -1,0 +1,64 @@
+/* Final desktop visual contract.
+ * Applies to notebook and external-monitor layouts at widths >= 901px.
+ * Mobile remains governed by its dedicated responsive rules.
+ *
+ * Canonical page families:
+ * - Home (/): fixed internal composition, uniformly scaled to the viewport.
+ * - Public card (/:slug): approved header and two-column composition, fitted to 100dvh.
+ * - Authentication: /cadastro, /entrar, /recuperar-senha,
+ *   /definir-senha and /admin/login at the approved 82.5% reference scale.
+ */
+@media (min-width: 901px) {
+  :root {
+    --desktop-viewport-width: 100vw;
+    --desktop-viewport-height: 100dvh;
+    --desktop-safe-gutter: 12px;
+    --desktop-auth-reference-scale: 0.825;
+  }
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+  }
+
+  /* These approved full-viewport pages must never create document scrolling. */
+  body:has(.home-page-shell),
+  body:has(.auth-page-shell),
+  body:has(.collaborator-own-card) {
+    height: var(--desktop-viewport-height);
+    max-height: var(--desktop-viewport-height);
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  .home-page-shell,
+  .auth-page-shell {
+    width: var(--desktop-viewport-width);
+    height: var(--desktop-viewport-height);
+    max-width: none;
+    max-height: var(--desktop-viewport-height);
+    overflow: hidden;
+  }
+
+  /* Reassert the approved authentication reference scale for every auth route. */
+  .auth-page-shell {
+    --auth-desktop-scale: var(--desktop-auth-reference-scale);
+  }
+
+  /* Keep canonical transformed compositions centered on both notebook and LCD screens. */
+  .home-desktop-viewport,
+  .auth-page-shell .auth-page-card,
+  .public-card-desktop-canvas {
+    margin-inline: auto;
+  }
+
+  .collaborator-shell:has(.collaborator-own-card) {
+    height: var(--desktop-viewport-height);
+    min-height: 0;
+    max-height: var(--desktop-viewport-height);
+    overflow: hidden;
+  }
+}
