@@ -5,7 +5,16 @@
   }
 
   .collaborator-own-card .card-visual {
-    padding-bottom: 10px;
+    padding-bottom: 0;
+  }
+
+  .collaborator-own-card .card-main {
+    margin-top: 40px;
+  }
+
+  .collaborator-own-card .person-block h1 {
+    margin-bottom: 30px;
+    font-size: 50px;
   }
 
   .collaborator-own-card .public-card-contact-list :is(a, p) {
@@ -16,22 +25,15 @@
     font-size: 30px;
   }
 
-  .collaborator-own-card .collaborator-owner-actions :is(.primary-button, .secondary-button) {
-    min-height: 36px;
-    padding-block: 6px;
-    font-size: 15px;
-    font-weight: 600;
-  }
-
-  .collaborator-own-card .collaborator-owner-actions .auxiliary-button {
-    min-height: 32px;
+  .collaborator-own-card .collaborator-owner-actions :is(.primary-button, .secondary-button, .auxiliary-button) {
+    min-height: 35px;
     padding-block: 5px;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
   }
 
   .collaborator-own-card .extra-functions h3 {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 500;
   }
 }
