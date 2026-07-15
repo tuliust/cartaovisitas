@@ -9,7 +9,7 @@
     --home-panel-height: 648px;
     --home-support-height: 58px;
     --home-panel-support-gap: 12px;
-    --home-logo-width: 750px;
+    --home-logo-width: 450px;
     --home-logo-content-gap: 80px;
     --home-description-actions-gap: 80px;
     --home-panel-padding-top: 35px;
@@ -17,28 +17,30 @@
     --home-panel-padding-bottom: 20px;
     --home-actions-bottom-clearance: 10px;
 
-    width: 100%;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
     max-width: none;
     height: 100dvh;
     min-height: 0;
     max-height: 100dvh;
     margin: 0;
     padding: 14px;
-    display: grid;
-    place-items: center;
+    display: block;
     overflow: clip;
   }
 
   .home-desktop-viewport {
+    position: absolute;
+    top: 50%;
+    left: 50%;
     width: var(--home-desktop-scaled-width);
     height: var(--home-desktop-scaled-height);
     min-width: 0;
     min-height: 0;
-    flex: 0 0 auto;
-    justify-self: center;
-    align-self: center;
-    margin: auto;
+    margin: 0;
     overflow: visible;
+    transform: translate(-50%, -50%);
   }
 
   .home-desktop-stage {
@@ -55,6 +57,7 @@
     width: var(--home-reference-width);
     height: var(--home-panel-height);
     min-height: var(--home-panel-height);
+    margin-inline: auto;
     padding:
       var(--home-panel-padding-top)
       var(--home-panel-padding-inline)
@@ -124,7 +127,7 @@
     position: static;
     width: var(--home-reference-width);
     height: var(--home-support-height);
-    margin: 0;
+    margin: 0 auto;
     padding: 10px 0 20px;
     align-self: center;
     display: flex;
