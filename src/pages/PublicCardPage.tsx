@@ -79,7 +79,7 @@ export default function PublicCardPage() {
       </div>
       <div className={`action-panel public-card-actions-panel ${actionTheme}`} ref={actionPanelRef} id="card-lower-actions">
         <div className="public-card-actions-heading">
-          <p className="eyebrow">Ferramentas da minha página</p>
+          <p className="eyebrow">Minha Página</p>
           <LanguageToggle language={language} className="public-card-language-desktop" onChange={changeLanguage} />
         </div>
         <h2>Gerencie e compartilhe seu cartão</h2>
