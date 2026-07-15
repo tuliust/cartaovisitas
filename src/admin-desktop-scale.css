@@ -1,0 +1,30 @@
+/*
+ * Canonical desktop scale for every /admin/* route.
+ * Browser 100% reproduces the visual density previously seen at browser 75%.
+ * The rule is scoped to administrative shells and does not affect public pages.
+ */
+@media (min-width: 901px) {
+  :root {
+    --admin-desktop-scale: 0.75;
+    --admin-desktop-inverse-scale: 1.3333333333;
+  }
+
+  html:has(.admin-shell),
+  body:has(.admin-shell) {
+    overflow-x: hidden;
+  }
+
+  /* Authenticated /admin/* pages. Width and minimum height are compensated so
+   * the scaled result still occupies the complete browser viewport. */
+  .admin-shell {
+    width: calc(100% * var(--admin-desktop-inverse-scale));
+    min-height: calc(100dvh * var(--admin-desktop-inverse-scale));
+    zoom: var(--admin-desktop-scale);
+  }
+
+  /* /admin/login already uses the shared auth scaling system. Override its
+   * reference from 82.5% to 75% instead of applying a second nested scale. */
+  .admin-login-shell.auth-page-shell {
+    --auth-desktop-scale: var(--admin-desktop-scale);
+  }
+}
