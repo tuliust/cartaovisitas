@@ -30,7 +30,7 @@ export default function PasswordResetRequestPage() {
   }
 
   return (
-    <main className="admin-login-shell auth-page-shell">
+    <main className="admin-login-shell auth-page-shell auth-logo-shift-page">
       <section className="admin-login-card auth-page-card">
         <img
           className="auth-logo auth-page-logo"
