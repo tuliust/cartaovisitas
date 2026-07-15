@@ -17,9 +17,22 @@
   }
 
   .collaborator-shell:has(.collaborator-own-card) .collaborator-nav :is(a, button) {
-    min-height: 34px;
-    padding: 6px 9px;
-    font-size: 0.76rem;
+    min-height: 30px;
+    padding: 4px 8px;
+    font-size: 0.72rem;
+  }
+
+  .collaborator-shell:has(.collaborator-own-card) .visual-mode-selector--compact .visual-mode-trigger {
+    display: grid;
+    place-items: center;
+    padding: 2px;
+    line-height: 0;
+  }
+
+  .collaborator-shell:has(.collaborator-own-card) .visual-mode-selector--compact .visual-mode-trigger-swatch {
+    margin: 0;
+    justify-self: center;
+    align-self: center;
   }
 
   /* Use the available viewport width before reducing the approved composition. */
@@ -91,6 +104,11 @@
   }
 
   /* Actions panel: larger, more comfortable controls without increasing panel height. */
+  .public-card-desktop-canvas .public-card-actions-panel h2 {
+    margin-top: 16px;
+    margin-bottom: 20px;
+  }
+
   .public-card-desktop-canvas .collaborator-owner-actions :is(.primary-button, .secondary-button, .auxiliary-button) {
     min-height: 42px;
     padding-block: 8px;
@@ -102,12 +120,8 @@
     gap: 9px;
   }
 
-  .public-card-desktop-canvas .public-card-actions-panel h2 {
-    margin-bottom: 20px;
-  }
-
   .public-card-desktop-canvas .extra-functions {
-    margin-top: 14px;
+    margin-top: 24px;
     padding-top: 12px;
   }
 }
