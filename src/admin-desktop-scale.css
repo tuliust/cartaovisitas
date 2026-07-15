@@ -11,19 +11,42 @@
 
   html:has(.admin-shell),
   body:has(.admin-shell) {
+    width: 100%;
+    min-height: 100%;
     overflow-x: hidden;
   }
 
-  /* Authenticated /admin/* pages. Width and minimum height are compensated so
-   * the scaled result still occupies the complete browser viewport. */
+  /* Authenticated /admin/* pages.
+   * Use a local transform rather than CSS zoom. The canvas is expanded before
+   * scaling, so its visible result still matches the complete viewport and all
+   * centered content remains centered after the 75% reduction.
+   */
   .admin-shell {
-    width: calc(100% * var(--admin-desktop-inverse-scale));
+    width: calc(100vw * var(--admin-desktop-inverse-scale));
     min-height: calc(100dvh * var(--admin-desktop-inverse-scale));
-    zoom: var(--admin-desktop-scale);
+    margin: 0;
+    transform: scale(var(--admin-desktop-scale));
+    transform-origin: top left;
+  }
+
+  .admin-shell .admin-topbar {
+    width: 100%;
+  }
+
+  .admin-shell .admin-nav {
+    display: flex;
+    visibility: visible;
+    opacity: 1;
+    flex-shrink: 0;
+  }
+
+  .admin-shell .admin-page {
+    margin-inline: auto;
   }
 
   /* /admin/login already uses the shared auth scaling system. Override its
-   * reference from 82.5% to 75% instead of applying a second nested scale. */
+   * reference from 82.5% to 75% instead of applying a second nested scale.
+   */
   .admin-login-shell.auth-page-shell {
     --auth-desktop-scale: var(--admin-desktop-scale);
   }
