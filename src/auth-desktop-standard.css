@@ -1,0 +1,125 @@
+/* Canonical desktop contract for authentication pages.
+ * The approved notebook composition is rendered at 82.5% and remains centered
+ * inside the visible viewport without page or card scrolling.
+ */
+@media (min-width: 901px) {
+  .auth-page-shell {
+    --auth-desktop-scale: 0.825;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    min-height: 0;
+    max-height: 100dvh;
+    padding: 12px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+
+  .auth-page-shell .auth-page-card {
+    width: min(620px, calc((100vw - 24px) / var(--auth-desktop-scale)));
+    max-width: calc((100vw - 24px) / var(--auth-desktop-scale));
+    max-height: calc((100dvh - 24px) / var(--auth-desktop-scale));
+    min-height: 0;
+    margin: 0;
+    padding: 15px 34px 24px;
+    overflow: hidden;
+    transform: scale(var(--auth-desktop-scale));
+    transform-origin: center center;
+  }
+
+  .auth-page-shell .auth-page-logo {
+    margin-bottom: 28px;
+  }
+
+  .auth-page-shell .auth-page-title {
+    margin-bottom: 25px;
+  }
+
+  .auth-page-shell .auth-page-description {
+    margin-bottom: 25px;
+  }
+
+  .auth-page-shell .auth-page-form {
+    gap: 12px;
+  }
+
+  .auth-page-shell .auth-page-form > label,
+  .auth-page-shell .auth-form-field > label,
+  .auth-page-shell .terms-acceptance {
+    font-size: 15px;
+  }
+
+  .auth-page-shell :is(.email-suffix-field, .password-input-field) {
+    min-height: 42px;
+    height: 42px;
+  }
+
+  .auth-page-shell :is(.email-suffix-field input, .password-input-field input) {
+    min-height: 42px;
+    height: 42px;
+    padding-block: 6px;
+    font-size: 15px;
+    line-height: 1.2;
+    color: var(--modal-input-text);
+    caret-color: var(--modal-input-text);
+  }
+
+  .auth-page-shell :is(.email-suffix-field input, .password-input-field input)::placeholder {
+    color: var(--modal-input-placeholder);
+    opacity: 1;
+  }
+
+  .auth-page-shell .email-suffix-label,
+  .auth-page-shell .password-visibility-button {
+    min-height: 42px;
+    height: 42px;
+    font-size: 15px;
+  }
+
+  .auth-page-shell .password-visibility-button {
+    width: 48px;
+  }
+
+  .auth-page-shell .terms-acceptance {
+    margin-block: -4px;
+  }
+
+  .auth-page-shell .terms-acceptance label {
+    gap: 9px;
+  }
+
+  .auth-page-shell .terms-acceptance input {
+    width: 20px;
+    height: 20px;
+  }
+
+  .auth-page-shell .auth-page-submit {
+    min-height: 48px;
+    margin-top: -4px;
+    font-size: 16px;
+  }
+
+  .auth-page-shell .auth-page-links {
+    margin-top: 10px;
+  }
+
+  html.app-visual-mode-dark .auth-page-shell input:-webkit-autofill,
+  html.app-visual-mode-dark .auth-page-shell input:-webkit-autofill:hover,
+  html.app-visual-mode-dark .auth-page-shell input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #ffffff;
+    caret-color: #ffffff;
+    box-shadow: 0 0 0 1000px #202326 inset;
+    -webkit-box-shadow: 0 0 0 1000px #202326 inset;
+  }
+
+  html.app-visual-mode-light .auth-page-shell input:-webkit-autofill,
+  html.app-visual-mode-light .auth-page-shell input:-webkit-autofill:hover,
+  html.app-visual-mode-light .auth-page-shell input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #111111;
+    caret-color: #111111;
+    box-shadow: 0 0 0 1000px #ffffff inset;
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
+  }
+}
