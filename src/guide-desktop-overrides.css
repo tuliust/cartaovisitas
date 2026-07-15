@@ -1,0 +1,72 @@
+/* Canonical desktop refinements for the usage guide. */
+@media (min-width: 901px) {
+  .collaborator-page:has(.guide-layout) .collaborator-page-header .eyebrow {
+    display: none;
+  }
+
+  .collaborator-page:has(.guide-layout) .collaborator-page-header h1 {
+    font-size: 56px;
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-search label {
+    background: rgba(8, 8, 8, 0.78);
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-search input {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    box-shadow: none;
+    color: #ffffff;
+    -webkit-text-fill-color: #ffffff;
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-search input::placeholder {
+    color: rgba(255, 255, 255, 0.64);
+    opacity: 1;
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-search input:focus,
+  .collaborator-page:has(.guide-layout) .guide-search input:focus-visible {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-index {
+    max-height: 95dvh;
+    overflow: hidden;
+    padding-block: 10px;
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-index ol {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-index li {
+    margin: 0;
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-index a {
+    min-height: 36px;
+    padding: 4px 10px;
+    gap: 9px;
+    font-size: 14px;
+    line-height: 1.16;
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-index a svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .collaborator-page:has(.guide-layout) .guide-index-number {
+    font-size: 11px;
+  }
+}
