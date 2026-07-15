@@ -1,9 +1,21 @@
-/* Canonical desktop composition for the home page.
- * The internal layout always remains 920 x 718 px and is uniformly scaled
- * to fit the available desktop viewport.
+/* Canonical desktop contract for the home page.
+ * Notebook and LCD displays use the same fixed 920 x 718 px composition.
+ * Only --home-desktop-scale changes to fit the available viewport.
  */
 @media (min-width: 901px) {
   .home-page-shell.app-shell {
+    --home-reference-width: 920px;
+    --home-reference-height: 718px;
+    --home-panel-height: 648px;
+    --home-support-height: 58px;
+    --home-panel-support-gap: 12px;
+    --home-logo-width: 500px;
+    --home-logo-content-gap: 80px;
+    --home-description-actions-gap: 80px;
+    --home-panel-padding-top: 35px;
+    --home-panel-padding-inline: 35px;
+    --home-panel-padding-bottom: 20px;
+
     width: 100vw;
     max-width: none;
     min-height: 100dvh;
@@ -24,20 +36,23 @@
   }
 
   .home-desktop-stage {
-    width: 920px;
-    height: 718px;
+    width: var(--home-reference-width);
+    height: var(--home-reference-height);
     display: grid;
-    grid-template-rows: 648px 58px;
-    gap: 12px;
+    grid-template-rows: var(--home-panel-height) var(--home-support-height);
+    gap: var(--home-panel-support-gap);
     transform: scale(var(--home-desktop-scale));
     transform-origin: top left;
   }
 
   .home-page-shell .home-panel {
-    width: 920px;
-    height: 648px;
-    min-height: 648px;
-    padding: 35px 35px 20px;
+    width: var(--home-reference-width);
+    height: var(--home-panel-height);
+    min-height: var(--home-panel-height);
+    padding:
+      var(--home-panel-padding-top)
+      var(--home-panel-padding-inline)
+      var(--home-panel-padding-bottom);
     border-radius: 28px;
     display: flex;
     flex-direction: column;
@@ -46,7 +61,7 @@
   }
 
   .home-page-shell .brand-logo-main {
-    width: 500px;
+    width: var(--home-logo-width);
     max-width: none;
     transform: translateX(-2px);
   }
@@ -55,7 +70,7 @@
     width: 100%;
     max-width: none;
     min-height: 0;
-    margin-top: 80px;
+    margin-top: var(--home-logo-content-gap);
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
@@ -78,7 +93,7 @@
 
   .home-page-shell .home-actions {
     width: 100%;
-    margin-top: 80px;
+    margin-top: var(--home-description-actions-gap);
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 20px;
@@ -96,8 +111,8 @@
 
   .home-page-shell .home-secondary-actions {
     position: static;
-    width: 920px;
-    height: 58px;
+    width: var(--home-reference-width);
+    height: var(--home-support-height);
     margin: 0;
     padding: 10px 0 20px;
     align-self: center;
