@@ -24,7 +24,6 @@ import MyCardEmailSignaturePage from './pages/MyCardEmailSignaturePage'
 import MyCardAnalyticsPage from './pages/MyCardAnalyticsPage'
 import TermsAndPrivacyPage from './pages/TermsAndPrivacyPage'
 import { ScrollToTop } from './components/ScrollToTop'
-import AdaptiveViewportDensity from './components/AdaptiveViewportDensity'
 
 function PrivateCollaboratorRoutes() { return <CollaboratorProvider><Outlet /></CollaboratorProvider> }
 
@@ -36,7 +35,6 @@ function ResolvedApplication() {
       <ToastProvider>
         <BrowserRouter>
           <InstallAppProvider>
-            <AdaptiveViewportDensity />
             <ScrollToTop />
             <Routes>
               <Route path="/" element={<HomePage />} />
