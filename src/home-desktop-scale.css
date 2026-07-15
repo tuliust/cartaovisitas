@@ -15,6 +15,7 @@
     --home-panel-padding-top: 35px;
     --home-panel-padding-inline: 35px;
     --home-panel-padding-bottom: 20px;
+    --home-actions-bottom-clearance: 10px;
 
     width: 100%;
     max-width: none;
@@ -67,7 +68,11 @@
 
   .home-page-shell .brand-logo-main {
     width: var(--home-logo-width);
+    height: auto;
     max-width: calc(100% - 110px);
+    max-height: none;
+    flex: 0 0 auto;
+    object-fit: contain;
     transform: translateX(-2px);
   }
 
@@ -99,6 +104,7 @@
   .home-page-shell .home-actions {
     width: 100%;
     margin-top: var(--home-description-actions-gap);
+    margin-bottom: var(--home-actions-bottom-clearance);
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 20px;
