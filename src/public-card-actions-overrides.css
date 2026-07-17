@@ -7,37 +7,66 @@
     min-height: 176px;
     gap: 0;
   }
+
+  .public-card-desktop-canvas .public-card-actions-panel .extra-functions {
+    margin-top: auto;
+    padding-top: 16px;
+    padding-bottom: 0;
+  }
+
+  .public-card-desktop-canvas .public-card-actions-panel .extra-functions h3 {
+    margin-bottom: 14px;
+  }
 }
 
-.models-colors-action {
-  position: relative;
-  cursor: pointer;
+.extra-actions-grid > a.extra-action-button,
+.extra-actions-grid > a.extra-action-button:hover,
+.extra-actions-grid > a.extra-action-button:focus-visible,
+.extra-actions-grid > a.extra-action-button:active,
+.extra-actions-grid > a.extra-action-button:visited,
+.extra-actions-grid > a.extra-action-button .extra-action-label {
+  text-decoration: none;
 }
 
-.models-colors-action .visual-mode-selector {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
+.extra-actions-grid > .visual-mode-selector {
+  width: 100%;
+  min-width: 0;
 }
 
-.models-colors-action .visual-mode-trigger {
+.models-colors-trigger {
   width: 100%;
   height: 100%;
   min-height: 0;
-  padding: 0;
-  border: 0;
+  padding: inherit;
+  border: inherit;
   border-radius: inherit;
-  background: transparent;
-  box-shadow: none;
-  opacity: 0;
+  background: inherit;
+  color: inherit;
+  box-shadow: inherit;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: inherit;
+  opacity: 1;
 }
 
-.models-colors-action .visual-mode-popover {
-  right: 0;
-  bottom: calc(100% + 10px);
-  top: auto;
-  width: min(340px, calc(100vw - 40px));
-  opacity: 1;
+.models-colors-trigger:hover,
+.models-colors-trigger:focus-visible {
+  border-color: color-mix(in srgb, var(--semantic-focus, currentColor) 52%, transparent);
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.visual-mode-popover--portal {
+  position: fixed;
+  z-index: 1000;
+  right: auto;
+  bottom: auto;
+  margin: 0;
+}
+
+.visual-mode-popover--portal.visual-mode-popover--top {
+  transform: translateY(-100%);
+  transform-origin: bottom right;
 }
 
 .share-contact-popover button span {
@@ -45,13 +74,69 @@
   overflow-wrap: anywhere;
 }
 
+.public-card-export-host {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  width: 629px;
+  height: 648px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.public-card-export-canvas {
+  width: 629px !important;
+  height: 648px !important;
+  min-height: 648px !important;
+  max-width: none !important;
+  max-height: none !important;
+  padding: 26px 34px 10px !important;
+  transform: none !important;
+}
+
+.public-card-export-canvas .public-card-logo {
+  width: 220px !important;
+  max-width: 45% !important;
+}
+
+.public-card-export-canvas .public-card-avatar-wrapper {
+  width: 132px !important;
+  height: 132px !important;
+  flex-basis: 132px !important;
+  border-radius: 24px !important;
+}
+
+.public-card-export-canvas .card-main {
+  margin: 22px 0 16px !important;
+}
+
+.public-card-export-canvas .person-block h1 {
+  max-width: 420px !important;
+  margin-bottom: 12px !important;
+  font-size: 58px !important;
+  line-height: 0.9 !important;
+  text-wrap: balance;
+}
+
+.public-card-export-canvas .public-card-contact-list {
+  align-content: space-between;
+  align-self: end;
+  min-height: 176px;
+  gap: 0;
+}
+
+.public-card-export-canvas .public-card-initial-toolbar {
+  display: none !important;
+}
+
 @media (max-width: 900px) {
-  .models-colors-action .visual-mode-popover {
-    position: fixed;
-    left: 14px;
-    right: 14px;
-    top: auto;
-    bottom: max(14px, env(safe-area-inset-bottom));
-    width: auto;
+  .visual-mode-popover--portal {
+    left: 14px !important;
+    right: 14px !important;
+    top: auto !important;
+    bottom: max(14px, env(safe-area-inset-bottom)) !important;
+    width: auto !important;
+    transform: none !important;
   }
 }
