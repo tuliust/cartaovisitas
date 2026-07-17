@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import QRCode from 'qrcode'
 import { BarChart3, BookOpen, Copy, Download, FileText, FileUp, Globe, Mail, MapPin, MessageCircle, Palette, Pencil, QrCode, Smartphone, Wallet, type LucideIcon } from 'lucide-react'
@@ -208,6 +207,8 @@ export default function PublicCardPage() {
 
   if (!card) return <Navigate to="/meu-cartao/editar" replace />
   if (!slug || slug !== card.slug) return <Navigate to="/meu-cartao" replace />
+  const cardId = card.id
+  const cardSlug = card.slug
 
   const name = card.display_name || card.full_name
   const phone = card.mobile_phone || card.work_phone
@@ -229,9 +230,9 @@ export default function PublicCardPage() {
     setShareAction('card')
     try {
       const blob = await getCardPng()
-      downloadBlob(blob, `cartao-${card.slug}.png`)
+      downloadBlob(blob, `cartao-${cardSlug}.png`)
       toast.success('Imagem do cartão salva em PNG.')
-      void recordCardEvent(card.id, 'share')
+      void recordCardEvent(cardId, 'share')
       setShareMenuOpen(false)
     } catch (error) {
       console.error('Falha ao gerar a imagem PNG do cartão.', error)
@@ -241,7 +242,7 @@ export default function PublicCardPage() {
 
   function shareOnWhatsApp() {
     window.open(`https://wa.me/?text=${encodeURIComponent(shareMessage)}`, '_blank', 'noopener,noreferrer')
-    void recordCardEvent(card.id, 'share')
+    void recordCardEvent(cardId, 'share')
     setShareMenuOpen(false)
   }
 
@@ -255,7 +256,7 @@ export default function PublicCardPage() {
     } else {
       window.open(gmailWebUrl, '_blank', 'noopener,noreferrer')
     }
-    void recordCardEvent(card.id, 'share')
+    void recordCardEvent(cardId, 'share')
     setShareMenuOpen(false)
   }
 
@@ -267,7 +268,7 @@ export default function PublicCardPage() {
         return
       }
       await navigator.share({ title: `${name} | Invest RS`, text: shareMessage, url: actions.vcardUrl })
-      void recordCardEvent(card.id, 'share')
+      void recordCardEvent(cardId, 'share')
       setShareMenuOpen(false)
     } catch (error) {
       if (!(error instanceof DOMException && error.name === 'AbortError')) {
