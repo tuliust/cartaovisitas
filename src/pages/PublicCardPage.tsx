@@ -15,9 +15,15 @@ import { getLocalizedProfessionalData, getStoredPublicCardLanguage, publicCardCo
 
 type PublicVisualLanguage = PublicCardLanguage
 
+type HtmlToImageApi = {
+  toBlob: (node: HTMLElement, options?: Record<string, unknown>) => Promise<Blob | null>
+}
+
 const PUBLIC_CARD_DESKTOP_WIDTH = 1108
 const PUBLIC_CARD_DESKTOP_HEIGHT = 648
 const PUBLIC_CARD_DESKTOP_BOTTOM_GAP = 18
+const PUBLIC_CARD_VISUAL_WIDTH = 629
+const HTML_TO_IMAGE_SCRIPT = 'https://unpkg.com/html-to-image@1.11.13/dist/html-to-image.js'
 
 function normalizePhoneForWhatsApp(phone: string) { return phone.replace(/\D/g, '') }
 function buildAddress(card: NonNullable<ReturnType<typeof useCollaborator>['card']>) { return [card.address_line, card.city, card.state, card.country].filter(Boolean).join(', ') }
@@ -34,28 +40,26 @@ function downloadBlob(blob: Blob, filename: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
-async function urlToDataUrl(url: string) {
-  if (!url || url.startsWith('data:') || url.startsWith('blob:')) return url
-  const response = await fetch(url, { mode: 'cors', credentials: 'omit' })
-  if (!response.ok) throw new Error(`Falha ao carregar recurso: ${url}`)
-  const blob = await response.blob()
-  return await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(String(reader.result))
-    reader.onerror = () => reject(reader.error)
-    reader.readAsDataURL(blob)
+async function loadHtmlToImage() {
+  const targetWindow = window as typeof window & { htmlToImage?: HtmlToImageApi }
+  if (targetWindow.htmlToImage?.toBlob) return targetWindow.htmlToImage
+  const existing = document.querySelector<HTMLScriptElement>(`script[src="${HTML_TO_IMAGE_SCRIPT}"]`)
+  await new Promise<void>((resolve, reject) => {
+    const script = existing ?? document.createElement('script')
+    const onLoad = () => resolve()
+    const onError = () => reject(new Error('Não foi possível carregar o gerador de imagem.'))
+    script.addEventListener('load', onLoad, { once: true })
+    script.addEventListener('error', onError, { once: true })
+    if (!existing) {
+      script.src = HTML_TO_IMAGE_SCRIPT
+      script.crossOrigin = 'anonymous'
+      document.head.appendChild(script)
+    } else if (targetWindow.htmlToImage?.toBlob) {
+      resolve()
+    }
   })
-}
-
-async function inlineBackgroundImages(value: string) {
-  const matches = Array.from(value.matchAll(/url\(["']?([^"')]+)["']?\)/g))
-  let result = value
-  for (const match of matches) {
-    const source = match[1]
-    if (!source || source.startsWith('data:') || source.startsWith('blob:')) continue
-    try { result = result.replace(source, await urlToDataUrl(source)) } catch (error) { console.warn('Não foi possível incorporar imagem de fundo ao PNG.', source, error) }
-  }
-  return result
+  if (!targetWindow.htmlToImage?.toBlob) throw new Error('Gerador de imagem indisponível após o carregamento.')
+  return targetWindow.htmlToImage
 }
 
 async function waitForImages(source: HTMLElement) {
@@ -69,76 +73,6 @@ async function waitForImages(source: HTMLElement) {
       window.setTimeout(finish, 3000)
     })
   }))
-}
-
-async function cloneCardWithInlineStyles(source: HTMLElement) {
-  const clone = source.cloneNode(true) as HTMLElement
-  clone.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml')
-  const sourceNodes = [source, ...Array.from(source.querySelectorAll<HTMLElement>('*'))]
-  const cloneNodes = [clone, ...Array.from(clone.querySelectorAll<HTMLElement>('*'))]
-
-  await Promise.all(sourceNodes.map(async (sourceNode, index) => {
-    const cloneNode = cloneNodes[index]
-    if (!cloneNode) return
-    const computed = window.getComputedStyle(sourceNode)
-    const declarations: string[] = []
-    for (let propertyIndex = 0; propertyIndex < computed.length; propertyIndex += 1) {
-      const property = computed.item(propertyIndex)
-      let value = computed.getPropertyValue(property)
-      if (property === 'background-image' && value.includes('url(')) value = await inlineBackgroundImages(value)
-      declarations.push(`${property}:${value};`)
-    }
-    cloneNode.style.cssText = declarations.join('')
-
-    if (sourceNode instanceof HTMLImageElement && cloneNode instanceof HTMLImageElement) {
-      try { cloneNode.src = await urlToDataUrl(sourceNode.currentSrc || sourceNode.src) } catch (error) {
-        console.warn('Não foi possível incorporar imagem ao PNG.', sourceNode.currentSrc || sourceNode.src, error)
-        cloneNode.src = sourceNode.currentSrc || sourceNode.src
-      }
-    }
-  }))
-
-  clone.style.transform = 'none'
-  clone.style.margin = '0'
-  clone.style.width = `${source.offsetWidth}px`
-  clone.style.height = `${source.offsetHeight}px`
-  clone.style.maxWidth = 'none'
-  clone.style.maxHeight = 'none'
-  return clone
-}
-
-async function renderElementToPngBlob(source: HTMLElement) {
-  await document.fonts.ready
-  await waitForImages(source)
-  const width = source.offsetWidth
-  const height = source.offsetHeight
-  if (width <= 0 || height <= 0) throw new Error(`Dimensões inválidas do cartão: ${width}x${height}.`)
-
-  const clone = await cloneCardWithInlineStyles(source)
-  const serialized = new XMLSerializer().serializeToString(clone)
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><foreignObject width="100%" height="100%">${serialized}</foreignObject></svg>`
-  const svgBlob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' })
-  const svgUrl = URL.createObjectURL(svgBlob)
-
-  try {
-    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
-      const nextImage = new Image()
-      nextImage.onload = () => resolve(nextImage)
-      nextImage.onerror = () => reject(new Error('Falha ao renderizar o SVG intermediário do cartão.'))
-      nextImage.src = svgUrl
-    })
-    const scale = 2
-    const canvas = document.createElement('canvas')
-    canvas.width = width * scale
-    canvas.height = height * scale
-    const context = canvas.getContext('2d')
-    if (!context) throw new Error('Canvas indisponível.')
-    context.scale(scale, scale)
-    context.drawImage(image, 0, 0, width, height)
-    return await new Promise<Blob>((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('Falha ao gerar PNG.')), 'image/png', 1))
-  } finally {
-    URL.revokeObjectURL(svgUrl)
-  }
 }
 
 type LanguageToggleProps = {
@@ -222,8 +156,39 @@ export default function PublicCardPage() {
   function changeLanguage(next: PublicCardLanguage) { setLanguage(next); storePublicCardLanguage(next) }
 
   async function getCardPng() {
-    if (!cardVisualRef.current) throw new Error('Cartão indisponível.')
-    return await renderElementToPngBlob(cardVisualRef.current)
+    const source = cardVisualRef.current
+    if (!source) throw new Error('Cartão indisponível.')
+    await document.fonts.ready
+    await waitForImages(source)
+    const htmlToImage = await loadHtmlToImage()
+    const exportHost = document.createElement('div')
+    exportHost.className = 'public-card-export-host'
+    const exportCard = source.cloneNode(true) as HTMLElement
+    exportCard.classList.add('public-card-export-canvas')
+    exportCard.style.width = `${PUBLIC_CARD_VISUAL_WIDTH}px`
+    exportCard.style.height = `${PUBLIC_CARD_DESKTOP_HEIGHT}px`
+    exportCard.style.minHeight = `${PUBLIC_CARD_DESKTOP_HEIGHT}px`
+    exportCard.style.maxWidth = 'none'
+    exportCard.style.maxHeight = 'none'
+    exportCard.style.transform = 'none'
+    exportHost.appendChild(exportCard)
+    document.body.appendChild(exportHost)
+    try {
+      await waitForImages(exportCard)
+      const blob = await htmlToImage.toBlob(exportCard, {
+        cacheBust: true,
+        pixelRatio: 2,
+        width: PUBLIC_CARD_VISUAL_WIDTH,
+        height: PUBLIC_CARD_DESKTOP_HEIGHT,
+        canvasWidth: PUBLIC_CARD_VISUAL_WIDTH * 2,
+        canvasHeight: PUBLIC_CARD_DESKTOP_HEIGHT * 2,
+        skipAutoScale: true,
+      })
+      if (!blob) throw new Error('O gerador não retornou uma imagem.')
+      return blob
+    } finally {
+      exportHost.remove()
+    }
   }
 
   async function saveCardPng() {
@@ -313,8 +278,8 @@ export default function PublicCardPage() {
                 <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void shareViaAirDrop()}><FileUp aria-hidden="true" /><span>{shareAction === 'airdrop' ? 'Abrindo...' : 'AirDrop'}</span></button>
               </div> : null}
             </div>
-            <Link className="auxiliary-button" to="/meu-cartao/editar">Editar Dados</Link>
             {!isInstalled ? <button className="secondary-button install-page-button" type="button" onClick={openInstallModal}><Smartphone aria-hidden="true" />Instale esta página como app</button> : null}
+            <Link className="auxiliary-button" to="/meu-cartao/editar">Editar Dados</Link>
             <Link className="auxiliary-button" to="/meu-cartao/assinatura-de-email">Gerar Rodapé para E-mail</Link>
             <Link className="auxiliary-button" to="/meu-cartao/estatisticas">Estatísticas de Compartilhamento</Link>
           </div>
@@ -324,7 +289,12 @@ export default function PublicCardPage() {
               <Link className="extra-action-button" to="/guia-de-utilizacao"><BookOpen className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">Guia de Utilização</span></Link>
               <Link className="extra-action-button" to="/termos-de-uso-e-privacidade"><FileText className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">Termos de Uso e Privacidade</span></Link>
               <button className="extra-action-button" type="button" disabled={Boolean(actions.running)} onClick={() => void actions.openWallet()}><Wallet className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">{actions.running === 'wallet' ? 'Abrindo...' : 'Adicionar à Wallet'}</span></button>
-              <div className="extra-action-button models-colors-action"><Palette className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">Modelos e Cores</span><VisualModeSelector variant="compact" /></div>
+              <VisualModeSelector
+                variant="compact"
+                popoverPlacement="top-end"
+                triggerClassName="extra-action-button models-colors-trigger"
+                triggerContent={<><Palette className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">Modelos e Cores</span></>}
+              />
             </div>
           </section>
         </div>
