@@ -1,0 +1,57 @@
+/* Ajustes específicos da página autenticada /:slug. */
+
+@media (min-width: 901px) {
+  .collaborator-own-card .public-card-contact-list {
+    align-content: space-between;
+    align-self: end;
+    min-height: 176px;
+    gap: 0;
+  }
+}
+
+.models-colors-action {
+  position: relative;
+  cursor: pointer;
+}
+
+.models-colors-action .visual-mode-selector {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.models-colors-action .visual-mode-trigger {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  box-shadow: none;
+  opacity: 0;
+}
+
+.models-colors-action .visual-mode-popover {
+  right: 0;
+  bottom: calc(100% + 10px);
+  top: auto;
+  width: min(340px, calc(100vw - 40px));
+  opacity: 1;
+}
+
+.share-contact-popover button span {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+  .models-colors-action .visual-mode-popover {
+    position: fixed;
+    left: 14px;
+    right: 14px;
+    top: auto;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    width: auto;
+  }
+}
