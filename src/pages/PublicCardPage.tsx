@@ -1,9 +1,10 @@
 // @ts-nocheck
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import QRCode from 'qrcode'
-import { BarChart3, Copy, Download, FileUp, Globe, Mail, MapPin, MessageCircle, Pencil, QrCode, Smartphone, Wallet, type LucideIcon } from 'lucide-react'
+import { BarChart3, BookOpen, Copy, Download, FileText, FileUp, Globe, Mail, MapPin, MessageCircle, Palette, Pencil, QrCode, Smartphone, Wallet, type LucideIcon } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import CollaboratorLayout from '../components/collaborator/CollaboratorLayout'
+import VisualModeSelector from '../components/VisualModeSelector'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
 import { useCollaborator } from '../contexts/CollaboratorContext'
 import { useToast } from '../contexts/ToastContext'
@@ -53,9 +54,22 @@ async function inlineBackgroundImages(value: string) {
   for (const match of matches) {
     const source = match[1]
     if (!source || source.startsWith('data:') || source.startsWith('blob:')) continue
-    try { result = result.replace(source, await urlToDataUrl(source)) } catch { /* Keep original URL when it cannot be embedded. */ }
+    try { result = result.replace(source, await urlToDataUrl(source)) } catch (error) { console.warn('Não foi possível incorporar imagem de fundo ao PNG.', source, error) }
   }
   return result
+}
+
+async function waitForImages(source: HTMLElement) {
+  const images = Array.from(source.querySelectorAll('img'))
+  await Promise.all(images.map((image) => {
+    if (image.complete && image.naturalWidth > 0) return Promise.resolve()
+    return new Promise<void>((resolve) => {
+      const finish = () => resolve()
+      image.addEventListener('load', finish, { once: true })
+      image.addEventListener('error', finish, { once: true })
+      window.setTimeout(finish, 3000)
+    })
+  }))
 }
 
 async function cloneCardWithInlineStyles(source: HTMLElement) {
@@ -78,7 +92,10 @@ async function cloneCardWithInlineStyles(source: HTMLElement) {
     cloneNode.style.cssText = declarations.join('')
 
     if (sourceNode instanceof HTMLImageElement && cloneNode instanceof HTMLImageElement) {
-      try { cloneNode.src = await urlToDataUrl(sourceNode.currentSrc || sourceNode.src) } catch { cloneNode.src = sourceNode.currentSrc || sourceNode.src }
+      try { cloneNode.src = await urlToDataUrl(sourceNode.currentSrc || sourceNode.src) } catch (error) {
+        console.warn('Não foi possível incorporar imagem ao PNG.', sourceNode.currentSrc || sourceNode.src, error)
+        cloneNode.src = sourceNode.currentSrc || sourceNode.src
+      }
     }
   }))
 
@@ -93,8 +110,11 @@ async function cloneCardWithInlineStyles(source: HTMLElement) {
 
 async function renderElementToPngBlob(source: HTMLElement) {
   await document.fonts.ready
+  await waitForImages(source)
   const width = source.offsetWidth
   const height = source.offsetHeight
+  if (width <= 0 || height <= 0) throw new Error(`Dimensões inválidas do cartão: ${width}x${height}.`)
+
   const clone = await cloneCardWithInlineStyles(source)
   const serialized = new XMLSerializer().serializeToString(clone)
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><foreignObject width="100%" height="100%">${serialized}</foreignObject></svg>`
@@ -105,7 +125,7 @@ async function renderElementToPngBlob(source: HTMLElement) {
     const image = await new Promise<HTMLImageElement>((resolve, reject) => {
       const nextImage = new Image()
       nextImage.onload = () => resolve(nextImage)
-      nextImage.onerror = () => reject(new Error('Falha ao renderizar o cartão.'))
+      nextImage.onerror = () => reject(new Error('Falha ao renderizar o SVG intermediário do cartão.'))
       nextImage.src = svgUrl
     })
     const scale = 2
@@ -170,31 +190,19 @@ export default function PublicCardPage() {
   useEffect(() => {
     const stage = desktopStageRef.current
     if (!stage) return
-
     const updateScale = () => {
-      if (window.innerWidth < 901) {
-        setDesktopScale(1)
-        return
-      }
-
+      if (window.innerWidth < 901) { setDesktopScale(1); return }
       const rect = stage.getBoundingClientRect()
       const availableWidth = stage.clientWidth
       const availableHeight = Math.max(1, window.innerHeight - rect.top - PUBLIC_CARD_DESKTOP_BOTTOM_GAP)
-      const nextScale = Math.min(
-        availableWidth / PUBLIC_CARD_DESKTOP_WIDTH,
-        availableHeight / PUBLIC_CARD_DESKTOP_HEIGHT,
-      )
+      const nextScale = Math.min(availableWidth / PUBLIC_CARD_DESKTOP_WIDTH, availableHeight / PUBLIC_CARD_DESKTOP_HEIGHT)
       setDesktopScale(Math.max(0.1, nextScale))
     }
-
     updateScale()
     const observer = new ResizeObserver(updateScale)
     observer.observe(stage)
     window.addEventListener('resize', updateScale)
-    return () => {
-      observer.disconnect()
-      window.removeEventListener('resize', updateScale)
-    }
+    return () => { observer.disconnect(); window.removeEventListener('resize', updateScale) }
   }, [])
   const professionalData = useMemo(() => card ? getLocalizedProfessionalData(card, language) : null, [card, language])
 
@@ -208,10 +216,8 @@ export default function PublicCardPage() {
   const actionTheme = isLightVisualVariant(getEffectiveVisualVariant(settings, variant)) ? 'action-panel-theme-light' : 'action-panel-theme-dark'
   const logoUrl = getVariantLogo(settings, variant, card.logo_url)
   const copy = publicCardCopy[language]
-  const desktopStageStyle = {
-    '--public-card-desktop-scale': desktopScale,
-    height: `${PUBLIC_CARD_DESKTOP_HEIGHT * desktopScale}px`,
-  } as CSSProperties
+  const shareMessage = `Olá! Este é o link para abrir meu cartão de visitas e salvar o contato no seu celular: ${actions.vcardUrl}`
+  const desktopStageStyle = { '--public-card-desktop-scale': desktopScale, height: `${PUBLIC_CARD_DESKTOP_HEIGHT * desktopScale}px` } as CSSProperties
   function changeLanguage(next: PublicCardLanguage) { setLanguage(next); storePublicCardLanguage(next) }
 
   async function getCardPng() {
@@ -227,34 +233,48 @@ export default function PublicCardPage() {
       toast.success('Imagem do cartão salva em PNG.')
       void recordCardEvent(card.id, 'share')
       setShareMenuOpen(false)
-    } catch { toast.error('Não foi possível gerar a imagem do cartão.') }
-    finally { setShareAction(null) }
-  }
-
-  async function shareCardFile(destination: 'gmail' | 'airdrop') {
-    setShareAction(destination)
-    try {
-      const blob = await getCardPng()
-      const file = new File([blob], `cartao-${card.slug}.png`, { type: 'image/png' })
-      const data: ShareData = { files: [file], title: `${name} | Invest RS`, text: `Cartão profissional de ${name}. ${actions.vcardUrl}` }
-      if (typeof navigator.share === 'function' && (typeof navigator.canShare !== 'function' || navigator.canShare(data))) {
-        await navigator.share(data)
-      } else {
-        downloadBlob(blob, file.name)
-        if (destination === 'gmail') window.open(`https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent(`Cartão profissional de ${name}`)}&body=${encodeURIComponent(`Segue meu cartão profissional. Link do vCard: ${actions.vcardUrl}\n\nAnexe o arquivo PNG que foi baixado.`)}`, '_blank', 'noopener,noreferrer')
-        toast.info(destination === 'gmail' ? 'O PNG foi baixado. Anexe-o à mensagem aberta no Gmail.' : 'O PNG foi baixado. Em dispositivos Apple, use Compartilhar para enviá-lo por AirDrop.')
-      }
-      setShareMenuOpen(false)
     } catch (error) {
-      if (!(error instanceof DOMException && error.name === 'AbortError')) toast.error('Não foi possível compartilhar a imagem do cartão.')
+      console.error('Falha ao gerar a imagem PNG do cartão.', error)
+      toast.error('Não foi possível gerar a imagem do cartão.')
     } finally { setShareAction(null) }
   }
 
   function shareOnWhatsApp() {
-    const message = `Meu cartão profissional: ${actions.vcardUrl}`
-    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer')
+    window.open(`https://wa.me/?text=${encodeURIComponent(shareMessage)}`, '_blank', 'noopener,noreferrer')
     void recordCardEvent(card.id, 'share')
     setShareMenuOpen(false)
+  }
+
+  function shareByGmail() {
+    const subject = `${name} | Cartão de visitas Invest RS`
+    const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(shareMessage)}`
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+    if (isMobile) {
+      window.location.href = `googlegmail:///co?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(shareMessage)}`
+      window.setTimeout(() => { if (document.visibilityState === 'visible') window.open(gmailWebUrl, '_blank', 'noopener,noreferrer') }, 900)
+    } else {
+      window.open(gmailWebUrl, '_blank', 'noopener,noreferrer')
+    }
+    void recordCardEvent(card.id, 'share')
+    setShareMenuOpen(false)
+  }
+
+  async function shareViaAirDrop() {
+    setShareAction('airdrop')
+    try {
+      if (typeof navigator.share !== 'function') {
+        toast.info('O AirDrop depende do menu de compartilhamento de um dispositivo Apple compatível.')
+        return
+      }
+      await navigator.share({ title: `${name} | Invest RS`, text: shareMessage, url: actions.vcardUrl })
+      void recordCardEvent(card.id, 'share')
+      setShareMenuOpen(false)
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === 'AbortError')) {
+        console.error('Falha ao abrir o compartilhamento nativo para AirDrop.', error)
+        toast.error('Não foi possível abrir o compartilhamento do dispositivo.')
+      }
+    } finally { setShareAction(null) }
   }
 
   return <CollaboratorLayout>
@@ -264,7 +284,7 @@ export default function PublicCardPage() {
           <div className="card-topline">{failedLogoUrl === logoUrl ? <span className="brand-logo-fallback" role="img" aria-label="Invest RS">Invest RS</span> : <img className="public-card-logo" src={logoUrl} alt="Invest RS" onError={() => setFailedLogoUrl(logoUrl)} />}{card.show_avatar_public && card.avatar_url ? <div className="public-card-avatar-wrapper"><img className="public-card-avatar" src={card.avatar_url} alt={`Foto de ${name}`} /></div> : null}</div>
           <div className="card-main"><div className="person-block"><h1>{name}</h1>{professionalData?.jobTitle ? <p className="job-title">{professionalData.jobTitle}</p> : null}{professionalData?.department ? <p className="department">{professionalData.department}</p> : null}</div></div>
           <div className="card-footer"><div className="contact-list public-card-contact-list">{phone ? <a href={`https://wa.me/${normalizePhoneForWhatsApp(phone)}`} target="_blank" rel="noreferrer"><ContactLabel icon={MessageCircle}>WhatsApp</ContactLabel><span className="contact-value">{phone}</span></a> : null}{card.email ? <a href={`mailto:${card.email}`}><ContactLabel icon={Mail}>{copy.email}</ContactLabel><span className="contact-value">{card.email}</span></a> : null}{card.website ? <a href={card.website} target="_blank" rel="noreferrer"><ContactLabel icon={Globe}>{copy.website}</ContactLabel><span className="contact-value">{card.website.replace(/^https?:\/\//, '')}</span></a> : null}{address ? <a className="contact-address" href={INVEST_RS_MAPS_URL} target="_blank" rel="noreferrer"><ContactLabel icon={MapPin}>{copy.address}</ContactLabel><span className="contact-value">{address}</span></a> : null}</div>{qrDataUrl ? <img className="qr-code" src={qrDataUrl} alt={`QR Code de ${name}`} /> : null}</div>
-          <div className="public-card-initial-toolbar" aria-label="Acoes rapidas do cartao">
+          <div className="public-card-initial-toolbar" aria-label="Ações rápidas do cartão">
             <LanguageToggle language={language} className="public-card-language-mobile" onChange={changeLanguage} />
             <div className="public-card-initial-actions">
               <Link to="/meu-cartao/editar" aria-label="Editar" title="Editar"><Pencil aria-hidden="true" /></Link>
@@ -284,26 +304,26 @@ export default function PublicCardPage() {
             <div className="share-contact-control" ref={shareControlRef}>
               <button className="primary-button share-contact-trigger" type="button" aria-haspopup="menu" aria-expanded={shareMenuOpen} onClick={() => setShareMenuOpen((current) => !current)}>Compartilhar meu contato</button>
               {shareMenuOpen ? <div className="share-contact-popover" role="menu" aria-label="Opções para compartilhar contato">
-                <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void actions.copyVCard().then(() => setShareMenuOpen(false))}><Copy aria-hidden="true" /><span>Copiar</span></button>
-                <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={shareOnWhatsApp}><MessageCircle aria-hidden="true" /><span>WhatsApp</span></button>
+                <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void actions.copyVCard().then(() => setShareMenuOpen(false))}><Copy aria-hidden="true" /><span>Copiar vCard</span></button>
+                <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={shareOnWhatsApp}><MessageCircle aria-hidden="true" /><span>Enviar por WhatsApp</span></button>
                 <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void saveCardPng()}><Download aria-hidden="true" /><span>{shareAction === 'card' ? 'Gerando...' : 'Salvar Card'}</span></button>
                 <button type="button" role="menuitem" disabled={Boolean(shareAction) || Boolean(actions.running)} onClick={() => void actions.downloadQrCode().then(() => setShareMenuOpen(false))}><QrCode aria-hidden="true" /><span>Salvar QR-Code</span></button>
-                <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void shareCardFile('gmail')}><Mail aria-hidden="true" /><span>{shareAction === 'gmail' ? 'Preparando...' : 'Gmail'}</span></button>
-                <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void shareCardFile('airdrop')}><FileUp aria-hidden="true" /><span>{shareAction === 'airdrop' ? 'Preparando...' : 'AirDrop'}</span></button>
+                <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={shareByGmail}><Mail aria-hidden="true" /><span>Enviar pelo Gmail</span></button>
+                <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void shareViaAirDrop()}><FileUp aria-hidden="true" /><span>{shareAction === 'airdrop' ? 'Abrindo...' : 'AirDrop'}</span></button>
               </div> : null}
             </div>
+            <Link className="auxiliary-button" to="/meu-cartao/editar">Editar Dados</Link>
             {!isInstalled ? <button className="secondary-button install-page-button" type="button" onClick={openInstallModal}><Smartphone aria-hidden="true" />Instale esta página como app</button> : null}
-            <Link className="auxiliary-button" to="/guia-de-utilizacao">Guia de Utilização</Link>
             <Link className="auxiliary-button" to="/meu-cartao/assinatura-de-email">Gerar Rodapé para E-mail</Link>
             <Link className="auxiliary-button" to="/meu-cartao/estatisticas">Estatísticas de Compartilhamento</Link>
           </div>
           <section className="extra-functions" aria-labelledby="extra-functions-title">
             <h3 id="extra-functions-title">Funcionalidades adicionais</h3>
             <div className="extra-actions-grid">
-              <Link className="extra-action-button" to="/meu-cartao/editar"><Pencil className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">Editar</span></Link>
-              <button className="extra-action-button" type="button" disabled={Boolean(actions.running)} onClick={() => void actions.copyVCard()}><Copy className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">{actions.running === 'copy-vcard' ? 'Copiando...' : 'Copiar vCard'}</span></button>
-              <button className="extra-action-button" type="button" disabled={Boolean(actions.running)} onClick={() => void actions.downloadQrCode()}><QrCode className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">{actions.running === 'qr' ? 'Gerando...' : 'Baixar QR-Code'}</span></button>
+              <Link className="extra-action-button" to="/guia-de-utilizacao"><BookOpen className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">Guia de Utilização</span></Link>
+              <Link className="extra-action-button" to="/termos-de-uso-e-privacidade"><FileText className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">Termos de Uso e Privacidade</span></Link>
               <button className="extra-action-button" type="button" disabled={Boolean(actions.running)} onClick={() => void actions.openWallet()}><Wallet className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">{actions.running === 'wallet' ? 'Abrindo...' : 'Adicionar à Wallet'}</span></button>
+              <div className="extra-action-button models-colors-action"><Palette className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">Modelos e Cores</span><VisualModeSelector variant="compact" /></div>
             </div>
           </section>
         </div>
