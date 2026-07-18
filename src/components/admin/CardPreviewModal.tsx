@@ -2,6 +2,7 @@ import { X } from 'lucide-react'
 import { useEffect, useId, useRef, type RefObject } from 'react'
 import type { CardFormValues } from '../../lib/adminCards'
 import CardPreview from './CardPreview'
+import PublicCardDraftPreview from './PublicCardDraftPreview'
 
 type CardPreviewModalProps = {
   values: CardFormValues
@@ -63,7 +64,12 @@ export default function CardPreviewModal({ values, showStatus = true, onClose, r
           </button>
         </header>
         <div className="card-preview-modal-body">
-          <CardPreview values={values} showStatus={showStatus} />
+          <div className="card-preview-modal-legacy">
+            <CardPreview values={values} showStatus={showStatus} />
+          </div>
+          <div className="card-preview-modal-public">
+            <PublicCardDraftPreview values={values} showStatus={showStatus} />
+          </div>
         </div>
       </section>
     </div>
