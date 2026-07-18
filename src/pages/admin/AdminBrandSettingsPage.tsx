@@ -1,7 +1,11 @@
-import { useEffect, useState, type ChangeEvent, type CSSProperties } from 'react'
-import { AlertTriangle, CheckCircle2, Mail, Palette } from 'lucide-react'
+import { useEffect, useState, type ChangeEvent } from 'react'
 import AdminLayout from '../../components/admin/AdminLayout'
+import BrandInterfacePreview from '../../components/admin/BrandInterfacePreview'
+import { ManagedPagesEditor } from '../../components/admin/ManagedPagesEditor'
+import { TemplateOptionsEditor } from '../../components/admin/TemplateOptionsEditor'
 import { useBrandSettings } from '../../contexts/BrandSettingsContext'
+import { useToast } from '../../contexts/ToastContext'
+import { recordAuditLog } from '../../lib/audit'
 import { getCurrentSession } from '../../lib/auth'
 import {
   defaultBrandSettings,
@@ -13,14 +17,11 @@ import {
   type BrandSettings,
   type VisualVariantSettings,
 } from '../../lib/brandSettings'
+import type { TemplateElementKey } from '../../lib/brandTemplateElements'
+import { publicVisualVariantOptions, type PublicVisualVariant } from '../../lib/cardVisualVariants'
 import { getFriendlyErrorMessage } from '../../lib/errors'
 import { requireAdmin } from '../../lib/roles'
 import { useNavigate } from 'react-router-dom'
-import { useToast } from '../../contexts/ToastContext'
-import { recordAuditLog } from '../../lib/audit'
-import { getVariantClassName, getVariantLogo, getVariantStyle, publicVisualVariantOptions, type PublicVisualVariant } from '../../lib/cardVisualVariants'
-import { ManagedPagesEditor } from '../../components/admin/ManagedPagesEditor'
-import { TemplateOptionsEditor } from '../../components/admin/TemplateOptionsEditor'
 
 type AssetUrlKey = 'favicon_url' | 'og_image_url' | 'background_image_url' | 'apple_touch_icon_url' | 'logo_on_dark_url' | 'logo_on_light_url' | 'card_bg_dark_image_1_url' | 'card_bg_dark_image_2_url' | 'card_bg_light_image_3_url' | 'card_bg_light_image_4_url'
 type SettingsTab = 'visual' | 'content' | 'usage_guide' | 'terms_and_privacy'
@@ -65,6 +66,7 @@ export default function AdminBrandSettingsPage() {
   const [uploading, setUploading] = useState<BrandAssetType | ''>('')
   const [error, setError] = useState('')
   const [activeVariant, setActiveVariant] = useState<PublicVisualVariant>('dark_black')
+  const [activeElement, setActiveElement] = useState<TemplateElementKey>('background')
   const [activeSettingsTab, setActiveSettingsTab] = useState<SettingsTab>('visual')
 
   useEffect(() => {
@@ -178,25 +180,6 @@ export default function AdminBrandSettingsPage() {
 
   if (booting) return <main className="admin-login-shell admin-state-shell"><div className="admin-login-card admin-state-card" role="status">Carregando configurações...</div></main>
 
-  const activeTokens = values.visual_variant_settings[activeVariant]
-  const previewStyle = {
-    ...getVariantStyle(values, activeVariant),
-    '--preview-background': activeTokens.background_color,
-    '--preview-surface': `color-mix(in srgb, ${activeTokens.surface_color} ${activeTokens.surface_opacity * 100}%, transparent)`,
-    '--preview-text': activeTokens.text_color,
-    '--preview-muted': 'var(--semantic-muted)',
-    '--preview-border': 'var(--semantic-border)',
-    '--preview-icon': 'var(--semantic-icon)',
-    '--preview-primary-bg': 'var(--semantic-primary-bg)',
-    '--preview-primary-text': 'var(--semantic-primary-text)',
-    '--preview-secondary-bg': 'var(--semantic-secondary-bg)',
-    '--preview-secondary-text': 'var(--semantic-secondary-text)',
-    '--preview-auxiliary-bg': 'var(--semantic-auxiliary-bg)',
-    '--preview-auxiliary-text': 'var(--semantic-auxiliary-text)',
-    '--preview-input-bg': 'var(--semantic-input-bg)',
-    '--preview-input-text': 'var(--semantic-input-text)',
-  } as CSSProperties
-
   return (
     <AdminLayout title="Configurações" subtitle="Gerencie os assets e as cores da identidade visual do sistema.">
       {error ? <p className="admin-error" role="alert">{error}</p> : null}
@@ -247,35 +230,21 @@ export default function AdminBrandSettingsPage() {
                 <label>Enviar imagem<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void upload(event, 'og-image', 'og_image_url')} /></label>
               </section>
 
-              <TemplateOptionsEditor activeVariant={activeVariant} values={values} uploading={uploading} onActiveVariantChange={setActiveVariant} onAssetChange={update} onUpload={uploadFile} onVariantChange={updateVariant} />
+              <TemplateOptionsEditor
+                activeVariant={activeVariant}
+                activeElement={activeElement}
+                values={values}
+                uploading={uploading}
+                onActiveVariantChange={setActiveVariant}
+                onActiveElementChange={setActiveElement}
+                onAssetChange={update}
+                onUpload={uploadFile}
+                onVariantChange={updateVariant}
+              />
             </div>
 
             <div className="brand-settings-preview-column">
-              <aside className={`brand-preview ${getVariantClassName(values, activeVariant)}`} style={previewStyle} aria-label="Prévia em tempo real da identidade visual">
-                <img src={getVariantLogo(values, activeVariant)} alt="Invest RS" />
-                <div className="brand-preview-card">
-                  <div className="brand-preview-heading">
-                    <span className="template-preview-icon" aria-hidden="true"><Palette /></span>
-                    <div><p>Componentes da interface</p><h2>Identidade Invest RS</h2></div>
-                  </div>
-                  <p className="brand-preview-description">Amostra da superfície, borda, texto, ícones, campos, botões e estados deste modo.</p>
-                  <div className="brand-preview-components">
-                    <label className="brand-preview-field">
-                      Campo e ícone
-                      <span className="brand-preview-input"><Mail aria-hidden="true" /><span>contato@investrs.org.br</span></span>
-                    </label>
-                    <div className="brand-preview-actions" aria-label="Amostra dos três tipos de botão">
-                      <button className="preview-primary-button" type="button">Principal</button>
-                      <button className="preview-secondary-button" type="button">Secundário</button>
-                      <button className="preview-auxiliary-button" type="button">Auxiliar</button>
-                    </div>
-                    <div className="brand-preview-statuses" aria-label="Estados semânticos fixos">
-                      <span className="success"><CheckCircle2 aria-hidden="true" />Ativo</span>
-                      <span className="warning"><AlertTriangle aria-hidden="true" />Alerta</span>
-                    </div>
-                  </div>
-                </div>
-              </aside>
+              <BrandInterfacePreview settings={values} activeVariant={activeVariant} activeElement={activeElement} />
               <div className="brand-settings-actions"><button className="primary-button" type="button" disabled={saving || Boolean(uploading)} onClick={() => void save()}>{uploading ? 'Enviando asset...' : saving ? 'Salvando...' : 'Salvar configurações'}</button></div>
             </div>
           </div>
