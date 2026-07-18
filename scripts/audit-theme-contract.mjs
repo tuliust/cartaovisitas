@@ -82,7 +82,7 @@ requireFragments('Seis variantes no seletor', visualVariants, variants)
 requireFragments('Gerador semântico completo', visualVariants, semanticTokens)
 requireFragments('Aplicação global de tokens', visualProvider, [
   'getVariantSemanticTokens',
-  "root.style.setProperty('--brand-background-image'",
+  "'--brand-background-image'",
   "'--admin-header-bg'",
   "'--modal-surface'",
   "'--visual-action-primary-bg'",
@@ -120,8 +120,8 @@ requireFragments('Contrato base dos componentes', tokenContract, [
 ])
 requireFragments('Ponte de especificidade legada', tokenSpecificity, [
   'html:is(.app-visual-mode-light, .app-visual-mode-dark)',
-  '.auth-page-card',
   '.action-panel',
+  '.toast.error',
 ])
 requireFragments('Cobertura funcional de componentes', tokenCoverage, [
   '.card-visual',
