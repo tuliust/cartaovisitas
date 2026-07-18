@@ -75,6 +75,7 @@ export function VisualModeProvider({ children }: { children: ReactNode }) {
     const root = document.documentElement
     const effectiveMode = getEffectiveVisualVariant(settings, visualMode)
     const image = getVariantImage(settings, visualMode)
+    const imageValue = image ? `url("${image.replace(/"/g, '\\"')}")` : 'none'
     const tokens = getVariantSettings(settings, visualMode)
     const semanticTokens = getVariantSemanticTokens(settings, visualMode)
     const modeClass = isLightVisualVariant(effectiveMode) ? 'app-visual-mode-light' : 'app-visual-mode-dark'
@@ -84,7 +85,7 @@ export function VisualModeProvider({ children }: { children: ReactNode }) {
     publicVisualVariantOptions.forEach(({ value }) => root.classList.remove(`app-visual-variant-${value.replace(/_/g, '-')}`))
     root.classList.add(modeClass, variantClass)
 
-    root.style.setProperty('--app-visual-variant-image', image ? `url("${image.replace(/"/g, '\\"')}")` : 'none')
+    root.style.setProperty('--app-visual-variant-image', imageValue)
     root.style.setProperty('--variant-primary', tokens.primary_color)
     root.style.setProperty('--variant-accent', tokens.primary_button_color)
     root.style.setProperty('--variant-background', tokens.background_color)
@@ -101,6 +102,7 @@ export function VisualModeProvider({ children }: { children: ReactNode }) {
     const aliases: Record<string, string> = {
       '--brand-primary': tokens.primary_color,
       '--brand-background': tokens.background_color,
+      '--brand-background-image': imageValue,
       '--brand-surface': tokens.surface_color,
       '--brand-text': tokens.text_color,
       '--brand-accent': tokens.primary_button_color,
