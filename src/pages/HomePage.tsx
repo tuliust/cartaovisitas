@@ -57,6 +57,7 @@ export default function HomePage() {
                 <VisualModeSelector />
               </div>
               <div className="home-visual-selector-mobile">
+                <span className="home-theme-label">Selecione o tema</span>
                 <VisualModeSelector variant="compact" />
               </div>
             </div>
