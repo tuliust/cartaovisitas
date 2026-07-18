@@ -29,7 +29,7 @@ const elementOptions: Array<{ key: ElementKey; label: string; color?: EditableCo
   { key: 'surface', label: 'Caixa de texto', color: 'surface_color', opacity: 'surface_opacity' },
   { key: 'border', label: 'Borda', color: 'border_color', opacity: 'border_opacity' },
   { key: 'icon', label: 'Ícones', color: 'icon_color', opacity: 'icon_opacity' },
-  { key: 'font', label: 'Fontes' },
+  { key: 'font', label: 'Tipografia' },
   { key: 'primary', label: 'Principal', color: 'primary_button_color', opacity: 'primary_button_opacity' },
   { key: 'secondary', label: 'Secundário', color: 'secondary_button_color', opacity: 'secondary_button_opacity' },
   { key: 'auxiliary', label: 'Auxiliar', color: 'auxiliary_button_color', opacity: 'auxiliary_button_opacity' },
@@ -65,6 +65,7 @@ export function TemplateOptionsEditor({ activeVariant, values, uploading, onActi
   const tokens = values.visual_variant_settings[activeVariant]
   const element = elementOptions.find(({ key }) => key === activeElement) ?? elementOptions[0]
   const backgroundAsset = backgroundAssets[activeVariant]
+  const backgroundUrl = backgroundAsset ? String(values[backgroundAsset.key] || '') : ''
   const dark = activeVariant.startsWith('dark_')
   const logo = dark
     ? { key: 'logo_on_dark_url' as const, type: 'logo-on-dark' as const, title: 'Logo claro', url: values.logo_on_dark_url }
@@ -85,13 +86,14 @@ export function TemplateOptionsEditor({ activeVariant, values, uploading, onActi
 
     <div className="template-assets-grid">
       <AssetUploadCard accept="image/png,image/svg+xml,image/webp" alt={`Prévia do ${logo.title.toLowerCase()}`} help="PNG, SVG ou WebP · até 2 MB · 1200 × 320 px" loading={uploading === logo.type} title={logo.title} url={logo.url} onRemove={() => onAssetChange(logo.key, '')} onUpload={(file) => void onUpload(file, logo.type, logo.key)} />
-      {backgroundAsset ? <AssetUploadCard accept="image/png,image/jpeg,image/webp" alt={`Background de ${publicVisualVariantOptions.find(({ value }) => value === activeVariant)?.label}`} help="PNG, JPG ou WebP · até 5 MB · 1600 × 1000 px" loading={uploading === backgroundAsset.type} title="Background" url={String(values[backgroundAsset.key] || '')} onRemove={() => onAssetChange(backgroundAsset.key, '')} onUpload={(file) => void onUpload(file, backgroundAsset.type, backgroundAsset.key)} /> : <div className="template-solid-note"><strong>Background sólido</strong><small>Este template utiliza somente a cor de fundo selecionada.</small></div>}
+      {backgroundAsset ? <AssetUploadCard accept="image/png,image/jpeg,image/webp" alt={`Background de ${publicVisualVariantOptions.find(({ value }) => value === activeVariant)?.label}`} help="PNG, JPG ou WebP · até 5 MB · 1600 × 1000 px" loading={uploading === backgroundAsset.type} title="Background" url={backgroundUrl} onRemove={() => onAssetChange(backgroundAsset.key, '')} onUpload={(file) => void onUpload(file, backgroundAsset.type, backgroundAsset.key)} /> : <div className="template-solid-note"><strong>Background sólido</strong><small>Este template utiliza somente a cor de fundo selecionada.</small></div>}
     </div>
+    {backgroundAsset && !backgroundUrl ? <p className="template-fallback-note">Sem uma imagem configurada, este modo utiliza automaticamente o background sólido da mesma família, preservando suas cores, superfícies e botões.</p> : null}
 
     <label className="template-element-select">Elemento<select value={activeElement} onChange={(event) => setActiveElement(event.target.value as ElementKey)}>{elementOptions.map((option) => <option value={option.key} key={option.key}>{option.label}</option>)}</select></label>
     {element.color && element.opacity ? <div className="template-token-controls">
       <fieldset><legend>Cor</legend><div className="template-palette">{templateColorPalette.map((color) => <button type="button" className={tokens[element.color!] === color ? 'active' : ''} aria-label={`Usar cor ${color}`} aria-pressed={tokens[element.color!] === color} title={color} key={color} style={{ '--template-swatch': color } as CSSProperties} onClick={() => onVariantChange(element.color!, color as TemplateColor)} />)}</div></fieldset>
       <label className="opacity-field"><span>Opacidade <output>{opacity}%</output></span><input type="range" min="0" max="100" step="1" value={opacity} onChange={(event) => onVariantChange(element.opacity!, Number(event.target.value) / 100)} /></label>
-    </div> : <div className="template-font-token"><span>Cor fixa deste modo</span><strong><i style={{ background: tokens.text_color }} />{tokens.text_color.toUpperCase()}</strong><small>Tipografia e tamanhos seguem o padrão das páginas.</small></div>}
+    </div> : <div className="template-font-token"><span>Tipografia institucional fixa</span><strong><i style={{ background: tokens.text_color }} />Inter / sistema</strong><small>Família, pesos e tamanhos permanecem padronizados nos seis modos. A amostra ao lado usa a cor de texto deste modo: {tokens.text_color.toUpperCase()}.</small></div>}
   </section>
 }
