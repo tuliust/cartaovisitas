@@ -277,7 +277,7 @@ export default function PublicCardPage() {
                 variant="compact"
                 popoverPlacement="top-end"
                 triggerClassName="extra-action-button models-colors-trigger"
-                triggerContent={<><Palette className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label">Modelos e Cores</span></>}
+                triggerContent={<><Palette className="extra-action-icon" aria-hidden="true" /><span className="extra-action-label models-colors-label"><span>Modelos</span><span>e Cores</span></span></>}
               />
             </div>
           </section>
