@@ -1,0 +1,232 @@
+/* Refinements exclusive to /admin/cartoes on mobile.
+ * Desktop table and desktop header actions remain unchanged.
+ */
+
+@media (max-width: 900px) {
+  /* Keep the three page actions on one line. */
+  .admin-page:has(.admin-mobile-cards) .admin-header-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-header-actions :is(button, a) {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 8px 5px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(0.7rem, 2.85vw, 0.84rem);
+    font-weight: 800;
+    line-height: 1.05;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* Remove excess framing and vertical space around the mobile list. */
+  .admin-page:has(.admin-mobile-cards) .admin-card {
+    padding: 14px;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-table-header {
+    margin-bottom: 12px;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-cards {
+    display: grid;
+    gap: 12px;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-card {
+    min-width: 0;
+    padding: 15px;
+    border: 1px solid var(--semantic-border);
+    border-radius: 18px;
+    background: var(--semantic-surface);
+    display: grid;
+    gap: 7px;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-card-heading {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 8px;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-card-mobile-identity {
+    min-width: 0;
+    display: grid;
+    gap: 3px;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-card-mobile-identity strong {
+    min-width: 0;
+    color: var(--semantic-text);
+    font-size: clamp(1rem, 4.3vw, 1.18rem);
+    font-weight: 800;
+    line-height: 1.12;
+    text-decoration: none !important;
+    text-decoration-line: none !important;
+    border-bottom: 0 !important;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-card-mobile-identity small {
+    min-width: 0;
+    max-width: 100%;
+    color: var(--semantic-muted);
+    font-size: clamp(0.66rem, 2.65vw, 0.78rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-decoration: none !important;
+    border-bottom: 0 !important;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-card-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-card-controls .status-pill {
+    min-height: 32px;
+    padding: 5px 9px;
+    font-size: 0.72rem;
+    line-height: 1;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-card-controls .admin-actions-trigger {
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    min-height: 38px;
+    padding: 0;
+    border-radius: 12px;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-card > p {
+    margin: 2px 0 0;
+    color: var(--semantic-muted);
+    font-size: 0.88rem;
+    line-height: 1.18;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-card-slug {
+    margin: 0;
+    color: var(--semantic-muted);
+    font-size: 0.76rem;
+    line-height: 1.1;
+  }
+
+  /* Four compact metrics on a single line, with last view below. */
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-analytics {
+    width: 100%;
+    min-width: 0;
+    margin-top: 5px;
+    padding: 11px 9px;
+    border: 1px solid var(--semantic-border);
+    border-radius: 14px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 0;
+    row-gap: 9px;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-analytics > span:not(.admin-mobile-last-view) {
+    min-width: 0;
+    padding: 0 5px;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 3px;
+    color: var(--semantic-muted);
+    font-size: clamp(0.58rem, 2.35vw, 0.7rem);
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-analytics > span:not(.admin-mobile-last-view) + span:not(.admin-mobile-last-view) {
+    border-left: 1px solid var(--semantic-border);
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-analytics > span:not(.admin-mobile-last-view) strong {
+    flex: 0 0 auto;
+    color: var(--semantic-text);
+    font-size: clamp(0.76rem, 3vw, 0.9rem);
+    font-weight: 850;
+  }
+
+  /* Visually abbreviate only the mobile label; accessible text remains unchanged. */
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-analytics > span:nth-child(3) {
+    font-size: 0;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-analytics > span:nth-child(3) strong {
+    font-size: clamp(0.76rem, 3vw, 0.9rem);
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-analytics > span:nth-child(3)::after {
+    content: 'compart.';
+    color: var(--semantic-muted);
+    font-size: clamp(0.58rem, 2.35vw, 0.7rem);
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-last-view {
+    grid-column: 1 / -1;
+    padding-top: 8px;
+    border-top: 1px solid var(--semantic-border);
+    color: var(--semantic-muted);
+    font-size: 0.76rem;
+    line-height: 1.15;
+    text-align: left;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-last-view strong {
+    color: var(--semantic-text);
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .admin-page:has(.admin-mobile-cards) .admin-header-actions {
+    gap: 4px;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-header-actions :is(button, a) {
+    min-height: 40px;
+    padding-inline: 3px;
+    font-size: 0.64rem;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-card {
+    padding: 12px;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-analytics {
+    padding-inline: 5px;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-analytics > span:not(.admin-mobile-last-view) {
+    padding-inline: 2px;
+    gap: 2px;
+    font-size: 0.54rem;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-analytics > span:not(.admin-mobile-last-view) strong,
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-analytics > span:nth-child(3) strong {
+    font-size: 0.7rem;
+  }
+
+  .admin-page:has(.admin-mobile-cards) .admin-mobile-analytics > span:nth-child(3)::after {
+    font-size: 0.54rem;
+  }
+}
