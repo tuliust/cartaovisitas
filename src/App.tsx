@@ -24,8 +24,11 @@ import MyCardEmailSignaturePage from './pages/MyCardEmailSignaturePage'
 import MyCardAnalyticsPage from './pages/MyCardAnalyticsPage'
 import TermsAndPrivacyPage from './pages/TermsAndPrivacyPage'
 import { ScrollToTop } from './components/ScrollToTop'
+import { ActivitySessionProvider } from './contexts/ActivitySessionProvider'
+import AdminCardViewPage from './pages/admin/AdminCardViewPage'
 
 function PrivateCollaboratorRoutes() { return <CollaboratorProvider><Outlet /></CollaboratorProvider> }
+function OptionalCollaboratorRoutes() { return <CollaboratorProvider required={false}><Outlet /></CollaboratorProvider> }
 
 function ResolvedApplication() {
   const { status } = useBrandSettings()
@@ -34,9 +37,10 @@ function ResolvedApplication() {
     <VisualModeProvider>
       <ToastProvider>
         <BrowserRouter>
-          <InstallAppProvider>
-            <ScrollToTop />
-            <Routes>
+          <ActivitySessionProvider>
+            <InstallAppProvider>
+              <ScrollToTop />
+              <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/entrar" element={<EmployeeLoginPage />} />
               <Route path="/cadastro" element={<RegisterPage />} />
@@ -54,16 +58,20 @@ function ResolvedApplication() {
                 <Route path="/:slug" element={<PublicCardPage />} />
               </Route>
 
-              <Route path="/admin" element={<Navigate to="/admin/cartoes" replace />} />
-              <Route path="/admin/login" element={<AdminLoginPage />} />
-              <Route path="/admin/cartoes" element={<AdminCardsPage />} />
-              <Route path="/admin/cartoes/novo" element={<AdminCardFormPage />} />
-              <Route path="/admin/cartoes/:id/editar" element={<AdminCardFormPage />} />
-              <Route path="/admin/configuracoes" element={<AdminBrandSettingsPage />} />
-              <Route path="/admin/usuarios" element={<AdminUsersPage />} />
-              <Route path="/admin/auditoria" element={<AdminAuditPage />} />
-            </Routes>
-          </InstallAppProvider>
+                <Route path="/admin/login" element={<AdminLoginPage />} />
+                <Route element={<OptionalCollaboratorRoutes />}>
+                  <Route path="/admin" element={<Navigate to="/admin/cartoes" replace />} />
+                  <Route path="/admin/cartoes" element={<AdminCardsPage />} />
+                  <Route path="/admin/cartoes/novo" element={<AdminCardFormPage />} />
+                  <Route path="/admin/cartoes/:id/editar" element={<AdminCardFormPage />} />
+                  <Route path="/admin/cartoes/:id/visualizar" element={<AdminCardViewPage />} />
+                  <Route path="/admin/configuracoes" element={<AdminBrandSettingsPage />} />
+                  <Route path="/admin/usuarios" element={<AdminUsersPage />} />
+                  <Route path="/admin/auditoria" element={<AdminAuditPage />} />
+                </Route>
+              </Routes>
+            </InstallAppProvider>
+          </ActivitySessionProvider>
         </BrowserRouter>
       </ToastProvider>
     </VisualModeProvider>

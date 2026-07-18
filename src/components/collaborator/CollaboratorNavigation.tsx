@@ -23,7 +23,7 @@ export default function CollaboratorNavigation({ authenticated, isAdmin = false,
     {actions ? <CollaboratorMoreMenu
       disabled={!card}
       running={actions.running}
-      onShareContact={actions.shareVCard}
+      onShareContact={() => { if (card?.slug) navigate(`/${card.slug}`, { state: { openShareMenu: true } }) }}
       onInstallApp={openInstallModal}
       onEmailFooter={() => navigate('/meu-cartao/assinatura-de-email')}
       onStatistics={() => navigate('/meu-cartao/estatisticas')}

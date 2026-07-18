@@ -5,6 +5,8 @@ import { signOut } from '../../lib/auth'
 import { useBrandSettings } from '../../contexts/BrandSettingsContext'
 import { useVisualMode } from '../../contexts/VisualModeContext'
 import { getVariantLogo } from '../../lib/cardVisualVariants'
+import { useOptionalCollaborator } from '../../contexts/CollaboratorContext'
+import { getAuthenticatedLogoDestination } from '../../lib/navigation'
 
 type AdminLayoutProps = {
   title: string
@@ -16,23 +18,26 @@ type AdminLayoutProps = {
 export default function AdminLayout({ title, subtitle, action, children }: AdminLayoutProps) {
   const navigate = useNavigate()
   const { settings } = useBrandSettings()
-  const { visualMode } = useVisualMode()
+  const { visualMode, clearAuthenticatedDefault } = useVisualMode()
+  const collaborator = useOptionalCollaborator()
+  const logoDestination = getAuthenticatedLogoDestination(Boolean(collaborator?.authenticated), collaborator?.card ?? null)
 
   async function handleSignOut() {
+    clearAuthenticatedDefault()
     await signOut()
     navigate('/admin/login', { replace: true })
   }
 
   return (
     <main className="admin-shell">
-      <header className="admin-topbar">
-        <Link className="admin-brand" to="/admin/cartoes" aria-label="Ir para o painel de cartões">
-          <img className="admin-logo" src={getVariantLogo(settings, visualMode)} alt="Invest RS" />
+      <header className="collaborator-topbar admin-topbar">
+        <Link className="collaborator-brand admin-brand" to={logoDestination} aria-label={logoDestination === '/' ? 'Ir para a página inicial' : 'Ir para o meu cartão'}>
+          <img className="collaborator-logo admin-logo" src={getVariantLogo(settings, visualMode)} alt="Invest RS" />
         </Link>
 
-        <nav className="admin-nav" aria-label="Navegação administrativa">
+        <nav className="collaborator-nav admin-nav" aria-label="Navegação administrativa">
           <NavLink
-            className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}
+            className={({ isActive }) => `collaborator-nav-item admin-nav-link${isActive ? ' active' : ''}`}
             to="/admin/cartoes"
             aria-label="Cartões"
             title="Cartões"
@@ -42,7 +47,7 @@ export default function AdminLayout({ title, subtitle, action, children }: Admin
           </NavLink>
 
           <NavLink
-            className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}
+            className={({ isActive }) => `collaborator-nav-item admin-nav-link${isActive ? ' active' : ''}`}
             to="/admin/usuarios"
             aria-label="Usuários"
             title="Usuários"
@@ -52,7 +57,7 @@ export default function AdminLayout({ title, subtitle, action, children }: Admin
           </NavLink>
 
           <NavLink
-            className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}
+            className={({ isActive }) => `collaborator-nav-item admin-nav-link${isActive ? ' active' : ''}`}
             to="/admin/auditoria"
             aria-label="Auditoria"
             title="Auditoria"
@@ -62,7 +67,7 @@ export default function AdminLayout({ title, subtitle, action, children }: Admin
           </NavLink>
 
           <NavLink
-            className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}
+            className={({ isActive }) => `collaborator-nav-item admin-nav-link${isActive ? ' active' : ''}`}
             to="/admin/configuracoes"
             aria-label="Configurações"
             title="Configurações"
@@ -72,7 +77,7 @@ export default function AdminLayout({ title, subtitle, action, children }: Admin
           </NavLink>
 
           <button
-            className="admin-nav-logout"
+            className="collaborator-nav-item collaborator-nav-logout admin-nav-logout"
             type="button"
             aria-label="Sair"
             title="Sair"

@@ -7,6 +7,7 @@ import { getVariantLogo } from '../../lib/cardVisualVariants'
 import { isWalletPublicEnabled } from '../../lib/wallet'
 import WalletSupportModal from '../WalletSupportModal'
 import CollaboratorNavigation from './CollaboratorNavigation'
+import { getAuthenticatedLogoDestination } from '../../lib/navigation'
 
 type Props = { title?: string; subtitle?: string; headerContent?: ReactNode; useBackButton?: boolean; children: ReactNode }
 
@@ -16,9 +17,10 @@ export default function CollaboratorLayout({ title, subtitle, headerContent, use
   const { visualMode } = useVisualMode()
   const actions = collaborator?.actions
   const authenticated = Boolean(collaborator?.authenticated)
+  const logoDestination = getAuthenticatedLogoDestination(authenticated, collaborator?.card ?? null)
   return <main className="collaborator-shell">
     <header className="collaborator-topbar">
-      <Link className="collaborator-brand" to="/" aria-label="Ir para a página inicial"><img className="collaborator-logo" src={getVariantLogo(settings, visualMode)} alt="Invest RS" /></Link>
+      <Link className="collaborator-brand" to={logoDestination} aria-label={logoDestination === '/' ? 'Ir para a página inicial' : 'Ir para o meu cartão'}><img className="collaborator-logo" src={getVariantLogo(settings, visualMode)} alt="Invest RS" /></Link>
       <CollaboratorNavigation authenticated={authenticated} isAdmin={Boolean(collaborator?.isAdmin)} card={collaborator?.card ?? null} actions={authenticated ? actions : undefined} onLogout={() => void collaborator?.logout()} useBackButton={useBackButton} />
     </header>
     <section className="collaborator-page">

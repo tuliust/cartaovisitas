@@ -331,8 +331,8 @@ export default function AdminCardsPage() {
               <span>Editar</span>
             </Link>
 
-            <a
-              href={publicUrl}
+            <Link
+              to={`/admin/cartoes/${card.id}/visualizar`}
               target="_blank"
               rel="noreferrer"
               role="menuitem"
@@ -343,7 +343,7 @@ export default function AdminCardsPage() {
             >
               <ExternalLink aria-hidden="true" />
               <span>Abrir</span>
-            </a>
+            </Link>
 
             <button
               type="button"

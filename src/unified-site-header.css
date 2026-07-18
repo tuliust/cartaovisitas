@@ -36,16 +36,18 @@
     gap: 18px;
   }
 
-  /* Admin navigation is the visual reference: icon + label, no capsule surface. */
+  /* Shared navigation contract: icon + label, no capsule surface. */
   :is(
     .collaborator-nav-item,
     .admin-nav-link,
     .admin-nav-logout,
-    .visual-mode-selector--compact .visual-mode-trigger
+    .collaborator-nav .visual-mode-selector--compact .visual-mode-trigger,
+    .admin-nav .visual-mode-selector--compact .visual-mode-trigger
   ) {
     min-width: 0;
     min-height: 30px;
     height: 30px;
+    margin: 0;
     padding: 3px 0;
     border: 0;
     border-radius: 0;
@@ -66,7 +68,8 @@
     .collaborator-nav-item,
     .admin-nav-link,
     .admin-nav-logout,
-    .visual-mode-selector--compact .visual-mode-trigger
+    .collaborator-nav .visual-mode-selector--compact .visual-mode-trigger,
+    .admin-nav .visual-mode-selector--compact .visual-mode-trigger
   ) svg {
     width: 17px;
     height: 17px;
@@ -82,7 +85,8 @@
   }
 
   :is(.collaborator-nav-item, .admin-nav-link, .admin-nav-logout):focus-visible,
-  .visual-mode-selector--compact .visual-mode-trigger:focus-visible {
+  .collaborator-nav .visual-mode-selector--compact .visual-mode-trigger:focus-visible,
+  .admin-nav .visual-mode-selector--compact .visual-mode-trigger:focus-visible {
     outline: 2px solid currentColor;
     outline-offset: 4px;
   }
@@ -93,15 +97,56 @@
   }
 
   /* Preserve the circular color swatch while removing the surrounding capsule. */
-  .visual-mode-selector--compact .visual-mode-trigger {
+  :is(.collaborator-nav, .admin-nav) .visual-mode-selector--compact .visual-mode-trigger {
     width: 34px;
     min-width: 34px;
     padding: 0;
   }
 
-  .visual-mode-selector--compact .visual-mode-trigger-swatch {
+  :is(.collaborator-nav, .admin-nav) .visual-mode-selector--compact .visual-mode-trigger-swatch {
     margin: 0;
     justify-self: center;
     align-self: center;
+  }
+}
+
+@media (max-width: 820px) {
+  .admin-topbar.collaborator-topbar {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .admin-nav.collaborator-nav {
+    width: auto;
+    display: flex;
+    grid-template-columns: none;
+    flex: 1 1 auto;
+    justify-content: flex-end;
+  }
+
+  .admin-nav.collaborator-nav :is(.admin-nav-link, .admin-nav-logout) {
+    width: 34px;
+    min-width: 34px;
+    height: 34px;
+    min-height: 34px;
+    margin: 0;
+    padding: 4px;
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-nav.collaborator-nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 380px) {
+  .admin-nav.collaborator-nav :is(.admin-nav-link, .admin-nav-logout) {
+    width: 31px;
+    min-width: 31px;
+    height: 31px;
+    min-height: 31px;
+    padding: 3px;
   }
 }

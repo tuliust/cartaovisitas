@@ -285,7 +285,7 @@ export default function AdminUsersPage() {
 
             {user.card ? (
               <Link
-                to={`/${user.card.slug}`}
+                to={`/admin/cartoes/${user.card.id}/visualizar`}
                 target="_blank"
                 rel="noreferrer"
                 role="menuitem"
@@ -439,7 +439,7 @@ export default function AdminUsersPage() {
                       {user.card ? (
                         <Link
                           className="admin-user-card-link"
-                          to={`/${user.card.slug}`}
+                          to={`/admin/cartoes/${user.card.id}/visualizar`}
                           target="_blank"
                           rel="noreferrer"
                           title={`Abrir cartão /${user.card.slug}`}
@@ -477,7 +477,7 @@ export default function AdminUsersPage() {
                   <div className="admin-user-mobile-card-link">
                     <span>Cartão</span>
                     {user.card ? (
-                      <Link to={`/${user.card.slug}`} target="_blank" rel="noreferrer">
+                      <Link to={`/admin/cartoes/${user.card.id}/visualizar`} target="_blank" rel="noreferrer">
                         /{user.card.slug}
                       </Link>
                     ) : (

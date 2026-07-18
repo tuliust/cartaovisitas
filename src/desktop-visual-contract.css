@@ -27,7 +27,7 @@
   /* These approved full-viewport pages must never create document scrolling. */
   body:has(.home-page-shell),
   body:has(.auth-page-shell),
-  body:has(.collaborator-own-card) {
+  body:has(.collaborator-shell .collaborator-own-card) {
     height: var(--desktop-viewport-height);
     max-height: var(--desktop-viewport-height);
     overflow: hidden;

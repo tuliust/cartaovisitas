@@ -9,6 +9,7 @@ import { requireActiveUser } from '../lib/roles'
 import { useToast } from './ToastContext'
 import { CollaboratorContext } from './CollaboratorContext'
 import { useVisualMode } from './VisualModeContext'
+import { useActivitySession } from '../hooks/useActivitySession'
 
 type CollaboratorProviderProps = { children: ReactNode; required?: boolean }
 
@@ -17,6 +18,7 @@ export function CollaboratorProvider({ children, required = true }: Collaborator
   const location = useLocation()
   const toast = useToast()
   const { applyAuthenticatedDefault, clearAuthenticatedDefault } = useVisualMode()
+  const { ensureActiveSession } = useActivitySession()
   const [card, setCard] = useState<AdminBusinessCard | null>(null)
   const [authenticated, setAuthenticated] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
@@ -25,10 +27,11 @@ export function CollaboratorProvider({ children, required = true }: Collaborator
   const actions = useCollaboratorCardActions(card, toast)
 
   const refreshCard = useCallback(async () => {
+    if (!(await ensureActiveSession())) return null
     const nextCard = await getMyCard()
     setCard(nextCard)
     return nextCard
-  }, [])
+  }, [ensureActiveSession])
 
   const logout = useCallback(async () => {
     clearAuthenticatedDefault()
@@ -44,6 +47,7 @@ export function CollaboratorProvider({ children, required = true }: Collaborator
         if (mounted) { setAuthenticated(false); setIsAdmin(false); setLoading(false); if (required) setRedirect('/entrar') }
         return
       }
+      if (!(await ensureActiveSession())) return
       const profile = await requireActiveUser()
       const ownCard = await getMyCard()
       if (mounted) {
@@ -64,7 +68,7 @@ export function CollaboratorProvider({ children, required = true }: Collaborator
       if (required) setRedirect('/entrar')
     })
     return () => { mounted = false }
-  }, [applyAuthenticatedDefault, required, toast])
+  }, [applyAuthenticatedDefault, ensureActiveSession, required, toast])
 
   const value = useMemo(() => ({ card, loading, authenticated, isAdmin, actions, refreshCard, logout }), [actions, authenticated, card, isAdmin, loading, logout, refreshCard])
 
