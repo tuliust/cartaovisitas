@@ -4,6 +4,7 @@
 
 ```powershell
 npm.cmd run lint
+npm.cmd run qa:theme
 npm.cmd run build
 git diff --check
 git status
@@ -21,6 +22,44 @@ git diff --name-only
 - nenhum `node_modules`;
 - nenhuma pasta temporária do Supabase.
 
+## Matriz obrigatória dos seis modos
+
+Validar cada rota aplicável em:
+
+```text
+dark_black
+dark_image_1
+dark_image_2
+light_white
+light_image_3
+light_image_4
+```
+
+Para cada variante, conferir:
+
+- logo correta para o contraste;
+- background, imagem e overlay;
+- texto principal, secundário e sutil;
+- superfície e borda;
+- ícones;
+- botão principal;
+- botão secundário;
+- botão auxiliar;
+- inputs, placeholder e autofill;
+- foco visível;
+- header;
+- menus, popovers e modais;
+- toasts;
+- estados de sucesso, alerta e erro;
+- contraste em desktop e mobile.
+
+Exceções deliberadas:
+
+- tipografia institucional permanece Inter/sistema;
+- QR Code mantém estrutura de alto contraste;
+- sucesso, alerta e erro mantêm cores semânticas fixas;
+- assinatura de e-mail mantém Arial/Helvetica e cores próprias.
+
 ## Home
 
 - três CTAs principais;
@@ -34,6 +73,7 @@ git diff --name-only
 - Home integralmente visível em desktop de baixa altura quando houver espaço físico;
 - painel, logo, título e espaçamentos compactados sem `zoom` em viewport desktop baixo;
 - composição ampla preservada em monitor de altura normal;
+- botões principal, secundário e auxiliar coerentes com a variante;
 - mobile e desktop.
 
 ## Cadastro
@@ -47,7 +87,8 @@ git diff --name-only
 - modal de Termos;
 - fallback de conteúdo;
 - foco no erro;
-- criação válida.
+- criação válida;
+- background, texto, borda, ícones, placeholder e autofill nas seis variantes.
 
 ## Login e recuperação
 
@@ -62,7 +103,10 @@ git diff --name-only
 - reset com rate limit;
 - e-mail não cadastrado retorna o comportamento atual documentado;
 - confirmar que a resposta uniforme ainda é pendência da frente Resend;
-- redirect para definição de senha.
+- redirect para definição de senha;
+- autofill com texto, caret e background legíveis nos seis modos;
+- botão de exibição de senha usa a cor configurada de ícone;
+- seleção de texto permanece legível.
 
 Após a implementação do Resend:
 
@@ -81,6 +125,7 @@ Após a implementação do Resend:
 - seletor compacto;
 - popover em duas colunas e três linhas;
 - sem overflow horizontal;
+- ícones e estados ativos coerentes com a variante;
 - mobile.
 
 ## Edição
@@ -134,7 +179,9 @@ Após a implementação do Resend:
 - instalação PWA;
 - Wallet standby;
 - sem acesso a slug arbitrário;
-- Termos não aparece nessa rota.
+- Termos não aparece nessa rota;
+- labels, valores e ícones dos contatos consomem os tokens da variante;
+- coluna direita usa os três tipos de botão configurados.
 
 ## Guia de Utilização
 
@@ -152,6 +199,7 @@ Após a implementação do Resend:
 - índice estático e responsivo em tablet e mobile;
 - foco visível;
 - seis variantes;
+- ícones, links, superfícies e bordas coerentes com a variante;
 - mobile, tablet, desktop e zoom de 200%.
 
 ## vCard
@@ -173,7 +221,8 @@ Após a implementação do Resend:
 - redirect;
 - QR de impressão;
 - QR PNG da assinatura;
-- leitura física.
+- leitura física;
+- contraste estrutural não afetado pelas variantes.
 
 ## Assinatura
 
@@ -187,7 +236,8 @@ Após a implementação do Resend:
 - HTML;
 - texto simples usado apenas como fallback interno do clipboard;
 - colagem no Gmail;
-- imagens HTTPS.
+- imagens HTTPS;
+- aparência institucional fixa independentemente do modo da página.
 
 ## Estatísticas
 
@@ -200,6 +250,7 @@ Após a implementação do Resend:
 - comparação;
 - resumo textual;
 - estado vazio;
+- accent do gráfico correspondente ao botão principal da variante;
 - responsividade.
 
 ## Admin cartões
@@ -213,7 +264,8 @@ Após a implementação do Resend:
 - QR;
 - vCard;
 - CSV;
-- auditoria.
+- auditoria;
+- tabelas, filtros, paginação e menus nas seis variantes.
 
 ## Admin usuários
 
@@ -224,7 +276,8 @@ Após a implementação do Resend:
 - bloquear;
 - desbloquear;
 - proteção do último admin;
-- cartão vinculado.
+- cartão vinculado;
+- modal, inputs e menu de ações nas seis variantes.
 
 ## Auditoria
 
@@ -236,6 +289,7 @@ Após a implementação do Resend:
 - menu;
 - detalhes;
 - eventos sem corte;
+- modal e tabelas nas seis variantes;
 - mobile.
 
 ## Configurações
@@ -243,14 +297,37 @@ Após a implementação do Resend:
 - assets;
 - títulos;
 - seis variantes;
-- preview;
-- tokens;
+- preview em tempo real antes de salvar;
+- alterações locais preservadas ao alternar entre variantes;
+- background sólido;
+- background com imagem;
+- aviso de fallback quando o asset da imagem estiver ausente;
+- superfície;
+- borda;
+- ícone Lucide real;
+- input;
+- botão principal;
+- botão secundário;
+- botão auxiliar;
+- estados semânticos;
+- texto informando tipografia fixa;
+- texto informando QR, estados e assinatura como escopo fixo;
 - salvar com toast;
 - cards opacos;
 - editor de Termos e Guia;
 - publicação;
 - restauração;
-- auditoria.
+- auditoria;
+- outra aba aberta recebe a configuração salva sem reload;
+- executar `npm.cmd run qa:theme`.
+
+### Teste de sincronização entre abas
+
+1. Abrir `/admin/configuracoes` em uma aba autenticada.
+2. Abrir uma segunda página do sistema em outra aba.
+3. Alterar e salvar a variante em Configurações.
+4. Confirmar que a segunda aba recebe logo, background e tokens atualizados.
+5. Confirmar que a preferência visual selecionada na segunda aba não é substituída; apenas os valores da variante correspondente são atualizados.
 
 ## PWA
 
@@ -273,7 +350,7 @@ Após a implementação do Resend:
 ### Modal de instalação
 
 - fundo sólido validado nas seis variantes;
-- `card_surface_opacity` não afeta o painel;
+- opacidade da superfície do cartão não afeta o painel;
 - backdrop escurece a página;
 - abas, passos, ícones, botões e textos mantêm contraste;
 - mobile e desktop validados.
