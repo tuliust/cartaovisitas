@@ -60,6 +60,30 @@ Exceções deliberadas:
 - sucesso, alerta e erro mantêm cores semânticas fixas;
 - assinatura de e-mail mantém Arial/Helvetica e cores próprias.
 
+## Preview administrativo de identidade
+
+Em `/admin/configuracoes`, validar para cada uma das seis variantes:
+
+- coluna direita sticky apenas a partir de `901px`;
+- preview limitado à viewport e com rolagem interna;
+- botão `Salvar configurações` sempre visível abaixo do preview;
+- comportamento normal no mobile, sem sticky e sem rolagem interna própria;
+- logo, background, imagem e overlay corretos;
+- mini header com superfície, borda, ícones, item ativo e hover;
+- card de superfície comum e superfície elevada;
+- input vazio com placeholder;
+- input preenchido;
+- input em foco com focus ring;
+- botões principal, secundário e auxiliar em estado normal;
+- botões principal, secundário e auxiliar com hover simulado;
+- popover com item em hover;
+- estados sucesso, alerta, erro e desabilitado;
+- destaque dos componentes afetados ao trocar o elemento editado;
+- descrições e chips de componentes afetados coerentes com o token selecionado;
+- escala administrativa em 75% sem deslocar ou cortar o sticky;
+- Chrome e Edge em 1366, 1440 e 1920 px;
+- escala do Windows em 100%, 125% e 150%, quando disponível.
+
 ## Home
 
 - três CTAs principais;
@@ -196,7 +220,7 @@ Após a implementação do Resend:
 - botões do índice com dimensões uniformes;
 - índice sticky no topo com altura de `100dvh` no desktop;
 - cards da coluna direita rolando independentemente do índice sticky;
-- índice estático e responsivo em tablet e mobile;
+- seletor nativo de tópicos no mobile;
 - foco visível;
 - seis variantes;
 - ícones, links, superfícies e bordas coerentes com a variante;
@@ -238,137 +262,3 @@ Após a implementação do Resend:
 - colagem no Gmail;
 - imagens HTTPS;
 - aparência institucional fixa independentemente do modo da página.
-
-## Estatísticas
-
-- 7, 30, 90 e Personalizado;
-- quatro filtros na mesma linha mobile;
-- datas personalizadas;
-- quatro KPIs principais na mesma linha mobile;
-- indicadores secundários abaixo;
-- gráfico;
-- comparação;
-- resumo textual;
-- estado vazio;
-- accent do gráfico correspondente ao botão principal da variante;
-- responsividade.
-
-## Admin cartões
-
-- busca;
-- filtros;
-- criação;
-- edição;
-- ativação;
-- exclusão;
-- QR;
-- vCard;
-- CSV;
-- auditoria;
-- tabelas, filtros, paginação e menus nas seis variantes.
-
-## Admin usuários
-
-- convite;
-- reenviar;
-- promover;
-- remover admin;
-- bloquear;
-- desbloquear;
-- proteção do último admin;
-- cartão vinculado;
-- modal, inputs e menu de ações nas seis variantes.
-
-## Auditoria
-
-- filtros;
-- busca;
-- período;
-- 30 itens;
-- paginação;
-- menu;
-- detalhes;
-- eventos sem corte;
-- modal e tabelas nas seis variantes;
-- mobile.
-
-## Configurações
-
-- assets;
-- títulos;
-- seis variantes;
-- preview em tempo real antes de salvar;
-- alterações locais preservadas ao alternar entre variantes;
-- background sólido;
-- background com imagem;
-- aviso de fallback quando o asset da imagem estiver ausente;
-- superfície;
-- borda;
-- ícone Lucide real;
-- input;
-- botão principal;
-- botão secundário;
-- botão auxiliar;
-- estados semânticos;
-- texto informando tipografia fixa;
-- texto informando QR, estados e assinatura como escopo fixo;
-- salvar com toast;
-- cards opacos;
-- editor de Termos e Guia;
-- publicação;
-- restauração;
-- auditoria;
-- outra aba aberta recebe a configuração salva sem reload;
-- executar `npm.cmd run qa:theme`.
-
-### Teste de sincronização entre abas
-
-1. Abrir `/admin/configuracoes` em uma aba autenticada.
-2. Abrir uma segunda página do sistema em outra aba.
-3. Alterar e salvar a variante em Configurações.
-4. Confirmar que a segunda aba recebe logo, background e tokens atualizados.
-5. Confirmar que a preferência visual selecionada na segunda aba não é substituída; apenas os valores da variante correspondente são atualizados.
-
-## PWA
-
-- manifest válido;
-- ícones;
-- iOS;
-- Android;
-- desktop;
-- `beforeinstallprompt`;
-- `appinstalled`;
-- modo standalone;
-- app instalado oculta ação;
-- modal acessível;
-- Escape;
-- foco;
-- backdrop;
-- bloqueio de scroll;
-- ausência de service worker deliberada.
-
-### Modal de instalação
-
-- fundo sólido validado nas seis variantes;
-- opacidade da superfície do cartão não afeta o painel;
-- backdrop escurece a página;
-- abas, passos, ícones, botões e textos mantêm contraste;
-- mobile e desktop validados.
-
-## Wallet
-
-Standby:
-
-- botão abre aviso;
-- endpoint não é chamado com flag pública desativada.
-
-Antes da ativação:
-
-- corrigir o destino do QR do passe;
-- impedir destino para rota autenticada;
-- testar `.pkpass` em iPhone;
-- validar evento `wallet_apple`.
-
-## Pós-deploy
-
-Validar as rotas listadas em `03-ambientes-variaveis-deploy.md` e conferir logs da Vercel e Supabase quando aplicável.
