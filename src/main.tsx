@@ -17,6 +17,7 @@ import './public-card-share-popover.css'
 import './public-card-actions-overrides.css'
 import './admin-desktop-scale.css'
 import './unified-site-header.css'
+import './brand-token-contract.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
