@@ -1,0 +1,545 @@
+/* Mobile-only experience adjustments.
+ * Desktop contracts start at 901px and are intentionally untouched.
+ */
+
+.home-support-label-mobile,
+.guide-mobile-selector,
+.auth-link-back-icon {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  /* Home: keep the complete composition inside the useful mobile viewport. */
+  .home-page-shell.app-shell {
+    width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    max-height: 100dvh;
+    padding: max(8px, env(safe-area-inset-top)) 12px max(8px, env(safe-area-inset-bottom));
+    display: block;
+    overflow: hidden;
+  }
+
+  .home-page-shell .home-desktop-viewport,
+  .home-page-shell .home-desktop-stage {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .home-page-shell .home-desktop-stage {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 4px;
+  }
+
+  .home-page-shell .home-panel {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: clamp(18px, 3.2dvh, 28px);
+    border-radius: clamp(24px, 6vw, 32px);
+    justify-content: flex-start;
+    overflow: hidden;
+  }
+
+  .home-page-shell .home-topline {
+    min-height: 0;
+    align-items: flex-start;
+  }
+
+  .home-page-shell .brand-logo-main {
+    width: clamp(142px, 38vw, 205px);
+    max-height: clamp(54px, 9dvh, 80px);
+  }
+
+  .home-page-shell .home-content {
+    min-height: 0;
+    margin-top: clamp(24px, 5dvh, 52px);
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .home-page-shell .eyebrow {
+    margin-bottom: clamp(12px, 2dvh, 22px);
+    font-size: clamp(0.7rem, 2.7vw, 0.86rem);
+    letter-spacing: 0.2em;
+  }
+
+  .home-page-shell .home-content h1 {
+    max-width: 100%;
+    margin: 0 0 clamp(16px, 2.8dvh, 28px);
+    font-size: clamp(2.35rem, 11.5vw, 4.1rem);
+    line-height: 0.94;
+  }
+
+  .home-page-shell .home-description {
+    max-width: 100%;
+    margin: 0;
+    font-size: clamp(0.93rem, 4vw, 1.2rem);
+    line-height: 1.42;
+  }
+
+  .home-page-shell .home-actions {
+    width: 100%;
+    margin-top: auto;
+    padding-top: clamp(14px, 3dvh, 28px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(7px, 1.3dvh, 12px);
+  }
+
+  .home-page-shell .home-actions :is(.primary-button, .secondary-button, .auxiliary-button) {
+    width: 100%;
+    min-width: 0;
+    min-height: clamp(43px, 6.3dvh, 54px);
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-size: clamp(0.94rem, 3.8vw, 1.12rem);
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .home-page-shell .home-secondary-actions {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    margin: 0;
+    padding: 3px 2px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(12px, 5vw, 28px);
+  }
+
+  .home-page-shell .home-secondary-actions .auxiliary-button {
+    min-width: 0;
+    min-height: 34px;
+    padding: 7px 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--semantic-auxiliary-text);
+    font-size: clamp(0.72rem, 3vw, 0.88rem);
+    font-weight: 650;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .home-support-label-desktop {
+    display: none;
+  }
+
+  .home-support-label-mobile {
+    display: inline;
+  }
+
+  /* Guide and legal pages: native mobile topic selector replaces the long index. */
+  .guide-layout,
+  .legal-guide-layout {
+    display: block;
+  }
+
+  .guide-index {
+    display: none;
+  }
+
+  .guide-mobile-selector {
+    width: 100%;
+    margin: 0 0 14px;
+    display: grid;
+    gap: 7px;
+    color: var(--semantic-text);
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .guide-mobile-selector select {
+    width: 100%;
+    min-height: 48px;
+    border: 1px solid var(--semantic-border);
+    border-radius: 14px;
+    background: var(--semantic-input-bg);
+    color: var(--semantic-input-text);
+    padding: 10px 42px 10px 13px;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .guide-mobile-selector select:focus-visible {
+    outline: 3px solid var(--semantic-focus);
+    outline-offset: 2px;
+  }
+
+  .guide-content section,
+  .legal-document section,
+  .legal-document footer {
+    scroll-margin-top: 92px;
+  }
+
+  /* Collaborator login: three support links remain on one row. */
+  .auth-page-links.auth-page-links--three {
+    width: 100%;
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: minmax(40px, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 6px;
+    font-size: clamp(0.7rem, 3vw, 0.84rem);
+  }
+
+  .auth-page-links--three > a {
+    min-width: 0;
+    min-height: 40px;
+    padding: 7px 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.05;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .auth-page-links--three .auth-link-back {
+    width: 40px;
+    justify-self: start;
+    padding-inline: 0;
+  }
+
+  .auth-page-links--three .auth-link-recovery {
+    justify-self: center;
+  }
+
+  .auth-page-links--three .auth-link-register {
+    justify-self: end;
+  }
+
+  .auth-link-back-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
+
+  .auth-link-back-text {
+    display: none;
+  }
+
+  /* /:slug: first viewport is the card; tools are revealed only on demand. */
+  .collaborator-shell:has(.collaborator-own-card) .collaborator-page {
+    width: 100%;
+    padding: 0;
+  }
+
+  .collaborator-shell:has(.collaborator-own-card) .public-card-desktop-stage {
+    width: 100%;
+    height: auto !important;
+    min-height: 0;
+  }
+
+  .collaborator-shell:has(.collaborator-own-card) .collaborator-own-card {
+    width: 100%;
+    display: block;
+  }
+
+  .collaborator-shell:has(.collaborator-own-card) .card-visual {
+    width: 100%;
+    height: calc(100dvh - 72px);
+    min-height: 620px;
+    max-height: calc(100dvh - 72px);
+    padding: clamp(18px, 4.5vw, 28px);
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  .collaborator-own-card .card-topline {
+    min-height: 0;
+    gap: 14px;
+  }
+
+  .collaborator-own-card .public-card-logo {
+    width: clamp(150px, 39vw, 210px);
+    max-height: 82px;
+  }
+
+  .collaborator-own-card .public-card-avatar-wrapper {
+    width: clamp(106px, 29vw, 136px);
+    height: clamp(106px, 29vw, 136px);
+    flex-basis: clamp(106px, 29vw, 136px);
+    border-radius: 22px;
+  }
+
+  .collaborator-own-card .card-main,
+  .collaborator-own-card .card-footer {
+    transform: none;
+  }
+
+  .collaborator-own-card .card-main {
+    margin: clamp(14px, 3dvh, 28px) 0 clamp(8px, 1.8dvh, 16px);
+  }
+
+  .collaborator-own-card .person-block h1 {
+    max-width: 100%;
+    margin: 0 0 13px;
+    font-size: clamp(2.65rem, 13vw, 3.7rem);
+    line-height: 0.89;
+  }
+
+  .collaborator-own-card .person-block .job-title {
+    margin-bottom: 2px;
+    font-size: clamp(0.92rem, 4vw, 1.06rem);
+    line-height: 1.16;
+  }
+
+  .collaborator-own-card .person-block .department {
+    margin-bottom: 0;
+    font-size: clamp(0.84rem, 3.7vw, 0.98rem);
+    line-height: 1.16;
+  }
+
+  .collaborator-own-card .card-footer {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: clamp(10px, 3vw, 16px);
+  }
+
+  .collaborator-own-card .public-card-contact-list {
+    min-width: 0;
+    gap: clamp(7px, 1.35dvh, 11px);
+  }
+
+  .collaborator-own-card .public-card-contact-list :is(a, p) {
+    min-width: 0;
+    grid-template-columns: 19px minmax(0, 1fr);
+    grid-template-rows: 10px auto;
+    column-gap: 6px;
+    row-gap: 2px;
+  }
+
+  .collaborator-own-card .public-card-contact-list .contact-label-text {
+    font-size: 9px;
+    line-height: 10px;
+  }
+
+  .collaborator-own-card .public-card-contact-list .contact-label svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .collaborator-own-card .public-card-contact-list .contact-value {
+    min-width: 0;
+    font-size: clamp(0.76rem, 3.45vw, 0.9rem);
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .collaborator-own-card .public-card-contact-list .contact-address,
+  .collaborator-own-card .public-card-contact-list .contact-address .contact-value {
+    width: auto;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .collaborator-own-card .qr-code {
+    width: clamp(98px, 26vw, 126px);
+    height: clamp(98px, 26vw, 126px);
+    padding: 6px;
+    border-radius: 14px;
+    transform: none;
+  }
+
+  .collaborator-own-card .public-card-initial-toolbar {
+    width: 100%;
+    min-height: 54px;
+    margin-top: clamp(9px, 1.6dvh, 14px);
+    padding: 6px 8px;
+    border: 1px solid var(--semantic-border);
+    border-radius: 18px;
+    background: var(--semantic-surface-raised);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex: 0 0 auto;
+  }
+
+  .collaborator-own-card .public-card-language-mobile {
+    margin: 0;
+  }
+
+  .collaborator-own-card .public-card-language-mobile button {
+    min-width: 42px;
+    min-height: 38px;
+  }
+
+  .collaborator-own-card .public-card-initial-actions {
+    display: flex;
+    align-items: center;
+  }
+
+  .collaborator-own-card .public-card-mobile-expand {
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    min-height: 42px;
+    padding: 0;
+    border: 1px solid var(--semantic-border);
+    border-radius: 50%;
+    background: var(--semantic-auxiliary-bg);
+    color: var(--semantic-auxiliary-text);
+    display: inline-grid;
+    place-items: center;
+    cursor: pointer;
+  }
+
+  .collaborator-own-card .public-card-mobile-expand svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .collaborator-own-card .public-card-mobile-expand:focus-visible {
+    outline: 3px solid var(--semantic-focus);
+    outline-offset: 2px;
+  }
+
+  .collaborator-own-card .public-card-actions-panel {
+    display: none;
+  }
+
+  .collaborator-own-card .public-card-actions-panel.mobile-actions-expanded {
+    display: block;
+    min-height: 0;
+    margin-top: 12px;
+    scroll-margin-top: 84px;
+  }
+}
+
+@media (max-width: 900px) and (max-height: 720px) {
+  .home-page-shell .home-panel {
+    padding: 15px 18px;
+  }
+
+  .home-page-shell .brand-logo-main {
+    width: clamp(126px, 34vw, 170px);
+    max-height: 58px;
+  }
+
+  .home-page-shell .home-content {
+    margin-top: 18px;
+  }
+
+  .home-page-shell .eyebrow {
+    margin-bottom: 9px;
+  }
+
+  .home-page-shell .home-content h1 {
+    margin-bottom: 12px;
+    font-size: clamp(2.05rem, 9.8vw, 3.25rem);
+  }
+
+  .home-page-shell .home-description {
+    font-size: clamp(0.82rem, 3.45vw, 0.98rem);
+    line-height: 1.32;
+  }
+
+  .home-page-shell .home-actions {
+    padding-top: 10px;
+    gap: 6px;
+  }
+
+  .home-page-shell .home-actions :is(.primary-button, .secondary-button, .auxiliary-button) {
+    min-height: 40px;
+    padding-block: 7px;
+    font-size: 0.9rem;
+  }
+
+  .home-page-shell .home-secondary-actions .auxiliary-button {
+    min-height: 30px;
+    padding-block: 5px;
+    font-size: 0.68rem;
+  }
+
+  .collaborator-shell:has(.collaborator-own-card) .card-visual {
+    min-height: 560px;
+  }
+
+  .collaborator-own-card .public-card-logo {
+    width: clamp(132px, 35vw, 180px);
+  }
+
+  .collaborator-own-card .public-card-avatar-wrapper {
+    width: 96px;
+    height: 96px;
+    flex-basis: 96px;
+  }
+
+  .collaborator-own-card .card-main {
+    margin-block: 10px 6px;
+  }
+
+  .collaborator-own-card .person-block h1 {
+    margin-bottom: 9px;
+    font-size: clamp(2.35rem, 11.5vw, 3.15rem);
+  }
+
+  .collaborator-own-card .public-card-contact-list {
+    gap: 6px;
+  }
+
+  .collaborator-own-card .qr-code {
+    width: 94px;
+    height: 94px;
+  }
+
+  .collaborator-own-card .public-card-initial-toolbar {
+    min-height: 48px;
+    margin-top: 7px;
+    padding-block: 4px;
+  }
+}
+
+@media (max-width: 360px) {
+  .home-page-shell.app-shell {
+    padding-inline: 8px;
+  }
+
+  .home-page-shell .home-panel {
+    padding-inline: 15px;
+  }
+
+  .home-page-shell .home-secondary-actions {
+    gap: 10px;
+  }
+
+  .home-page-shell .home-secondary-actions .auxiliary-button {
+    font-size: 0.64rem;
+  }
+
+  .auth-page-links.auth-page-links--three {
+    gap: 3px;
+    font-size: 0.66rem;
+  }
+
+  .auth-page-links--three > a {
+    padding-inline: 4px;
+  }
+
+  .collaborator-own-card .person-block h1 {
+    font-size: clamp(2.15rem, 11.8vw, 2.8rem);
+  }
+
+  .collaborator-own-card .public-card-contact-list .contact-value {
+    font-size: 0.72rem;
+  }
+
+  .collaborator-own-card .qr-code {
+    width: 84px;
+    height: 84px;
+  }
+}
