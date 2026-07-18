@@ -1,0 +1,291 @@
+/* Final mobile-only polish requested after device validation.
+ * Desktop layouts start at 901px and remain unchanged.
+ */
+
+.home-theme-label,
+.card-preview-modal-public {
+  display: none;
+}
+
+.card-preview-modal-legacy {
+  display: block;
+}
+
+@media (max-width: 900px) {
+  /* Home: preserve the approved outer card and use more of its internal space. */
+  .home-page-shell .home-topline {
+    align-items: center;
+  }
+
+  .home-page-shell .brand-logo-main {
+    width: clamp(178px, 45vw, 238px);
+    max-height: clamp(68px, 11dvh, 96px);
+  }
+
+  .home-page-shell .home-visual-selector-mobile {
+    min-width: 86px;
+    min-height: 86px;
+    padding: 7px 8px;
+    border: 1px solid var(--semantic-border);
+    border-radius: 18px;
+    background: var(--semantic-surface-raised);
+    box-shadow: 0 12px 30px rgb(0 0 0 / 0.22);
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 5px;
+    align-self: center;
+  }
+
+  .home-theme-label {
+    display: block;
+    color: var(--semantic-muted);
+    font-size: clamp(0.54rem, 2.3vw, 0.66rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .home-page-shell .home-visual-selector-mobile .visual-mode-trigger {
+    width: 48px;
+    min-width: 48px;
+    height: 48px;
+    min-height: 48px;
+    padding: 5px;
+    border: 2px solid color-mix(in srgb, var(--semantic-primary-base) 62%, var(--semantic-border));
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--semantic-primary-base) 18%, transparent),
+      0 8px 20px rgb(0 0 0 / 0.24);
+  }
+
+  .home-page-shell .home-visual-selector-mobile .visual-mode-trigger-swatch {
+    width: 34px;
+    height: 34px;
+  }
+
+  .home-page-shell .home-content {
+    margin-top: clamp(30px, 5.6dvh, 58px);
+  }
+
+  .home-page-shell .eyebrow {
+    font-size: clamp(0.76rem, 2.9vw, 0.92rem);
+  }
+
+  .home-page-shell .home-content h1 {
+    font-size: clamp(2.7rem, 12.4vw, 4.45rem);
+    line-height: 0.93;
+  }
+
+  .home-page-shell .home-description {
+    font-size: clamp(1rem, 4.25vw, 1.28rem);
+    line-height: 1.4;
+  }
+
+  .home-page-shell .home-actions :is(.primary-button, .secondary-button, .auxiliary-button) {
+    min-height: clamp(50px, 6.8dvh, 60px);
+    padding: 11px 18px;
+    font-size: clamp(1rem, 4vw, 1.2rem);
+  }
+
+  /* /:slug: move professional information upward and create clearer contact grouping. */
+  .collaborator-own-card .card-main {
+    margin: clamp(2px, 0.7dvh, 7px) 0 2px;
+  }
+
+  .collaborator-own-card .person-block h1 {
+    margin-bottom: 9px;
+  }
+
+  .collaborator-own-card .person-block .job-title {
+    margin-bottom: 1px;
+  }
+
+  .collaborator-own-card .card-footer {
+    margin-top: -3px;
+  }
+
+  .collaborator-own-card .public-card-contact-list {
+    gap: clamp(10px, 1.75dvh, 15px);
+  }
+
+  .collaborator-own-card .public-card-contact-list :is(a, p) {
+    row-gap: 3px;
+  }
+
+  /* Four equal additional-function tiles on one row. */
+  .public-card-actions-panel .extra-actions-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .public-card-actions-panel .extra-actions-grid > * {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .public-card-actions-panel .extra-actions-grid .extra-action-button,
+  .public-card-actions-panel .extra-actions-grid > .visual-mode-selector.visual-mode-selector--compact > .visual-mode-trigger.models-colors-trigger {
+    width: 100%;
+    min-width: 0;
+    height: 100px;
+    min-height: 100px;
+    padding: 8px 3px;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    text-align: center;
+  }
+
+  .public-card-actions-panel .extra-actions-grid .extra-action-icon {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+  }
+
+  .public-card-actions-panel .extra-actions-grid .extra-action-label {
+    max-width: 100%;
+    font-size: clamp(0.56rem, 2.35vw, 0.7rem);
+    line-height: 1.08;
+    font-weight: 780;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
+  }
+
+  .public-card-actions-panel .extra-actions-grid .models-colors-label {
+    display: block;
+  }
+
+  .public-card-actions-panel .extra-actions-grid .models-colors-label span {
+    display: inline;
+  }
+
+  .public-card-actions-panel .extra-actions-grid .models-colors-label span + span::before {
+    content: " ";
+  }
+
+  /* Mobile editor preview uses the exact PublicCardVisual structure from /:slug. */
+  .card-preview-modal-legacy {
+    display: none;
+  }
+
+  .card-preview-modal-public {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .card-preview-modal-body {
+    min-height: 0;
+    padding: 10px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .draft-public-card-preview {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .card-preview-modal .draft-public-card-preview .card-visual {
+    width: 100%;
+    height: max(620px, calc(100dvh - 190px));
+    min-height: 620px;
+    max-height: none;
+    border-radius: 20px;
+  }
+
+  .card-preview-modal .draft-public-card-preview .card-visual a {
+    pointer-events: none;
+  }
+
+  .card-preview-modal .draft-public-card-preview .draft-preview-expand-icon {
+    cursor: default;
+  }
+
+  .draft-preview-status {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 4;
+  }
+}
+
+@media (max-width: 900px) and (max-height: 720px) {
+  .home-page-shell .brand-logo-main {
+    width: clamp(154px, 40vw, 192px);
+    max-height: 68px;
+  }
+
+  .home-page-shell .home-visual-selector-mobile {
+    min-width: 76px;
+    min-height: 74px;
+    padding: 5px 6px;
+  }
+
+  .home-page-shell .home-visual-selector-mobile .visual-mode-trigger {
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    min-height: 42px;
+  }
+
+  .home-page-shell .home-visual-selector-mobile .visual-mode-trigger-swatch {
+    width: 30px;
+    height: 30px;
+  }
+
+  .home-page-shell .home-content {
+    margin-top: 16px;
+  }
+
+  .home-page-shell .home-content h1 {
+    font-size: clamp(2.2rem, 10.2vw, 3.3rem);
+  }
+
+  .home-page-shell .home-description {
+    font-size: clamp(0.86rem, 3.55vw, 1rem);
+  }
+
+  .home-page-shell .home-actions :is(.primary-button, .secondary-button, .auxiliary-button) {
+    min-height: 43px;
+    padding-block: 8px;
+    font-size: 0.93rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .home-page-shell .home-visual-selector-mobile {
+    min-width: 70px;
+  }
+
+  .home-theme-label {
+    font-size: 0.5rem;
+  }
+
+  .public-card-actions-panel .extra-actions-grid {
+    gap: 4px;
+  }
+
+  .public-card-actions-panel .extra-actions-grid .extra-action-button,
+  .public-card-actions-panel .extra-actions-grid > .visual-mode-selector.visual-mode-selector--compact > .visual-mode-trigger.models-colors-trigger {
+    height: 92px;
+    min-height: 92px;
+    padding-inline: 2px;
+  }
+
+  .public-card-actions-panel .extra-actions-grid .extra-action-label {
+    font-size: 0.54rem;
+  }
+}
