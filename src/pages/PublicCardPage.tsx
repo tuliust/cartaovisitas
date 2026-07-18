@@ -20,6 +20,11 @@ type HtmlToImageApi = {
   toBlob: (node: HTMLElement, options?: Record<string, unknown>) => Promise<Blob | null>
 }
 
+type CardImageCache = {
+  key: string
+  blob: Blob
+}
+
 const PUBLIC_CARD_DESKTOP_WIDTH = 1108
 const PUBLIC_CARD_DESKTOP_HEIGHT = 648
 const PUBLIC_CARD_DESKTOP_BOTTOM_GAP = 18
@@ -90,6 +95,32 @@ async function waitForImages(source: HTMLElement) {
   }))
 }
 
+async function createCardPng(source: HTMLElement) {
+  await document.fonts.ready
+  await waitForImages(source)
+
+  const width = source.offsetWidth
+  const height = source.offsetHeight
+  if (width <= 0 || height <= 0) {
+    throw new Error(`Dimensões inválidas do cartão: ${width}x${height}.`)
+  }
+
+  const htmlToImage = await loadHtmlToImage()
+  const blob = await htmlToImage.toBlob(source, {
+    cacheBust: true,
+    pixelRatio: 2,
+    width,
+    height,
+    canvasWidth: width * 2,
+    canvasHeight: height * 2,
+    skipAutoScale: true,
+    filter: (node: HTMLElement) => !node.classList?.contains('public-card-initial-toolbar'),
+  })
+
+  if (!blob) throw new Error('O gerador não retornou uma imagem.')
+  return blob
+}
+
 export default function PublicCardPage() {
   const { slug } = useParams()
   const location = useLocation()
@@ -103,11 +134,14 @@ export default function PublicCardPage() {
   const desktopStageRef = useRef<HTMLDivElement>(null)
   const cardVisualRef = useRef<HTMLDivElement>(null)
   const shareControlRef = useRef<HTMLDivElement>(null)
+  const cardImageCacheRef = useRef<CardImageCache | null>(null)
+  const cardImagePromiseRef = useRef<{ key: string; promise: Promise<Blob> } | null>(null)
   const [desktopScale, setDesktopScale] = useState(1)
   const [language, setLanguage] = useState<PublicVisualLanguage>(getStoredPublicCardLanguage)
   const [qrDataUrl, setQrDataUrl] = useState('')
   const [shareMenuOpen, setShareMenuOpen] = useState(false)
   const [shareAction, setShareAction] = useState<string | null>(null)
+  const [cardImagePreparing, setCardImagePreparing] = useState(false)
   const [mobileActionsExpanded, setMobileActionsExpanded] = useState(false)
 
   const qrValue = actions.qrValue
@@ -116,12 +150,13 @@ export default function PublicCardPage() {
   useEffect(() => {
     const state = location.state as { openShareMenu?: boolean } | null
     if (!state?.openShareMenu) return
-    if (isMobileCardViewport()) setMobileActionsExpanded(true)
-    window.setTimeout(() => {
+    const timer = window.setTimeout(() => {
+      if (isMobileCardViewport()) setMobileActionsExpanded(true)
       setShareMenuOpen(true)
       scrollToCardActions(actionPanelRef.current)
     }, 0)
     navigate(location.pathname, { replace: true, state: null })
+    return () => window.clearTimeout(timer)
   }, [location.pathname, location.state, navigate])
   useEffect(() => {
     if (!shareMenuOpen) return
@@ -131,6 +166,31 @@ export default function PublicCardPage() {
     document.addEventListener('keydown', closeOnEscape)
     return () => { document.removeEventListener('mousedown', closeOnOutsideClick); document.removeEventListener('keydown', closeOnEscape) }
   }, [shareMenuOpen])
+  useEffect(() => {
+    if (!shareMenuOpen || !isMobileCardViewport() || !card || slug !== card.slug) return
+    const variantKey = hasVisualModePreference ? visualMode : card.public_visual_variant ?? 'dark_black'
+    const cacheKey = `${card.id}:${variantKey}:${language}`
+    if (cardImageCacheRef.current?.key === cacheKey || cardImagePromiseRef.current?.key === cacheKey) return
+
+    const timer = window.setTimeout(() => {
+      const source = cardVisualRef.current
+      if (!source) return
+      setCardImagePreparing(true)
+      const promise = createCardPng(source)
+      cardImagePromiseRef.current = { key: cacheKey, promise }
+      void promise
+        .then((blob) => { cardImageCacheRef.current = { key: cacheKey, blob } })
+        .catch(() => undefined)
+        .finally(() => {
+          if (cardImagePromiseRef.current?.promise === promise) {
+            cardImagePromiseRef.current = null
+            setCardImagePreparing(false)
+          }
+        })
+    }, 0)
+
+    return () => window.clearTimeout(timer)
+  }, [card, hasVisualModePreference, language, shareMenuOpen, slug, visualMode])
   useEffect(() => {
     const stage = desktopStageRef.current
     if (!stage) return
@@ -165,46 +225,47 @@ export default function PublicCardPage() {
     if (next) scrollToCardActions(actionPanelRef.current)
   }
 
-  async function getCardPng() {
+  async function resolveCardPng() {
+    const cacheKey = `${cardId}:${variant}:${language}`
+    if (cardImageCacheRef.current?.key === cacheKey) return cardImageCacheRef.current.blob
+    if (cardImagePromiseRef.current?.key === cacheKey) return cardImagePromiseRef.current.promise
+
     const source = cardVisualRef.current
     if (!source) throw new Error('Cartão indisponível.')
-
-    await document.fonts.ready
-    await waitForImages(source)
-
-    const width = source.offsetWidth
-    const height = source.offsetHeight
-    if (width <= 0 || height <= 0) {
-      throw new Error(`Dimensões inválidas do cartão: ${width}x${height}.`)
-    }
-
-    const htmlToImage = await loadHtmlToImage()
-    const blob = await htmlToImage.toBlob(source, {
-      cacheBust: true,
-      pixelRatio: 2,
-      width,
-      height,
-      canvasWidth: width * 2,
-      canvasHeight: height * 2,
-      skipAutoScale: true,
-      filter: (node: HTMLElement) => !node.classList?.contains('public-card-initial-toolbar'),
-    })
-
-    if (!blob) throw new Error('O gerador não retornou uma imagem.')
+    const blob = await createCardPng(source)
+    cardImageCacheRef.current = { key: cacheKey, blob }
     return blob
   }
 
   async function saveCardPng() {
     setShareAction('card')
     try {
-      const blob = await getCardPng()
-      downloadBlob(blob, `cartao-${cardSlug}.png`)
-      toast.success('Imagem do cartão salva em PNG.')
+      const blob = await resolveCardPng()
+      const filename = `cartao-${cardSlug}.png`
+      const file = new File([blob], filename, { type: 'image/png' })
+      const canShareImage = isMobileCardViewport()
+        && typeof navigator.share === 'function'
+        && typeof navigator.canShare === 'function'
+        && navigator.canShare({ files: [file] })
+
+      if (canShareImage) {
+        await navigator.share({
+          title: `${name} | Cartão de visitas Invest RS`,
+          text: 'Salve ou compartilhe a imagem do meu cartão de visitas.',
+          files: [file],
+        })
+        toast.success('Imagem enviada ao menu de compartilhamento do aparelho.')
+      } else {
+        downloadBlob(blob, filename)
+        toast.success('Imagem do cartão salva em PNG.')
+      }
+
       void recordCardEvent(cardId, 'share')
       setShareMenuOpen(false)
     } catch (error) {
-      console.error('Falha ao gerar a imagem PNG do cartão.', error)
-      toast.error('Não foi possível gerar a imagem do cartão.')
+      if (error instanceof DOMException && error.name === 'AbortError') return
+      console.error('Falha ao gerar ou compartilhar a imagem PNG do cartão.', error)
+      toast.error('Não foi possível salvar ou compartilhar a imagem do cartão.')
     } finally { setShareAction(null) }
   }
 
@@ -284,7 +345,7 @@ export default function PublicCardPage() {
               {shareMenuOpen ? <div className="share-contact-popover" role="menu" aria-label="Opções para compartilhar contato">
                 <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void actions.copyVCard().then(() => setShareMenuOpen(false))}><Copy aria-hidden="true" /><span>Copiar vCard</span></button>
                 <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={shareOnWhatsApp}><MessageCircle aria-hidden="true" /><span>Enviar por WhatsApp</span></button>
-                <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void saveCardPng()}><Download aria-hidden="true" /><span>{shareAction === 'card' ? 'Gerando...' : 'Salvar Card'}</span></button>
+                <button type="button" role="menuitem" disabled={Boolean(shareAction) || cardImagePreparing} onClick={() => void saveCardPng()}><Download aria-hidden="true" /><span>{cardImagePreparing ? 'Preparando imagem...' : shareAction === 'card' ? 'Abrindo...' : <><span className="share-image-label-desktop">Salvar Card</span><span className="share-image-label-mobile">Salvar como Imagem</span></>}</span></button>
                 <button type="button" role="menuitem" disabled={Boolean(shareAction) || Boolean(actions.running)} onClick={() => void actions.downloadQrCode().then(() => setShareMenuOpen(false))}><QrCode aria-hidden="true" /><span>Salvar QR-Code</span></button>
                 <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={shareByGmail}><Mail aria-hidden="true" /><span>Enviar pelo Gmail</span></button>
                 <button type="button" role="menuitem" disabled={Boolean(shareAction)} onClick={() => void shareViaAirDrop()}><FileUp aria-hidden="true" /><span>{shareAction === 'airdrop' ? 'Abrindo...' : 'AirDrop'}</span></button>
