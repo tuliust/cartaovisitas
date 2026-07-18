@@ -6,6 +6,8 @@ A identidade visual é institucional e controlada.
 
 O colaborador não cria temas livres nem envia backgrounds próprios.
 
+As seis variantes constituem a fonte de verdade para cores, opacidades, superfícies, bordas, ícones e botões. Componentes não devem criar paletas paralelas quando existir um token semântico equivalente.
+
 ## Seis variantes
 
 ### Escuras
@@ -24,7 +26,17 @@ light_image_3
 light_image_4
 ```
 
-Cada variante possui tokens próprios de cor, background, superfície, texto, overlay e opacidade.
+Cada variante possui tokens próprios de:
+
+- background e overlay;
+- superfície;
+- texto;
+- borda;
+- ícone;
+- botão principal;
+- botão secundário;
+- botão auxiliar;
+- opacidades correspondentes.
 
 ## Seleção global
 
@@ -61,6 +73,106 @@ Para o colaborador:
 
 No preview de `/meu-cartao/editar`, a variante `light_image_4` usa uma superfície branca semitransparente específica atrás dos contatos. A superfície utiliza background com canal alpha e não aplica `opacity` ao container ou ao texto.
 
+## Painel administrativo de identidade
+
+Rota:
+
+```text
+/admin/configuracoes
+```
+
+O editor de identidade visual:
+
+- mantém configuração independente para cada uma das seis variantes;
+- atualiza a prévia da coluna direita antes do salvamento;
+- preserva alterações locais ao alternar entre variantes;
+- salva todas as variantes em uma única operação;
+- atualiza o `BrandSettingsContext` da aba atual;
+- sincroniza outras abas abertas pelo evento `storage`;
+- registra auditoria dos campos alterados.
+
+A prévia demonstra, para a variante ativa:
+
+- logo correspondente ao contraste;
+- background, imagem e overlay;
+- superfície e borda;
+- texto principal e secundário;
+- ícone Lucide real;
+- input;
+- botão principal;
+- botão secundário;
+- botão auxiliar;
+- estados semânticos de sucesso e alerta.
+
+Os modos com imagem sem asset configurado usam automaticamente o modo sólido da mesma família visual, preservando os tokens específicos de cor, superfície e botões.
+
+## Tokens semânticos
+
+A aplicação deriva tokens para:
+
+- texto;
+- texto secundário;
+- texto sutil;
+- superfícies translúcidas, sólidas e elevadas;
+- bordas;
+- ícones;
+- inputs e placeholders;
+- header;
+- botões principal, secundário e auxiliar;
+- foco;
+- modal e backdrop;
+- sucesso, alerta e erro.
+
+Os tokens são gerados em:
+
+```text
+src/lib/cardVisualVariants.ts
+```
+
+E aplicados globalmente em:
+
+```text
+src/contexts/VisualModeProvider.tsx
+```
+
+Arquivos de cobertura final:
+
+```text
+src/brand-token-contract.css
+src/brand-token-specificity.css
+src/brand-token-coverage.css
+src/brand-token-auth.css
+```
+
+Esses arquivos são carregados depois dos estilos históricos para garantir que os tokens das variantes prevaleçam sem alterar a estrutura dos componentes.
+
+## Cobertura esperada
+
+Os tokens devem alcançar:
+
+- Home;
+- login, cadastro e recuperação de senha;
+- cartão público e preview de edição;
+- header do colaborador e header administrativo;
+- menus, popovers e modais;
+- inputs, selects, textareas e autofill;
+- ações principais e funcionalidades adicionais;
+- Guia, Termos, Estatísticas e páginas administrativas;
+- tabelas, filtros, paginação e estados vazios;
+- toasts e feedbacks.
+
+## Escopo institucional fixo
+
+Os itens abaixo não variam entre os seis modos:
+
+- família tipográfica principal: Inter, com fallbacks do sistema;
+- escala tipográfica e pesos;
+- estrutura e legibilidade do QR Code;
+- cores semânticas de sucesso, alerta e erro;
+- assinatura de e-mail.
+
+A assinatura usa Arial/Helvetica, fundo branco e cores próprias por compatibilidade com Gmail e outros clientes de e-mail. Ela não deve herdar a variante visual da página.
+
 ## Home e autenticação
 
 - desktops com baixa altura usam uma composição compacta sem aplicar `zoom` ou `transform: scale()`;
@@ -68,7 +180,8 @@ No preview de `/meu-cartao/editar`, a variante `light_image_4` usa uma superfíc
 - monitores com altura normal preservam a composição ampla;
 - cards compartilhados de autenticação permanecem centralizados enquanto couberem na viewport;
 - alinhamento no topo é reservado para mobile baixo ou alturas desktop críticas em que o conteúdo não cabe;
-- áreas clicáveis preservam dimensão mínima e os cards usam a rolagem da página como proteção.
+- áreas clicáveis preservam dimensão mínima e os cards usam a rolagem da página como proteção;
+- campos, autofill, ícones, bordas e foco consomem os tokens da variante ativa.
 
 ## Formulário do colaborador
 
@@ -77,26 +190,9 @@ No preview de `/meu-cartao/editar`, a variante `light_image_4` usa uma superfíc
 - links já salvos não são sobrescritos automaticamente;
 - check verde e X vermelho apresentam o resultado visual da disponibilidade;
 - campos institucionais bloqueados usam estado inativo de alto contraste;
-- prefixos de redes sociais e o sufixo de e-mail mantêm texto branco sobre fundo destacado;
+- prefixos de redes sociais e o sufixo de e-mail mantêm contraste conforme os tokens;
 - o editor de foto usa thumbnail, ações compactas, drag-and-drop e crop;
 - o preview e o salvamento formam um painel lateral sticky no desktop.
-
-## Tokens semânticos
-
-A aplicação deriva tokens para:
-
-- texto;
-- texto secundário;
-- superfícies;
-- bordas;
-- inputs;
-- header;
-- botões;
-- foco;
-- modal;
-- estados.
-
-Componentes devem consumir os tokens semânticos e evitar paletas paralelas.
 
 ## Transparência
 
@@ -104,9 +200,10 @@ Componentes devem consumir os tokens semânticos e evitar paletas paralelas.
 - usar `rgba()` ou `color-mix()` no background;
 - superfícies administrativas de configuração permanecem opacas;
 - modais devem usar superfície sólida;
-- `card_surface_opacity` afeta somente superfícies previstas.
+- `surface_opacity` afeta somente superfícies previstas;
+- `background_opacity` afeta somente o overlay do background.
 
-O modal PWA usa uma superfície elevada sólida e um backdrop semântico nas seis variantes, sem herdar `card_surface_opacity`.
+O modal PWA usa uma superfície elevada sólida e um backdrop semântico nas seis variantes, sem herdar a opacidade da superfície do cartão.
 
 ## Logos
 
@@ -142,6 +239,27 @@ O Guia público usa:
 - no desktop, índice lateral sticky, com altura de `100dvh`, sem rolagem interna e com botões de dimensões uniformes;
 - no desktop, os cards permanecem no fluxo e deslizam ao lado do índice fixado no topo;
 - uma coluna no mobile e índice em duas colunas no tablet quando houver espaço.
+
+## Auditoria estática do contrato visual
+
+Comando:
+
+```powershell
+npm.cmd run qa:theme
+```
+
+A auditoria verifica:
+
+- cadastro das seis variantes;
+- presença dos tokens semânticos obrigatórios;
+- carregamento dos arquivos de contrato;
+- aplicação global e aliases legados;
+- sincronização entre abas;
+- composição mínima da prévia administrativa;
+- cobertura de autenticação e autofill;
+- ausência de `@ts-nocheck` em `src`.
+
+A auditoria estática complementa, mas não substitui, a validação visual manual das seis variantes.
 
 ## PWA
 
