@@ -72,6 +72,8 @@ const brandProvider = read('src/contexts/BrandSettingsProvider.tsx')
 const main = read('src/main.tsx')
 const adminPreview = read('src/pages/admin/AdminBrandSettingsPage.tsx')
 const templateEditor = read('src/components/admin/TemplateOptionsEditor.tsx')
+const employeeLogin = read('src/pages/EmployeeLoginPage.tsx')
+const adminLogin = read('src/pages/admin/AdminLoginPage.tsx')
 const tokenContract = read('src/brand-token-contract.css')
 const tokenSpecificity = read('src/brand-token-specificity.css')
 const tokenCoverage = read('src/brand-token-coverage.css')
@@ -111,6 +113,26 @@ requireFragments('Escopo institucional documentado no painel', templateEditor, [
   'Escopo fixo:',
   'assinatura de e-mail',
 ])
+requireFragments('Credenciais reconhecíveis no login do colaborador', employeeLogin, [
+  'method="post"',
+  'name="username"',
+  'type="email"',
+  'autoComplete="username"',
+  'name="password"',
+  'autoComplete="current-password"',
+  'type="submit"',
+  'buildInvestEmail(email)',
+])
+requireFragments('Credenciais reconhecíveis no login administrativo', adminLogin, [
+  'method="post"',
+  'name="username"',
+  'type="email"',
+  'autoComplete="username"',
+  'name="password"',
+  'autoComplete="current-password"',
+  'type="submit"',
+  'buildInvestEmail(email)',
+])
 requireFragments('Contrato base dos componentes', tokenContract, [
   '.primary-button',
   '.secondary-button',
@@ -134,6 +156,7 @@ requireFragments('Cobertura de autenticação e autofill', tokenAuth, [
   '--auth-input-bg: var(--semantic-input-bg)',
   'input:-webkit-autofill',
   '.password-visibility-button',
+  '.email-full-field',
 ])
 
 const tsNoCheckFiles = walk('src')
