@@ -77,11 +77,15 @@ const adminLogin = read('src/pages/admin/AdminLoginPage.tsx')
 const homePage = read('src/pages/HomePage.tsx')
 const managedPageView = read('src/components/ManagedPageView.tsx')
 const publicCardPage = read('src/pages/PublicCardPage.tsx')
+const signaturePage = read('src/pages/MyCardEmailSignaturePage.tsx')
+const collaboratorNavigation = read('src/components/collaborator/CollaboratorNavigation.tsx')
+const collaboratorAccountMenu = read('src/components/collaborator/CollaboratorAccountMenu.tsx')
 const tokenContract = read('src/brand-token-contract.css')
 const tokenSpecificity = read('src/brand-token-specificity.css')
 const tokenCoverage = read('src/brand-token-coverage.css')
 const tokenAuth = read('src/brand-token-auth.css')
 const mobileExperience = read('src/mobile-experience-overrides.css')
+const mobileFollowup = read('src/mobile-experience-followup.css')
 
 requireFragments('Seis variantes no cadastro', brandSettings, variants)
 requireFragments('Seis variantes no seletor', visualVariants, variants)
@@ -104,6 +108,7 @@ requireFragments('CSS canônico carregado por último', main, [
   "import './brand-token-coverage.css'",
   "import './brand-token-auth.css'",
   "import './mobile-experience-overrides.css'",
+  "import './mobile-experience-followup.css'",
 ])
 requireFragments('Prévia administrativa completa', adminPreview, [
   'brand-preview-input',
@@ -176,6 +181,38 @@ requireFragments('Controles funcionais da experiência mobile', `${homePage}\n${
   'mobileActionsExpanded',
   'scrollToCardActions',
   'aria-controls="card-lower-actions"',
+])
+requireFragments('Header autenticado simplificado no mobile', `${collaboratorNavigation}\n${collaboratorAccountMenu}\n${mobileFollowup}`, [
+  'collaborator-nav--desktop',
+  'collaborator-nav--mobile',
+  'includeNavigation',
+  'isAdmin={isAdmin}',
+  '.collaborator-nav--desktop',
+  '.collaborator-nav.collaborator-nav--mobile',
+])
+requireFragments('Correções de estatísticas e salvamento no mobile', mobileFollowup, [
+  '.analytics-filters .period-buttons',
+  '.analytics-kpis.analytics-kpis-primary',
+  '.analytics-kpis-primary article > strong',
+  '.employee-card-form.admin-card-form--desktop-actions .admin-card-form-actions',
+])
+requireFragments('Prévia de assinatura responsiva e Gmail preferencial', `${signaturePage}\n${mobileFollowup}`, [
+  'SIGNATURE_PREVIEW_WIDTH',
+  'ResizeObserver',
+  "window.location.href = 'googlegmail://'",
+  'signature-preview-scale-stage',
+])
+requireFragments('Compartilhamento nativo da imagem do cartão', `${publicCardPage}\n${mobileFollowup}`, [
+  'navigator.canShare({ files: [file] })',
+  'navigator.share({',
+  'cardImagePreparing',
+  'share-image-label-mobile',
+  'Salvar como Imagem',
+])
+requireFragments('Modal de instalação empilhado no mobile', mobileFollowup, [
+  '.install-modal-header',
+  'grid-template-columns: minmax(0, 1fr)',
+  '.install-modal-icon',
 ])
 
 const tsNoCheckFiles = walk('src')
