@@ -16,21 +16,30 @@ export default function CollaboratorNavigation({ authenticated, isAdmin = false,
   if (useBackButton) return <nav className="collaborator-nav" aria-label="Navegação">{backButton}<VisualModeSelector variant="compact" />{authenticated ? <CollaboratorAccountMenu card={card} onLogout={onLogout} /> : <Link className="collaborator-nav-item" to="/entrar"><LogIn aria-hidden="true" /><span>Entrar</span></Link>}</nav>
   if (!authenticated) return <nav className="collaborator-nav" aria-label="Navegação"><NavLink className="collaborator-nav-item" to="/"><Home aria-hidden="true" /><span>Home</span></NavLink><VisualModeSelector variant="compact" /><Link className="collaborator-nav-item" to="/entrar"><LogIn aria-hidden="true" /><span>Entrar</span></Link></nav>
   const pagePath = card?.slug ? `/${card.slug}` : '/meu-cartao/editar'
-  return <nav className="collaborator-nav" aria-label="Navegação do colaborador">
-    <NavLink end className={({ isActive }) => `collaborator-nav-item${isActive ? ' active' : ''}`} to="/" title="Home"><Home aria-hidden="true" /><span>Home</span></NavLink>
-    <NavLink className={({ isActive }) => `collaborator-nav-item${isActive && Boolean(card?.slug) ? ' active' : ''}`} to={pagePath} title="Minha Página"><Contact aria-hidden="true" /><span>Minha Página</span></NavLink>
-    <NavLink className={({ isActive }) => `collaborator-nav-item${isActive ? ' active' : ''}`} to="/meu-cartao/editar" title="Editar"><Pencil aria-hidden="true" /><span>Editar</span></NavLink>
-    {actions ? <CollaboratorMoreMenu
-      disabled={!card}
-      running={actions.running}
-      onShareContact={() => { if (card?.slug) navigate(`/${card.slug}`, { state: { openShareMenu: true } }) }}
-      onInstallApp={openInstallModal}
-      onEmailFooter={() => navigate('/meu-cartao/assinatura-de-email')}
-      onStatistics={() => navigate('/meu-cartao/estatisticas')}
-      onWallet={actions.openWallet}
-    /> : null}
-    {isAdmin ? <NavLink className={({ isActive }) => `collaborator-nav-item${isActive ? ' active' : ''}`} to="/admin/cartoes" title="Admin"><LayoutDashboard aria-hidden="true" /><span>Admin</span></NavLink> : null}
-    <VisualModeSelector variant="compact" />
-    <button className="collaborator-nav-item collaborator-nav-logout" type="button" aria-label="Sair" title="Sair" onClick={onLogout}><LogOut aria-hidden="true" /><span>Sair</span></button>
-  </nav>
+  const moreMenu = actions ? <CollaboratorMoreMenu
+    disabled={!card}
+    running={actions.running}
+    onShareContact={() => { if (card?.slug) navigate(`/${card.slug}`, { state: { openShareMenu: true } }) }}
+    onInstallApp={openInstallModal}
+    onEmailFooter={() => navigate('/meu-cartao/assinatura-de-email')}
+    onStatistics={() => navigate('/meu-cartao/estatisticas')}
+    onWallet={actions.openWallet}
+  /> : null
+
+  return <>
+    <nav className="collaborator-nav collaborator-nav--desktop" aria-label="Navegação do colaborador">
+      <NavLink end className={({ isActive }) => `collaborator-nav-item${isActive ? ' active' : ''}`} to="/" title="Home"><Home aria-hidden="true" /><span>Home</span></NavLink>
+      <NavLink className={({ isActive }) => `collaborator-nav-item${isActive && Boolean(card?.slug) ? ' active' : ''}`} to={pagePath} title="Minha Página"><Contact aria-hidden="true" /><span>Minha Página</span></NavLink>
+      <NavLink className={({ isActive }) => `collaborator-nav-item${isActive ? ' active' : ''}`} to="/meu-cartao/editar" title="Editar"><Pencil aria-hidden="true" /><span>Editar</span></NavLink>
+      {moreMenu}
+      {isAdmin ? <NavLink className={({ isActive }) => `collaborator-nav-item${isActive ? ' active' : ''}`} to="/admin/cartoes" title="Admin"><LayoutDashboard aria-hidden="true" /><span>Admin</span></NavLink> : null}
+      <VisualModeSelector variant="compact" />
+      <button className="collaborator-nav-item collaborator-nav-logout" type="button" aria-label="Sair" title="Sair" onClick={onLogout}><LogOut aria-hidden="true" /><span>Sair</span></button>
+    </nav>
+    <nav className="collaborator-nav collaborator-nav--mobile" aria-label="Navegação compacta do colaborador">
+      {moreMenu}
+      <VisualModeSelector variant="compact" />
+      <CollaboratorAccountMenu card={card} onLogout={onLogout} includeNavigation isAdmin={isAdmin} />
+    </nav>
+  </>
 }
