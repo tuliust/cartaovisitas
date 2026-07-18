@@ -118,9 +118,16 @@ export function ManagedPageView({ pageKey, variant }: ManagedPageViewProps) {
   const searchId = variant === 'guide' ? 'guide-search-input' : 'legal-search-input'
   const suggestionsId = variant === 'guide' ? 'guide-search-suggestions' : 'legal-search-suggestions'
   const searchLabel = variant === 'guide' ? 'Buscar no guia' : 'Buscar nos termos'
+  const topicLabel = variant === 'guide' ? 'Selecionar tópico do guia' : 'Selecionar seção dos termos'
 
   return <CollaboratorLayout title={page.title} useBackButton headerContent={<div className="guide-search"><label htmlFor={searchId}><Search aria-hidden="true" /><span className="sr-only">{searchLabel}</span><input id={searchId} type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={searchLabel} autoComplete="off" aria-controls={suggestionsId} aria-expanded={Boolean(search)} /></label>{search ? <div className="guide-search-suggestions" id={suggestionsId} role="listbox" aria-label={variant === 'guide' ? 'Sugestões do guia' : 'Sugestões dos termos'}>{suggestions.length ? suggestions.map((section) => <button type="button" role="option" aria-selected={section.id === activeSection} key={section.id} onClick={() => goToSection(section.id)}><Search aria-hidden="true" /><span>{section.title}</span></button>) : <p>Nenhum tópico encontrado.</p>}</div> : null}</div>}>
     <div className={`guide-layout${variant === 'legal' ? ' legal-guide-layout' : ''}`}>
+      <label className="guide-mobile-selector">
+        <span>{topicLabel}</span>
+        <select value={activeSection} onChange={(event) => goToSection(event.target.value)} aria-label={topicLabel}>
+          {page.content.sections.map((section, index) => <option value={section.id} key={section.id}>{String(index + 1).padStart(2, '0')} — {section.title}</option>)}
+        </select>
+      </label>
       <nav className="guide-index" aria-label={variant === 'guide' ? 'Índice do guia' : 'Índice dos termos'}>
         <ol>{page.content.sections.map((section, index) => {
           const Icon = getSectionIcon(section.id, variant)
