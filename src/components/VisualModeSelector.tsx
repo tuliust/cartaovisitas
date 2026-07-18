@@ -12,9 +12,20 @@ type VisualModeSelectorProps = {
   popoverPlacement?: 'bottom-end' | 'top-end'
 }
 
-export default function VisualModeSelector({ variant = 'default', triggerContent, triggerClassName = '', popoverPlacement = 'bottom-end' }: VisualModeSelectorProps) {
+export default function VisualModeSelector({
+  variant = 'default',
+  triggerContent,
+  triggerClassName = '',
+  popoverPlacement = 'bottom-end',
+}: VisualModeSelectorProps) {
   const { settings } = useBrandSettings()
-  const { visualMode, setVisualMode, visualModeOptions, keepVisualModeAsDefault, setKeepVisualModeAsDefault } = useVisualMode()
+  const {
+    visualMode,
+    setVisualMode,
+    visualModeOptions,
+    keepVisualModeAsDefault,
+    setKeepVisualModeAsDefault,
+  } = useVisualMode()
   const [open, setOpen] = useState(false)
   const [popoverStyle, setPopoverStyle] = useState<CSSProperties>({})
   const containerRef = useRef<HTMLDivElement>(null)
@@ -29,9 +40,11 @@ export default function VisualModeSelector({ variant = 'default', triggerContent
 
   useLayoutEffect(() => {
     if (!open || !triggerRef.current) return
+
     const rect = triggerRef.current.getBoundingClientRect()
     const width = Math.min(340, window.innerWidth - 28)
     const left = Math.max(14, Math.min(rect.right - width, window.innerWidth - width - 14))
+
     setPopoverStyle({
       left,
       top: popoverPlacement === 'top-end' ? rect.top - 10 : rect.bottom + 10,
@@ -41,18 +54,24 @@ export default function VisualModeSelector({ variant = 'default', triggerContent
 
   useEffect(() => {
     if (!open) return
+
     function closeOnOutsideClick(event: MouseEvent) {
       const target = event.target as Node
-      if (!containerRef.current?.contains(target) && !popoverRef.current?.contains(target)) closeAndRestoreFocus()
+      if (!containerRef.current?.contains(target) && !popoverRef.current?.contains(target)) {
+        closeAndRestoreFocus()
+      }
     }
+
     function closeOnEscape(event: KeyboardEvent) {
       if (event.key === 'Escape') closeAndRestoreFocus()
     }
+
     const close = () => closeAndRestoreFocus()
     document.addEventListener('mousedown', closeOnOutsideClick)
     document.addEventListener('keydown', closeOnEscape)
     window.addEventListener('resize', close)
     window.addEventListener('scroll', close, true)
+
     return () => {
       document.removeEventListener('mousedown', closeOnOutsideClick)
       document.removeEventListener('keydown', closeOnEscape)
@@ -73,6 +92,7 @@ export default function VisualModeSelector({ variant = 'default', triggerContent
       {visualModeOptions.map((option) => {
         const hasImage = Boolean(getVariantImage(settings, option.value))
         const active = visualMode === option.value
+
         return <button
           className={`visual-mode-option${active ? ' active' : ''}`}
           type="button"
@@ -82,7 +102,11 @@ export default function VisualModeSelector({ variant = 'default', triggerContent
           key={option.value}
           onClick={() => setVisualMode(option.value)}
         >
-          <span className={`visual-mode-option-preview visual-mode-option-${option.value.replace(/_/g, '-')}${hasImage ? ' has-image' : ''} ${getVariantClassName(settings, option.value)}`} style={getVariantStyle(settings, option.value)} aria-hidden="true" />
+          <span
+            className={`visual-mode-option-preview visual-mode-option-${option.value.replace(/_/g, '-')}${hasImage ? ' has-image' : ''} ${getVariantClassName(settings, option.value)}`}
+            style={getVariantStyle(settings, option.value)}
+            aria-hidden="true"
+          />
         </button>
       })}
     </div> : (['dark', 'light'] as const).map((group) => <div className="visual-mode-group" key={group}>
@@ -91,6 +115,7 @@ export default function VisualModeSelector({ variant = 'default', triggerContent
         {visualModeOptions.filter(({ value }) => value.startsWith(`${group}_`)).map((option) => {
           const hasImage = Boolean(getVariantImage(settings, option.value))
           const active = visualMode === option.value
+
           return <button
             className={`visual-mode-option${active ? ' active' : ''}`}
             type="button"
@@ -100,7 +125,11 @@ export default function VisualModeSelector({ variant = 'default', triggerContent
             key={option.value}
             onClick={() => setVisualMode(option.value)}
           >
-            <span className={`visual-mode-option-preview visual-mode-option-${option.value.replace(/_/g, '-')}${hasImage ? ' has-image' : ''} ${getVariantClassName(settings, option.value)}`} style={getVariantStyle(settings, option.value)} aria-hidden="true">
+            <span
+              className={`visual-mode-option-preview visual-mode-option-${option.value.replace(/_/g, '-')}${hasImage ? ' has-image' : ''} ${getVariantClassName(settings, option.value)}`}
+              style={getVariantStyle(settings, option.value)}
+              aria-hidden="true"
+            >
               {active ? <span className="visual-mode-option-check"><Check size={13} /></span> : null}
             </span>
           </button>
@@ -108,16 +137,35 @@ export default function VisualModeSelector({ variant = 'default', triggerContent
       </div>
     </div>)}
     <label className="visual-mode-default-option">
-      <input type="checkbox" checked={keepVisualModeAsDefault} onChange={(event) => setKeepVisualModeAsDefault(event.target.checked)} />
+      <input
+        type="checkbox"
+        checked={keepVisualModeAsDefault}
+        onChange={(event) => setKeepVisualModeAsDefault(event.target.checked)}
+      />
       <span>Manter como padrão</span>
     </label>
   </section> : null
 
   return <div className={`visual-mode-selector${compact ? ' visual-mode-selector--compact' : ''}`} ref={containerRef}>
-    <button ref={triggerRef} className={`visual-mode-trigger${triggerClassName ? ` ${triggerClassName}` : ''}`} type="button" aria-label={`Escolher visual. Atual: ${activeOption?.label ?? 'Modo Escuro 1'}`} aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
+    <button
+      ref={triggerRef}
+      className={`visual-mode-trigger${triggerClassName ? ` ${triggerClassName}` : ''}`}
+      type="button"
+      aria-label={`Escolher visual. Atual: ${activeOption?.label ?? 'Modo Escuro 1'}`}
+      aria-haspopup="dialog"
+      aria-expanded={open}
+      onClick={() => setOpen((current) => !current)}
+    >
       {triggerContent ?? <>
-        <span className={`visual-mode-trigger-swatch ${getVariantClassName(settings, visualMode)}`} style={getVariantStyle(settings, visualMode)} aria-hidden="true" />
-        {!compact ? <><span>Visual</span><ChevronDown className={open ? 'open' : ''} size={15} aria-hidden="true" /></> : null}
+        <span
+          className={`visual-mode-trigger-swatch ${getVariantClassName(settings, visualMode)}`}
+          style={getVariantStyle(settings, visualMode)}
+          aria-hidden="true"
+        />
+        {!compact ? <>
+          <span>Visual</span>
+          <ChevronDown className={open ? 'open' : ''} size={15} aria-hidden="true" />
+        </> : null}
       </>}
     </button>
     {popover && typeof document !== 'undefined' ? createPortal(popover, document.body) : null}

@@ -22,7 +22,6 @@ type HtmlToImageApi = {
 const PUBLIC_CARD_DESKTOP_WIDTH = 1108
 const PUBLIC_CARD_DESKTOP_HEIGHT = 648
 const PUBLIC_CARD_DESKTOP_BOTTOM_GAP = 18
-const PUBLIC_CARD_VISUAL_WIDTH = 629
 const HTML_TO_IMAGE_SCRIPT = 'https://unpkg.com/html-to-image@1.11.13/dist/html-to-image.js'
 
 function normalizePhoneForWhatsApp(phone: string) { return phone.replace(/\D/g, '') }
@@ -43,13 +42,16 @@ function downloadBlob(blob: Blob, filename: string) {
 async function loadHtmlToImage() {
   const targetWindow = window as typeof window & { htmlToImage?: HtmlToImageApi }
   if (targetWindow.htmlToImage?.toBlob) return targetWindow.htmlToImage
+
   const existing = document.querySelector<HTMLScriptElement>(`script[src="${HTML_TO_IMAGE_SCRIPT}"]`)
   await new Promise<void>((resolve, reject) => {
     const script = existing ?? document.createElement('script')
     const onLoad = () => resolve()
     const onError = () => reject(new Error('Não foi possível carregar o gerador de imagem.'))
+
     script.addEventListener('load', onLoad, { once: true })
     script.addEventListener('error', onError, { once: true })
+
     if (!existing) {
       script.src = HTML_TO_IMAGE_SCRIPT
       script.crossOrigin = 'anonymous'
@@ -58,7 +60,11 @@ async function loadHtmlToImage() {
       resolve()
     }
   })
-  if (!targetWindow.htmlToImage?.toBlob) throw new Error('Gerador de imagem indisponível após o carregamento.')
+
+  if (!targetWindow.htmlToImage?.toBlob) {
+    throw new Error('Gerador de imagem indisponível após o carregamento.')
+  }
+
   return targetWindow.htmlToImage
 }
 
@@ -66,6 +72,7 @@ async function waitForImages(source: HTMLElement) {
   const images = Array.from(source.querySelectorAll('img'))
   await Promise.all(images.map((image) => {
     if (image.complete && image.naturalWidth > 0) return Promise.resolve()
+
     return new Promise<void>((resolve) => {
       const finish = () => resolve()
       image.addEventListener('load', finish, { once: true })
@@ -158,37 +165,30 @@ export default function PublicCardPage() {
   async function getCardPng() {
     const source = cardVisualRef.current
     if (!source) throw new Error('Cartão indisponível.')
+
     await document.fonts.ready
     await waitForImages(source)
-    const htmlToImage = await loadHtmlToImage()
-    const exportHost = document.createElement('div')
-    exportHost.className = 'public-card-export-host'
-    const exportCard = source.cloneNode(true) as HTMLElement
-    exportCard.classList.add('public-card-export-canvas')
-    exportCard.style.width = `${PUBLIC_CARD_VISUAL_WIDTH}px`
-    exportCard.style.height = `${PUBLIC_CARD_DESKTOP_HEIGHT}px`
-    exportCard.style.minHeight = `${PUBLIC_CARD_DESKTOP_HEIGHT}px`
-    exportCard.style.maxWidth = 'none'
-    exportCard.style.maxHeight = 'none'
-    exportCard.style.transform = 'none'
-    exportHost.appendChild(exportCard)
-    document.body.appendChild(exportHost)
-    try {
-      await waitForImages(exportCard)
-      const blob = await htmlToImage.toBlob(exportCard, {
-        cacheBust: true,
-        pixelRatio: 2,
-        width: PUBLIC_CARD_VISUAL_WIDTH,
-        height: PUBLIC_CARD_DESKTOP_HEIGHT,
-        canvasWidth: PUBLIC_CARD_VISUAL_WIDTH * 2,
-        canvasHeight: PUBLIC_CARD_DESKTOP_HEIGHT * 2,
-        skipAutoScale: true,
-      })
-      if (!blob) throw new Error('O gerador não retornou uma imagem.')
-      return blob
-    } finally {
-      exportHost.remove()
+
+    const width = source.offsetWidth
+    const height = source.offsetHeight
+    if (width <= 0 || height <= 0) {
+      throw new Error(`Dimensões inválidas do cartão: ${width}x${height}.`)
     }
+
+    const htmlToImage = await loadHtmlToImage()
+    const blob = await htmlToImage.toBlob(source, {
+      cacheBust: true,
+      pixelRatio: 2,
+      width,
+      height,
+      canvasWidth: width * 2,
+      canvasHeight: height * 2,
+      skipAutoScale: true,
+      filter: (node: HTMLElement) => !node.classList?.contains('public-card-initial-toolbar'),
+    })
+
+    if (!blob) throw new Error('O gerador não retornou uma imagem.')
+    return blob
   }
 
   async function saveCardPng() {
