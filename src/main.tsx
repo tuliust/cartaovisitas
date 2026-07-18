@@ -24,6 +24,7 @@ import './brand-token-auth.css'
 import './admin-brand-settings-preview.css'
 import './mobile-experience-overrides.css'
 import './mobile-experience-followup.css'
+import './mobile-experience-polish.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
