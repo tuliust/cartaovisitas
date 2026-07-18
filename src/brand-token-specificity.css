@@ -1,0 +1,144 @@
+/* Specificity bridge for legacy light/dark selectors.
+ * Keep this file after every other stylesheet.
+ */
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .primary-button,
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.home-actions, .button-grid, .admin-page-action, .signature-actions, .brand-settings-actions) .primary-button {
+  border-color: transparent;
+  background: var(--semantic-primary-bg);
+  color: var(--semantic-primary-text);
+  opacity: 1;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .secondary-button,
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.home-actions, .button-grid, .signature-actions) .secondary-button {
+  border-color: var(--semantic-border);
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-secondary-text);
+  opacity: 1;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auxiliary-button,
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.home-actions, .button-grid, .signature-actions) .auxiliary-button {
+  border-color: var(--semantic-border);
+  background: var(--semantic-auxiliary-bg);
+  color: var(--semantic-auxiliary-text);
+  opacity: 1;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .primary-button:is(:hover, :focus-visible):not(:disabled) {
+  background: color-mix(in srgb, var(--semantic-primary-base) 88%, var(--semantic-text));
+  color: var(--semantic-primary-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .secondary-button:is(:hover, :focus-visible):not(:disabled) {
+  border-color: color-mix(in srgb, var(--semantic-icon) 72%, transparent);
+  background: color-mix(in srgb, var(--semantic-secondary-bg) 82%, var(--semantic-text));
+  color: var(--semantic-secondary-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auxiliary-button:is(:hover, :focus-visible):not(:disabled) {
+  border-color: color-mix(in srgb, var(--semantic-icon) 72%, transparent);
+  background: color-mix(in srgb, var(--semantic-auxiliary-bg) 82%, var(--semantic-text));
+  color: var(--semantic-auxiliary-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.collaborator-topbar, .admin-topbar) {
+  border-bottom-color: var(--semantic-border);
+  background: var(--semantic-header-bg);
+  color: var(--semantic-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(
+  .admin-login-card,
+  .admin-card,
+  .admin-form-section,
+  .brand-settings-section,
+  .collaborator-card
+) :is(
+  input:not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+  select,
+  textarea
+),
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.admin-search-input, .admin-filter-select, .admin-sort-select),
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .audit-filters :is(input, select) {
+  border-color: var(--semantic-border);
+  background: var(--semantic-input-bg);
+  color: var(--semantic-input-text);
+  caret-color: var(--semantic-input-text);
+  opacity: 1;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.email-suffix-field, .url-prefix-field, .password-input-field) {
+  border-color: var(--semantic-border);
+  background: var(--semantic-input-bg);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.email-suffix-field, .url-prefix-field, .password-input-field) input {
+  background: transparent;
+  color: var(--semantic-input-text);
+  -webkit-text-fill-color: var(--semantic-input-text);
+  opacity: 1;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.email-suffix-label, .url-prefix-label) {
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-secondary-text);
+  -webkit-text-fill-color: var(--semantic-secondary-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.confirmation-modal, .crop-modal, .wallet-modal, .invite-user-modal, .audit-detail) {
+  border-color: var(--semantic-border);
+  background: var(--semantic-surface-raised);
+  color: var(--semantic-text);
+  opacity: 1;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.confirmation-modal, .crop-modal, .wallet-modal, .invite-user-modal, .audit-detail) :is(h1, h2, h3, strong, label) {
+  color: var(--semantic-text);
+  opacity: 1;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.confirmation-modal, .crop-modal, .wallet-modal, .invite-user-modal, .audit-detail) :is(p, small) {
+  color: var(--semantic-muted);
+  opacity: 1;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.confirmation-modal, .crop-modal, .wallet-modal, .invite-user-modal, .audit-detail) :is(input, select, textarea) {
+  border-color: var(--semantic-border);
+  background: var(--semantic-input-bg);
+  color: var(--semantic-input-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .action-panel .button-grid .secondary-button,
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .action-panel .public-language-toggle,
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .signature-language-toggle,
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .period-buttons button {
+  border-color: var(--semantic-border);
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-secondary-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .action-panel :is(.button-grid .auxiliary-button, .extra-action-button) {
+  border-color: var(--semantic-border);
+  background: var(--semantic-auxiliary-bg);
+  color: var(--semantic-auxiliary-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .action-panel :is(.button-grid .primary-button, .public-language-toggle button.active),
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .signature-language-toggle button.active,
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .period-buttons button.active {
+  border-color: transparent;
+  background: var(--semantic-primary-bg);
+  color: var(--semantic-primary-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .toast {
+  border-color: var(--semantic-border);
+  background: var(--semantic-surface-raised);
+  color: var(--semantic-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .toast.success { border-left-color: var(--semantic-success); }
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .toast.error { border-left-color: var(--semantic-danger); }
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .toast.info { border-left-color: var(--semantic-warning); }
