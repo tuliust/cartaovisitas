@@ -1,5 +1,5 @@
 import { ImagePlus, Trash2, Upload } from 'lucide-react'
-import { useRef, useState, type CSSProperties, type DragEvent } from 'react'
+import { useRef, type CSSProperties, type DragEvent } from 'react'
 import {
   templateColorPalette,
   type BrandAssetType,
@@ -7,33 +7,26 @@ import {
   type TemplateColor,
   type VisualVariantSettings,
 } from '../../lib/brandSettings'
+import {
+  brandTemplateElements,
+  getBrandTemplateElement,
+  type TemplateElementKey,
+} from '../../lib/brandTemplateElements'
 import { getVariantClassName, getVariantStyle, publicVisualVariantOptions, type PublicVisualVariant } from '../../lib/cardVisualVariants'
 
 type AssetUrlKey = 'logo_on_dark_url' | 'logo_on_light_url' | 'card_bg_dark_image_1_url' | 'card_bg_dark_image_2_url' | 'card_bg_light_image_3_url' | 'card_bg_light_image_4_url'
-type EditableColorKey = 'background_color' | 'surface_color' | 'border_color' | 'icon_color' | 'primary_button_color' | 'secondary_button_color' | 'auxiliary_button_color'
-type EditableOpacityKey = 'background_opacity' | 'surface_opacity' | 'border_opacity' | 'icon_opacity' | 'primary_button_opacity' | 'secondary_button_opacity' | 'auxiliary_button_opacity'
-type ElementKey = 'background' | 'surface' | 'border' | 'icon' | 'font' | 'primary' | 'secondary' | 'auxiliary'
 
 type TemplateOptionsEditorProps = {
   activeVariant: PublicVisualVariant
+  activeElement: TemplateElementKey
   values: BrandSettings
   uploading: BrandAssetType | ''
   onActiveVariantChange: (variant: PublicVisualVariant) => void
+  onActiveElementChange: (element: TemplateElementKey) => void
   onAssetChange: (key: AssetUrlKey, value: string) => void
   onUpload: (file: File, type: BrandAssetType, key: AssetUrlKey) => Promise<void>
   onVariantChange: <K extends keyof VisualVariantSettings>(key: K, value: VisualVariantSettings[K]) => void
 }
-
-const elementOptions: Array<{ key: ElementKey; label: string; color?: EditableColorKey; opacity?: EditableOpacityKey }> = [
-  { key: 'background', label: 'Background', color: 'background_color', opacity: 'background_opacity' },
-  { key: 'surface', label: 'Caixa de texto', color: 'surface_color', opacity: 'surface_opacity' },
-  { key: 'border', label: 'Borda', color: 'border_color', opacity: 'border_opacity' },
-  { key: 'icon', label: 'Ícones', color: 'icon_color', opacity: 'icon_opacity' },
-  { key: 'font', label: 'Tipografia' },
-  { key: 'primary', label: 'Principal', color: 'primary_button_color', opacity: 'primary_button_opacity' },
-  { key: 'secondary', label: 'Secundário', color: 'secondary_button_color', opacity: 'secondary_button_opacity' },
-  { key: 'auxiliary', label: 'Auxiliar', color: 'auxiliary_button_color', opacity: 'auxiliary_button_opacity' },
-]
 
 const backgroundAssets: Partial<Record<PublicVisualVariant, { key: AssetUrlKey; type: BrandAssetType }>> = {
   dark_image_1: { key: 'card_bg_dark_image_1_url', type: 'card-bg-dark-1' },
@@ -44,10 +37,20 @@ const backgroundAssets: Partial<Record<PublicVisualVariant, { key: AssetUrlKey; 
 
 function AssetUploadCard({ accept, alt, help, loading, title, url, onRemove, onUpload }: { accept: string; alt: string; help: string; loading: boolean; title: string; url: string; onRemove: () => void; onUpload: (file: File) => void }) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const [dragging, setDragging] = useState(false)
+  const draggingRef = useRef(false)
+
   function select(file?: File) { if (file) onUpload(file) }
-  function drop(event: DragEvent<HTMLDivElement>) { event.preventDefault(); setDragging(false); select(event.dataTransfer.files?.[0]) }
-  return <div className={`template-asset-editor${dragging ? ' is-dragging' : ''}`} onDragEnter={(event) => { event.preventDefault(); setDragging(true) }} onDragOver={(event) => event.preventDefault()} onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(false) }} onDrop={drop}>
+  function setDragging(element: HTMLDivElement, dragging: boolean) {
+    draggingRef.current = dragging
+    element.classList.toggle('is-dragging', dragging)
+  }
+  function drop(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault()
+    setDragging(event.currentTarget, false)
+    select(event.dataTransfer.files?.[0])
+  }
+
+  return <div className="template-asset-editor" onDragEnter={(event) => { event.preventDefault(); setDragging(event.currentTarget, true) }} onDragOver={(event) => event.preventDefault()} onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(event.currentTarget, false) }} onDrop={drop}>
     <div className="template-asset-heading"><strong>{title}</strong><small>{help}</small></div>
     <input ref={inputRef} type="file" hidden tabIndex={-1} accept={accept} onChange={(event) => { select(event.target.files?.[0]); event.target.value = '' }} />
     {url ? <div className="template-asset-stage" role="group" tabIndex={0} aria-label={`${title}. Use Tab para acessar as ações da imagem.`}>
@@ -60,10 +63,9 @@ function AssetUploadCard({ accept, alt, help, loading, title, url, onRemove, onU
   </div>
 }
 
-export function TemplateOptionsEditor({ activeVariant, values, uploading, onActiveVariantChange, onAssetChange, onUpload, onVariantChange }: TemplateOptionsEditorProps) {
-  const [activeElement, setActiveElement] = useState<ElementKey>('background')
+export function TemplateOptionsEditor({ activeVariant, activeElement, values, uploading, onActiveVariantChange, onActiveElementChange, onAssetChange, onUpload, onVariantChange }: TemplateOptionsEditorProps) {
   const tokens = values.visual_variant_settings[activeVariant]
-  const element = elementOptions.find(({ key }) => key === activeElement) ?? elementOptions[0]
+  const element = getBrandTemplateElement(activeElement)
   const backgroundAsset = backgroundAssets[activeVariant]
   const backgroundUrl = backgroundAsset ? String(values[backgroundAsset.key] || '') : ''
   const dark = activeVariant.startsWith('dark_')
@@ -73,7 +75,7 @@ export function TemplateOptionsEditor({ activeVariant, values, uploading, onActi
   const opacity = element.opacity ? Math.round(tokens[element.opacity] * 100) : 100
 
   return <section className="brand-settings-section template-options-editor">
-    <div><h2>Opções de Template</h2><p className="field-help">Escolha um template e ajuste seus elementos. A prévia é atualizada em tempo real.</p></div>
+    <div><h2>Opções de Template</h2><p className="field-help">Escolha um template e ajuste seus elementos. A prévia é atualizada em tempo real e destaca os componentes afetados.</p></div>
     {(['dark', 'light'] as const).map((group) => <div className="template-mode-group" key={group}>
       <h3>{group === 'dark' ? 'Modo Escuro' : 'Modo Claro'}</h3>
       <div className="template-picker-grid" role="tablist" aria-label={group === 'dark' ? 'Templates escuros' : 'Templates claros'}>
@@ -90,7 +92,20 @@ export function TemplateOptionsEditor({ activeVariant, values, uploading, onActi
     </div>
     {backgroundAsset && !backgroundUrl ? <p className="template-fallback-note">Sem uma imagem configurada, este modo utiliza automaticamente o background sólido da mesma família, preservando suas cores, superfícies e botões.</p> : null}
 
-    <label className="template-element-select">Elemento<select value={activeElement} onChange={(event) => setActiveElement(event.target.value as ElementKey)}>{elementOptions.map((option) => <option value={option.key} key={option.key}>{option.label}</option>)}</select></label>
+    <label className="template-element-select">Elemento
+      <select value={activeElement} onChange={(event) => onActiveElementChange(event.target.value as TemplateElementKey)}>
+        {brandTemplateElements.map((option) => <option value={option.key} key={option.key}>{option.label}</option>)}
+      </select>
+    </label>
+
+    <div className="template-element-context">
+      <p>{element.description}</p>
+      <strong>Componentes afetados</strong>
+      <div className="template-affected-components">
+        {element.affectedComponents.map((component) => <span key={component}>{component}</span>)}
+      </div>
+    </div>
+
     {element.color && element.opacity ? <div className="template-token-controls">
       <fieldset><legend>Cor</legend><div className="template-palette">{templateColorPalette.map((color) => <button type="button" className={tokens[element.color!] === color ? 'active' : ''} aria-label={`Usar cor ${color}`} aria-pressed={tokens[element.color!] === color} title={color} key={color} style={{ '--template-swatch': color } as CSSProperties} onClick={() => onVariantChange(element.color!, color as TemplateColor)} />)}</div></fieldset>
       <label className="opacity-field"><span>Opacidade <output>{opacity}%</output></span><input type="range" min="0" max="100" step="1" value={opacity} onChange={(event) => onVariantChange(element.opacity!, Number(event.target.value) / 100)} /></label>
