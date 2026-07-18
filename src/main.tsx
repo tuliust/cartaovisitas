@@ -22,6 +22,7 @@ import './brand-token-specificity.css'
 import './brand-token-coverage.css'
 import './brand-token-auth.css'
 import './mobile-experience-overrides.css'
+import './mobile-experience-followup.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
