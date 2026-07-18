@@ -70,7 +70,9 @@ const visualVariants = read('src/lib/cardVisualVariants.ts')
 const visualProvider = read('src/contexts/VisualModeProvider.tsx')
 const brandProvider = read('src/contexts/BrandSettingsProvider.tsx')
 const main = read('src/main.tsx')
-const adminPreview = read('src/pages/admin/AdminBrandSettingsPage.tsx')
+const adminPreviewPage = read('src/pages/admin/AdminBrandSettingsPage.tsx')
+const brandInterfacePreview = read('src/components/admin/BrandInterfacePreview.tsx')
+const brandTemplateElements = read('src/lib/brandTemplateElements.ts')
 const templateEditor = read('src/components/admin/TemplateOptionsEditor.tsx')
 const employeeLogin = read('src/pages/EmployeeLoginPage.tsx')
 const adminLogin = read('src/pages/admin/AdminLoginPage.tsx')
@@ -84,6 +86,7 @@ const tokenContract = read('src/brand-token-contract.css')
 const tokenSpecificity = read('src/brand-token-specificity.css')
 const tokenCoverage = read('src/brand-token-coverage.css')
 const tokenAuth = read('src/brand-token-auth.css')
+const adminBrandPreviewCss = read('src/admin-brand-settings-preview.css')
 const mobileExperience = read('src/mobile-experience-overrides.css')
 const mobileFollowup = read('src/mobile-experience-followup.css')
 
@@ -107,16 +110,28 @@ requireFragments('CSS canônico carregado por último', main, [
   "import './brand-token-specificity.css'",
   "import './brand-token-coverage.css'",
   "import './brand-token-auth.css'",
+  "import './admin-brand-settings-preview.css'",
   "import './mobile-experience-overrides.css'",
   "import './mobile-experience-followup.css'",
 ])
-requireFragments('Prévia administrativa completa', adminPreview, [
-  'brand-preview-input',
-  'preview-primary-button',
-  'preview-secondary-button',
-  'preview-auxiliary-button',
+requireFragments('Prévia administrativa completa e sincronizada', `${adminPreviewPage}\n${brandInterfacePreview}\n${adminBrandPreviewCss}`, [
+  'BrandInterfacePreview',
+  'activeElement={activeElement}',
+  'brand-preview-demo-header',
+  'brand-preview-input-demo is-focus',
+  'brand-preview-button-matrix',
+  'brand-preview-popover',
   'brand-preview-statuses',
-  'getVariantStyle(values, activeVariant)',
+  'position: sticky',
+  '--admin-desktop-inverse-scale',
+])
+requireFragments('Campos explicam os componentes afetados', `${brandTemplateElements}\n${templateEditor}`, [
+  'affectedComponents',
+  'Superfícies, cards e header',
+  'Botões e destaques principais',
+  'template-element-context',
+  'template-affected-components',
+  'onActiveElementChange',
 ])
 requireFragments('Escopo institucional documentado no painel', templateEditor, [
   'Tipografia institucional fixa',
