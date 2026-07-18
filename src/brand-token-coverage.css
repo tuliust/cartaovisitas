@@ -1,0 +1,230 @@
+/* Component coverage for the six configurable visual variants.
+ * Semantic status colors and the e-mail signature remain intentionally fixed.
+ */
+
+/* Public card and administrative card previews. */
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.card-visual, .card-preview) {
+  border-color: var(--semantic-border);
+  color: var(--semantic-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.card-visual, .card-preview) :is(.job-title, .card-preview-job-title) {
+  color: var(--semantic-muted);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.card-visual, .card-preview) :is(.department, .card-preview-department) {
+  color: var(--semantic-subtle);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.card-visual, .card-preview) :is(.contact-label-text, .card-preview-contact-label-text) {
+  color: var(--semantic-muted);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.card-visual, .card-preview) :is(.contact-value, .card-preview-contact-value) {
+  color: var(--semantic-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.card-visual, .card-preview) :is(.contact-label, .card-preview-contact-label) svg {
+  color: var(--semantic-icon);
+  opacity: 1;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .public-language-toggle {
+  border-color: var(--semantic-border);
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-secondary-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .public-language-toggle button {
+  color: inherit;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .public-language-toggle button.active {
+  background: var(--semantic-primary-bg);
+  color: var(--semantic-primary-text);
+}
+
+/* Header icons use the configured icon token until an item is active. */
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.collaborator-nav-item, .admin-nav-link) svg {
+  color: var(--semantic-icon);
+  opacity: 1;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.collaborator-nav-item, .admin-nav-link):is(:hover, :focus-visible, .active) svg {
+  color: var(--semantic-primary-base);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.collaborator-nav-logout, .admin-nav-logout) svg {
+  color: var(--semantic-danger);
+}
+
+/* Dropdowns and popovers. */
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(
+  .collaborator-more-menu,
+  .share-contact-popover,
+  .visual-mode-popover,
+  .admin-actions-popover
+) {
+  border-color: var(--semantic-border);
+  background: var(--semantic-surface-raised);
+  color: var(--semantic-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(
+  .collaborator-more-menu,
+  .share-contact-popover,
+  .visual-mode-popover,
+  .admin-actions-popover
+) :is(button, a) {
+  color: var(--semantic-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(
+  .collaborator-more-menu,
+  .share-contact-popover,
+  .visual-mode-popover,
+  .admin-actions-popover
+) :is(button, a):is(:hover, :focus-visible) {
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-secondary-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(
+  .collaborator-more-menu,
+  .share-contact-popover,
+  .visual-mode-popover,
+  .admin-actions-popover
+) svg {
+  color: var(--semantic-icon);
+  opacity: 1;
+}
+
+/* Administrative navigation, tabs and filters. */
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.admin-settings-tabs, .managed-page-tabs) {
+  color: var(--semantic-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.admin-settings-tabs, .managed-page-tabs) button {
+  border-color: var(--semantic-border);
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-secondary-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.admin-settings-tabs, .managed-page-tabs) button.active,
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.admin-settings-tabs, .managed-page-tabs) button[aria-selected="true"] {
+  border-color: transparent;
+  background: var(--semantic-primary-bg);
+  color: var(--semantic-primary-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.admin-table-wrap, .admin-list-card, .audit-table-wrap) {
+  border-color: var(--semantic-border);
+  background: var(--semantic-surface);
+  color: var(--semantic-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.admin-table, .audit-table) {
+  color: var(--semantic-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.admin-table, .audit-table) :is(th, td) {
+  border-color: var(--semantic-border);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.admin-table, .audit-table) th {
+  color: var(--semantic-muted);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.admin-table, .audit-table) tbody tr:is(:hover, :focus-within) {
+  background: var(--semantic-secondary-bg);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.admin-pagination, .pagination) button {
+  border-color: var(--semantic-border);
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-secondary-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.admin-pagination, .pagination) button.active,
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.admin-pagination, .pagination) button[aria-current="page"] {
+  border-color: transparent;
+  background: var(--semantic-primary-bg);
+  color: var(--semantic-primary-text);
+}
+
+/* Configuration editor controls and previews. */
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .template-picker-grid button {
+  border-color: var(--semantic-border);
+  background: var(--semantic-surface-raised);
+  color: var(--semantic-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .template-picker-grid button.active,
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .template-picker-grid button[aria-selected="true"] {
+  border-color: var(--semantic-primary-base);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--semantic-focus) 24%, transparent);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.template-asset-editor, .template-solid-note, .template-font-token) {
+  border-color: var(--semantic-border);
+  background: var(--semantic-surface-raised);
+  color: var(--semantic-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.template-asset-editor, .template-solid-note, .template-font-token) small {
+  color: var(--semantic-muted);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .template-upload-empty {
+  border-color: var(--semantic-border);
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-secondary-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .template-palette button {
+  border-color: var(--semantic-border);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .template-palette button.active {
+  outline-color: var(--semantic-focus);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) input[type="range"] {
+  accent-color: var(--semantic-primary-base);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) input:is([type="checkbox"], [type="radio"]) {
+  accent-color: var(--semantic-primary-base);
+}
+
+/* Guide, terms and analytics. Warning, success and danger remain semantic. */
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.guide-index, .guide-content, .legal-document, .analytics-grid, .signature-layout) {
+  color: var(--semantic-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.guide-index, .guide-content, .legal-document, .analytics-grid, .signature-layout) a {
+  color: var(--semantic-primary-base);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .legal-document aside {
+  border-color: var(--semantic-warning);
+  background: color-mix(in srgb, var(--semantic-warning) 12%, var(--semantic-surface));
+  color: var(--semantic-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.analytics-bar-fill, .analytics-chart-fill) {
+  background: var(--semantic-primary-bg);
+}
+
+/* Explicit semantic feedback. */
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.admin-error, .field-error, .error-message) {
+  color: var(--semantic-danger);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.admin-success, .success-message) {
+  color: var(--semantic-success);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) :is(.field-help, .metadata-preview, .admin-page-header > div > p) {
+  color: var(--semantic-muted);
+}
