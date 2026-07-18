@@ -74,10 +74,14 @@ const adminPreview = read('src/pages/admin/AdminBrandSettingsPage.tsx')
 const templateEditor = read('src/components/admin/TemplateOptionsEditor.tsx')
 const employeeLogin = read('src/pages/EmployeeLoginPage.tsx')
 const adminLogin = read('src/pages/admin/AdminLoginPage.tsx')
+const homePage = read('src/pages/HomePage.tsx')
+const managedPageView = read('src/components/ManagedPageView.tsx')
+const publicCardPage = read('src/pages/PublicCardPage.tsx')
 const tokenContract = read('src/brand-token-contract.css')
 const tokenSpecificity = read('src/brand-token-specificity.css')
 const tokenCoverage = read('src/brand-token-coverage.css')
 const tokenAuth = read('src/brand-token-auth.css')
+const mobileExperience = read('src/mobile-experience-overrides.css')
 
 requireFragments('Seis variantes no cadastro', brandSettings, variants)
 requireFragments('Seis variantes no seletor', visualVariants, variants)
@@ -99,6 +103,7 @@ requireFragments('CSS canônico carregado por último', main, [
   "import './brand-token-specificity.css'",
   "import './brand-token-coverage.css'",
   "import './brand-token-auth.css'",
+  "import './mobile-experience-overrides.css'",
 ])
 requireFragments('Prévia administrativa completa', adminPreview, [
   'brand-preview-input',
@@ -157,6 +162,20 @@ requireFragments('Cobertura de autenticação e autofill', tokenAuth, [
   'input:-webkit-autofill',
   '.password-visibility-button',
   '.email-full-field',
+])
+requireFragments('Contrato CSS da experiência mobile', mobileExperience, [
+  '@media (max-width: 900px)',
+  '.home-page-shell .home-actions',
+  '.guide-mobile-selector',
+  '.auth-page-links.auth-page-links--three',
+  '.public-card-actions-panel.mobile-actions-expanded',
+])
+requireFragments('Controles funcionais da experiência mobile', `${homePage}\n${managedPageView}\n${publicCardPage}`, [
+  'home-support-label-mobile',
+  'guide-mobile-selector',
+  'mobileActionsExpanded',
+  'scrollToCardActions',
+  'aria-controls="card-lower-actions"',
 ])
 
 const tsNoCheckFiles = walk('src')
