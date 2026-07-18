@@ -30,6 +30,19 @@ html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card :is(.emai
   background-color: var(--semantic-input-bg) !important;
 }
 
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card .email-full-field {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card .email-full-field input {
+  width: 100%;
+  min-width: 0;
+  border-radius: inherit;
+  padding-inline: 14px;
+}
+
 html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card :is(.email-suffix-field input, .password-input-field input) {
   color: var(--semantic-input-text) !important;
   -webkit-text-fill-color: var(--semantic-input-text) !important;
