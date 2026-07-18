@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import QRCode from 'qrcode'
-import { BarChart3, BookOpen, Copy, Download, FileText, FileUp, Mail, MessageCircle, Palette, Pencil, QrCode, Smartphone, Wallet } from 'lucide-react'
+import { BookOpen, ChevronDown, ChevronUp, Copy, Download, FileText, FileUp, Mail, MessageCircle, Palette, QrCode, Smartphone, Wallet } from 'lucide-react'
 import { Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import CollaboratorLayout from '../components/collaborator/CollaboratorLayout'
 import VisualModeSelector from '../components/VisualModeSelector'
@@ -34,6 +34,17 @@ function downloadBlob(blob: Blob, filename: string) {
   anchor.click()
   anchor.remove()
   setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+
+function isMobileCardViewport() {
+  return typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches
+}
+
+function scrollToCardActions(element: HTMLElement | null) {
+  if (!element || !isMobileCardViewport()) return
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => element.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  })
 }
 
 async function loadHtmlToImage() {
@@ -97,6 +108,7 @@ export default function PublicCardPage() {
   const [qrDataUrl, setQrDataUrl] = useState('')
   const [shareMenuOpen, setShareMenuOpen] = useState(false)
   const [shareAction, setShareAction] = useState<string | null>(null)
+  const [mobileActionsExpanded, setMobileActionsExpanded] = useState(false)
 
   const qrValue = actions.qrValue
   useEffect(() => { if (card && slug === card.slug) void recordCardEvent(card.id, 'view') }, [card, slug])
@@ -104,7 +116,11 @@ export default function PublicCardPage() {
   useEffect(() => {
     const state = location.state as { openShareMenu?: boolean } | null
     if (!state?.openShareMenu) return
-    window.setTimeout(() => setShareMenuOpen(true), 0)
+    if (isMobileCardViewport()) setMobileActionsExpanded(true)
+    window.setTimeout(() => {
+      setShareMenuOpen(true)
+      scrollToCardActions(actionPanelRef.current)
+    }, 0)
     navigate(location.pathname, { replace: true, state: null })
   }, [location.pathname, location.state, navigate])
   useEffect(() => {
@@ -143,6 +159,11 @@ export default function PublicCardPage() {
   const shareMessage = `Olá! Este é o link para abrir meu cartão de visitas e salvar o contato no seu celular: ${actions.vcardUrl}`
   const desktopStageStyle = { '--public-card-desktop-scale': desktopScale, height: `${PUBLIC_CARD_DESKTOP_HEIGHT * desktopScale}px` } as CSSProperties
   function changeLanguage(next: PublicCardLanguage) { setLanguage(next); storePublicCardLanguage(next) }
+  function toggleMobileActions() {
+    const next = !mobileActionsExpanded
+    setMobileActionsExpanded(next)
+    if (next) scrollToCardActions(actionPanelRef.current)
+  }
 
   async function getCardPng() {
     const source = cardVisualRef.current
@@ -234,17 +255,24 @@ export default function PublicCardPage() {
           language={language}
           variant={variant}
           qrDataUrl={qrDataUrl}
-          toolbar={<div className="public-card-initial-toolbar" aria-label="Ações rápidas do cartão">
+          toolbar={<div className="public-card-initial-toolbar" aria-label="Idioma e ferramentas do cartão">
             <PublicCardLanguageToggle language={language} className="public-card-language-mobile" onChange={changeLanguage} />
             <div className="public-card-initial-actions">
-              <Link to="/meu-cartao/editar" aria-label="Editar" title="Editar"><Pencil aria-hidden="true" /></Link>
-              <button type="button" aria-label="Baixar QR Code" title="Baixar QR Code" disabled={Boolean(actions.running)} onClick={() => void actions.downloadQrCode()}><Download aria-hidden="true" /></button>
-              <button type="button" aria-label="Exportar" title="Exportar" disabled={Boolean(actions.running)} onClick={() => setShareMenuOpen(true)}><FileUp aria-hidden="true" /></button>
-              <Link to="/meu-cartao/estatisticas" aria-label="Estatísticas" title="Estatísticas"><BarChart3 aria-hidden="true" /></Link>
+              <button
+                className="public-card-mobile-expand"
+                type="button"
+                aria-label={mobileActionsExpanded ? 'Ocultar ferramentas do cartão' : 'Exibir ferramentas do cartão'}
+                aria-controls="card-lower-actions"
+                aria-expanded={mobileActionsExpanded}
+                title={mobileActionsExpanded ? 'Ocultar ferramentas' : 'Exibir ferramentas'}
+                onClick={toggleMobileActions}
+              >
+                {mobileActionsExpanded ? <ChevronUp aria-hidden="true" /> : <ChevronDown aria-hidden="true" />}
+              </button>
             </div>
           </div>}
         />
-        <div className={`action-panel public-card-actions-panel ${actionTheme}`} ref={actionPanelRef} id="card-lower-actions">
+        <div className={`action-panel public-card-actions-panel ${actionTheme}${mobileActionsExpanded ? ' mobile-actions-expanded' : ''}`} ref={actionPanelRef} id="card-lower-actions">
           <div className="public-card-actions-heading">
             <p className="eyebrow">Minha Página</p>
             <PublicCardLanguageToggle language={language} className="public-card-language-desktop" onChange={changeLanguage} />
