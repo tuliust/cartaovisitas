@@ -84,7 +84,10 @@ export default function HomePage() {
           </section>
           <div className="home-secondary-actions" aria-label="Links de apoio">
             <Link className="auxiliary-button" to="/guia-de-utilizacao">Guia de Uso</Link>
-            <Link className="auxiliary-button" to="/termos-de-uso-e-privacidade">Termos de Uso e Privacidade</Link>
+            <Link className="auxiliary-button" to="/termos-de-uso-e-privacidade">
+              <span className="home-support-label-desktop">Termos de Uso e Privacidade</span>
+              <span className="home-support-label-mobile">Termos e Privacidade</span>
+            </Link>
           </div>
         </div>
       </div>
