@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "npm run qa:theme && tsc -b && vite build",
     "lint": "eslint .",
     "qa:theme": "node scripts/audit-theme-contract.mjs",
     "preview": "vite preview"
