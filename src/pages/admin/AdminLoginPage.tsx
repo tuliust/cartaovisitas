@@ -3,7 +3,7 @@ import { Eye, EyeOff } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { getCurrentSession, signInWithPassword, signOut } from '../../lib/auth'
 import { getFriendlyErrorMessage } from '../../lib/errors'
-import { buildInvestEmail, INVEST_EMAIL_DOMAIN, normalizeInvestEmailInput } from '../../lib/investEmail'
+import { buildInvestEmail, normalizeInvestEmailAddressInput } from '../../lib/investEmail'
 import { isCurrentUserAdmin } from '../../lib/roles'
 import { useBrandSettings } from '../../contexts/BrandSettingsContext'
 import { useVisualMode } from '../../contexts/VisualModeContext'
@@ -15,7 +15,7 @@ export default function AdminLoginPage() {
   const { visualMode } = useVisualMode()
   const toast = useToast()
   const navigate = useNavigate()
-  const [prefix, setPrefix] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [checking, setChecking] = useState(true)
@@ -31,12 +31,14 @@ export default function AdminLoginPage() {
       .finally(() => setChecking(false))
   }, [navigate])
 
-  async function submit(event: FormEvent) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    const credentialEmail = buildInvestEmail(email)
+    setEmail(credentialEmail)
     setLoading(true)
 
     try {
-      await signInWithPassword(buildInvestEmail(prefix), password)
+      await signInWithPassword(credentialEmail, password)
 
       if (!(await isCurrentUserAdmin())) {
         await signOut()
@@ -77,22 +79,25 @@ export default function AdminLoginPage() {
           Acesso administrativo aos cartões digitais da Invest RS.
         </p>
 
-        <form className="auth-page-form" autoComplete="on" onSubmit={submit}>
+        <form className="auth-page-form" autoComplete="on" method="post" onSubmit={submit}>
           <label>
             E-mail institucional
-            <span className="email-suffix-field">
+            <span className="email-suffix-field email-full-field">
               <input
                 required
                 id="admin-login-username"
                 name="username"
-                type="text"
+                type="email"
                 inputMode="email"
                 autoComplete="username"
-                value={prefix}
-                onChange={(event) => setPrefix(normalizeInvestEmailInput(event.target.value))}
-                placeholder="seu.nome"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                value={email}
+                onChange={(event) => setEmail(normalizeInvestEmailAddressInput(event.target.value))}
+                onBlur={() => setEmail((current) => buildInvestEmail(current))}
+                placeholder="seu.nome@investrs.org.br"
               />
-              <span className="email-suffix-label">{INVEST_EMAIL_DOMAIN}</span>
             </span>
           </label>
 
@@ -121,7 +126,7 @@ export default function AdminLoginPage() {
             </span>
           </div>
 
-          <button className="primary-button auth-page-submit" disabled={loading}>
+          <button className="primary-button auth-page-submit" type="submit" disabled={loading}>
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
