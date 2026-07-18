@@ -20,6 +20,7 @@ import './unified-site-header.css'
 import './brand-token-contract.css'
 import './brand-token-specificity.css'
 import './brand-token-coverage.css'
+import './brand-token-auth.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
