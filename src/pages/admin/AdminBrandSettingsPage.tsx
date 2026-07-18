@@ -1,4 +1,5 @@
 import { useEffect, useState, type ChangeEvent, type CSSProperties } from 'react'
+import { AlertTriangle, CheckCircle2, Mail, Palette } from 'lucide-react'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { useBrandSettings } from '../../contexts/BrandSettingsContext'
 import { getCurrentSession } from '../../lib/auth'
@@ -25,7 +26,19 @@ type AssetUrlKey = 'favicon_url' | 'og_image_url' | 'background_image_url' | 'ap
 type SettingsTab = 'visual' | 'content' | 'usage_guide' | 'terms_and_privacy'
 
 function getImageDimensions(file: File) {
-  return new Promise<{ width: number; height: number }>((resolve, reject) => { const image = new Image(); const url = URL.createObjectURL(file); image.onload = () => { resolve({ width: image.naturalWidth, height: image.naturalHeight }); URL.revokeObjectURL(url) }; image.onerror = () => { reject(new Error('Não foi possível ler as dimensões da imagem.')); URL.revokeObjectURL(url) }; image.src = url })
+  return new Promise<{ width: number; height: number }>((resolve, reject) => {
+    const image = new Image()
+    const url = URL.createObjectURL(file)
+    image.onload = () => {
+      resolve({ width: image.naturalWidth, height: image.naturalHeight })
+      URL.revokeObjectURL(url)
+    }
+    image.onerror = () => {
+      reject(new Error('Não foi possível ler as dimensões da imagem.'))
+      URL.revokeObjectURL(url)
+    }
+    image.src = url
+  })
 }
 
 const settingsTabs: Array<{ key: SettingsTab; label: string }> = [
@@ -60,7 +73,11 @@ export default function AdminBrandSettingsPage() {
       if (!(await getCurrentSession())) return navigate('/admin/login', { replace: true })
       await requireAdmin()
       const loaded = await getBrandSettings()
-      if (mounted) { setValues(loaded); setSavedValues(loaded); setBooting(false) }
+      if (mounted) {
+        setValues(loaded)
+        setSavedValues(loaded)
+        setBooting(false)
+      }
     })().catch(() => navigate('/admin/login', { replace: true }))
     return () => { mounted = false }
   }, [navigate])
@@ -80,13 +97,25 @@ export default function AdminBrandSettingsPage() {
   }
 
   async function uploadFile(file: File, type: BrandAssetType, key: AssetUrlKey) {
-    setUploading(type); setError('')
+    setUploading(type)
+    setError('')
     try {
-      if (file.type === 'image/png' && (type === 'favicon' || type === 'apple-touch-icon')) { const dimensions = await getImageDimensions(file); if (dimensions.width !== dimensions.height) toast.info('Recomendamos uma imagem quadrada para este ícone.'); else if (type === 'apple-touch-icon' && (dimensions.width !== 180 || dimensions.height !== 180)) toast.info('O tamanho recomendado para o Ícone Apple Touch é 180 × 180 px.') }
-      const url = await uploadBrandAsset(file, type); update(key, url); await recordAuditLog({ action: 'brand_asset_uploaded', targetType: 'brand_settings', targetLabel: type, afterData: { type, url } }); toast.success('Imagem enviada com sucesso. Salve as configurações para aplicar.')
+      if (file.type === 'image/png' && (type === 'favicon' || type === 'apple-touch-icon')) {
+        const dimensions = await getImageDimensions(file)
+        if (dimensions.width !== dimensions.height) toast.info('Recomendamos uma imagem quadrada para este ícone.')
+        else if (type === 'apple-touch-icon' && (dimensions.width !== 180 || dimensions.height !== 180)) toast.info('O tamanho recomendado para o Ícone Apple Touch é 180 × 180 px.')
+      }
+      const url = await uploadBrandAsset(file, type)
+      update(key, url)
+      await recordAuditLog({ action: 'brand_asset_uploaded', targetType: 'brand_settings', targetLabel: type, afterData: { type, url } })
+      toast.success('Imagem enviada com sucesso. Salve as configurações para aplicar.')
+    } catch (uploadError) {
+      const message = getFriendlyErrorMessage(uploadError)
+      setError(message)
+      toast.error(message)
+    } finally {
+      setUploading('')
     }
-    catch (uploadError) { const message = getFriendlyErrorMessage(uploadError); setError(message); toast.error(message) }
-    finally { setUploading('') }
   }
 
   async function upload(event: ChangeEvent<HTMLInputElement>, type: BrandAssetType, key: AssetUrlKey) {
@@ -99,12 +128,23 @@ export default function AdminBrandSettingsPage() {
     const allowedColors = new Set<string>(templateColorPalette)
     const colorKeys = ['background_color', 'surface_color', 'border_color', 'icon_color', 'primary_button_color', 'secondary_button_color', 'auxiliary_button_color'] as const
     const invalidVariant = publicVisualVariantOptions.find(({ value }) => colorKeys.some((key) => !allowedColors.has(values.visual_variant_settings[value][key])))
-    if (invalidVariant) { const message = 'Selecione apenas cores da paleta institucional.'; setError(message); toast.error(message); return }
+    if (invalidVariant) {
+      const message = 'Selecione apenas cores da paleta institucional.'
+      setError(message)
+      toast.error(message)
+      return
+    }
     const browserTitle = values.browser_title.replace(/[\r\n]+/g, ' ').trim()
     const appleTouchTitle = values.apple_touch_title.replace(/[\r\n]+/g, ' ').trim()
-    if (!browserTitle || browserTitle.length > 100 || /[<>]/.test(browserTitle) || !appleTouchTitle || appleTouchTitle.length > 40 || /[<>]/.test(appleTouchTitle)) { const message = 'Revise os títulos: não use HTML ou quebras de linha e respeite os limites informados.'; setError(message); toast.error(message); return }
+    if (!browserTitle || browserTitle.length > 100 || /[<>]/.test(browserTitle) || !appleTouchTitle || appleTouchTitle.length > 40 || /[<>]/.test(appleTouchTitle)) {
+      const message = 'Revise os títulos: não use HTML ou quebras de linha e respeite os limites informados.'
+      setError(message)
+      toast.error(message)
+      return
+    }
     const valuesToSave = { ...values, browser_title: browserTitle, apple_touch_title: appleTouchTitle }
-    setSaving(true); setError('')
+    setSaving(true)
+    setError('')
     try {
       const previousValues = savedValues
       const changedFields = getChangedBrandFields(previousValues, valuesToSave)
@@ -123,15 +163,39 @@ export default function AdminBrandSettingsPage() {
       }
 
       const message = 'Identidade visual atualizada com sucesso.'
-      setValues(saved); setSavedValues(saved); setSettings(saved); toast.success(message)
-    } catch (saveError) { const message = getFriendlyErrorMessage(saveError); setError(message); toast.error(message) }
-    finally { setSaving(false) }
+      setValues(saved)
+      setSavedValues(saved)
+      setSettings(saved)
+      toast.success(message)
+    } catch (saveError) {
+      const message = getFriendlyErrorMessage(saveError)
+      setError(message)
+      toast.error(message)
+    } finally {
+      setSaving(false)
+    }
   }
 
   if (booting) return <main className="admin-login-shell admin-state-shell"><div className="admin-login-card admin-state-card" role="status">Carregando configurações...</div></main>
 
   const activeTokens = values.visual_variant_settings[activeVariant]
-  const previewStyle = { ...getVariantStyle(values, activeVariant), '--preview-background': activeTokens.background_color, '--preview-surface': activeTokens.surface_color, '--preview-text': activeTokens.text_color, '--preview-primary': 'var(--semantic-primary-text)', '--preview-accent': 'var(--semantic-primary-bg)' } as CSSProperties
+  const previewStyle = {
+    ...getVariantStyle(values, activeVariant),
+    '--preview-background': activeTokens.background_color,
+    '--preview-surface': `color-mix(in srgb, ${activeTokens.surface_color} ${activeTokens.surface_opacity * 100}%, transparent)`,
+    '--preview-text': activeTokens.text_color,
+    '--preview-muted': 'var(--semantic-muted)',
+    '--preview-border': 'var(--semantic-border)',
+    '--preview-icon': 'var(--semantic-icon)',
+    '--preview-primary-bg': 'var(--semantic-primary-bg)',
+    '--preview-primary-text': 'var(--semantic-primary-text)',
+    '--preview-secondary-bg': 'var(--semantic-secondary-bg)',
+    '--preview-secondary-text': 'var(--semantic-secondary-text)',
+    '--preview-auxiliary-bg': 'var(--semantic-auxiliary-bg)',
+    '--preview-auxiliary-text': 'var(--semantic-auxiliary-text)',
+    '--preview-input-bg': 'var(--semantic-input-bg)',
+    '--preview-input-text': 'var(--semantic-input-text)',
+  } as CSSProperties
 
   return (
     <AdminLayout title="Configurações" subtitle="Gerencie os assets e as cores da identidade visual do sistema.">
@@ -140,57 +204,82 @@ export default function AdminBrandSettingsPage() {
         {settingsTabs.map((tab) => <button key={tab.key} type="button" role="tab" aria-selected={activeSettingsTab === tab.key} className={activeSettingsTab === tab.key ? 'active' : ''} onClick={() => setActiveSettingsTab(tab.key)}>{tab.label}</button>)}
       </div>
       {activeSettingsTab === 'visual' ? <>
-      <section className="admin-settings-area" aria-labelledby="visual-settings-title"><h2 id="visual-settings-title">Identidade visual</h2><div className="brand-settings-grid">
-        <div className="brand-settings-form">
-          <section className="brand-settings-section">
-            <h2>Metadados do site</h2>
-            <label htmlFor="browser-title">Título das janelas do navegador</label>
-            <input id="browser-title" value={values.browser_title} maxLength={100} onChange={(event) => update('browser_title', event.target.value.replace(/[\r\n]+/g, ' '))} />
-            <small className="field-help">Usado na aba ou janela do navegador em todas as páginas.</small>
-            <div className="metadata-field-footer"><span className="metadata-preview">Prévia: {values.browser_title || defaultBrandSettings.browser_title}</span><span>{values.browser_title.length}/100</span></div>
-            <button className="secondary-button compact-button" type="button" onClick={() => update('browser_title', defaultBrandSettings.browser_title)}>Restaurar título padrão</button>
-            <label htmlFor="apple-touch-title">Título do Apple Touch</label>
-            <input id="apple-touch-title" value={values.apple_touch_title} maxLength={40} onChange={(event) => update('apple_touch_title', event.target.value.replace(/[\r\n]+/g, ' '))} />
-            <small className="field-help">Usado como nome do atalho quando o site é adicionado à Tela de Início do iPhone ou iPad.</small>
-            <div className="metadata-field-footer"><span className="metadata-preview">Prévia: {values.apple_touch_title || defaultBrandSettings.apple_touch_title}</span><span>{values.apple_touch_title.length}/40</span></div>
-            <button className="secondary-button compact-button" type="button" onClick={() => update('apple_touch_title', defaultBrandSettings.apple_touch_title)}>Restaurar título padrão</button>
-          </section>
-          <section className="brand-settings-section">
-            <h2>Favicon</h2>
-            <p className="field-help">Usado na aba do navegador. Prefira SVG quadrado ou ICO com 16, 32 e 48 px.</p>
-            <img className="brand-asset-preview favicon" src={values.favicon_url || defaultBrandSettings.favicon_url} alt="Favicon atual" />
-            <label>URL do favicon<input value={values.favicon_url} onChange={(event) => update('favicon_url', event.target.value)} /></label>
-            <label>Enviar favicon<input type="file" accept=".ico,image/x-icon,image/vnd.microsoft.icon,image/svg+xml,image/png" onChange={(event) => void upload(event, 'favicon', 'favicon_url')} /></label>
-          </section>
+        <section className="admin-settings-area" aria-labelledby="visual-settings-title">
+          <h2 id="visual-settings-title">Identidade visual</h2>
+          <div className="brand-settings-grid">
+            <div className="brand-settings-form">
+              <section className="brand-settings-section">
+                <h2>Metadados do site</h2>
+                <label htmlFor="browser-title">Título das janelas do navegador</label>
+                <input id="browser-title" value={values.browser_title} maxLength={100} onChange={(event) => update('browser_title', event.target.value.replace(/[\r\n]+/g, ' '))} />
+                <small className="field-help">Usado na aba ou janela do navegador em todas as páginas.</small>
+                <div className="metadata-field-footer"><span className="metadata-preview">Prévia: {values.browser_title || defaultBrandSettings.browser_title}</span><span>{values.browser_title.length}/100</span></div>
+                <button className="secondary-button compact-button" type="button" onClick={() => update('browser_title', defaultBrandSettings.browser_title)}>Restaurar título padrão</button>
+                <label htmlFor="apple-touch-title">Título do Apple Touch</label>
+                <input id="apple-touch-title" value={values.apple_touch_title} maxLength={40} onChange={(event) => update('apple_touch_title', event.target.value.replace(/[\r\n]+/g, ' '))} />
+                <small className="field-help">Usado como nome do atalho quando o site é adicionado à Tela de Início do iPhone ou iPad.</small>
+                <div className="metadata-field-footer"><span className="metadata-preview">Prévia: {values.apple_touch_title || defaultBrandSettings.apple_touch_title}</span><span>{values.apple_touch_title.length}/40</span></div>
+                <button className="secondary-button compact-button" type="button" onClick={() => update('apple_touch_title', defaultBrandSettings.apple_touch_title)}>Restaurar título padrão</button>
+              </section>
 
-          <section className="brand-settings-section">
-            <h2>Ícone Apple Touch</h2>
-            <p className="field-help">Usado quando o site é salvo na tela inicial do iPhone ou iPad. Recomendado: PNG 180 × 180 px.</p>
-            {values.apple_touch_icon_url ? <img className="brand-asset-preview favicon" src={values.apple_touch_icon_url} alt="Ícone Apple Touch atual" /> : <p className="field-help">Nenhum ícone Apple Touch configurado.</p>}
-            <label>URL do ícone<input value={values.apple_touch_icon_url} onChange={(event) => update('apple_touch_icon_url', event.target.value)} /></label>
-            <label>Enviar ícone<input type="file" accept="image/png" onChange={(event) => void upload(event, 'apple-touch-icon', 'apple_touch_icon_url')} /></label>
-            <button className="secondary-button compact-button" type="button" onClick={() => update('apple_touch_icon_url', '')}>Remover ícone</button>
-          </section>
+              <section className="brand-settings-section">
+                <h2>Favicon</h2>
+                <p className="field-help">Usado na aba do navegador. Prefira SVG quadrado ou ICO com 16, 32 e 48 px.</p>
+                <img className="brand-asset-preview favicon" src={values.favicon_url || defaultBrandSettings.favicon_url} alt="Favicon atual" />
+                <label>URL do favicon<input value={values.favicon_url} onChange={(event) => update('favicon_url', event.target.value)} /></label>
+                <label>Enviar favicon<input type="file" accept=".ico,image/x-icon,image/vnd.microsoft.icon,image/svg+xml,image/png" onChange={(event) => void upload(event, 'favicon', 'favicon_url')} /></label>
+              </section>
 
-          <section className="brand-settings-section">
-            <h2>Imagem de compartilhamento</h2>
-            <p className="field-help">Dimensão recomendada: 1200 × 630 px.</p>
-            <img className="brand-asset-preview og" src={values.og_image_url || defaultBrandSettings.og_image_url} alt="Imagem Open Graph atual" />
-            <label>URL da imagem<input value={values.og_image_url} onChange={(event) => update('og_image_url', event.target.value)} /></label>
-            <label>Enviar imagem<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void upload(event, 'og-image', 'og_image_url')} /></label>
-          </section>
+              <section className="brand-settings-section">
+                <h2>Ícone Apple Touch</h2>
+                <p className="field-help">Usado quando o site é salvo na tela inicial do iPhone ou iPad. Recomendado: PNG 180 × 180 px.</p>
+                {values.apple_touch_icon_url ? <img className="brand-asset-preview favicon" src={values.apple_touch_icon_url} alt="Ícone Apple Touch atual" /> : <p className="field-help">Nenhum ícone Apple Touch configurado.</p>}
+                <label>URL do ícone<input value={values.apple_touch_icon_url} onChange={(event) => update('apple_touch_icon_url', event.target.value)} /></label>
+                <label>Enviar ícone<input type="file" accept="image/png" onChange={(event) => void upload(event, 'apple-touch-icon', 'apple_touch_icon_url')} /></label>
+                <button className="secondary-button compact-button" type="button" onClick={() => update('apple_touch_icon_url', '')}>Remover ícone</button>
+              </section>
 
-          <TemplateOptionsEditor activeVariant={activeVariant} values={values} uploading={uploading} onActiveVariantChange={setActiveVariant} onAssetChange={update} onUpload={uploadFile} onVariantChange={updateVariant} />
-        </div>
+              <section className="brand-settings-section">
+                <h2>Imagem de compartilhamento</h2>
+                <p className="field-help">Dimensão recomendada: 1200 × 630 px.</p>
+                <img className="brand-asset-preview og" src={values.og_image_url || defaultBrandSettings.og_image_url} alt="Imagem Open Graph atual" />
+                <label>URL da imagem<input value={values.og_image_url} onChange={(event) => update('og_image_url', event.target.value)} /></label>
+                <label>Enviar imagem<input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => void upload(event, 'og-image', 'og_image_url')} /></label>
+              </section>
 
-        <div className="brand-settings-preview-column">
-          <aside className={`brand-preview ${getVariantClassName(values, activeVariant)}`} style={previewStyle} aria-label="Prévia da identidade visual">
-            <img src={getVariantLogo(values, activeVariant)} alt="Invest RS" />
-            <div className="brand-preview-card"><span className="template-preview-icon" aria-hidden="true">◆</span><p>Cartão institucional</p><h2>Identidade Invest RS</h2><span>Texto de exemplo para conferir contraste e legibilidade.</span><div><button className="primary-button" type="button">Principal</button><button className="secondary-button" type="button">Secundário</button><button className="auxiliary-button" type="button">Auxiliar</button></div></div>
-          </aside>
-          <div className="brand-settings-actions"><button className="primary-button" type="button" disabled={saving || Boolean(uploading)} onClick={() => void save()}>{uploading ? 'Enviando asset...' : saving ? 'Salvando...' : 'Salvar configurações'}</button></div>
-        </div>
-      </div></section>
+              <TemplateOptionsEditor activeVariant={activeVariant} values={values} uploading={uploading} onActiveVariantChange={setActiveVariant} onAssetChange={update} onUpload={uploadFile} onVariantChange={updateVariant} />
+            </div>
+
+            <div className="brand-settings-preview-column">
+              <aside className={`brand-preview ${getVariantClassName(values, activeVariant)}`} style={previewStyle} aria-label="Prévia em tempo real da identidade visual">
+                <img src={getVariantLogo(values, activeVariant)} alt="Invest RS" />
+                <div className="brand-preview-card">
+                  <div className="brand-preview-heading">
+                    <span className="template-preview-icon" aria-hidden="true"><Palette /></span>
+                    <div><p>Componentes da interface</p><h2>Identidade Invest RS</h2></div>
+                  </div>
+                  <p className="brand-preview-description">Amostra da superfície, borda, texto, ícones, campos, botões e estados deste modo.</p>
+                  <div className="brand-preview-components">
+                    <label className="brand-preview-field">
+                      Campo e ícone
+                      <span className="brand-preview-input"><Mail aria-hidden="true" /><span>contato@investrs.org.br</span></span>
+                    </label>
+                    <div className="brand-preview-actions" aria-label="Amostra dos três tipos de botão">
+                      <button className="preview-primary-button" type="button">Principal</button>
+                      <button className="preview-secondary-button" type="button">Secundário</button>
+                      <button className="preview-auxiliary-button" type="button">Auxiliar</button>
+                    </div>
+                    <div className="brand-preview-statuses" aria-label="Estados semânticos fixos">
+                      <span className="success"><CheckCircle2 aria-hidden="true" />Ativo</span>
+                      <span className="warning"><AlertTriangle aria-hidden="true" />Alerta</span>
+                    </div>
+                  </div>
+                </div>
+              </aside>
+              <div className="brand-settings-actions"><button className="primary-button" type="button" disabled={saving || Boolean(uploading)} onClick={() => void save()}>{uploading ? 'Enviando asset...' : saving ? 'Salvando...' : 'Salvar configurações'}</button></div>
+            </div>
+          </div>
+        </section>
       </> : null}
       {activeSettingsTab === 'content' ? <section className="admin-settings-area" aria-labelledby="content-settings-title"><div className="admin-settings-area-heading"><h2 id="content-settings-title">Conteúdo</h2><p>Use as abas Guia de Utilização e Termos de Uso para editar textos institucionais estruturados sem HTML.</p></div></section> : null}
       {activeSettingsTab === 'usage_guide' ? <section className="admin-settings-area" aria-labelledby="usage-guide-settings-title"><div className="admin-settings-area-heading"><h2 id="usage-guide-settings-title">Guia de Utilização</h2><p>Edite o conteúdo publicado em /guia-de-utilizacao.</p></div><ManagedPagesEditor pageKey="usage_guide" showPreview={false} showTabs={false} /></section> : null}
