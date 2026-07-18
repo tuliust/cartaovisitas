@@ -34,7 +34,6 @@
 
 /* Compensacao optica apenas onde o alinhamento pela esquerda e desejado */
 .public-card-logo,
-.admin-logo,
 .card-preview-logo,
 .brand-logo-main {
   transform: translateX(var(--brand-logo-optical-offset));

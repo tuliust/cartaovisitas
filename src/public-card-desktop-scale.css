@@ -22,14 +22,14 @@
     font-size: 0.72rem;
   }
 
-  .collaborator-shell:has(.collaborator-own-card) .visual-mode-selector--compact .visual-mode-trigger {
+  .collaborator-shell:has(.collaborator-own-card) .collaborator-nav .visual-mode-selector--compact .visual-mode-trigger {
     display: grid;
     place-items: center;
     padding: 2px;
     line-height: 0;
   }
 
-  .collaborator-shell:has(.collaborator-own-card) .visual-mode-selector--compact .visual-mode-trigger-swatch {
+  .collaborator-shell:has(.collaborator-own-card) .collaborator-nav .visual-mode-selector--compact .visual-mode-trigger-swatch {
     margin: 0;
     justify-self: center;
     align-self: center;

@@ -30,8 +30,7 @@
    * minimum 10 px side margin. The canvas is expanded before the 75% scale,
    * so the final rendered margins remain symmetrical in the viewport. */
   .admin-shell .admin-page {
-    position: relative;
-    left: 50%;
+    position: static;
     width: min(
       calc((100vw - (2 * var(--admin-visible-side-gap))) * var(--admin-desktop-inverse-scale)),
       calc(var(--admin-visible-max-width) * var(--admin-desktop-inverse-scale))
@@ -39,9 +38,9 @@
     max-width: none;
     min-height: 0;
     height: auto;
-    margin: 0;
-    transform: translateX(-50%) scale(var(--admin-desktop-scale));
-    transform-origin: top center;
+    margin: 0 auto;
+    transform: none;
+    zoom: var(--admin-desktop-scale);
   }
 
   /* /admin/login uses the shared authentication scaling system. */
