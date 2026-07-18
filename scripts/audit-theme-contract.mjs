@@ -80,6 +80,8 @@ const homePage = read('src/pages/HomePage.tsx')
 const managedPageView = read('src/components/ManagedPageView.tsx')
 const publicCardPage = read('src/pages/PublicCardPage.tsx')
 const signaturePage = read('src/pages/MyCardEmailSignaturePage.tsx')
+const cardPreviewModal = read('src/components/admin/CardPreviewModal.tsx')
+const publicCardDraftPreview = read('src/components/admin/PublicCardDraftPreview.tsx')
 const collaboratorNavigation = read('src/components/collaborator/CollaboratorNavigation.tsx')
 const collaboratorAccountMenu = read('src/components/collaborator/CollaboratorAccountMenu.tsx')
 const tokenContract = read('src/brand-token-contract.css')
@@ -89,6 +91,7 @@ const tokenAuth = read('src/brand-token-auth.css')
 const adminBrandPreviewCss = read('src/admin-brand-settings-preview.css')
 const mobileExperience = read('src/mobile-experience-overrides.css')
 const mobileFollowup = read('src/mobile-experience-followup.css')
+const mobilePolish = read('src/mobile-experience-polish.css')
 
 requireFragments('Seis variantes no cadastro', brandSettings, variants)
 requireFragments('Seis variantes no seletor', visualVariants, variants)
@@ -113,6 +116,7 @@ requireFragments('CSS canônico carregado por último', main, [
   "import './admin-brand-settings-preview.css'",
   "import './mobile-experience-overrides.css'",
   "import './mobile-experience-followup.css'",
+  "import './mobile-experience-polish.css'",
 ])
 requireFragments('Prévia administrativa completa e sincronizada', `${adminPreviewPage}\n${brandInterfacePreview}\n${adminBrandPreviewCss}`, [
   'BrandInterfacePreview',
@@ -228,6 +232,21 @@ requireFragments('Modal de instalação empilhado no mobile', mobileFollowup, [
   '.install-modal-header',
   'grid-template-columns: minmax(0, 1fr)',
   '.install-modal-icon',
+])
+requireFragments('Refinamentos finais da home e do cartão mobile', `${homePage}\n${mobilePolish}`, [
+  'home-theme-label',
+  'Selecione o tema',
+  '.home-page-shell .brand-logo-main',
+  'grid-template-columns: repeat(4, minmax(0, 1fr))',
+  '.collaborator-own-card .public-card-contact-list',
+])
+requireFragments('Preview mobile reutiliza a estrutura pública real', `${cardPreviewModal}\n${publicCardDraftPreview}\n${mobilePolish}`, [
+  'PublicCardDraftPreview',
+  'PublicCardVisual',
+  'PublicCardLanguageToggle',
+  'card-preview-modal-public',
+  '.draft-public-card-preview',
+  '.card-preview-modal-legacy',
 ])
 
 const tsNoCheckFiles = walk('src')
