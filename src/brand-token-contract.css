@@ -1,0 +1,432 @@
+/* Final identity-token contract.
+ * Imported after legacy and page-specific styles so the six variants remain
+ * the single source of truth for colors, opacities, borders and controls.
+ */
+
+body,
+.admin-shell,
+.admin-login-shell,
+.collaborator-shell {
+  color: var(--semantic-text);
+}
+
+.primary-button {
+  border-color: transparent;
+  background: var(--semantic-primary-bg);
+  color: var(--semantic-primary-text);
+}
+
+.secondary-button {
+  border-color: var(--semantic-border);
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-secondary-text);
+}
+
+.auxiliary-button {
+  border-color: var(--semantic-border);
+  background: var(--semantic-auxiliary-bg);
+  color: var(--semantic-auxiliary-text);
+}
+
+.primary-button:hover:not(:disabled),
+.primary-button:focus-visible:not(:disabled) {
+  background: color-mix(in srgb, var(--semantic-primary-base) 88%, var(--semantic-text));
+  color: var(--semantic-primary-text);
+}
+
+.secondary-button:hover:not(:disabled),
+.secondary-button:focus-visible:not(:disabled) {
+  border-color: color-mix(in srgb, var(--semantic-icon) 72%, transparent);
+  background: color-mix(in srgb, var(--semantic-secondary-bg) 82%, var(--semantic-text));
+  color: var(--semantic-secondary-text);
+}
+
+.auxiliary-button:hover:not(:disabled),
+.auxiliary-button:focus-visible:not(:disabled) {
+  border-color: color-mix(in srgb, var(--semantic-icon) 72%, transparent);
+  background: color-mix(in srgb, var(--semantic-auxiliary-bg) 82%, var(--semantic-text));
+  color: var(--semantic-auxiliary-text);
+}
+
+:is(.collaborator-topbar, .admin-topbar) {
+  border-bottom-color: var(--semantic-border);
+  background: var(--semantic-header-bg);
+  color: var(--semantic-text);
+}
+
+:is(.collaborator-nav-item, .admin-nav-link) {
+  color: var(--semantic-muted);
+}
+
+:is(.collaborator-nav-item, .admin-nav-link):is(:hover, :focus-visible, .active) {
+  color: var(--semantic-primary-base);
+}
+
+:is(.collaborator-nav-logout, .admin-nav-logout),
+:is(.collaborator-nav-logout, .admin-nav-logout):is(:hover, :focus-visible) {
+  color: var(--semantic-danger);
+}
+
+:is(
+  .home-panel,
+  .admin-login-card,
+  .admin-card,
+  .admin-form-section,
+  .collaborator-card,
+  .action-panel,
+  .state-card,
+  .guide-index,
+  .guide-content section,
+  .legal-document section,
+  .legal-document footer,
+  .analytics-kpis article
+) {
+  border-color: var(--semantic-border);
+  background: var(--semantic-surface);
+  color: var(--semantic-text);
+}
+
+/* Administrative configuration must stay opaque even when card surfaces are translucent. */
+:is(.brand-settings-section, .brand-settings-actions, .admin-list-controls) {
+  border-color: var(--semantic-border);
+  background: var(--semantic-surface-raised);
+  color: var(--semantic-text);
+}
+
+:is(
+  .admin-page-header,
+  .admin-card,
+  .admin-form-section,
+  .brand-settings-section,
+  .collaborator-card
+) :is(h1, h2, h3, strong, label) {
+  color: var(--semantic-text);
+}
+
+:is(
+  .admin-page-header,
+  .admin-card,
+  .admin-form-section,
+  .brand-settings-section,
+  .collaborator-card
+) :is(p, small, .field-help) {
+  color: var(--semantic-muted);
+}
+
+:is(
+  .admin-login-card,
+  .admin-card,
+  .admin-form-section,
+  .brand-settings-section,
+  .collaborator-card
+) :is(
+  input:not([type="file"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+  select,
+  textarea
+),
+:is(.admin-search-input, .admin-filter-select, .admin-sort-select),
+.audit-filters :is(input, select) {
+  border-color: var(--semantic-border);
+  background: var(--semantic-input-bg);
+  color: var(--semantic-input-text);
+  caret-color: var(--semantic-input-text);
+}
+
+:is(
+  .admin-login-card,
+  .admin-card,
+  .admin-form-section,
+  .brand-settings-section,
+  .collaborator-card
+) :is(input, textarea)::placeholder,
+.admin-search-input::placeholder {
+  color: var(--semantic-input-placeholder);
+}
+
+:is(.email-suffix-field, .url-prefix-field, .password-input-field) {
+  border-color: var(--semantic-border);
+  background: var(--semantic-input-bg);
+}
+
+:is(.email-suffix-field, .url-prefix-field, .password-input-field) input {
+  background: transparent;
+  color: var(--semantic-input-text);
+  -webkit-text-fill-color: var(--semantic-input-text);
+}
+
+:is(.email-suffix-label, .url-prefix-label) {
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-secondary-text);
+  -webkit-text-fill-color: var(--semantic-secondary-text);
+}
+
+:is(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea,
+  button,
+  a,
+  [tabindex]
+):focus-visible {
+  outline-color: var(--semantic-focus);
+}
+
+:is(
+  .admin-login-card,
+  .admin-card,
+  .admin-form-section,
+  .brand-settings-section,
+  .collaborator-card
+) :is(input, select, textarea):focus-visible,
+:is(.email-suffix-field, .url-prefix-field, .password-input-field):focus-within {
+  border-color: var(--semantic-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--semantic-focus) 28%, transparent);
+}
+
+.action-panel .button-grid .primary-button,
+.action-panel .public-language-toggle button.active,
+.signature-language-toggle button.active,
+.period-buttons button.active {
+  border-color: transparent;
+  background: var(--semantic-primary-bg);
+  color: var(--semantic-primary-text);
+}
+
+.action-panel .button-grid .secondary-button,
+.action-panel .public-language-toggle,
+.signature-language-toggle,
+.period-buttons button {
+  border-color: var(--semantic-border);
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-secondary-text);
+}
+
+.action-panel .button-grid .auxiliary-button,
+.action-panel .extra-action-button {
+  border-color: var(--semantic-border);
+  background: var(--semantic-auxiliary-bg);
+  color: var(--semantic-auxiliary-text);
+}
+
+.action-panel .extra-action-button:hover,
+.action-panel .extra-action-button:focus-visible {
+  border-color: color-mix(in srgb, var(--semantic-icon) 72%, transparent);
+  background: color-mix(in srgb, var(--semantic-auxiliary-bg) 82%, var(--semantic-text));
+  color: var(--semantic-auxiliary-text);
+}
+
+:is(
+  .contact-label svg,
+  .card-preview-contact-label svg,
+  .extra-action-icon,
+  .template-preview-icon svg,
+  .guide-index svg,
+  .guide-content svg,
+  .analytics-kpis svg
+) {
+  color: var(--semantic-icon);
+  opacity: 1;
+}
+
+:is(.confirmation-backdrop, .crop-modal-backdrop, .wallet-modal-backdrop) {
+  background: var(--semantic-modal-backdrop);
+}
+
+:is(.confirmation-modal, .crop-modal, .wallet-modal, .invite-user-modal, .audit-detail) {
+  border-color: var(--semantic-border);
+  background: var(--semantic-surface-raised);
+  color: var(--semantic-text);
+}
+
+:is(.confirmation-modal, .crop-modal, .wallet-modal, .invite-user-modal, .audit-detail) :is(p, small) {
+  color: var(--semantic-muted);
+}
+
+:is(.confirmation-modal, .crop-modal, .wallet-modal, .invite-user-modal, .audit-detail) :is(input, select, textarea) {
+  border-color: var(--semantic-border);
+  background: var(--semantic-input-bg);
+  color: var(--semantic-input-text);
+}
+
+.toast {
+  border-color: var(--semantic-border);
+  background: var(--semantic-surface-raised);
+  color: var(--semantic-text);
+}
+
+.toast.success { border-left-color: var(--semantic-success); }
+.toast.error { border-left-color: var(--semantic-danger); }
+.toast.info { border-left-color: var(--semantic-warning); }
+
+.status-pill.active {
+  background: color-mix(in srgb, var(--semantic-success) 18%, transparent);
+  color: var(--semantic-success);
+}
+
+.visual-variant-warning {
+  background: color-mix(in srgb, var(--semantic-warning) 16%, transparent);
+  color: var(--semantic-warning);
+}
+
+/* Accurate live preview for /admin/configuracoes. */
+.brand-preview {
+  border-color: var(--preview-border);
+  background-color: var(--preview-background);
+  color: var(--preview-text);
+}
+
+.brand-preview-card {
+  border: 1px solid var(--preview-border);
+  background: var(--preview-surface);
+  color: var(--preview-text);
+}
+
+.brand-preview-heading {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-preview-heading h2,
+.brand-preview-heading p {
+  margin: 0;
+}
+
+.brand-preview-heading p,
+.brand-preview-description,
+.brand-preview-field small {
+  color: var(--preview-muted);
+}
+
+.template-preview-icon {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--preview-border);
+  border-radius: 12px;
+  background: var(--preview-auxiliary-bg);
+  color: var(--preview-icon);
+  display: grid;
+  place-items: center;
+}
+
+.template-preview-icon svg {
+  width: 21px;
+  height: 21px;
+}
+
+.brand-preview-components {
+  display: grid;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.brand-preview-field {
+  display: grid;
+  gap: 7px;
+  color: var(--preview-text);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.brand-preview-input {
+  min-height: 44px;
+  border: 1px solid var(--preview-border);
+  border-radius: 12px;
+  background: var(--preview-input-bg);
+  color: var(--preview-input-text);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 500;
+}
+
+.brand-preview-input svg {
+  width: 18px;
+  height: 18px;
+  color: var(--preview-icon);
+}
+
+.brand-preview-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 0;
+}
+
+.brand-preview-actions button {
+  min-width: 0;
+  min-height: 42px;
+  border-radius: 999px;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.brand-preview-actions .preview-primary-button {
+  border: 1px solid transparent;
+  background: var(--preview-primary-bg);
+  color: var(--preview-primary-text);
+}
+
+.brand-preview-actions .preview-secondary-button {
+  border: 1px solid var(--preview-border);
+  background: var(--preview-secondary-bg);
+  color: var(--preview-secondary-text);
+}
+
+.brand-preview-actions .preview-auxiliary-button {
+  border: 1px solid var(--preview-border);
+  background: var(--preview-auxiliary-bg);
+  color: var(--preview-auxiliary-text);
+}
+
+.brand-preview-statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.brand-preview-statuses span {
+  min-height: 30px;
+  border: 1px solid var(--preview-border);
+  border-radius: 999px;
+  padding: 5px 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  font-weight: 750;
+}
+
+.brand-preview-statuses svg {
+  width: 15px;
+  height: 15px;
+}
+
+.brand-preview-statuses .success {
+  color: var(--semantic-success);
+}
+
+.brand-preview-statuses .warning {
+  color: var(--semantic-warning);
+}
+
+.template-fallback-note {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--semantic-border);
+  border-radius: 12px;
+  background: var(--semantic-secondary-bg);
+  color: var(--semantic-muted);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 560px) {
+  .brand-preview-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
