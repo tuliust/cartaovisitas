@@ -1,0 +1,70 @@
+/* Authentication token bridge.
+ * The legacy autofill stylesheet uses !important values through local custom
+ * properties; redefining those properties keeps autofill readable while
+ * allowing every visual variant to control the fields.
+ */
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card {
+  --auth-input-bg: var(--semantic-input-bg);
+  --auth-input-text: var(--semantic-input-text);
+  --auth-input-placeholder: var(--semantic-input-placeholder);
+  --auth-input-border: var(--semantic-border);
+  --auth-autofill-bg: var(--semantic-input-bg);
+  --auth-autofill-text: var(--semantic-input-text);
+  border-color: var(--semantic-border);
+  background: var(--semantic-surface-raised);
+  color: var(--semantic-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card :is(h1, h2, h3, strong, label) {
+  color: var(--semantic-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card :is(p, small, .field-help, .auth-page-description) {
+  color: var(--semantic-muted);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card :is(.email-suffix-field, .password-input-field) {
+  border-color: var(--semantic-border) !important;
+  background: var(--semantic-input-bg) !important;
+  background-color: var(--semantic-input-bg) !important;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card :is(.email-suffix-field input, .password-input-field input) {
+  color: var(--semantic-input-text) !important;
+  -webkit-text-fill-color: var(--semantic-input-text) !important;
+  caret-color: var(--semantic-input-text) !important;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card input::placeholder {
+  color: var(--semantic-input-placeholder) !important;
+  -webkit-text-fill-color: var(--semantic-input-placeholder) !important;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card input:-webkit-autofill,
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card input:-webkit-autofill:hover,
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card input:-webkit-autofill:focus,
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card input:-webkit-autofill:active,
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card input:autofill {
+  color: var(--semantic-input-text) !important;
+  -webkit-text-fill-color: var(--semantic-input-text) !important;
+  caret-color: var(--semantic-input-text) !important;
+  background: var(--semantic-input-bg) !important;
+  background-color: var(--semantic-input-bg) !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--semantic-input-bg) inset !important;
+  box-shadow: 0 0 0 1000px var(--semantic-input-bg) inset !important;
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card input::selection {
+  background: color-mix(in srgb, var(--semantic-primary-base) 32%, transparent);
+  color: var(--semantic-input-text);
+  -webkit-text-fill-color: var(--semantic-input-text);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card :is(.password-visibility-button, .password-toggle, .auth-field-icon) {
+  color: var(--semantic-icon);
+}
+
+html:is(.app-visual-mode-light, .app-visual-mode-dark) .auth-page-card a {
+  color: var(--semantic-primary-base);
+}
