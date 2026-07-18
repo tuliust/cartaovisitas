@@ -64,7 +64,6 @@ public_visual_variant
 ```
 
 Para o colaborador:
-
 - a variante salva se torna o padrão visual após cada novo login;
 - salvar o formulário aplica imediatamente a variante na interface atual;
 - escolhas posteriores no seletor global continuam temporárias durante o acesso;
@@ -89,22 +88,57 @@ O editor de identidade visual:
 - salva todas as variantes em uma única operação;
 - atualiza o `BrandSettingsContext` da aba atual;
 - sincroniza outras abas abertas pelo evento `storage`;
-- registra auditoria dos campos alterados.
+- registra auditoria dos campos alterados;
+- mantém a coluna de prévia sticky no desktop;
+- limita a altura da prévia à viewport e usa rolagem interna;
+- mantém o botão `Salvar configurações` visível abaixo da prévia;
+- desativa o comportamento sticky abaixo de `901px`.
 
 A prévia demonstra, para a variante ativa:
 
 - logo correspondente ao contraste;
 - background, imagem e overlay;
-- superfície e borda;
+- header e borda do header;
+- ícones e links do header;
+- item ativo e hover simulado na navegação;
+- superfície comum e superfície elevada;
 - texto principal e secundário;
-- ícone Lucide real;
-- input;
-- botão principal;
-- botão secundário;
-- botão auxiliar;
-- estados semânticos de sucesso e alerta.
+- input vazio e placeholder;
+- input preenchido;
+- input em foco e focus ring;
+- botão principal normal e hover;
+- botão secundário normal e hover;
+- botão auxiliar normal e hover;
+- popover com item em hover;
+- estados semânticos de sucesso, alerta e erro;
+- estado desabilitado.
+
+Ao selecionar um elemento no editor, os componentes relacionados recebem destaque na prévia. A mesma fonte de metadados define o rótulo, a descrição e a lista de componentes afetados.
+
+Arquivos principais:
+
+```text
+src/components/admin/BrandInterfacePreview.tsx
+src/components/admin/TemplateOptionsEditor.tsx
+src/lib/brandTemplateElements.ts
+src/admin-brand-settings-preview.css
+```
 
 Os modos com imagem sem asset configurado usam automaticamente o modo sólido da mesma família visual, preservando os tokens específicos de cor, superfície e botões.
+
+## Relações derivadas
+
+Alguns componentes não possuem controles independentes e são derivados dos tokens configuráveis:
+
+- o header usa a cor de superfície com uma mistura técnica fixa de 88%;
+- o item ativo da navegação usa a cor principal;
+- o hover da navegação usa a superfície secundária;
+- o fundo do input combina background e superfície;
+- o placeholder deriva da cor de texto;
+- o foco dos campos deriva da cor principal;
+- os estados hover dos botões são calculados por `color-mix()`.
+
+Essas relações devem ser representadas na prévia e explicadas no editor. Novos campos independentes só devem ser criados quando houver decisão explícita de ampliar o modelo persistido.
 
 ## Tokens semânticos
 
@@ -142,6 +176,7 @@ src/brand-token-contract.css
 src/brand-token-specificity.css
 src/brand-token-coverage.css
 src/brand-token-auth.css
+src/admin-brand-settings-preview.css
 ```
 
 Esses arquivos são carregados depois dos estilos históricos para garantir que os tokens das variantes prevaleçam sem alterar a estrutura dos componentes.
@@ -238,7 +273,7 @@ O Guia público usa:
 - superfícies e estados de foco derivados dos tokens semânticos;
 - no desktop, índice lateral sticky, com altura de `100dvh`, sem rolagem interna e com botões de dimensões uniformes;
 - no desktop, os cards permanecem no fluxo e deslizam ao lado do índice fixado no topo;
-- uma coluna no mobile e índice em duas colunas no tablet quando houver espaço.
+- no mobile, o índice completo é substituído por um seletor nativo de tópicos.
 
 ## Auditoria estática do contrato visual
 
@@ -255,21 +290,8 @@ A auditoria verifica:
 - carregamento dos arquivos de contrato;
 - aplicação global e aliases legados;
 - sincronização entre abas;
-- composição mínima da prévia administrativa;
+- composição completa e sticky da prévia administrativa;
+- sincronização entre elemento editado e componentes destacados;
+- explicação dos componentes afetados por cada campo;
 - cobertura de autenticação e autofill;
 - ausência de `@ts-nocheck` em `src`.
-
-A auditoria estática complementa, mas não substitui, a validação visual manual das seis variantes.
-
-## PWA
-
-Existe manifest. A documentação específica está em `14-pwa-instalacao-e-compartilhamento.md`.
-
-## Assets
-
-Recomendações:
-
-- fundos: 1600 × 1000 ou maior;
-- Apple Touch: PNG 180 × 180;
-- Open Graph: 1200 × 630;
-- logos com área segura e transparência adequada.
