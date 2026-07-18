@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { getCurrentSession, signInWithPassword, signOut } from '../lib/auth'
 import { getFriendlyErrorMessage } from '../lib/errors'
@@ -115,10 +115,13 @@ export default function EmployeeLoginPage() {
           </button>
         </form>
 
-        <div className="auth-links auth-page-links">
-          <Link to="/">Voltar</Link>
-          <Link to="/cadastro">Cadastre-se</Link>
-          <Link to="/recuperar-senha">Recuperar senha</Link>
+        <div className="auth-links auth-page-links auth-page-links--three">
+          <Link className="auth-link-back" to="/" aria-label="Voltar">
+            <ArrowLeft className="auth-link-back-icon" aria-hidden="true" />
+            <span className="auth-link-back-text">Voltar</span>
+          </Link>
+          <Link className="auth-link-recovery" to="/recuperar-senha">Recuperar senha</Link>
+          <Link className="auth-link-register" to="/cadastro">Cadastre-se</Link>
         </div>
       </section>
     </main>
