@@ -23,57 +23,44 @@ export function getEffectiveVisualVariant(settings: BrandSettings, variant: Publ
 export function getVariantLogo(settings: BrandSettings, variant: PublicVisualVariant, cardLogo?: string | null) { return isLightVisualVariant(variant) ? settings.logo_on_light_url || cardLogo || settings.logo_url || '/invest-rs-logo.png' : settings.logo_on_dark_url || cardLogo || settings.logo_url || '/invest-rs-logo.png' }
 export function getVariantClassName(settings: BrandSettings, variant: PublicVisualVariant) { const effective = getEffectiveVisualVariant(settings, variant); return `public-card-theme-${isLightVisualVariant(effective) ? 'light' : 'dark'} public-card-variant-${effective.replace(/_/g, '-')}` }
 export function getVariantSettings(settings: BrandSettings, variant: PublicVisualVariant) { return settings.visual_variant_settings[variant] }
-function hexChannels(hex: string) { return [1, 3, 5].map((start) => Number.parseInt(hex.slice(start, start + 2), 16)) }
-function autoContrast(background: string, opacity: number, surface: string) {
-  const bg = hexChannels(background)
-  const underlay = hexChannels(surface)
-  const composed = bg.map((channel, index) => Math.round((channel * opacity) + (underlay[index] * (1 - opacity))))
-  const luminance = composed.map((channel) => { const value = channel / 255; return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4 })
-    .reduce((sum, channel, index) => sum + (channel * [0.2126, 0.7152, 0.0722][index]), 0)
-  return luminance > 0.42 ? '#000000' : '#ffffff'
-}
+function withOpacity(color: string, opacity: number) { return `color-mix(in srgb, ${color} ${opacity * 100}%, transparent)` }
+
 export function getVariantSemanticTokens(settings: BrandSettings, variant: PublicVisualVariant) {
   const tokens = getVariantSettings(settings, variant)
-  const text = tokens.text_color
-  const surface = tokens.surface_color
-  const background = tokens.background_color
-  const primaryText = autoContrast(tokens.primary_button_color, tokens.primary_button_opacity, surface)
-  const secondaryText = autoContrast(tokens.secondary_button_color, tokens.secondary_button_opacity, surface)
-  const auxiliaryText = autoContrast(tokens.auxiliary_button_color, tokens.auxiliary_button_opacity, surface)
   return {
-    '--semantic-text': text,
-    '--semantic-muted': `color-mix(in srgb, ${text} 72%, transparent)`,
-    '--semantic-subtle': `color-mix(in srgb, ${text} 56%, transparent)`,
-    '--semantic-surface': `color-mix(in srgb, ${surface} ${tokens.surface_opacity * 100}%, transparent)`,
-    '--semantic-surface-solid': surface,
-    '--semantic-surface-raised': `color-mix(in srgb, ${surface} 94%, ${background})`,
-    '--semantic-border': `color-mix(in srgb, ${tokens.border_color} ${tokens.border_opacity * 100}%, transparent)`,
-    '--semantic-icon': `color-mix(in srgb, ${tokens.icon_color} ${tokens.icon_opacity * 100}%, transparent)`,
-    '--semantic-input-bg': `color-mix(in srgb, ${background} 76%, ${surface})`,
-    '--semantic-input-text': text,
-    '--semantic-input-placeholder': `color-mix(in srgb, ${text} 48%, transparent)`,
-    '--semantic-header-bg': `color-mix(in srgb, ${surface} 88%, transparent)`,
+    '--semantic-text': withOpacity(tokens.text_color, tokens.text_opacity),
+    '--semantic-muted': withOpacity(tokens.muted_text_color, tokens.muted_text_opacity),
+    '--semantic-subtle': withOpacity(tokens.subtle_text_color, tokens.subtle_text_opacity),
+    '--semantic-surface': withOpacity(tokens.surface_color, tokens.surface_opacity),
+    '--semantic-surface-solid': tokens.surface_color,
+    '--semantic-surface-raised': withOpacity(tokens.raised_surface_color, tokens.raised_surface_opacity),
+    '--semantic-border': withOpacity(tokens.border_color, tokens.border_opacity),
+    '--semantic-icon': withOpacity(tokens.icon_color, tokens.icon_opacity),
+    '--semantic-input-bg': withOpacity(tokens.input_background_color, tokens.input_background_opacity),
+    '--semantic-input-text': withOpacity(tokens.input_text_color, tokens.input_text_opacity),
+    '--semantic-input-placeholder': withOpacity(tokens.input_placeholder_color, tokens.input_placeholder_opacity),
+    '--semantic-header-bg': withOpacity(tokens.header_color, tokens.header_opacity),
     '--semantic-primary-base': tokens.primary_button_color,
-    '--semantic-primary-bg': `color-mix(in srgb, ${tokens.primary_button_color} ${tokens.primary_button_opacity * 100}%, transparent)`,
-    '--semantic-primary-text': primaryText,
-    '--semantic-secondary-bg': `color-mix(in srgb, ${tokens.secondary_button_color} ${tokens.secondary_button_opacity * 100}%, transparent)`,
-    '--semantic-secondary-text': secondaryText,
-    '--semantic-auxiliary-bg': `color-mix(in srgb, ${tokens.auxiliary_button_color} ${tokens.auxiliary_button_opacity * 100}%, transparent)`,
-    '--semantic-auxiliary-text': auxiliaryText,
-    '--semantic-focus': tokens.primary_button_color,
-    '--semantic-modal-backdrop': `color-mix(in srgb, ${background} 72%, transparent)`,
+    '--semantic-primary-bg': withOpacity(tokens.primary_button_color, tokens.primary_button_opacity),
+    '--semantic-primary-text': withOpacity(tokens.primary_button_text_color, tokens.primary_button_text_opacity),
+    '--semantic-secondary-bg': withOpacity(tokens.secondary_button_color, tokens.secondary_button_opacity),
+    '--semantic-secondary-text': withOpacity(tokens.secondary_button_text_color, tokens.secondary_button_text_opacity),
+    '--semantic-auxiliary-bg': withOpacity(tokens.auxiliary_button_color, tokens.auxiliary_button_opacity),
+    '--semantic-auxiliary-text': withOpacity(tokens.auxiliary_button_text_color, tokens.auxiliary_button_text_opacity),
+    '--semantic-focus': withOpacity(tokens.focus_color, tokens.focus_opacity),
+    '--semantic-modal-backdrop': withOpacity(tokens.modal_backdrop_color, tokens.modal_backdrop_opacity),
     '--semantic-danger': '#ee286e',
     '--semantic-success': '#00ac7c',
     '--semantic-warning': '#fdb642',
   }
 }
 function hexToRgbChannels(hex: string) { return `${Number.parseInt(hex.slice(1, 3), 16)} ${Number.parseInt(hex.slice(3, 5), 16)} ${Number.parseInt(hex.slice(5, 7), 16)}` }
-export function getVariantStyle(settings: BrandSettings, variant: PublicVisualVariant) { const image = getVariantImage(settings, variant); const tokens = getVariantSettings(settings, variant); return {
-  ...getVariantSemanticTokens(settings, variant),
+export function getVariantStyle(settings: BrandSettings, variant: PublicVisualVariant) { const image = getVariantImage(settings, variant); const tokens = getVariantSettings(settings, variant); const semanticTokens = getVariantSemanticTokens(settings, variant); return {
+  ...semanticTokens,
   '--public-card-variant-image': image ? `url("${image.replace(/"/g, '\\"')}")` : 'none',
-  '--variant-primary': tokens.primary_color, '--variant-accent': tokens.primary_button_color,
+  '--variant-primary': semanticTokens['--semantic-text'], '--variant-accent': tokens.primary_button_color,
   '--variant-background': tokens.background_color, '--variant-surface': tokens.surface_color,
-  '--variant-surface-rgb': hexToRgbChannels(tokens.surface_color), '--variant-text': tokens.text_color,
-  '--variant-overlay-rgb': hexToRgbChannels(tokens.background_color),
+  '--variant-surface-rgb': hexToRgbChannels(tokens.surface_color), '--variant-text': semanticTokens['--semantic-text'],
+  '--variant-overlay-rgb': hexToRgbChannels(tokens.overlay_color),
   '--variant-overlay-opacity': String(tokens.background_opacity), '--variant-card-opacity': String(tokens.surface_opacity),
 } as CSSProperties }

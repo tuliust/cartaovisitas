@@ -1,0 +1,111 @@
+/* Independent template token controls layered after the original preview CSS. */
+
+.template-token-no-opacity {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  gap: 3px;
+}
+
+.template-token-no-opacity > span {
+  color: var(--semantic-muted);
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.template-token-no-opacity > strong {
+  color: var(--semantic-text);
+  font-size: 0.9rem;
+}
+
+.template-token-no-opacity > small {
+  color: var(--semantic-subtle);
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
+.brand-interface-preview.is-editing-background,
+.brand-interface-preview.is-editing-overlay,
+.brand-interface-preview.is-editing-raised-surface [data-preview-target~="raised-surface"],
+.brand-interface-preview.is-editing-header [data-preview-target~="header"],
+.brand-interface-preview.is-editing-input-background [data-preview-target~="input-background"],
+.brand-interface-preview.is-editing-modal-backdrop [data-preview-target~="modal-backdrop"],
+.brand-interface-preview.is-editing-muted-text [data-preview-target~="muted-text"],
+.brand-interface-preview.is-editing-subtle-text [data-preview-target~="subtle-text"],
+.brand-interface-preview.is-editing-input-text [data-preview-target~="input-text"],
+.brand-interface-preview.is-editing-placeholder [data-preview-target~="placeholder"],
+.brand-interface-preview.is-editing-focus [data-preview-target~="focus"],
+.brand-interface-preview.is-editing-primary-text [data-preview-target~="primary-text"],
+.brand-interface-preview.is-editing-secondary-text [data-preview-target~="secondary-text"],
+.brand-interface-preview.is-editing-auxiliary-text [data-preview-target~="auxiliary-text"] {
+  outline: 2px solid var(--semantic-focus);
+  outline-offset: 2px;
+}
+
+.brand-preview-modal-backdrop {
+  min-height: 150px;
+  padding: 18px;
+  border-radius: 14px;
+  background: var(--semantic-modal-backdrop);
+  display: grid;
+  place-items: center;
+}
+
+.brand-preview-modal-card {
+  width: min(100%, 280px);
+  padding: 14px;
+  border: 1px solid var(--semantic-border);
+  border-radius: 14px;
+  background: var(--semantic-surface-raised);
+  color: var(--semantic-text);
+  display: grid;
+  gap: 10px;
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--variant-background) 36%, transparent);
+}
+
+.brand-preview-modal-card > strong,
+.brand-preview-modal-card > p {
+  margin: 0;
+}
+
+.brand-preview-modal-card > strong {
+  font-size: 0.82rem;
+}
+
+.brand-preview-modal-card > p {
+  color: var(--semantic-muted);
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+.brand-preview-modal-card > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+/* Hover states depend on their own button tokens, not on the page text or icon token. */
+.primary-button:hover:not(:disabled),
+.primary-button:focus-visible:not(:disabled),
+.brand-preview-button.is-primary.is-hover {
+  background: color-mix(in srgb, var(--semantic-primary-base) 88%, var(--semantic-primary-text));
+  color: var(--semantic-primary-text);
+}
+
+.secondary-button:hover:not(:disabled),
+.secondary-button:focus-visible:not(:disabled),
+.brand-preview-button.is-secondary.is-hover {
+  border-color: color-mix(in srgb, var(--semantic-secondary-text) 72%, transparent);
+  background: color-mix(in srgb, var(--semantic-secondary-bg) 82%, var(--semantic-secondary-text));
+  color: var(--semantic-secondary-text);
+}
+
+.auxiliary-button:hover:not(:disabled),
+.auxiliary-button:focus-visible:not(:disabled),
+.action-panel .extra-action-button:hover,
+.action-panel .extra-action-button:focus-visible,
+.brand-preview-button.is-auxiliary.is-hover {
+  border-color: color-mix(in srgb, var(--semantic-auxiliary-text) 72%, transparent);
+  background: color-mix(in srgb, var(--semantic-auxiliary-bg) 82%, var(--semantic-auxiliary-text));
+  color: var(--semantic-auxiliary-text);
+}

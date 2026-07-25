@@ -86,25 +86,25 @@ export function VisualModeProvider({ children }: { children: ReactNode }) {
     root.classList.add(modeClass, variantClass)
 
     root.style.setProperty('--app-visual-variant-image', imageValue)
-    root.style.setProperty('--variant-primary', tokens.primary_color)
+    root.style.setProperty('--variant-primary', semanticTokens['--semantic-text'])
     root.style.setProperty('--variant-accent', tokens.primary_button_color)
     root.style.setProperty('--variant-background', tokens.background_color)
     root.style.setProperty('--variant-surface', tokens.surface_color)
-    root.style.setProperty('--variant-text', tokens.text_color)
-    root.style.setProperty('--visual-page-text', tokens.text_color)
-    root.style.setProperty('--visual-page-muted', `color-mix(in srgb, ${tokens.text_color} 72%, transparent)`)
-    root.style.setProperty('--variant-overlay-color', `color-mix(in srgb, ${tokens.background_color} ${tokens.background_opacity * 100}%, transparent)`)
-    root.style.setProperty('--variant-card-surface', `color-mix(in srgb, ${tokens.surface_color} ${tokens.surface_opacity * 100}%, transparent)`)
-    root.style.setProperty('--visual-card-surface', `color-mix(in srgb, ${tokens.surface_color} ${tokens.surface_opacity * 100}%, transparent)`)
+    root.style.setProperty('--variant-text', semanticTokens['--semantic-text'])
+    root.style.setProperty('--visual-page-text', semanticTokens['--semantic-text'])
+    root.style.setProperty('--visual-page-muted', semanticTokens['--semantic-muted'])
+    root.style.setProperty('--variant-overlay-color', `color-mix(in srgb, ${tokens.overlay_color} ${tokens.background_opacity * 100}%, transparent)`)
+    root.style.setProperty('--variant-card-surface', semanticTokens['--semantic-surface'])
+    root.style.setProperty('--visual-card-surface', semanticTokens['--semantic-surface'])
 
     Object.entries(semanticTokens).forEach(([name, value]) => root.style.setProperty(name, value))
 
     const aliases: Record<string, string> = {
-      '--brand-primary': tokens.primary_color,
+      '--brand-primary': semanticTokens['--semantic-text'],
       '--brand-background': tokens.background_color,
       '--brand-background-image': imageValue,
       '--brand-surface': tokens.surface_color,
-      '--brand-text': tokens.text_color,
+      '--brand-text': semanticTokens['--semantic-text'],
       '--brand-accent': tokens.primary_button_color,
       '--visual-card-border': semanticTokens['--semantic-border'],
       '--visual-action-color': semanticTokens['--semantic-text'],
@@ -117,7 +117,7 @@ export function VisualModeProvider({ children }: { children: ReactNode }) {
       '--admin-header-bg': semanticTokens['--semantic-header-bg'],
       '--admin-nav-text': semanticTokens['--semantic-muted'],
       '--admin-nav-text-hover': semanticTokens['--semantic-text'],
-      '--admin-nav-text-active': tokens.primary_button_color,
+      '--admin-nav-text-active': semanticTokens['--semantic-primary-base'],
       '--admin-nav-bg': 'transparent',
       '--admin-nav-bg-hover': semanticTokens['--semantic-secondary-bg'],
       '--admin-nav-border': semanticTokens['--semantic-border'],
@@ -134,7 +134,7 @@ export function VisualModeProvider({ children }: { children: ReactNode }) {
       '--admin-border': semanticTokens['--semantic-border'],
       '--modal-backdrop': semanticTokens['--semantic-modal-backdrop'],
       '--modal-surface': semanticTokens['--semantic-surface-raised'],
-      '--modal-surface-strong': semanticTokens['--semantic-surface-solid'],
+      '--modal-surface-strong': tokens.raised_surface_color,
       '--modal-text': semanticTokens['--semantic-text'],
       '--modal-muted': semanticTokens['--semantic-muted'],
       '--modal-border': semanticTokens['--semantic-border'],
