@@ -1,9 +1,10 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
 import { Eye, EyeOff, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import InstitutionalEmailField from '../components/auth/InstitutionalEmailField'
 import { signUpWithPassword } from '../lib/auth'
 import { getFriendlyErrorMessage } from '../lib/errors'
-import { buildInvestEmail, INVEST_EMAIL_DOMAIN, normalizeInvestEmailInput } from '../lib/investEmail'
+import { buildInvestEmail } from '../lib/investEmail'
 import { useBrandSettings } from '../contexts/BrandSettingsContext'
 import { useVisualMode } from '../contexts/VisualModeContext'
 import { getVariantLogo } from '../lib/cardVisualVariants'
@@ -74,23 +75,11 @@ export default function RegisterPage() {
 
         <h1 className="auth-page-title">Cadastro</h1>
         <form className="auth-page-form" onSubmit={submit}>
-          <label>
-            E-mail institucional
-            <span className="email-suffix-field">
-              <input
-                required
-                id="register-username"
-                name="username"
-                type="text"
-                inputMode="email"
-                value={prefix}
-                autoComplete="username"
-                onChange={(event) => setPrefix(normalizeInvestEmailInput(event.target.value))}
-                placeholder="seu.nome"
-              />
-              <span className="email-suffix-label">{INVEST_EMAIL_DOMAIN}</span>
-            </span>
-          </label>
+          <InstitutionalEmailField
+            id="register-username"
+            value={prefix}
+            onChange={setPrefix}
+          />
 
           <div className="auth-form-field">
             <label htmlFor="register-password">Senha</label>
