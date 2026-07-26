@@ -1,0 +1,15 @@
+/* Desktop authentication scale correction.
+ * These routes should render at 100% browser zoom with the visual size previously
+ * reached only at 125%. The existing 0.825 reference scale multiplied by 1.25
+ * results in the 1.03125 target below.
+ *
+ * /cadastro remains on its current compact scale.
+ */
+@media (min-width: 901px) {
+  .auth-page-shell:has(#employee-login-username),
+  .auth-page-shell:has(#password-reset-username),
+  .auth-page-shell:has(#password-update-new),
+  .auth-page-shell:has(#admin-login-username) {
+    --auth-desktop-scale: 1.03125;
+  }
+}
