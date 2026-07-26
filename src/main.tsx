@@ -29,6 +29,7 @@ import './mobile-experience-followup.css'
 import './mobile-experience-polish.css'
 import './admin-cards-mobile-polish.css'
 import './interface-followups.css'
+import './template-dropdown-opaque.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
