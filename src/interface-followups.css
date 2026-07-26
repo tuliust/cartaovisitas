@@ -1,0 +1,237 @@
+/* Follow-up refinements for language previews, analytics and editable theme tokens. */
+
+/* The logout action is regular header navigation. Its text and icon now follow
+ * the editable navigation and icon tokens instead of the fixed danger color. */
+html body :is(.collaborator-nav-logout, .admin-nav-logout) {
+  color: var(--semantic-muted, var(--admin-nav-text, rgba(255, 255, 255, 0.72))) !important;
+}
+
+html body :is(.collaborator-nav-logout, .admin-nav-logout) svg {
+  color: var(--semantic-icon, currentColor) !important;
+}
+
+html body :is(.collaborator-nav-logout, .admin-nav-logout):is(:hover, :focus-visible) {
+  color: var(--semantic-text, var(--admin-nav-text-hover, #ffffff)) !important;
+}
+
+html body :is(.collaborator-nav-logout, .admin-nav-logout):is(:hover, :focus-visible) svg {
+  color: var(--semantic-icon, currentColor) !important;
+}
+
+/* Keep the compact Models and Colors action centered like the other tiles. */
+.models-colors-trigger {
+  width: 100%;
+  height: 100%;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center;
+}
+
+.models-colors-trigger .extra-action-icon {
+  margin-inline: auto !important;
+  align-self: center !important;
+}
+
+.models-colors-trigger .models-colors-label {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Plain-language analytics cards. */
+.analytics-kpis article {
+  align-content: start;
+  gap: 8px;
+}
+
+.analytics-kpis article > span {
+  line-height: 1.35;
+}
+
+.analytics-kpis article > strong {
+  margin-top: 2px;
+}
+
+.analytics-kpis article > small,
+.analytics-section-description {
+  color: var(--semantic-muted, rgba(255, 255, 255, 0.7));
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.analytics-kpis article > small {
+  display: block;
+  max-width: 34rem;
+}
+
+.analytics-section-description {
+  margin: -8px 0 18px;
+}
+
+/* Accessible custom selector for editable interface tokens. This avoids the
+ * white native dropdown flash and exposes each element's current values. */
+.template-element-picker {
+  position: relative;
+  display: grid;
+  gap: 7px;
+}
+
+.template-element-picker-label {
+  color: var(--semantic-text, #ffffff);
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.template-element-picker-trigger {
+  width: 100%;
+  min-height: 54px;
+  padding: 9px 12px;
+  border: 1px solid var(--semantic-border, rgba(255, 255, 255, 0.18));
+  border-radius: 12px;
+  background: var(--semantic-input-bg, #111111);
+  color: var(--semantic-input-text, #ffffff);
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+}
+
+.template-element-picker-trigger:is(:hover, :focus-visible),
+.template-element-picker-trigger[aria-expanded="true"] {
+  border-color: var(--semantic-focus, #fdb642);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--semantic-focus, #fdb642) 24%, transparent);
+}
+
+.template-element-picker-copy {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.template-element-picker-copy strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--semantic-input-text, #ffffff);
+  font-size: 0.86rem;
+}
+
+.template-element-picker-copy small,
+.template-element-picker-option small {
+  color: var(--semantic-muted, rgba(255, 255, 255, 0.7));
+  font-size: 0.69rem;
+  font-weight: 600;
+}
+
+.template-element-picker-swatch {
+  width: 27px;
+  height: 27px;
+  flex: 0 0 27px;
+  border: 1px solid color-mix(in srgb, var(--semantic-text, #ffffff) 35%, transparent);
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--semantic-background, #000000) 22%, transparent);
+}
+
+.template-element-picker-trigger > svg {
+  width: 18px;
+  height: 18px;
+  color: var(--semantic-icon, currentColor);
+  transition: transform 150ms ease;
+}
+
+.template-element-picker-trigger > svg.open {
+  transform: rotate(180deg);
+}
+
+.template-element-picker-menu {
+  position: absolute;
+  z-index: 120;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  max-height: min(480px, 65vh);
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid var(--semantic-border, rgba(255, 255, 255, 0.18));
+  border-radius: 14px;
+  background: var(--semantic-surface-raised, #111111);
+  color: var(--semantic-text, #ffffff);
+  box-shadow: 0 22px 52px rgba(0, 0, 0, 0.42);
+  color-scheme: dark;
+}
+
+.template-element-picker-group + .template-element-picker-group {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--semantic-border, rgba(255, 255, 255, 0.14));
+}
+
+.template-element-picker-group h3 {
+  margin: 0 0 6px;
+  padding: 0 7px;
+  color: var(--semantic-subtle, rgba(255, 255, 255, 0.56));
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.template-element-picker-option {
+  width: 100%;
+  min-height: 48px;
+  padding: 7px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--semantic-text, #ffffff);
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+}
+
+.template-element-picker-option > span:nth-child(2) {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.template-element-picker-option strong {
+  color: var(--semantic-text, #ffffff);
+  font-size: 0.78rem;
+  line-height: 1.3;
+}
+
+.template-element-picker-option > svg {
+  width: 17px;
+  height: 17px;
+  color: var(--semantic-focus, #fdb642);
+}
+
+.template-element-picker-option:is(:hover, :focus-visible) {
+  border-color: var(--semantic-border, rgba(255, 255, 255, 0.18));
+  background: var(--semantic-secondary-bg, rgba(255, 255, 255, 0.08));
+}
+
+.template-element-picker-option.active {
+  border-color: var(--semantic-focus, #fdb642);
+  background: color-mix(in srgb, var(--semantic-focus, #fdb642) 13%, transparent);
+}
+
+@media (max-width: 700px) {
+  .template-element-picker-menu {
+    max-height: min(420px, 58vh);
+  }
+
+  .analytics-kpis article > small {
+    font-size: 0.75rem;
+  }
+}
