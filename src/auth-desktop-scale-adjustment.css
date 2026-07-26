@@ -1,0 +1,142 @@
+/* Desktop authentication sizing and centering.
+ * The selected routes stay fully visible, centered in the viewport and without
+ * document or card scrolling. Mobile continues to use its dedicated contract.
+ */
+@media (min-width: 901px) {
+  .auth-page-shell:has(#employee-login-username),
+  .auth-page-shell:has(#password-reset-username),
+  .auth-page-shell:has(#password-update-new),
+  .auth-page-shell:has(#admin-login-username) {
+    --auth-desktop-scale: 1.03125;
+  }
+
+  .registration-page-shell:has(#register-username) {
+    --auth-desktop-scale: 0.9;
+    --registration-reference-scale: 0.9;
+  }
+
+  .auth-page-shell:has(#employee-login-username),
+  .auth-page-shell:has(#admin-login-username),
+  .registration-page-shell:has(#register-username) {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    min-height: 0;
+    max-height: 100dvh;
+    padding: 16px;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+  }
+
+  .auth-page-shell:has(#employee-login-username) .auth-page-card,
+  .auth-page-shell:has(#admin-login-username) .auth-page-card,
+  .registration-page-shell:has(#register-username) .auth-page-card {
+    width: min(620px, calc((100vw - 32px) / var(--auth-desktop-scale)));
+    max-width: calc((100vw - 32px) / var(--auth-desktop-scale));
+    max-height: calc((100dvh - 32px) / var(--auth-desktop-scale));
+    min-height: 0;
+    margin: 0;
+    overflow: hidden;
+    transform: scale(var(--auth-desktop-scale));
+    transform-origin: center center;
+  }
+
+  .auth-page-shell:has(#employee-login-username) .auth-page-card,
+  .auth-page-shell:has(#admin-login-username) .auth-page-card {
+    padding: 26px 40px 28px;
+  }
+
+  .auth-page-shell:has(#employee-login-username) .auth-page-logo,
+  .auth-page-shell:has(#admin-login-username) .auth-page-logo {
+    width: min(210px, 48%);
+    max-height: 82px;
+    margin-bottom: 20px;
+  }
+
+  .auth-page-shell:has(#employee-login-username) .auth-page-title,
+  .auth-page-shell:has(#admin-login-username) .auth-page-title {
+    margin-bottom: 14px;
+  }
+
+  .auth-page-shell:has(#employee-login-username) .auth-page-description,
+  .auth-page-shell:has(#admin-login-username) .auth-page-description {
+    margin-bottom: 20px;
+  }
+
+  .auth-page-shell:has(#employee-login-username) .auth-page-form,
+  .auth-page-shell:has(#admin-login-username) .auth-page-form {
+    gap: 12px;
+  }
+
+  .auth-page-shell:has(#employee-login-username) .auth-page-submit,
+  .auth-page-shell:has(#admin-login-username) .auth-page-submit {
+    margin-top: 12px;
+  }
+
+  .auth-page-shell:has(#employee-login-username) .auth-page-links,
+  .auth-page-shell:has(#admin-login-username) .auth-page-links {
+    margin-top: 20px;
+  }
+
+  .registration-page-shell:has(#register-username) .auth-page-card {
+    padding: 18px 36px 20px;
+  }
+
+  .registration-page-shell:has(#register-username) .auth-page-logo {
+    width: min(190px, 44%);
+    max-height: 72px;
+    margin-bottom: 14px;
+  }
+
+  .registration-page-shell:has(#register-username) .auth-page-title {
+    margin-bottom: 14px;
+  }
+
+  .registration-page-shell:has(#register-username) .auth-page-form {
+    gap: 10px;
+  }
+
+  .registration-page-shell:has(#register-username) .auth-page-form > label,
+  .registration-page-shell:has(#register-username) .auth-form-field {
+    gap: 5px;
+  }
+
+  .registration-page-shell:has(#register-username) :is(.email-suffix-field, .password-input-field),
+  .registration-page-shell:has(#register-username) :is(.email-suffix-field input, .password-input-field input),
+  .registration-page-shell:has(#register-username) :is(.email-suffix-label, .password-visibility-button) {
+    min-height: 44px;
+    height: 44px;
+  }
+
+  .registration-page-shell:has(#register-username) .terms-acceptance {
+    margin: 2px 0;
+  }
+
+  .registration-page-shell:has(#register-username) .auth-page-submit {
+    min-height: 48px;
+    margin-top: 2px;
+  }
+
+  .registration-page-shell:has(#register-username) .auth-page-links {
+    margin-top: 12px;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 760px) {
+  .registration-page-shell:has(#register-username) {
+    --auth-desktop-scale: 0.84;
+    --registration-reference-scale: 0.84;
+  }
+
+  .registration-page-shell:has(#register-username) .auth-page-card {
+    padding-top: 14px;
+    padding-bottom: 16px;
+  }
+
+  .registration-page-shell:has(#register-username) .auth-page-logo {
+    max-height: 62px;
+    margin-bottom: 10px;
+  }
+}
