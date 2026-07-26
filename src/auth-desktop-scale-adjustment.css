@@ -11,8 +11,8 @@
   }
 
   .registration-page-shell:has(#register-username) {
-    --auth-desktop-scale: 1;
-    --registration-reference-scale: 1;
+    --auth-desktop-scale: 1.2;
+    --registration-reference-scale: 1.2;
   }
 
   .auth-page-shell:has(#employee-login-username),
