@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type MouseEvent } from 'react'
 import CardForm from '../components/admin/CardForm'
 import CardPreview from '../components/admin/CardPreview'
 import CardPreviewModal from '../components/admin/CardPreviewModal'
@@ -9,6 +9,9 @@ import { useVisualMode } from '../contexts/VisualModeContext'
 import { defaultCardFormValues, type CardFormValues } from '../lib/adminCards'
 import { getFriendlyErrorMessage } from '../lib/errors'
 import { createMyCardDraft, toMyCardFormValues, upsertMyCard } from '../lib/myCard'
+import type { PublicCardLanguage } from '../lib/publicCardLocale'
+
+const previewLanguages = new Set<PublicCardLanguage>(['pt', 'es', 'en'])
 
 export default function MyCardEditPage() {
   const { card, refreshCard } = useCollaborator()
@@ -20,6 +23,7 @@ export default function MyCardEditPage() {
   const [cardId, setCardId] = useState(card?.id ?? '')
   const [values, setValues] = useState<CardFormValues>({ ...defaultCardFormValues })
   const [preview, setPreview] = useState<CardFormValues>({ ...defaultCardFormValues })
+  const [previewLanguage, setPreviewLanguage] = useState<PublicCardLanguage>('pt')
   const [previewOpen, setPreviewOpen] = useState(false)
   const [desktopActionsTarget, setDesktopActionsTarget] = useState<HTMLDivElement | null>(null)
   const previewButtonRef = useRef<HTMLButtonElement>(null)
@@ -48,19 +52,26 @@ export default function MyCardEditPage() {
     finally { setSaving(false) }
   }
 
+  function synchronizePreviewLanguage(event: MouseEvent<HTMLDivElement>) {
+    if (!(event.target instanceof Element)) return
+    const button = event.target.closest<HTMLButtonElement>('.language-toggle button')
+    const language = button?.textContent?.trim().toLowerCase() as PublicCardLanguage | undefined
+    if (language && previewLanguages.has(language)) setPreviewLanguage(language)
+  }
+
   return <CollaboratorLayout title="Editar meu cartão" subtitle="Atualize os dados exibidos em sua página e nos arquivos de contato.">
     {booting ? <div className="state-card" role="status">Carregando formulário...</div> : <>
       {error ? <p className="admin-error" role="alert">{error}</p> : null}
-      <div className="admin-form-preview-layout collaborator-card-layout">
+      <div className="admin-form-preview-layout collaborator-card-layout" onClickCapture={synchronizePreviewLanguage}>
         <CardForm initialValues={values} submitLabel="Salvar alterações" loading={saving} currentCardId={cardId || undefined} onChange={setPreview} onSubmit={save} mode="employee" lockedEmail={values.email} allowStatusEdit={false} allowLogoUpload={false} allowAvatarUpload lockInstitutionalFields onPreview={() => setPreviewOpen(true)} previewButtonRef={previewButtonRef} formId={formId} autoGenerateSlug={!cardId} desktopActionsTarget={desktopActionsTarget} />
         <div className="desktop-card-preview">
           <div className="desktop-card-preview-sticky">
-            <CardPreview values={preview} showStatus={false} />
+            <CardPreview values={preview} showStatus={false} language={previewLanguage} />
             <div ref={setDesktopActionsTarget} />
           </div>
         </div>
       </div>
-      {previewOpen ? <CardPreviewModal values={preview} showStatus={false} onClose={() => setPreviewOpen(false)} returnFocusRef={previewButtonRef} /> : null}
+      {previewOpen ? <CardPreviewModal values={preview} showStatus={false} language={previewLanguage} onLanguageChange={setPreviewLanguage} onClose={() => setPreviewOpen(false)} returnFocusRef={previewButtonRef} /> : null}
     </>}
   </CollaboratorLayout>
 }
