@@ -1,47 +1,49 @@
 /* Desktop authentication sizing and centering.
- * /cadastro, /entrar and /admin/login share the same visual scale, card width,
- * controls and spacing. The complete composition remains centered and without
- * document or card scrolling. Mobile keeps its dedicated contract.
+ * /recuperar-senha is the visual reference for /cadastro, /entrar and
+ * /admin/login. These routes share the same scale, card width, logo sizing,
+ * controls and vertical rhythm. Mobile keeps its dedicated contract.
  */
 @media (min-width: 901px) {
-  /* Password recovery/update keep their existing reference scale. */
-  .auth-page-shell:has(#password-reset-username),
+  /* /definir-senha keeps the same reference scale without joining this layout. */
   .auth-page-shell:has(#password-update-new) {
     --auth-desktop-scale: 1.03125;
   }
 
-  /* Canonical desktop contract for /cadastro, /entrar and /admin/login. */
+  /* Canonical desktop contract based on /recuperar-senha. */
+  .auth-page-shell:has(#password-reset-username),
   .auth-page-shell:has(#employee-login-username),
   .auth-page-shell:has(#admin-login-username),
   .registration-page-shell:has(#register-username) {
-    --auth-desktop-scale: 1.2;
-    --registration-reference-scale: 1.2;
+    --auth-desktop-scale: 1.03125;
+    --registration-reference-scale: 1.03125;
     position: fixed;
     inset: 0;
     width: 100vw;
     height: 100dvh;
     min-height: 0;
     max-height: 100dvh;
-    padding: 16px;
+    padding: 12px;
     overflow: hidden;
     display: grid;
     place-items: center;
   }
 
+  .auth-page-shell:has(#password-reset-username) .auth-page-card,
   .auth-page-shell:has(#employee-login-username) .auth-page-card,
   .auth-page-shell:has(#admin-login-username) .auth-page-card,
   .registration-page-shell:has(#register-username) .auth-page-card {
-    width: min(620px, calc((100vw - 32px) / var(--auth-desktop-scale)));
-    max-width: calc((100vw - 32px) / var(--auth-desktop-scale));
-    max-height: calc((100dvh - 32px) / var(--auth-desktop-scale));
+    width: min(620px, calc((100vw - 24px) / var(--auth-desktop-scale)));
+    max-width: calc((100vw - 24px) / var(--auth-desktop-scale));
+    max-height: calc((100dvh - 24px) / var(--auth-desktop-scale));
     min-height: 0;
     margin: 0;
-    padding: 24px 40px 28px;
+    padding: 15px 34px 24px;
     overflow: hidden;
     transform: scale(var(--auth-desktop-scale));
     transform-origin: center center;
   }
 
+  .auth-page-shell:has(#password-reset-username) .auth-page-logo,
   .auth-page-shell:has(#employee-login-username) .auth-page-logo,
   .auth-page-shell:has(#admin-login-username) .auth-page-logo,
   .registration-page-shell:has(#register-username) .auth-page-logo {
@@ -50,23 +52,27 @@
     margin-bottom: 28px;
   }
 
+  .auth-page-shell:has(#password-reset-username) .auth-page-title,
   .auth-page-shell:has(#employee-login-username) .auth-page-title,
   .auth-page-shell:has(#admin-login-username) .auth-page-title,
   .registration-page-shell:has(#register-username) .auth-page-title {
-    margin-bottom: 16px;
+    margin-bottom: 25px;
   }
 
+  .auth-page-shell:has(#password-reset-username) .auth-page-description,
   .auth-page-shell:has(#employee-login-username) .auth-page-description,
   .auth-page-shell:has(#admin-login-username) .auth-page-description {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
   }
 
+  .auth-page-shell:has(#password-reset-username) .auth-page-form,
   .auth-page-shell:has(#employee-login-username) .auth-page-form,
   .auth-page-shell:has(#admin-login-username) .auth-page-form,
   .registration-page-shell:has(#register-username) .auth-page-form {
     gap: 12px;
   }
 
+  .auth-page-shell:has(#password-reset-username) .auth-page-form > label,
   .auth-page-shell:has(#employee-login-username) .auth-page-form > label,
   .auth-page-shell:has(#employee-login-username) .auth-form-field > label,
   .auth-page-shell:has(#admin-login-username) .auth-page-form > label,
@@ -77,25 +83,20 @@
     font-size: 15px;
   }
 
+  .auth-page-shell:has(#password-reset-username) :is(.email-suffix-field, .password-input-field),
   .auth-page-shell:has(#employee-login-username) :is(.email-suffix-field, .password-input-field),
   .auth-page-shell:has(#admin-login-username) :is(.email-suffix-field, .password-input-field),
   .registration-page-shell:has(#register-username) :is(.email-suffix-field, .password-input-field),
+  .auth-page-shell:has(#password-reset-username) :is(.email-suffix-field input, .password-input-field input),
   .auth-page-shell:has(#employee-login-username) :is(.email-suffix-field input, .password-input-field input),
   .auth-page-shell:has(#admin-login-username) :is(.email-suffix-field input, .password-input-field input),
   .registration-page-shell:has(#register-username) :is(.email-suffix-field input, .password-input-field input),
+  .auth-page-shell:has(#password-reset-username) :is(.email-suffix-label, .password-visibility-button),
   .auth-page-shell:has(#employee-login-username) :is(.email-suffix-label, .password-visibility-button),
   .auth-page-shell:has(#admin-login-username) :is(.email-suffix-label, .password-visibility-button),
   .registration-page-shell:has(#register-username) :is(.email-suffix-label, .password-visibility-button) {
-    min-height: 44px;
-    height: 44px;
-  }
-
-  .auth-page-shell:has(#employee-login-username) :is(.email-suffix-field input, .password-input-field input),
-  .auth-page-shell:has(#admin-login-username) :is(.email-suffix-field input, .password-input-field input),
-  .registration-page-shell:has(#register-username) :is(.email-suffix-field input, .password-input-field input),
-  .auth-page-shell:has(#employee-login-username) :is(.email-suffix-label, .password-visibility-button),
-  .auth-page-shell:has(#admin-login-username) :is(.email-suffix-label, .password-visibility-button),
-  .registration-page-shell:has(#register-username) :is(.email-suffix-label, .password-visibility-button) {
+    min-height: 42px;
+    height: 42px;
     font-size: 15px;
   }
 
@@ -106,26 +107,29 @@
   }
 
   .registration-page-shell:has(#register-username) .terms-acceptance {
-    margin: 4px 0;
+    margin: -4px 0;
   }
 
+  .auth-page-shell:has(#password-reset-username) .auth-page-submit,
   .auth-page-shell:has(#employee-login-username) .auth-page-submit,
   .auth-page-shell:has(#admin-login-username) .auth-page-submit,
   .registration-page-shell:has(#register-username) .auth-page-submit {
     min-height: 48px;
-    margin-top: 10px;
+    margin-top: 16px;
     font-size: 16px;
   }
 
+  .auth-page-shell:has(#password-reset-username) .auth-page-links,
   .auth-page-shell:has(#employee-login-username) .auth-page-links,
   .auth-page-shell:has(#admin-login-username) .auth-page-links,
   .registration-page-shell:has(#register-username) .auth-page-links {
-    margin-top: 20px;
+    margin-top: 30px;
   }
 }
 
-/* Compact but still standardized desktop treatment for shorter viewports. */
+/* Preserve the same hierarchy in shorter desktop viewports without clipping. */
 @media (min-width: 901px) and (max-height: 760px) {
+  .auth-page-shell:has(#password-reset-username),
   .auth-page-shell:has(#employee-login-username),
   .auth-page-shell:has(#admin-login-username),
   .registration-page-shell:has(#register-username) {
@@ -133,17 +137,19 @@
     --registration-reference-scale: 0.9;
   }
 
+  .auth-page-shell:has(#password-reset-username) .auth-page-card,
   .auth-page-shell:has(#employee-login-username) .auth-page-card,
   .auth-page-shell:has(#admin-login-username) .auth-page-card,
   .registration-page-shell:has(#register-username) .auth-page-card {
-    padding-top: 16px;
+    padding-top: 14px;
     padding-bottom: 18px;
   }
 
+  .auth-page-shell:has(#password-reset-username) .auth-page-logo,
   .auth-page-shell:has(#employee-login-username) .auth-page-logo,
   .auth-page-shell:has(#admin-login-username) .auth-page-logo,
   .registration-page-shell:has(#register-username) .auth-page-logo {
     max-height: 66px;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
   }
 }
