@@ -48,16 +48,21 @@ function toPreviewCard(values: CardFormValues): AdminBusinessCard {
   }
 }
 
-function buildPreviewQrValue(values: CardFormValues) {
+function localizedJobTitle(values: CardFormValues, language: PublicCardLanguage) {
+  return values[`job_title_${language}`] || values.job_title_pt || values.job_title
+}
+
+function buildPreviewQrValue(values: CardFormValues, language: PublicCardLanguage) {
   const name = values.display_name || values.full_name || 'Contato Invest RS'
   const phone = values.mobile_phone || values.work_phone
+  const jobTitle = localizedJobTitle(values, language)
 
   return [
     'BEGIN:VCARD',
     'VERSION:3.0',
     `FN:${name}`,
     'ORG:Invest RS',
-    values.job_title_pt || values.job_title ? `TITLE:${values.job_title_pt || values.job_title}` : '',
+    jobTitle ? `TITLE:${jobTitle}` : '',
     phone ? `TEL;TYPE=CELL:${phone}` : '',
     values.email ? `EMAIL:${values.email}` : '',
     values.website ? `URL:${values.website}` : '',
@@ -65,11 +70,24 @@ function buildPreviewQrValue(values: CardFormValues) {
   ].filter(Boolean).join('\r\n')
 }
 
-export default function PublicCardDraftPreview({ values, showStatus = false }: { values: CardFormValues; showStatus?: boolean }) {
-  const [language, setLanguage] = useState<PublicCardLanguage>('pt')
+type PublicCardDraftPreviewProps = {
+  values: CardFormValues
+  showStatus?: boolean
+  language?: PublicCardLanguage
+  onLanguageChange?: (language: PublicCardLanguage) => void
+}
+
+export default function PublicCardDraftPreview({ values, showStatus = false, language: controlledLanguage, onLanguageChange }: PublicCardDraftPreviewProps) {
+  const [localLanguage, setLocalLanguage] = useState<PublicCardLanguage>('pt')
   const [qrDataUrl, setQrDataUrl] = useState('')
+  const language = controlledLanguage ?? localLanguage
   const card = useMemo(() => toPreviewCard(values), [values])
-  const qrValue = useMemo(() => buildPreviewQrValue(values), [values])
+  const qrValue = useMemo(() => buildPreviewQrValue(values, language), [language, values])
+
+  function changeLanguage(nextLanguage: PublicCardLanguage) {
+    if (controlledLanguage === undefined) setLocalLanguage(nextLanguage)
+    onLanguageChange?.(nextLanguage)
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -94,7 +112,7 @@ export default function PublicCardDraftPreview({ values, showStatus = false }: {
       variant={values.public_visual_variant}
       qrDataUrl={qrDataUrl}
       toolbar={<div className="public-card-initial-toolbar" aria-label="Idioma e ferramentas do cartão no preview">
-        <PublicCardLanguageToggle language={language} className="public-card-language-mobile" onChange={setLanguage} />
+        <PublicCardLanguageToggle language={language} className="public-card-language-mobile" onChange={changeLanguage} />
         <div className="public-card-initial-actions" aria-hidden="true">
           <span className="public-card-mobile-expand draft-preview-expand-icon"><ChevronDown /></span>
         </div>

@@ -1,5 +1,5 @@
-import { ImagePlus, Trash2, Upload } from 'lucide-react'
-import { useRef, type CSSProperties, type DragEvent } from 'react'
+import { Check, ChevronDown, ImagePlus, Trash2, Upload } from 'lucide-react'
+import { useEffect, useRef, useState, type CSSProperties, type DragEvent } from 'react'
 import {
   templateColorPalette,
   type BrandAssetType,
@@ -11,6 +11,7 @@ import {
   brandTemplateElementGroups,
   brandTemplateElements,
   getBrandTemplateElement,
+  type TemplateElementDefinition,
   type TemplateElementKey,
 } from '../../lib/brandTemplateElements'
 import { getVariantClassName, getVariantStyle, publicVisualVariantOptions, type PublicVisualVariant } from '../../lib/cardVisualVariants'
@@ -64,6 +65,51 @@ function AssetUploadCard({ accept, alt, help, loading, title, url, onRemove, onU
   </div>
 }
 
+function getElementTokenSummary(tokens: VisualVariantSettings, element: TemplateElementDefinition) {
+  const color = String(tokens[element.color])
+  const opacity = element.opacity ? Math.round(Number(tokens[element.opacity]) * 100) : 100
+  return { color, opacity }
+}
+
+function TemplateElementPicker({ activeElement, tokens, onChange }: { activeElement: TemplateElementKey; tokens: VisualVariantSettings; onChange: (element: TemplateElementKey) => void }) {
+  const [open, setOpen] = useState(false)
+  const rootRef = useRef<HTMLDivElement>(null)
+  const active = getBrandTemplateElement(activeElement)
+  const summary = getElementTokenSummary(tokens, active)
+
+  useEffect(() => {
+    if (!open) return
+    function closeOutside(event: MouseEvent) { if (!rootRef.current?.contains(event.target as Node)) setOpen(false) }
+    function closeEscape(event: KeyboardEvent) { if (event.key === 'Escape') setOpen(false) }
+    document.addEventListener('mousedown', closeOutside)
+    document.addEventListener('keydown', closeEscape)
+    return () => { document.removeEventListener('mousedown', closeOutside); document.removeEventListener('keydown', closeEscape) }
+  }, [open])
+
+  return <div className="template-element-picker" ref={rootRef}>
+    <span className="template-element-picker-label">Elemento</span>
+    <button className="template-element-picker-trigger" type="button" aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
+      <span className="template-element-picker-copy"><strong>{active.label}</strong><small>{summary.color} · {summary.opacity}% de opacidade</small></span>
+      <span className="template-element-picker-swatch" style={{ backgroundColor: summary.color, opacity: Math.max(0.18, summary.opacity / 100) }} aria-hidden="true" />
+      <ChevronDown className={open ? 'open' : ''} aria-hidden="true" />
+    </button>
+    {open ? <div className="template-element-picker-menu" role="listbox" aria-label="Elementos de cor e opacidade">
+      {brandTemplateElementGroups.map((group) => <section className="template-element-picker-group" key={group.key}>
+        <h3>{group.label}</h3>
+        {brandTemplateElements.filter((option) => option.group === group.key).map((option) => {
+          const optionSummary = getElementTokenSummary(tokens, option)
+          const selected = option.key === activeElement
+          return <button className={`template-element-picker-option${selected ? ' active' : ''}`} type="button" role="option" aria-selected={selected} key={option.key} onClick={() => { onChange(option.key); setOpen(false) }}>
+            <span className="template-element-picker-swatch" style={{ backgroundColor: optionSummary.color, opacity: Math.max(0.18, optionSummary.opacity / 100) }} aria-hidden="true" />
+            <span><strong>{option.label}</strong><small>{optionSummary.color} · {optionSummary.opacity}%</small></span>
+            {selected ? <Check aria-hidden="true" /> : null}
+          </button>
+        })}
+      </section>)}
+    </div> : null}
+  </div>
+}
+
 export function TemplateOptionsEditor({ activeVariant, activeElement, values, uploading, onActiveVariantChange, onActiveElementChange, onAssetChange, onUpload, onVariantChange }: TemplateOptionsEditorProps) {
   const tokens = values.visual_variant_settings[activeVariant]
   const element = getBrandTemplateElement(activeElement)
@@ -94,13 +140,7 @@ export function TemplateOptionsEditor({ activeVariant, activeElement, values, up
     </div>
     {backgroundAsset && !backgroundUrl ? <p className="template-fallback-note">Sem uma imagem configurada, este modo utiliza automaticamente o background sólido da mesma família, preservando suas cores, superfícies e botões.</p> : null}
 
-    <label className="template-element-select">Elemento
-      <select value={activeElement} onChange={(event) => onActiveElementChange(event.target.value as TemplateElementKey)}>
-        {brandTemplateElementGroups.map((group) => <optgroup label={group.label} key={group.key}>
-          {brandTemplateElements.filter((option) => option.group === group.key).map((option) => <option value={option.key} key={option.key}>{option.label}</option>)}
-        </optgroup>)}
-      </select>
-    </label>
+    <TemplateElementPicker activeElement={activeElement} tokens={tokens} onChange={onActiveElementChange} />
 
     <div className="template-element-context">
       <p>{element.description}</p>
@@ -110,9 +150,9 @@ export function TemplateOptionsEditor({ activeVariant, activeElement, values, up
       </div>
     </div>
 
-    <div className="template-token-controls">
-      <fieldset><legend>Cor</legend><div className="template-palette">{templateColorPalette.map((color) => <button type="button" className={selectedColor === color ? 'active' : ''} aria-label={`Usar cor ${color}`} aria-pressed={selectedColor === color} title={color} key={color} style={{ '--template-swatch': color } as CSSProperties} onClick={() => onVariantChange(element.color, color as TemplateColor)} />)}</div></fieldset>
-      {element.opacity ? <label className="opacity-field"><span>Opacidade <output>{opacity}%</output></span><input type="range" min="0" max="100" step="1" value={opacity ?? 100} onChange={(event) => onVariantChange(element.opacity!, Number(event.target.value) / 100)} /></label> : <div className="template-token-no-opacity"><span>Opacidade</span><strong>100%</strong><small>Este elemento usa cor sólida para preservar o background base.</small></div>}
+    <div className="template-token-controls" key={activeElement}>
+      <fieldset><legend>Cor atual</legend><div className="template-palette">{templateColorPalette.map((color) => <button type="button" className={selectedColor === color ? 'active' : ''} aria-label={`Usar cor ${color}`} aria-pressed={selectedColor === color} title={color} key={color} style={{ '--template-swatch': color } as CSSProperties} onClick={() => onVariantChange(element.color, color as TemplateColor)} />)}</div></fieldset>
+      {element.opacity ? <label className="opacity-field"><span>Opacidade atual <output>{opacity}%</output></span><input type="range" min="0" max="100" step="1" value={opacity ?? 100} onChange={(event) => onVariantChange(element.opacity!, Number(event.target.value) / 100)} /></label> : <div className="template-token-no-opacity"><span>Opacidade atual</span><strong>100%</strong><small>Este elemento usa cor sólida para preservar o background base.</small></div>}
     </div>
     <p className="template-fallback-note">Tipografia institucional fixa: a família Inter/sistema, os pesos e os tamanhos permanecem padronizados. As cores de textos, ícones, fundos, superfícies, campos e botões agora são controladas por tokens independentes.</p>
     <p className="template-fallback-note">Escopo fixo: QR Code, cores semânticas de sucesso/alerta/erro e a assinatura de e-mail não mudam entre os seis modos. A assinatura mantém Arial e cores próprias para compatibilidade com Gmail e outros clientes.</p>

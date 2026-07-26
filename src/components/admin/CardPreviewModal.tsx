@@ -1,17 +1,20 @@
 import { X } from 'lucide-react'
 import { useEffect, useId, useRef, type RefObject } from 'react'
 import type { CardFormValues } from '../../lib/adminCards'
+import type { PublicCardLanguage } from '../../lib/publicCardLocale'
 import CardPreview from './CardPreview'
 import PublicCardDraftPreview from './PublicCardDraftPreview'
 
 type CardPreviewModalProps = {
   values: CardFormValues
   showStatus?: boolean
+  language?: PublicCardLanguage
+  onLanguageChange?: (language: PublicCardLanguage) => void
   onClose: () => void
   returnFocusRef: RefObject<HTMLButtonElement | null>
 }
 
-export default function CardPreviewModal({ values, showStatus = true, onClose, returnFocusRef }: CardPreviewModalProps) {
+export default function CardPreviewModal({ values, showStatus = true, language = 'pt', onLanguageChange, onClose, returnFocusRef }: CardPreviewModalProps) {
   const titleId = useId()
   const closeRef = useRef<HTMLButtonElement>(null)
   const modalRef = useRef<HTMLElement>(null)
@@ -65,10 +68,10 @@ export default function CardPreviewModal({ values, showStatus = true, onClose, r
         </header>
         <div className="card-preview-modal-body">
           <div className="card-preview-modal-legacy">
-            <CardPreview values={values} showStatus={showStatus} />
+            <CardPreview values={values} showStatus={showStatus} language={language} />
           </div>
           <div className="card-preview-modal-public">
-            <PublicCardDraftPreview values={values} showStatus={showStatus} />
+            <PublicCardDraftPreview values={values} showStatus={showStatus} language={language} onLanguageChange={onLanguageChange} />
           </div>
         </div>
       </section>

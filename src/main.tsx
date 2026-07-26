@@ -28,6 +28,7 @@ import './mobile-experience-overrides.css'
 import './mobile-experience-followup.css'
 import './mobile-experience-polish.css'
 import './admin-cards-mobile-polish.css'
+import './interface-followups.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
