@@ -74,6 +74,7 @@ const adminPreviewPage = read('src/pages/admin/AdminBrandSettingsPage.tsx')
 const brandInterfacePreview = read('src/components/admin/BrandInterfacePreview.tsx')
 const brandTemplateElements = read('src/lib/brandTemplateElements.ts')
 const templateEditor = read('src/components/admin/TemplateOptionsEditor.tsx')
+const institutionalEmailField = read('src/components/auth/InstitutionalEmailField.tsx')
 const employeeLogin = read('src/pages/EmployeeLoginPage.tsx')
 const adminLogin = read('src/pages/admin/AdminLoginPage.tsx')
 const homePage = read('src/pages/HomePage.tsx')
@@ -142,25 +143,34 @@ requireFragments('Escopo institucional documentado no painel', templateEditor, [
   'Escopo fixo:',
   'assinatura de e-mail',
 ])
-requireFragments('Credenciais reconhecíveis no login do colaborador', employeeLogin, [
-  'method="post"',
-  'name="username"',
-  'type="email"',
-  'autoComplete="username"',
-  'name="password"',
-  'autoComplete="current-password"',
-  'type="submit"',
-  'buildInvestEmail(email)',
+requireFragments('Campo institucional compartilhado', institutionalEmailField, [
+  'name = \'username\'',
+  'type="text"',
+  'autoComplete={autoComplete}',
+  'email-suffix-field',
+  'email-suffix-label',
+  'INVEST_EMAIL_DOMAIN',
+  'parseInvestEmailInput',
 ])
-requireFragments('Credenciais reconhecíveis no login administrativo', adminLogin, [
+requireFragments('Credenciais reconhecíveis no login do colaborador', `${employeeLogin}\n${institutionalEmailField}`, [
   'method="post"',
-  'name="username"',
-  'type="email"',
-  'autoComplete="username"',
+  'id="employee-login-username"',
+  'name = \'username\'',
+  'autoComplete={autoComplete}',
   'name="password"',
   'autoComplete="current-password"',
   'type="submit"',
-  'buildInvestEmail(email)',
+  'buildInvestEmail(emailPrefix)',
+])
+requireFragments('Credenciais reconhecíveis no login administrativo', `${adminLogin}\n${institutionalEmailField}`, [
+  'method="post"',
+  'id="admin-login-username"',
+  'name = \'username\'',
+  'autoComplete={autoComplete}',
+  'name="password"',
+  'autoComplete="current-password"',
+  'type="submit"',
+  'buildInvestEmail(emailPrefix)',
 ])
 requireFragments('Contrato base dos componentes', tokenContract, [
   '.primary-button',
@@ -185,7 +195,7 @@ requireFragments('Cobertura de autenticação e autofill', tokenAuth, [
   '--auth-input-bg: var(--semantic-input-bg)',
   'input:-webkit-autofill',
   '.password-visibility-button',
-  '.email-full-field',
+  '.email-suffix-field',
 ])
 requireFragments('Contrato CSS da experiência mobile', mobileExperience, [
   '@media (max-width: 900px)',
