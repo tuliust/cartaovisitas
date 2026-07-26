@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import QRCode from 'qrcode'
 import type { CardFormValues } from '../../lib/adminCards'
+import type { PublicCardLanguage } from '../../lib/publicCardLocale'
 import { useBrandSettings } from '../../contexts/BrandSettingsContext'
 import { getVariantClassName, getVariantLogo, getVariantStyle } from '../../lib/cardVisualVariants'
 import { Globe, Mail, MapPin, MessageCircle, type LucideIcon } from 'lucide-react'
@@ -8,6 +9,21 @@ import { Globe, Mail, MapPin, MessageCircle, type LucideIcon } from 'lucide-reac
 type CardPreviewProps = {
   values: CardFormValues
   showStatus?: boolean
+  language?: PublicCardLanguage
+}
+
+type PreviewCopy = {
+  languageLabel: string
+  whatsapp: string
+  email: string
+  website: string
+  address: string
+}
+
+const previewCopy: Record<PublicCardLanguage, PreviewCopy> = {
+  pt: { languageLabel: 'português', whatsapp: 'WhatsApp', email: 'E-mail', website: 'Site', address: 'Endereço' },
+  es: { languageLabel: 'espanhol', whatsapp: 'WhatsApp', email: 'Correo electrónico', website: 'Sitio web', address: 'Dirección' },
+  en: { languageLabel: 'inglês', whatsapp: 'WhatsApp', email: 'Email', website: 'Website', address: 'Address' },
 }
 
 function buildAddress(values: CardFormValues) {
@@ -17,15 +33,22 @@ function buildAddress(values: CardFormValues) {
 function normalizePhoneForWhatsApp(phone: string) { return phone.replace(/\D/g, '') }
 const INVEST_RS_MAPS_URL = 'https://maps.app.goo.gl/Je4hp2P23VrX6Ctq8'
 
-function buildPreviewQrValue(values: CardFormValues) {
+function getLocalizedProfessionalField(values: CardFormValues, kind: 'job_title' | 'department', language: PublicCardLanguage) {
+  const localized = values[`${kind}_${language}`]
+  const portuguese = values[`${kind}_pt`]
+  return localized || portuguese || values[kind]
+}
+
+function buildPreviewQrValue(values: CardFormValues, language: PublicCardLanguage) {
   const name = values.display_name || values.full_name || 'Contato Invest RS'
   const phone = values.mobile_phone || values.work_phone
+  const jobTitle = getLocalizedProfessionalField(values, 'job_title', language)
   return [
     'BEGIN:VCARD',
     'VERSION:3.0',
     `FN:${name}`,
     'ORG:Invest RS',
-    values.job_title ? `TITLE:${values.job_title}` : '',
+    jobTitle ? `TITLE:${jobTitle}` : '',
     phone ? `TEL;TYPE=CELL:${phone}` : '',
     values.email ? `EMAIL:${values.email}` : '',
     values.website ? `URL:${values.website}` : '',
@@ -37,14 +60,17 @@ function PreviewContactLabel({ icon: Icon, children }: { icon: LucideIcon; child
   return <span className="card-preview-contact-label"><Icon aria-hidden="true" /><span className="card-preview-contact-label-text">{children}</span></span>
 }
 
-export default function CardPreview({ values, showStatus = true }: CardPreviewProps) {
+export default function CardPreview({ values, showStatus = true, language = 'pt' }: CardPreviewProps) {
   const { settings } = useBrandSettings()
   const [qrDataUrl, setQrDataUrl] = useState('')
+  const copy = previewCopy[language]
   const name = values.display_name || values.full_name || 'Nome completo'
   const phone = values.mobile_phone || values.work_phone
   const address = buildAddress(values)
   const logoUrl = getVariantLogo(settings, values.public_visual_variant, values.logo_url)
-  const qrValue = useMemo(() => buildPreviewQrValue(values), [values])
+  const jobTitle = getLocalizedProfessionalField(values, 'job_title', language)
+  const department = getLocalizedProfessionalField(values, 'department', language)
+  const qrValue = useMemo(() => buildPreviewQrValue(values, language), [language, values])
 
   useEffect(() => {
     void QRCode.toDataURL(qrValue, { width: 360, margin: 1, errorCorrectionLevel: 'M' })
@@ -53,7 +79,7 @@ export default function CardPreview({ values, showStatus = true }: CardPreviewPr
   }, [qrValue])
 
   return (
-    <aside className={`card-preview card-preview--responsive ${getVariantClassName(settings, values.public_visual_variant)}`} style={getVariantStyle(settings, values.public_visual_variant)} aria-label="Prévia do cartão">
+    <aside className={`card-preview card-preview--responsive ${getVariantClassName(settings, values.public_visual_variant)}`} style={getVariantStyle(settings, values.public_visual_variant)} aria-label={`Prévia do cartão em ${copy.languageLabel}`}>
       <div className="card-preview-top">
         <img className="public-card-logo card-preview-logo" src={logoUrl} alt="Invest RS" />
         <div className="card-preview-top-actions">
@@ -64,16 +90,16 @@ export default function CardPreview({ values, showStatus = true }: CardPreviewPr
 
       <div className="card-preview-person">
         <h2>{name}</h2>
-        {values.job_title ? <p className="card-preview-job-title">{values.job_title}</p> : null}
-        {values.department ? <p className="card-preview-department">{values.department}</p> : null}
+        {jobTitle ? <p className="card-preview-job-title">{jobTitle}</p> : null}
+        {department ? <p className="card-preview-department">{department}</p> : null}
       </div>
 
       <div className="card-preview-footer">
         <div className="contact-list card-preview-contact-list">
-          {phone ? <a href={`https://wa.me/${normalizePhoneForWhatsApp(phone)}`} target="_blank" rel="noreferrer"><PreviewContactLabel icon={MessageCircle}>WhatsApp</PreviewContactLabel><span className="card-preview-contact-value">{phone}</span></a> : null}
-          {values.email ? <a href={`mailto:${values.email}`}><PreviewContactLabel icon={Mail}>E-mail</PreviewContactLabel><span className="card-preview-contact-value">{values.email}</span></a> : null}
-          {values.website ? <a href={values.website} target="_blank" rel="noreferrer"><PreviewContactLabel icon={Globe}>Site</PreviewContactLabel><span className="card-preview-contact-value">{values.website.replace(/^https?:\/\//, '')}</span></a> : null}
-          {address ? <a className="card-preview-contact-address" href={INVEST_RS_MAPS_URL} target="_blank" rel="noreferrer"><PreviewContactLabel icon={MapPin}>Endereço</PreviewContactLabel><span className="card-preview-contact-value">{address}</span></a> : null}
+          {phone ? <a href={`https://wa.me/${normalizePhoneForWhatsApp(phone)}`} target="_blank" rel="noreferrer"><PreviewContactLabel icon={MessageCircle}>{copy.whatsapp}</PreviewContactLabel><span className="card-preview-contact-value">{phone}</span></a> : null}
+          {values.email ? <a href={`mailto:${values.email}`}><PreviewContactLabel icon={Mail}>{copy.email}</PreviewContactLabel><span className="card-preview-contact-value">{values.email}</span></a> : null}
+          {values.website ? <a href={values.website} target="_blank" rel="noreferrer"><PreviewContactLabel icon={Globe}>{copy.website}</PreviewContactLabel><span className="card-preview-contact-value">{values.website.replace(/^https?:\/\//, '')}</span></a> : null}
+          {address ? <a className="card-preview-contact-address" href={INVEST_RS_MAPS_URL} target="_blank" rel="noreferrer"><PreviewContactLabel icon={MapPin}>{copy.address}</PreviewContactLabel><span className="card-preview-contact-value">{address}</span></a> : null}
         </div>
 
         {qrDataUrl ? <img className="card-preview-qr" src={qrDataUrl} alt={`QR Code de ${name}`} /> : null}
