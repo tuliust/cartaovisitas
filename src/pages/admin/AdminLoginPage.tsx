@@ -1,9 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
+import InstitutionalEmailField from '../../components/auth/InstitutionalEmailField'
 import { getCurrentSession, signInWithPassword, signOut } from '../../lib/auth'
 import { getFriendlyErrorMessage } from '../../lib/errors'
-import { buildInvestEmail, normalizeInvestEmailAddressInput } from '../../lib/investEmail'
+import { buildInvestEmail } from '../../lib/investEmail'
 import { isCurrentUserAdmin } from '../../lib/roles'
 import { useBrandSettings } from '../../contexts/BrandSettingsContext'
 import { useVisualMode } from '../../contexts/VisualModeContext'
@@ -15,7 +16,7 @@ export default function AdminLoginPage() {
   const { visualMode } = useVisualMode()
   const toast = useToast()
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
+  const [emailPrefix, setEmailPrefix] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [checking, setChecking] = useState(true)
@@ -33,8 +34,7 @@ export default function AdminLoginPage() {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    const credentialEmail = buildInvestEmail(email)
-    setEmail(credentialEmail)
+    const credentialEmail = buildInvestEmail(emailPrefix)
     setLoading(true)
 
     try {
@@ -80,26 +80,11 @@ export default function AdminLoginPage() {
         </p>
 
         <form className="auth-page-form" autoComplete="on" method="post" onSubmit={submit}>
-          <label>
-            E-mail institucional
-            <span className="email-suffix-field email-full-field">
-              <input
-                required
-                id="admin-login-username"
-                name="username"
-                type="email"
-                inputMode="email"
-                autoComplete="username"
-                autoCapitalize="none"
-                autoCorrect="off"
-                spellCheck={false}
-                value={email}
-                onChange={(event) => setEmail(normalizeInvestEmailAddressInput(event.target.value))}
-                onBlur={() => setEmail((current) => buildInvestEmail(current))}
-                placeholder="seu.nome@investrs.org.br"
-              />
-            </span>
-          </label>
+          <InstitutionalEmailField
+            id="admin-login-username"
+            value={emailPrefix}
+            onChange={setEmailPrefix}
+          />
 
           <div className="auth-form-field">
             <label htmlFor="admin-login-password">Senha</label>
