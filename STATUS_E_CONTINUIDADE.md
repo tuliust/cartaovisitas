@@ -58,12 +58,28 @@ A saída PowerShell enviada pelo usuário confirma a preparação para a reinteg
 - Em seguida o usuário ajustou o arquivo local. **Nova verificação mascarada:** URL exata `https://mmuzdakjliottmsxfhbd.supabase.co` = `True`; `VITE_SUPABASE_ANON_KEY` com prefixo `sb_publishable_` = `True`; `VITE_DEMO_MODE` desativado = `True`; `git status` continuou `## main...origin/main`. Nenhum valor da chave foi compartilhado.
 - Essa verificação demonstra **configuração local correta**, mas não valida por si só autenticação, acesso às 8 tabelas, visualização dos 2 cartões/418 eventos, leitura das páginas administrativas ou alterações de registro.
 - O documento e os dados reais continuam preservados. Nenhuma migration foi aplicada; a pendência da migration `202607250001` continua sob análise, sem execução.
-- **Próximo passo seguro:** executar `npm.cmd run build` na `main` e, após build aprovado, `npm.cmd run dev`; validar login com usuário existente, cartão, painel e métricas somente por leitura. Não usar `demo-case` nem importar fixtures.
+- **Build da `main` concluído e aprovado**; próximo passo seguro: executar `npm.cmd run dev`, validar login com usuário existente, cartão, painel e métricas somente por leitura. Não usar `demo-case` nem importar fixtures.
 - A exclusão de `demo-case` é desejada pelo usuário, mas não foi confirmada neste projeto: o procedimento anterior foi interrompido pela defasagem da `main`, agora corrigida. Não apagar trabalho local sem inventariar a branch.
+
+## Build local aprovado — 23/11/2026
+
+O usuário confirmou a execução da `main` original com a configuração local do Supabase real:
+
+- Versões na sessão PowerShell: Node.js `v24.22.1` e npm `11.19.1`.
+- Comando `npm.cmd run build`: **aprovado**, encadeando `npm run qa:theme && tsc -b && vite build`.
+- `qa:theme`: **Auditoria do contrato visual: APROVADA**, com 25 verificações visuais/funcionais de componentes, seis variantes, identidade visual, responsividade, autenticação, autofill e mobile.
+- TypeScript `tsc -b`: sucesso sem erro reportado.
+- Vite `v8.1.4`: **1.975 módulos transformados**, build concluído em **1,00 segundo**.
+- Artefatos: CSS `286,51 kB` (gzip `44,12 kB`), JS `768,11 kB` (gzip `218,48 kB`), HTML `1,96 kB` (gzip `0,63 kB`).
+- Aviso **não bloqueante**: chunk JS superior a 500 kB após minificação; otimização por code splitting pode ser avaliada em trabalho futuro.
+- `git status --short --branch` depois do build: `## main...origin/main`, sem alterações locais.
+- `npm ci`, migrations, seeds, deploy, alterações em Supabase e importações não foram executados nesta rodada.
+- **Pendente para encerramento funcional:** `npm.cmd run dev`, abertura de `/`, `/admin/login`, login com usuário real existente e inspeção **somente de leitura** de cartões, perfis e estatísticas. Não abrir links `/qr/:slug` para testar, pois o endpoint registra eventos de leitura/QR; não enviar convites nem executar operações de escrita.
+- Não declarar integração funcional concluída apenas com o build: a configuração do cliente está correta, mas navegação e consultas Supabase ainda não foram confirmadas em browser.
 
 ## Limites
 
 - Os dados recuperados **já estão no projeto Supabase original**: não é necessário copiá-los de um banco novo ou importar as demonstrações.
 - Não executar `supabase db reset`, `db push`, seeds, `npm audit fix --force`, deploy nem operações de escrita sem revisão.
 - Documentação registrada apenas na branch `docs/reintegracao-supabase-2026-11-23`; sem alterações na `main` ou na Vercel.
-- **Resultado desta rodada:** banco recuperado e inventariado; `main` local alinhada ao GitHub e `.env.local` corrigido para chave publicável, URL original e demo desativado. **Build e reconexão funcional local ainda pendentes.**
+- **Resultado desta rodada:** banco recuperado e inventariado; `main` local alinhada ao GitHub e `.env.local` corrigido para chave publicável, URL original e demo desativado. **Build local aprovado; reconexão funcional com dados reais ainda pendente de teste no navegador.**
