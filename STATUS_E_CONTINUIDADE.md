@@ -2,6 +2,8 @@
 
 > **Encerramento da limpeza Git — 23/11/2026: CONCLUÍDO.** A branch `demo-case` foi removida **do GitHub e dos dois computadores locais/repositórios verificados**. O usuário executou o procedimento seguro e enviou saída com `Deleted branch demo-case`, `git branch -a --list '*demo-case*'` vazio e `## main...origin/main` em ambos os repositórios. A ausência das branches remotas foi confirmada diretamente no GitHub. `main`, documentação, banco Supabase e Vercel foram preservados.
 
+> **Auditoria complementar de segurança e publicação — 23/11/2026:** o relatório consolidado, na seção 9, inclui **comandos PowerShell para VS Code**, revisão dos privilégios `SECURITY DEFINER` (funções `is_admin`, `protect_business_card_owner`, `consume_password_reset_rate_limit`), restrição de não executar a migration `202607250001` (seis variantes atuais de `brand_settings` preservadas) e comprovação de que a Vercel `cartaovisitas` está ligada a `tuliust/cartaovisitas`. Valores de secrets, Auth e escrita em produção **não homologados**. PR documental: https://github.com/tuliust/cartaovisitas/pull/6 (draft, sem merge).
+
 > **Relatório consolidado para futuras retomadas:** [RELATORIO_DE_RETOMADA_2026-11-23.md](RELATORIO_DE_RETOMADA_2026-11-23.md) — estado atual, evidências, procedimentos e pendências. O relatório é a referência rápida; este documento preserva a trilha histórica da auditoria.
 
 > Auditoria de reintegração ao Supabase: 23/11/2026.  
@@ -115,4 +117,4 @@ Após compilar a `main` com êxito e iniciar a aplicação com `npm.cmd run dev`
 - Os dados recuperados **já estão no projeto Supabase original**: não é necessário copiá-los de um banco novo ou importar as demonstrações.
 - Não executar `supabase db reset`, `db push`, seeds, `npm audit fix --force`, deploy nem operações de escrita sem revisão.
 - Documentação registrada apenas na branch `docs/reintegracao-supabase-2026-11-23`; sem alterações na `main` ou na Vercel.
-- **Resultado desta rodada:** banco recuperado e inventariado; `main` local alinhada ao GitHub e `.env.local` corrigido para chave publicável, URL original e demo desativado. **Build e reconexão funcional local com dados reais aprovados pelo usuário; produção funcional, branch demo e homologações de escrita ainda pendentes.**
+- **Resultado desta rodada:** banco recuperado e inventariado; `main` local alinhada ao GitHub e `.env.local` corrigido para chave publicável, URL original e demo desativado. **Build e reconexão funcional local aprovados; limpeza da branch demo concluída; homologação de produção e operações de escrita ainda pendente.**
