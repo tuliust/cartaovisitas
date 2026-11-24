@@ -96,7 +96,15 @@ Após compilar a `main` com êxito e iniciar a aplicação com `npm.cmd run dev`
 - Supabase Advisors de segurança e aviso de bundle JS superior a 500 kB permanecem para revisão posterior.
 - Branch `demo-case` deve ser **removida**, conforme decisão expressa do usuário, mas a exclusão **ainda não foi confirmada**. A `main` original deve permanecer preservada.
 
-**Próxima etapa:** encerrar as referências de demo no Git após verificar que não há trabalho local pendente, e avançar à reintegração funcional local do projeto `tuliust/eventosinvestrs` com o Supabase original `kcixoybbxcogpqlgeaoi`.
+**Evolução de 23/11/2026:** o EventosInvestRS também concluiu o build e os 7 grupos de testes funcionais locais de login e leitura real. Ambos os projetos já estão reintegrados em ambiente local aos respectivos bancos recuperados. Restam as exclusões das branches `demo-case` e a auditoria separada de produção.
+
+## Encerramento conjunto — 23/11/2026
+
+- **CartaoVisitas:** reconexão funcional local concluída e confirmada pelo usuário, sem operações de escrita.
+- **EventosInvestRS:** testes locais concluídos e confirmados pelo usuário: login administrativo; Dashboard; contatos; organizações; eventos e inscrições; mailing; segmentações e relatórios. Dados do projeto original `kcixoybbxcogpqlgeaoi` preservados.
+- **Branches `demo-case`:** decisão do usuário é removê-las de **ambos** os repositórios. Verificação do GitHub nesta rodada: ainda presentes em ambos os remotos. Nenhuma exclusão ocorreu via conector disponível; a tentativa anterior de `git push origin --delete demo-case` em EventosInvestRS falhou por autenticação. Priorizar remoção controlada pelo GitHub Web e, depois, das referências locais; verificar que `main` e eventuais worktrees estejam preservadas.
+- **Produção:** não houve alteração de Vercel, Supabase, credenciais, migrations, Auth ou Edge Functions. Os testes realizados não equivalem à homologação dos fluxos de escrita nem à validação independente da produção.
+- **Documentação:** permanece na branch `docs/reintegracao-supabase-2026-11-23`; a `main` não foi modificada por estes registros.
 
 ## Limites
 
