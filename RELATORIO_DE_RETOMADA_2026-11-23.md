@@ -210,3 +210,21 @@ O `vercel project inspect` só consulta metadados do projeto; requer CLI instala
 - **Concluído:** recuperação do banco; Git, build, login e leitura local; exclusão da demo; inspeção de migrations e dos privilégios básicos; identificação da integração Vercel; documentação.
 - **Pendente (não é falha da recuperação):** conferência privada dos valores Vercel; homologação autenticada em produção; revisão linha a linha de funções/autorizações; eventual habilitação de proteção de senha; plano específico para fluxos mutáveis em staging.
 - Pull Request documental: https://github.com/tuliust/cartaovisitas/pull/6 (**draft**, sem merge). Após homologação do impacto de deploy, poderá ser revisado e mesclado. Não alterar `main` automaticamente.
+
+## 10. Resultado de execução no VS Code e diagnóstico do domínio principal — 23/11/2026
+
+O usuário executou os comandos de validação em PowerShell no VS Code e enviou a saída integral:
+
+| Verificação | Resultado |
+| --- | --- |
+| `git status --short --branch` inicial/final | `## main...origin/main` (limpa e sincronizada) |
+| `git rev-list --left-right --count main...origin/main` | `0 0` |
+| `git branch -a --list '*demo-case*'` | Sem entradas |
+| `npm.cmd run build` | **APROVADO**; auditoria visual de 6 variantes, `tsc -b` e Vite `8.1.4`, 1.975 módulos, 696 ms |
+| Otimização | Aviso **não bloqueante** para bundle JS de 768,11 kB (gzip 218,48 kB) |
+| `vercel.cmd project inspect cartaovisitas --scope tuliust` | Projeto `prj_dIgjo6zEy3N6jm6XraCpH7boCMyQ` encontrado; Vite, Node 24.x |
+| HTTP `HEAD https://cartaovisitas.vercel.app/` | **HTTP 200**, conforme saída do usuário |
+
+**Interpretação:** o build local, o estado Git, a identificação do projeto na Vercel e a disponibilidade HTTP pública foram confirmados. Isso **não comprova login administrativo, RLS nem operações de escrita em produção**. Os testes de login e leitura com banco real foram previamente confirmados **apenas localmente**.
+
+**Ações finais recomendadas:** nenhuma migration/destruição de dados; conferir variáveis Vercel de forma privada, testar autenticação e leitura em produção com conta existente, e planejar homologação de escrita em staging. O PR #6 continua **draft**, não mesclado, para evitar deployment inesperado ao incorporar documentação. 
