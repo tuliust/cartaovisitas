@@ -119,3 +119,16 @@ A antiga branch `demo-case` continha código/fixtures de demonstração, **não 
 - **Status de limpeza: concluído (remoto e local).** Não há ações adicionais de `demo-case` a executar.
 
 **Estado a registrar no Guia de Retomada:** *Aplicação funcional com banco Supabase original recuperado; Git, build e login/leitura local validados em 23/11/2026. Pendentes apenas: verificação completa da produção e homologação de operações de escrita.*
+
+## 8. Auditoria final de integridade e publicação — 23/11/2026
+
+**Auditoria por leitura efetuada após a remoção de `demo-case`:**
+
+- GitHub: `main` permanece em `5fa1cd70fea5a0dd72c8410c5a294fff7c0e2d36`; a branch documental difere somente por este relatório e `STATUS_E_CONTINUIDADE.md`. Não há branch remota `demo-case`.
+- Supabase `mmuzdakjliottmsxfhbd`: `ACTIVE_HEALTHY`; consulta SQL **somente leitura** retornou `business_cards=2`, `card_scan_events=420`, `user_profiles=2`, `audit_logs=148` e `managed_pages=2`. Os eventos de leitura passaram de **418 no inventário anterior** para **420** nesta auditoria. Não há atribuição confirmada da origem desses dois novos registros; nenhum `INSERT`, `UPDATE` ou `DELETE` foi executado nesta verificação.
+- Vercel: projeto `cartaovisitas`, deployment produção `dpl_2KrFrYzJADkZgNR4eQEibrgN5a6G`, estado `READY`, SHA `5fa1cd70...` compatível com GitHub `main`; domínio `cartaovisitas.vercel.app` **verificado**.
+- Variáveis existentes na produção: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `SUPABASE_URL`, `SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY`. **Os valores sensíveis não foram confirmados**; `READY` não é teste funcional autenticado em produção.
+- Supabase Security Advisors: 3 avisos `WARN` — funções `SECURITY DEFINER` executáveis por `anon` e `authenticated`, e proteção contra senhas vazadas desativada — e 1 `INFO` de RLS habilitada sem policy. Requer análise das funções, papéis e impacto antes de mudanças.
+- **Decisão de segurança:** nenhum merge na `main`, redeploy, alteração em Auth/RLS, segredo, migration ou teste mutável nesta rodada. Documentação pronta para revisão via Pull Request; uma publicação acionada automaticamente por merge deve ser precedida da validação de ambiente e do fluxo de deploy.
+
+**Status final seguro:** aplicação reintegrada e testada localmente; demo removida; infraestrutura e inventário confirmados por leitura; **produção e escrita ainda não homologadas**.
