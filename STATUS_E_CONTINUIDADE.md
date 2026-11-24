@@ -1,6 +1,6 @@
 # STATUS E CONTINUIDADE — CartaoVisitas
 
-> **Atualização da limpeza Git (verificação posterior em 23/11/2026):** a branch remota `demo-case` foi **excluída e sua ausência confirmada diretamente na lista de branches do GitHub**. O usuário executou `git fetch --prune origin` em ambos os repositórios; `git branch -a --list '*demo-case*'` apresentou apenas `demo-case` **local**. **Pendente: excluir a referência local** com a `main` limpa e sem worktree usando essa branch. `main`, branch documental e dados Supabase foram preservados.
+> **Encerramento da limpeza Git — 23/11/2026: CONCLUÍDO.** A branch `demo-case` foi removida **do GitHub e dos dois computadores locais/repositórios verificados**. O usuário executou o procedimento seguro e enviou saída com `Deleted branch demo-case`, `git branch -a --list '*demo-case*'` vazio e `## main...origin/main` em ambos os repositórios. A ausência das branches remotas foi confirmada diretamente no GitHub. `main`, documentação, banco Supabase e Vercel foram preservados.
 
 > **Relatório consolidado para futuras retomadas:** [RELATORIO_DE_RETOMADA_2026-11-23.md](RELATORIO_DE_RETOMADA_2026-11-23.md) — estado atual, evidências, procedimentos e pendências. O relatório é a referência rápida; este documento preserva a trilha histórica da auditoria.
 
@@ -37,7 +37,7 @@
 ## GitHub e demos
 
 - `main`: versão concebida para Supabase real; preservar e auditar antes de publicar mudanças.
-- `demo-case`: 1 commit exclusivo à frente e 15 atrás de `main`, com mock `src/lib/demoSupabase.ts`, `.env.demo.example` e `STATUS_E_CONTINUIDADE.md` de demonstração. **Decisão do usuário: não manter a branch demo**. Exclusão **remota** confirmada posteriormente; exclusão **local** pendente de verificação do estado e das worktrees. Não importar dados do mock ao Supabase real.
+- `demo-case`: 1 commit exclusivo à frente e 15 atrás de `main`, com mock `src/lib/demoSupabase.ts`, `.env.demo.example` e `STATUS_E_CONTINUIDADE.md` de demonstração. **Decisão do usuário: não manter a branch demo**. Exclusões **remota e local concluídas e verificadas** em 23/11/2026. Não importar dados do mock ao Supabase real.
 - O conector GitHub disponível não oferece exclusão de branches. Após a validação da integração, usar o Git local para excluir remotamente e localmente, com verificação de worktree.
 - Documentação técnica principal em `docs/INDEX.md`, `docs/03-ambientes-variaveis-deploy.md`, `docs/04-banco-supabase-rls-storage.md`.
 
@@ -49,7 +49,7 @@
 4. Compilar e validar navegação, login administrativo, cartões, perfis e métricas por leitura, sem gravações.
 5. Vercel: já existem as variáveis `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `SUPABASE_URL`, `SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY`. Seus valores são classificados como sensíveis e o conector **não os revelou**, mesmo solicitada leitura: **não afirmar que estão certos ou errados**. Confirmar por procedimento autorizado sem divulgar os segredos, antes de qualquer redeploy.
 6. Revisar Auth redirect URLs, Edge Function e políticas RLS antes de testes que escrevam dados.
-7. Remover `demo-case` conforme decisão do usuário, **sem deletar `.env.local` ou trabalho não commitado**.
+7. **Concluído em 23/11/2026:** remover `demo-case` remota e local; `.env.local`, trabalho local e `main` preservados.
 
 ## Validação local da configuração real — 23/11/2026
 
@@ -63,7 +63,7 @@ A saída PowerShell enviada pelo usuário confirma a preparação para a reinteg
 - Essa verificação demonstra **configuração local correta**, mas não valida por si só autenticação, acesso às 8 tabelas, visualização dos 2 cartões/418 eventos, leitura das páginas administrativas ou alterações de registro.
 - O documento e os dados reais continuam preservados. Nenhuma migration foi aplicada; a pendência da migration `202607250001` continua sob análise, sem execução.
 - **Build da `main` concluído e aprovado**; próximo passo seguro: executar `npm.cmd run dev`, validar login com usuário existente, cartão, painel e métricas somente por leitura. Não usar `demo-case` nem importar fixtures.
-- Atualização: `demo-case` foi excluída remotamente e confirmada no GitHub. Ainda falta excluir a branch **local**. Não apagar trabalho local sem inventariar seu estado.
+- Atualização final: `demo-case` foi excluída **remota e localmente**, com saídas PowerShell e verificação GitHub confirmadas. Nenhum arquivo de trabalho foi descartado.
 
 ## Build local aprovado — 23/11/2026
 
@@ -98,15 +98,15 @@ Após compilar a `main` com êxito e iniciar a aplicação com `npm.cmd run dev`
 - Valores sensíveis de variáveis da Vercel não verificados; produção `READY` não equivale a homologação funcional independente.
 - Migration `202607250001_expand_independent_visual_tokens.sql` ainda sem registro no histórico remoto; **não executar**, pois sobrescreveria configurações atuais `visual_variant_settings` e poderia descartar personalizações.
 - Supabase Advisors de segurança e aviso de bundle JS superior a 500 kB permanecem para revisão posterior.
-- Branch `demo-case` foi **removida do remoto e confirmada**, conforme decisão expressa do usuário; a referência local ainda existe. A `main` original deve permanecer preservada.
+- Branch `demo-case` foi **removida do remoto e do ambiente local, com verificação positiva**, conforme decisão expressa do usuário. A `main` original deve permanecer preservada.
 
-**Evolução de 23/11/2026:** o EventosInvestRS também concluiu o build e os 7 grupos de testes funcionais locais de login e leitura real. Ambos os projetos já estão reintegrados em ambiente local aos respectivos bancos recuperados. Restam as exclusões das referências **locais** `demo-case` e a auditoria separada de produção.
+**Evolução de 23/11/2026:** o EventosInvestRS também concluiu o build e os 7 grupos de testes funcionais locais de login e leitura real. Ambos os projetos já estão reintegrados em ambiente local aos respectivos bancos recuperados. A limpeza local e remota das branches `demo-case` foi concluída; resta a auditoria separada de produção.
 
 ## Encerramento conjunto — 23/11/2026
 
 - **CartaoVisitas:** reconexão funcional local concluída e confirmada pelo usuário, sem operações de escrita.
 - **EventosInvestRS:** testes locais concluídos e confirmados pelo usuário: login administrativo; Dashboard; contatos; organizações; eventos e inscrições; mailing; segmentações e relatórios. Dados do projeto original `kcixoybbxcogpqlgeaoi` preservados.
-- **Branches `demo-case`:** após a rodada anterior, a exclusão remota foi executada pelo usuário via VS Code/GitHub e **confirmada diretamente no GitHub para ambos os repositórios**. O usuário executou `git fetch --prune origin`; o comando `git branch -a --list '*demo-case*'` exibiu apenas as referências **locais**. Falta removê-las com `main` limpa e sem worktrees usando demo; não alterar as branches de documentação.
+- **Branches `demo-case`: CONCLUÍDO (ambos os projetos).** A exclusão remota foi confirmada no GitHub e a local foi confirmada pelo usuário com `Deleted branch demo-case`, listagem de demos vazia e `## main...origin/main`. Nenhuma alteração na `main` ou nas branches de documentação.
 - **Produção:** não houve alteração de Vercel, Supabase, credenciais, migrations, Auth ou Edge Functions. Os testes realizados não equivalem à homologação dos fluxos de escrita nem à validação independente da produção.
 - **Documentação:** permanece na branch `docs/reintegracao-supabase-2026-11-23`; a `main` não foi modificada por estes registros.
 
