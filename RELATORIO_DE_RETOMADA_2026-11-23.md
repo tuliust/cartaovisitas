@@ -132,3 +132,81 @@ A antiga branch `demo-case` continha código/fixtures de demonstração, **não 
 - **Decisão de segurança:** nenhum merge na `main`, redeploy, alteração em Auth/RLS, segredo, migration ou teste mutável nesta rodada. Documentação pronta para revisão via Pull Request; uma publicação acionada automaticamente por merge deve ser precedida da validação de ambiente e do fluxo de deploy.
 
 **Status final seguro:** aplicação reintegrada e testada localmente; demo removida; infraestrutura e inventário confirmados por leitura; **produção e escrita ainda não homologadas**.
+
+## 9. Auditoria das pendências e execução no VS Code — 23/11/2026
+
+### 9.1 Segurança Supabase — diagnóstico por metadados concluído
+
+Consulta **somente leitura** ao catálogo `pg_proc` e ao Security Advisor:
+
+| Função `public` com `SECURITY DEFINER` | EXECUTE anon | EXECUTE authenticated | Observação |
+| --- | --- | --- | --- |
+| `is_admin()` | Sim | Sim | Retorna `boolean` e seu código referencia `auth.uid()`. Revisar implementação/RLS antes de restringir |
+| `protect_business_card_owner()` | Sim | Sim | Retorna `trigger`; é uma função de gatilho, não uma RPC comum. Revisar concessões e triggers vinculados |
+| `consume_password_reset_rate_limit(...)` | Não | Não | Execução direta não concedida aos dois papéis |
+
+As três funções têm configuração explícita `search_path=public`. Isso **não substitui** revisão do corpo, RLS e chamadas internas. Não executar `REVOKE` em massa: `is_admin()` pode participar de políticas RLS e remover `EXECUTE` pode impedir fluxos legítimos.
+
+**Advisors atuais:** `anon_security_definer_function_executable` (WARN); `authenticated_security_definer_function_executable` (WARN); `auth_leaked_password_protection` (WARN); `rls_enabled_no_policy` (INFO). A proteção contra senhas vazadas pode ser habilitada pelo painel Auth **se o projeto tiver plano Supabase Pro ou superior**; não houve alteração de configuração. Referência: https://supabase.com/docs/guides/auth/password-security.
+
+### 9.2 Migration e personalizações — NÃO APLICAR
+
+- Arquivos do GitHub: **8**. Histórico de migrations executadas no Supabase: **7**.
+- A migration pendente `supabase/migrations/202607250001_expand_independent_visual_tokens.sql` contém um `UPDATE public.brand_settings SET visual_variant_settings = <JSON estático> WHERE singleton=true`. Executá-la substituiria a configuração recuperada.
+- Verificação atual somente leitura: `brand_settings.visual_variant_settings` já é um objeto JSON com **seis variantes**; a tabela dispõe de **quatro políticas RLS**. O cadastro e o seletor de seis variantes já passaram no `qa:theme` e no teste funcional local.
+- **Decisão:** não executar nem marcar falsamente a migration como aplicada. A eventual conciliação exige backup/versionamento do JSON existente e um novo plano idempotente que preserve personalizações; essa tarefa não bloqueia a aplicação já funcional.
+
+### 9.3 Vercel e produção — diagnóstico concluído, homologação pendente
+
+- O contexto Git da Vercel confirma ligação `cartaovisitas` → **`tuliust/cartaovisitas`**, coerente com GitHub `main`.
+- Último deployment de produção consultado: `READY`, SHA correspondente à `main`, domínio `cartaovisitas.vercel.app` verificado.
+- Variáveis de produção necessárias constam cadastradas, mas o conector não confirma os **valores** de `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` e variáveis server-side. Conferir **sem mostrar secrets** em Vercel → projeto `cartaovisitas` → Settings → Environment Variables; verificar URL `mmuzdakjliottmsxfhbd`.
+- Depois dessa conferência, homologar login e leitura na **URL de produção** com usuário existente. Somente com ambiente de testes isolado e dados sintéticos homologar operações de escrita, recuperação de senha e QR com rastreamento.
+- **Não fazer redeploy agora** apenas para incorporar esta documentação: push/merge na `main` pode disparar publicação na Vercel.
+
+### 9.4 Comandos seguros para o terminal PowerShell do VS Code
+
+Os comandos a seguir **não alteram dados Supabase nem publicam**. Executar na máquina Windows, sem copiar credenciais para o chat:
+
+~~~powershell
+Set-Location 'C:\Users\Tulius\Documents\github\cartaovisitas'
+
+if ((git branch --show-current) -ne 'main') {
+    throw 'Troque para main somente depois de preservar alteracoes locais.'
+}
+git status --short --branch
+git fetch --prune origin
+if ($LASTEXITCODE -ne 0) { throw 'Falha ao consultar GitHub.' }
+git rev-list --left-right --count main...origin/main
+git branch -a --list '*demo-case*'
+
+if (-not (Test-Path '.env.local')) { throw '.env.local ausente.' }
+$EnvVars = @{}
+Get-Content '.env.local' | ForEach-Object {
+    if ($_ -match '^\s*(VITE_SUPABASE_URL|VITE_SUPABASE_ANON_KEY|VITE_DEMO_MODE)\s*=(.*)$') {
+        $EnvVars[$matches[1]] = $matches[2].Trim().Trim('"', "'")
+    }
+}
+$Key = $EnvVars['VITE_SUPABASE_ANON_KEY']
+Write-Output "URL correta: $($EnvVars['VITE_SUPABASE_URL'] -eq 'https://mmuzdakjliottmsxfhbd.supabase.co')"
+Write-Output "Chave publica: $($Key -like 'sb_publishable_*')"
+Write-Output "Secret indevido: $($Key -like 'sb_secret_*')"
+Write-Output "Demo desativada: $($EnvVars['VITE_DEMO_MODE'] -ne 'true')"
+
+npm.cmd run build
+if ($LASTEXITCODE -ne 0) { throw 'Build reprovado.' }
+
+if (Get-Command vercel -ErrorAction SilentlyContinue) {
+    vercel project inspect cartaovisitas --scope tuliust
+} else {
+    Write-Output 'Vercel CLI nao instalado. Use o dashboard.'
+}
+~~~
+
+O `vercel project inspect` só consulta metadados do projeto; requer CLI instalado e login na equipe correta. **Não usar** `vercel git connect`, `vercel deploy`, `vercel env pull`, `supabase db push` ou comandos de escrita nesta verificação.
+
+### 9.5 Critérios de encerramento
+
+- **Concluído:** recuperação do banco; Git, build, login e leitura local; exclusão da demo; inspeção de migrations e dos privilégios básicos; identificação da integração Vercel; documentação.
+- **Pendente (não é falha da recuperação):** conferência privada dos valores Vercel; homologação autenticada em produção; revisão linha a linha de funções/autorizações; eventual habilitação de proteção de senha; plano específico para fluxos mutáveis em staging.
+- Pull Request documental: https://github.com/tuliust/cartaovisitas/pull/6 (**draft**, sem merge). Após homologação do impacto de deploy, poderá ser revisado e mesclado. Não alterar `main` automaticamente.
