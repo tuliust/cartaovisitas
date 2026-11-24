@@ -1,5 +1,7 @@
 # STATUS E CONTINUIDADE — CartaoVisitas
 
+> **Relatório consolidado para futuras retomadas:** [RELATORIO_DE_RETOMADA_2026-11-23.md](RELATORIO_DE_RETOMADA_2026-11-23.md) — estado atual, evidências, procedimentos e pendências. O relatório é a referência rápida; este documento preserva a trilha histórica da auditoria.
+
 > Auditoria de reintegração ao Supabase: 23/11/2026.  
 > Estado: **projeto Supabase original recuperado e ativo; dados existentes preservados**. A reconexão funcional local foi confirmada pelo usuário; a verificação funcional independente da produção Vercel ainda está pendente.  
 > Regra: nenhuma importação de mocks, seed, migration, ressincronização destrutiva ou deploy automático sem auditoria e testes.
