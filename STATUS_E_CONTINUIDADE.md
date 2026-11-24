@@ -1,7 +1,7 @@
 # STATUS E CONTINUIDADE — CartaoVisitas
 
 > Auditoria de reintegração ao Supabase: 23/11/2026.  
-> Estado: **projeto Supabase original recuperado e ativo; dados existentes preservados**. A reconexão funcional local e a verificação do ambiente Vercel ainda não foram validadas.  
+> Estado: **projeto Supabase original recuperado e ativo; dados existentes preservados**. A reconexão funcional local foi confirmada pelo usuário; a verificação funcional independente da produção Vercel ainda está pendente.  
 > Regra: nenhuma importação de mocks, seed, migration, ressincronização destrutiva ou deploy automático sem auditoria e testes.
 
 ## Identificação
@@ -77,9 +77,30 @@ O usuário confirmou a execução da `main` original com a configuração local 
 - **Pendente para encerramento funcional:** `npm.cmd run dev`, abertura de `/`, `/admin/login`, login com usuário real existente e inspeção **somente de leitura** de cartões, perfis e estatísticas. Não abrir links `/qr/:slug` para testar, pois o endpoint registra eventos de leitura/QR; não enviar convites nem executar operações de escrita.
 - Não declarar integração funcional concluída apenas com o build: a configuração do cliente está correta, mas navegação e consultas Supabase ainda não foram confirmadas em browser.
 
+## Testes funcionais locais — CONFIRMADOS pelo usuário em 23/11/2026
+
+Após compilar a `main` com êxito e iniciar a aplicação com `npm.cmd run dev`, o usuário confirmou que **todos os testes solicitados funcionaram**:
+
+- Página inicial (`/`) carregou corretamente.
+- Login administrativo (`/admin/login`) funcionou usando o ambiente real.
+- Painel de cartões (`/admin/cartoes`) abriu corretamente.
+- Os dados históricos do Supabase recuperado foram exibidos na aplicação.
+
+**Conclusão restrita:** reintegração **funcional local de navegação, autenticação e leitura** ao Supabase `mmuzdakjliottmsxfhbd` concluída. O sucesso foi informado pelo usuário; não houve coleta de dados pessoais ou de credenciais. A auditoria do build e os registros históricos foram confirmados anteriormente.
+
+**Fora do escopo / pendências:**
+
+- Testes de escrita ou operação institucional (edição, criação, importação, convite, reset de senha, QR com rastreamento) **não executados**, para preservar os dados reais.
+- Valores sensíveis de variáveis da Vercel não verificados; produção `READY` não equivale a homologação funcional independente.
+- Migration `202607250001_expand_independent_visual_tokens.sql` ainda sem registro no histórico remoto; **não executar**, pois sobrescreveria configurações atuais `visual_variant_settings` e poderia descartar personalizações.
+- Supabase Advisors de segurança e aviso de bundle JS superior a 500 kB permanecem para revisão posterior.
+- Branch `demo-case` deve ser **removida**, conforme decisão expressa do usuário, mas a exclusão **ainda não foi confirmada**. A `main` original deve permanecer preservada.
+
+**Próxima etapa:** encerrar as referências de demo no Git após verificar que não há trabalho local pendente, e avançar à reintegração funcional local do projeto `tuliust/eventosinvestrs` com o Supabase original `kcixoybbxcogpqlgeaoi`.
+
 ## Limites
 
 - Os dados recuperados **já estão no projeto Supabase original**: não é necessário copiá-los de um banco novo ou importar as demonstrações.
 - Não executar `supabase db reset`, `db push`, seeds, `npm audit fix --force`, deploy nem operações de escrita sem revisão.
 - Documentação registrada apenas na branch `docs/reintegracao-supabase-2026-11-23`; sem alterações na `main` ou na Vercel.
-- **Resultado desta rodada:** banco recuperado e inventariado; `main` local alinhada ao GitHub e `.env.local` corrigido para chave publicável, URL original e demo desativado. **Build local aprovado; reconexão funcional com dados reais ainda pendente de teste no navegador.**
+- **Resultado desta rodada:** banco recuperado e inventariado; `main` local alinhada ao GitHub e `.env.local` corrigido para chave publicável, URL original e demo desativado. **Build e reconexão funcional local com dados reais aprovados pelo usuário; produção funcional, branch demo e homologações de escrita ainda pendentes.**
