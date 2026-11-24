@@ -4,6 +4,8 @@
 
 > **Auditoria complementar de segurança e publicação — 23/11/2026:** o relatório consolidado, na seção 9, inclui **comandos PowerShell para VS Code**, revisão dos privilégios `SECURITY DEFINER` (funções `is_admin`, `protect_business_card_owner`, `consume_password_reset_rate_limit`), restrição de não executar a migration `202607250001` (seis variantes atuais de `brand_settings` preservadas) e comprovação de que a Vercel `cartaovisitas` está ligada a `tuliust/cartaovisitas`. Valores de secrets, Auth e escrita em produção **não homologados**. PR documental: https://github.com/tuliust/cartaovisitas/pull/6 (draft, sem merge).
 
+> **Validação de VS Code e disponibilidade HTTP — 23/11/2026:** `main...origin/main` limpa (`0 0`); `npm.cmd run build` aprovado (6 variantes, 1.975 módulos); Vercel CLI identificou o projeto `cartaovisitas` com Node 24.x; `HEAD https://cartaovisitas.vercel.app/` retornou **HTTP 200**. A disponibilidade pública não equivale à homologação de login e escrita em produção. Detalhes na seção 10 do relatório consolidado.
+
 > **Relatório consolidado para futuras retomadas:** [RELATORIO_DE_RETOMADA_2026-11-23.md](RELATORIO_DE_RETOMADA_2026-11-23.md) — estado atual, evidências, procedimentos e pendências. O relatório é a referência rápida; este documento preserva a trilha histórica da auditoria.
 
 > Auditoria de reintegração ao Supabase: 23/11/2026.  
