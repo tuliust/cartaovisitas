@@ -47,9 +47,23 @@
 6. Revisar Auth redirect URLs, Edge Function e políticas RLS antes de testes que escrevam dados.
 7. Remover `demo-case` conforme decisão do usuário, **sem deletar `.env.local` ou trabalho não commitado**.
 
+## Validação local da configuração real — 23/11/2026
+
+A saída PowerShell enviada pelo usuário confirma a preparação para a reintegração na aplicação original, ainda sem testes funcionais com o backend:
+
+- A pasta Windows é `C:\Users\Tulius\Documents\github\cartaovisitas`.
+- A `main` local estava **15 commits atrás** de `origin/main`; o usuário executou `git merge --ff-only origin/main` com sucesso, atualizando `4bf73a6` para `5fa1cd7`, sem merge commit nem descartes.
+- Após a atualização, `git status --short --branch` retornou `## main...origin/main`, e `git rev-list --left-right --count main...origin/main` retornou `0 0`. Nenhuma alteração local rastreada ou não rastreada foi apresentada.
+- O `.env.local` já existia, mas a primeira verificação mostrou URL incorreta ou ausente, chave não configurada e `VITE_DEMO_MODE` igual a `true`.
+- Em seguida o usuário ajustou o arquivo local. **Nova verificação mascarada:** URL exata `https://mmuzdakjliottmsxfhbd.supabase.co` = `True`; `VITE_SUPABASE_ANON_KEY` com prefixo `sb_publishable_` = `True`; `VITE_DEMO_MODE` desativado = `True`; `git status` continuou `## main...origin/main`. Nenhum valor da chave foi compartilhado.
+- Essa verificação demonstra **configuração local correta**, mas não valida por si só autenticação, acesso às 8 tabelas, visualização dos 2 cartões/418 eventos, leitura das páginas administrativas ou alterações de registro.
+- O documento e os dados reais continuam preservados. Nenhuma migration foi aplicada; a pendência da migration `202607250001` continua sob análise, sem execução.
+- **Próximo passo seguro:** executar `npm.cmd run build` na `main` e, após build aprovado, `npm.cmd run dev`; validar login com usuário existente, cartão, painel e métricas somente por leitura. Não usar `demo-case` nem importar fixtures.
+- A exclusão de `demo-case` é desejada pelo usuário, mas não foi confirmada neste projeto: o procedimento anterior foi interrompido pela defasagem da `main`, agora corrigida. Não apagar trabalho local sem inventariar a branch.
+
 ## Limites
 
 - Os dados recuperados **já estão no projeto Supabase original**: não é necessário copiá-los de um banco novo ou importar as demonstrações.
 - Não executar `supabase db reset`, `db push`, seeds, `npm audit fix --force`, deploy nem operações de escrita sem revisão.
 - Documentação registrada apenas na branch `docs/reintegracao-supabase-2026-11-23`; sem alterações na `main` ou na Vercel.
-- **Resultado desta rodada:** banco recuperado e inventariado; reconexão funcional local e validação produtiva ainda pendentes.
+- **Resultado desta rodada:** banco recuperado e inventariado; `main` local alinhada ao GitHub e `.env.local` corrigido para chave publicável, URL original e demo desativado. **Build e reconexão funcional local ainda pendentes.**
