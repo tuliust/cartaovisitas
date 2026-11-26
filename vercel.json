@@ -1,17 +1,51 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/wallet/apple/[slug].ts": { "includeFiles": "public/wallet/**" }
+    "api/wallet/apple/[slug].ts": {
+      "includeFiles": "public/wallet/**"
+    }
   },
   "rewrites": [
-    { "source": "/qr/:slug", "destination": "/api/qr/:slug" },
-    { "source": "/admin/:path*", "destination": "/index.html" },
-    { "source": "/meu-cartao/:path*", "destination": "/index.html" },
-    { "source": "/meu-cartao", "destination": "/index.html" },
-    { "source": "/entrar", "destination": "/index.html" },
-    { "source": "/cadastro", "destination": "/index.html" },
-    { "source": "/recuperar-senha", "destination": "/index.html" },
-    { "source": "/definir-senha", "destination": "/index.html" },
-    { "source": "/:slug", "destination": "/index.html" }
-  ]
+    {
+      "source": "/qr/:slug",
+      "destination": "/api/qr/:slug"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/meu-cartao/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/meu-cartao",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/entrar",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/cadastro",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/recuperar-senha",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/definir-senha",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:slug",
+      "destination": "/index.html"
+    }
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "docs/sql-hardening-2026-11-26": false
+    }
+  }
 }
